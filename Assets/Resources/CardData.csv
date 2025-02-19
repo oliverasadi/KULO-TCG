@@ -1,0 +1,124 @@
+,,,,,,,,,,,,,,,,,,,,,,
+OGN-01,The Cat with the Mole,C,Cats,Evo,Creature,Cat,2100,EVOLUTION: Sacrifice 1 'Baby Mole Cat' to summon this creature.,DOB: 2024 GPS: Gulu Island Height: 5kg Height: 0.23m,Yes,Yes,Yes,,,,,,,,,,
+OGN-02,467 Cat,C,Cats,Basic,Creature,Cat,1500,"If this card remains on the field after one of your opponent's turns, you may replace it with ‘Fat 467 Cat’ from your deck or hand. If you do, you cannot play any additional cards during that turn.","DOB: 2016, GPS: Gulu City, Weight: 4.5kg, Height: 0.22m.",Yes,Yes,Yes,,,,,,,,,,
+OGN-03,Spirit of Mimi,R,Cats,Spell,Spell,,,Add 1 'Cat'-type creature card from your graveyard to your hand.,,Yes,Yes,Yes,,,,,,,,,,
+OGN-04,Spirit of Twiggy,R,Cats,Spell,Spell,,,Add a spell card from your graveyard to your hand.,,Yes,Yes,Yes,,,,,,,,,,
+OGN-05,It’s Food Time,C,Cats,Spell,Spell,,,All Cat-type creatures gain +200 power until the end of this turn.,,Yes,Yes,Yes,,,,,,,,,,
+OGN-06,Mole Cat’s Girlfriend,U,Cats,Basic,Creature,Cat,1300,"If ‘The Cat with the Mole’ is on the field, both this card and ‘The Cat with the Mole’ gain +500 power.
+","DOB: 2024, GPS: Hidden Gulu Forest, Weight: 4.7kg, Height: 0.25m.",Yes,Yes,Yes,,,,,,,,,,
+OGN-07,Jump the Fence,C,Cats,Spell,Spell,,,You can move the creature ‘Baby Mole Cat’ or ‘The Cat with the Mole’ to any open position on the field.,,Yes,Yes,Yes,,,,,,,,,,
+OGN-08,Cat Friends,SR,Cats,Spell,Spell,,,"If you control 2 or more ‘Cat’ type cards on the field, you may summon a ‘Cat’ card from your deck.
+
+You cannot achieve a win condition this turn.",,Yes,Yes,Yes,,,,,,,,,,
+OGN-09,Return of the Cats,R,Cats,Spell,Spell,,,"Add 2 Cat creature cards from your graveyard to your hand.
+
+You cannot play any cards during your next turn.",,Yes,Yes,Yes,,,,,,,,,,
+OGN-10,Baby Tuan,C,Cats,Basic,Creature,Cat,1400,"If this card remains on the field after one of your opponent's turns, you may replace it with ‘Beautiful Tuan-Tuan’ from your deck or hand. If you do, you cannot play any additional cards during that turn.","DOB: 2018, GPS: Gulu Mountain, Weight: 3.2kg, Height: 0.19m.",Yes,Yes,Yes,,,,,,,,,,
+OGN-11,X1 Damiano,SR,Cats,Basic,Creature,Cat,2400,"After this card is summoned, it is immediately sent to the graveyard.
+
+(This action does not trigger a win condition.)","DOB: Unknown, GPS: Gulu Island, Weight: 5.0kg, Height: 0.30m.",Yes,Yes,Yes,,,,,,,,,,
+OGN-12,Beautiful Tuan-Tuan,C,Cats,Evo,Creature,Cat,2000,"EVOLUTION: Sacrifice 1 ‘Baby Tuan’ to summon this creature.
+
+On your opponent's next turn after this card is summoned, they may only play cards in zones directly above or below this card.","DOB: 2018, GPS: Gulu Island, Weight: 4.8kg, Height: 0.22m.",Yes,Yes,Yes,,,,,,,,,,
+OGN-13,Baidi the Sleepy Sphinx,C,Cats,Basic,Creature,Cat,1400,Draw a card when this card is summoned.,"DOB: 2023, GPS: Gulu Island, Weight: 6.2kg, Height: 0.35m.",Yes,Yes,Yes,,,,,,,,,,
+OGN-14,Large Happy Zui,C,Cats,Evo,Creature,Cat,1800,This card loses -100 power for each other Cat-type creature you control on the field.,"DOB: 2024, GPS: Gulu Island, Weight: 7.0kg, Height: 0.40m.",Yes,Yes,Yes,,,,,,,,,,
+OGN-15,3 Legged BaiBai,C,Cats,Basic,Creature,Cat,1400,Choose up to 3 cards on the field. Each of the chosen cards gains +100 power as long as this card remains on the field.,"DOB: 2017, GPS: Gulu Island, Weight: 3.8kg, Height: 0.20m.",Yes,Yes,Yes,,,,,,,,,,
+OGN-16,Mustache Cat Hero,C,Cats,Basic,Creature,Cat,1200,This card gains +100 power for each card your opponent controls on the field.,"DOB: 2016, GPS: Gulu Island, Weight: 4.9kg, Height: 0.23m.",Yes,Yes,Yes,,,,,,,,,,
+OGN-17,Fat 467 Cat,U,Cats,Evo,Creature,Cat,2000,"EVOLUTION :
+Sacrifice 1 ‘467 Cat’ to summon this creature.","DOB: 2016, GPS: Gulu City, Weight: 7.5kg, Height: 0.22m.",Yes,Yes,Yes,,,,,,,,,,
+OGN-18,Baby Mole Cat,C,Cats,Basic,Creature,Cat,1200,"If this card remains on the field after one of your opponent's turns, you may replace it with ‘The Cat with the Mole’ from your deck or hand. If you do, you cannot play any additional cards during that turn.",DOB: 2024 GPS: Gulu Island Height: 2kg Height: 0.23m,Yes,Yes,Yes,,,,,,,,,,
+OGN-19,Cat TriFecta,SSR,Cats,Evo,God,Cat,3000,"EVOLUTION: To play this card, remove any 3 Cat cards from either the field or your hand.","DOB: Ancient Era, GPS: Gulu Island, Weight: 10.0kg, Height: 0.50m.",Yes,Yes,Yes,,,,,,,,,,
+OGN-20,Cat Toy,C,Cats,Spell,Spell,,,"All 'Cat'-type cards on the field gain +100 power during your 
+opponent's next turn.",,Yes,Yes,Yes,,,,,,,,,,
+OGN-21,Rawnjima,C,Wax Beasts,Basic,Creature,Wax,1400,"If ‘Hitocon’ or ‘Rawnjima’ is on the field, this card gains +200 power.","DOB: 867 B.C, GPS: Wax Pole, Weight: 6.0kg, Height: 5.24m.",Yes,Yes,Yes,,,,,,,,,,
+OGN-22,Hitocon,C,Wax Beasts,Basic,Creature,Wax,1500,"If ‘Conomi’ or ‘Rawnjima’ is on the field, this card gains +200 power.","DOB: 1267 B.C, GPS: Wax Village, Weight: 5.5kg, Height: 2.23m.",Yes,Yes,Yes,,,,,,,,,,
+OGN-23,Mango Lango,C,Wax Beasts,Basic,Creature,Wax,1800,This card loses -400 power at the end of each turn.,"DOB: 2023, GPS: Tropical Island, Weight: 8.0kg, Height: 0.45m.",Yes,Yes,Yes,,,,,,,,,,
+OGN-24,Conomi,C,Wax Beasts,Basic,Creature,Wax,1400,"If ‘Hitocon’ or ‘Rawnjima’ is on the field, this card gains +200 power.","DOB: 467 B.C, GPS: Wax Desert, Weight: 5.3kg, Height: 5.22m.",Yes,Yes,Yes,,,,,,,,,,
+OGN-25,Lion Island,C,Wax Beasts,Spell,Spell,,,Increase all of your cards by +200 for the opponents next turn.,,Yes,Yes,Yes,,,,,,,,,,
+OGN-26,Ocean Lei-Gong,U,Wax Beasts,Basic,Creature,Wax,1500,N/A,"DOB: Unknown, GPS: Thunder Bay, Weight: 6.5kg, Height: 0.27m",Yes,Yes,Yes,,,,,,,,,,
+OGN-27,Heart Mask Boy,C,Wax Beasts,Basic,Creature,Wax,1200,"After this card has remained on the field for one of your opponent's turns, you may sacrifice this card to play a ‘Heart Mask Boy Lvl. 2’ from your deck or hand.
+
+You cannot play any additional cards for the rest of your turn.","DOB: Unknown, GPS: Mystical Hills, Weight: 4.5kg, Height: 1.20m.",Yes,Yes,Yes,,,,,,,,,,
+OGN-28,Heart Mask Boy Lvl 2,C,Wax Beasts,Evo,Creature,Wax,2000,"EVOLUTION: Sacrifice 'Heart Mask Boy Lvl 1' form the field.After this card has remained on the field for one of your opponent's turns, you may sacrifice this card to play a ‘Heart Mask Boy Lvl. 3’ from your deck or hand.
+
+You cannot play any additional cards for the rest of your turn.","DOB: Unknown, GPS: Mystical Peaks, Weight: 5.2kg, Height: 2.25m.",Yes,Yes,Yes,,,,,,,,,,
+OGN-29,Heart Mask Boy Lvl 3,SR,Wax Beasts,Evo,Creature,Wax,2800,"EVOLUTION: Sacrifice 'Heart Mask Boy Lvl 2' form the field.Increase the power of all cards in your hand and on the field by +200, excluding this card.","DOB: Unknown, GPS: Mystical Summit, Weight: 500.8kg, Height: 70.30m.",Yes,Yes,Yes,,,,,,,,,,
+OGN-30,Tainted Drink,R,Wax Beasts,Spell,Spell,,,"Decrease an opponent's creature's power by -300 until the end of this turn.
+",,Yes,Yes,Yes,,,,,,,,,,
+OGN-31,No Currency,C,Wax Beasts,Spell,Spell,,,"If you have fewer cards in your hand than your opponent, decrease the power of one of their creatures on the field by -400 until the end of this turn.",,Yes,Yes,Yes,,,,,,,,,,
+OGN-32,Pamyu Poo,U,Wax Beasts,Spell,Spell,,,Select an opponent's card on the field that is directly north or south of a card you control. Decrease its power by -500 until the end of this turn.,,Yes,Yes,Yes,,,,,,,,,,
+OGN-33,The Hot Boys,SR,Wax Beasts,Basic,Creature,Wax,0,"This card gains +300 power for each other creature on the field, excluding itself.
+","DOB: 1993 GPS: Bonito Wax Ashes, Weight: 0.0kg, Height: 1.83m",Yes,Yes,Yes,,,,,,,,,,
+OGN-34,Ecchikitten,U,Wax Beasts,Basic,Creature,Wax,1300,This card decreases the power of all opponent's creatures directly north and south of it by -300.,"DOB: 1996 GPS: Deep Wax Hole, Weight: 3.6kg, Height: 1.64m.",Yes,Yes,Yes,,,,,,,,,,
+OGN-35,The Wax Man,R,Wax Beasts,Basic,Creature,Wax,1400,"When this creature is summoned, draw 1 card.","DOB: 1995, GPS: WaxBrough, Weight: 79.0kg, Height: 1.75m.",Yes,Yes,Yes,,,,,,,,,,
+OGN-36,The Jump! ,C,Wax Beasts,Spell,Spell,,,Move one of your cards on the field to a position one space higher or lower than an opponent's card.,,Yes,Yes,Yes,,,,,,,,,,
+OGN-37,Red Seal,C,Wax Beasts,Basic,Creature,Wax,1400,N/A,"DOB: 2017, GPS: Lion Island, Weight: 305.0kg, Height: 1.35m.",Yes,Yes,Yes,,,,,,,,,,
+OGN-38,Ultimate Red Seal,SSR,Wax Beasts,Evo,Creature,Wax,3300,"EVOLUTION: To summon this card, remove 3 of your ‘Red Seal’ cards from either the field or your hand.","DOB: 1994, GPS: Lion Island, Weight: 100.0kg, Height: 100.35m.",Yes,Yes,Yes,,,,,,,,,,
+OGN-39,Showa Boy,C,Wax Beasts,Basic,Creature,Wax,1300,All cards adjacent to this card gain +100.,"DOB: 1994, GPS: WaxShire, Weight: 80.0kg, Height: 1.73m.",Yes,Yes,Yes,,,,,,,,,,
+OGN-40,Tatami Chaos,C,Wax Beasts,Basic,Creature,Wax,1300,All cards you control and place adjacent to this card gain +100 power.,"DOB: 1995, GPS: Wax Society, Weight: 76.0kg, Height: 1.77m.",Yes,Yes,Yes,,,,,,,,,,
+OGN-41,Destiny River Boat,C,Myth of the Su,Spell,Spell,,,Move one of your cards on the field two zones north or south to a free zone. ,,Yes,Yes,Yes,,,,,,,,,,
+OGN-42,Magnificent Garden,C,Myth of the Su,Spell,Spell,,,Choose one zone. Your opponent cannot play cards with more than 1400 power in that zone during their next turn.,,Yes,Yes,Yes,,,,,,,,,,
+OGN-43,Bonzai Beast Lvl 1,C,Myth of the Su,Basic,Creature,Su Beast,1500,Decrease the power card by 100 for each turn this is on the field.,"DOB: 2024, GPS: Su River, Weight: 5.0kg, Height: 0.26m.",Yes,Yes,Yes,,,,,,,,,,
+OGN-44,Bonzai Beast Lvl 2,U,Myth of the Su,Evo,Creature,Su Beast,2100,"EVOLUTION: To summon this card, sacrifice ‘Bonsai Beast Lvl.1’.
+ 
+Decrease the power card by 100 for each turn this is on the field.","DOB: 2025, GPS: Su River, Weight: 6.5kg, Height: 0.70m.",Yes,Yes,Yes,,,,,,,,,,
+OGN-45,Bonzai Beast Lvl 3,R,Myth of the Su,Evo,Creature,Su Beast,3000,"EVOLUTION: To summon this card, sacrifice ‘Bonsai Beast Lvl.2’.
+ 
+","DOB: 2025, GPS: Su River, Weight:14.5kg, Height: 1.13m.",Yes,Yes,Yes,,,,,,,,,,
+OGN-46,Pagoda of Terror,SR,Myth of the Su,Basic,Spell,,,"You may play this card from your hand when your opponent attempts to destroy one of your creatures. If you do, increase your creature’s power by +200.",,Yes,Yes,Yes,,,,,,,,,,
+OGN-47,Koi Child,C,Myth of the Su,Basic,Creature,Koi,1300,"If this card remains on the field after one of your opponent's turns, you may place a ‘Koi Dad’ or ‘Koi Mum’ from your deck or hand onto the field. If you do, you cannot play any additional cards during that turn.","DOB: Unknown, GPS: Legendary Koi River, Weight: 3.2kg, Height: 0.20m.",Yes,Yes,Yes,,,,,,,,,,
+OGN-48,Koi Dad,C,Myth of the Su,Basic,Creature,Koi,1400,"If this card remains on the field after one of your opponent's turns, you may place a ‘Koi Child’ or ‘Koi Mum’ from your deck or hand onto the field. If you do, you cannot play any additional cards during that turn.","DOB: Unknown, GPS: Legendary Koi River, Weight: 4.2kg, Height: 0.30m.",Yes,Yes,Yes,,,,,,,,,,
+OGN-49,Koi Mum,C,Myth of the Su,Basic,Creature,Koi,1400,"If this card remains on the field after one of your opponent's turns, you may place a ‘Koi Child’ or ‘Koi Dad’ from your deck or hand onto the field. If you do, you cannot play any additional cards during that turn.","DOB: Unknown, GPS: Legendary Koi River, Weight: 3.8kg, Height: 0.27m.",Yes,Yes,Yes,,,,,,,,,,
+OGN-50,Ancient Koi of the Destiny River,SR,Myth of the Su,Evo,Creature,Koi,2600,"EVOLUTION: To summon this card, sacrifice ‘Koi Child,’ ‘Koi Dad,’ and ‘Koi Mum’ from the field or your hand.
+
+Your opponent cannot play any creature cards during their next turn.","DOB: Unknown, GPS: Legendary Koi River, Weight: 10.8kg, Height: 3.27m.",Yes,Yes,Yes,,,,,,,,,,
+OGN-51,1000 Year Old Crab,SR,Myth of the Su,Basic,Creature,Su Beast,2000,"This card can only be played if you have no other cards on the field. To place it, discard any 2 cards from your hand.","DOB: 2025, GPS: Su River, Weight:1.5kg, Height: 0.23m.",Yes,Yes,Yes,,,,,,,,,,
+OGN-52,Old Fisherman,C,Myth of the Su,Basic,Creature,Fisherman,1500,,"DOB: 1935, GPS: Fisherman’s Wharf, Weight: 65.0kg, Height: 1.75m",Yes,Yes,Yes,,,,,,,,,,
+OGN-53,The Fishermans Tale,C,Myth of the Su,Spell,Spell,,,"Draw 2 cards if you control a card with “Fisherman” in its name on the field.
+",,Yes,Yes,Yes,,,,,,,,,,
+OGN-54,What a Catch!,C,Myth of the Su,Spell,Spell,,,"If you control a card with “Fisherman” in its name on the field, add ‘Koi Dad’ and ‘Koi Mum’ from your deck to your hand.",,Yes,Yes,Yes,,,,,,,,,,
+OGN-55,Swim Upstream!,C,Myth of the Su,Spell,Spell,,,Move one card with “Koi” in its name up or down one space to an empty zone.,,Yes,Yes,Yes,,,,,,,,,,
+OGN-56,The Granted Wish - Perfected Soil,SSR,Myth of the Su,Spell,Spell,,,For your next two turns all your cards on field and in hand gain +300 power.,,Yes,Yes,Yes,,,,,,,,,,
+OGN-57,Fish Feeding Frenzy,C,Myth of the Su,Spell,Spell,,,All your cards with “Koi” in their name gain +300 power until the end of your opponent's next turn.,,Yes,Yes,Yes,,,,,,,,,,
+OGN-58,Glowing Fish Lantern,C,Myth of the Su,Basic,Creature,Su Beast,1500,,"DOB: 2024, GPS: Su River Bridge, Weight: 2.8kg, Height: 0.18m",Yes,Yes,Yes,,,,,,,,,,
+OGN-59,Legendary White Tiger of the Pagoda,SSR,Myth of the Su,Evo,God,Su Beast,3500,EVOLUTION: This card can only be summoned by Swimming White Tiger Cub’s effect,"DOB: Ancient Era, GPS: Pagoda Heights, Weight: 15.0kg, Height: 0.60m.",Yes,Yes,Yes,,,,,,,,,,
+OGN-60,Swimming White Tiger Cub,C,Myth of the Su,Basic,Creature,Su Beast,1400,"After this card has been on the field for 3 of your opponents turns, sacrifice this card and summon ‘Legendary White Tiger of the Pagoda’ from your deck or hand. ","DOB: 2024, GPS: Pagoda Forest Weight: 5.2kg, Height: 0.24m.",Yes,Yes,Yes,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,`

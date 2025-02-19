@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9747e2743189362479fe32d85a8865e0, type: 3}
+  m_Name: Lion Island
+  m_EditorClassIdentifier: 
+  cardName: Lion Island
+  cardImage: {fileID: -8288566396435538473, guid: f876559bcb609ea4db444de7865c298a, type: 3}
+  category: 1
+  power: 0
+  effectDescription: Increase all of your cards by +200 for the opponents next turn.
+  spawnWeight: 1

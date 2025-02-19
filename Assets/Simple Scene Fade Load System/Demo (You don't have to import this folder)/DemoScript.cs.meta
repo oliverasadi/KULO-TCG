@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: dd0b7c05be4ac45468d6e5438f5c89d6
+MonoImporter:
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 81753
+  packageName: Simple Fade Scene Transition System
+  packageVersion: 1.2
+  assetPath: Assets/Simple Scene Fade Load System/Demo (You don't have to import
+    this folder)/DemoScript.cs
+  uploadId: 432274

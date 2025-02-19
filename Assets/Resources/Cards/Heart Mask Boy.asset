@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9747e2743189362479fe32d85a8865e0, type: 3}
+  m_Name: Heart Mask Boy
+  m_EditorClassIdentifier: 
+  cardName: Heart Mask Boy
+  cardImage: {fileID: 1257136585316704121, guid: c72595baedaa074459c1f5f3cfe9bee0, type: 3}
+  category: 0
+  power: 1200
+  effectDescription: '"After this card has remained on the field for one of your
+    opponent''s turns'
+  spawnWeight: 1

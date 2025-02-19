@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: b1ad542b4e472094c9d9b290ccbfd1da
+timeCreated: 1485724792
+licenseType: Store
+TextScriptImporter:
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 81753
+  packageName: Simple Fade Scene Transition System
+  packageVersion: 1.2
+  assetPath: Assets/Simple Scene Fade Load System/ReadMeFirst.txt
+  uploadId: 432274

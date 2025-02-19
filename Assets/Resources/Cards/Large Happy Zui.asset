@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9747e2743189362479fe32d85a8865e0, type: 3}
+  m_Name: Large Happy Zui
+  m_EditorClassIdentifier: 
+  cardName: Large Happy Zui
+  cardImage: {fileID: 7173768577386584756, guid: af67935fb4f3e6445ac46b9a2373e6e3, type: 3}
+  category: 0
+  power: 1800
+  effectDescription: This card loses -100 power for each other Cat-type creature
+    you control on the field.
+  spawnWeight: 1

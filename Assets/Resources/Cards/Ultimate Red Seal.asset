@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9747e2743189362479fe32d85a8865e0, type: 3}
+  m_Name: Ultimate Red Seal
+  m_EditorClassIdentifier: 
+  cardName: Ultimate Red Seal
+  cardImage: {fileID: -8641784713208657438, guid: f7078e9a1a4dc7540a1f033909b68d7d, type: 3}
+  category: 0
+  power: 3300
+  effectDescription: '"EVOLUTION: To summon this card'
+  spawnWeight: 1

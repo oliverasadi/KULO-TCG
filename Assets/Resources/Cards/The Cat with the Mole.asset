@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9747e2743189362479fe32d85a8865e0, type: 3}
+  m_Name: The Cat with the Mole
+  m_EditorClassIdentifier: 
+  cardName: The Cat with the Mole
+  cardImage: {fileID: -5765902510023883411, guid: 9f6e141efb3ca3643a52ebd2d2675f32, type: 3}
+  category: 0
+  power: 2100
+  effectDescription: 'EVOLUTION: Sacrifice 1 ''Baby Mole Cat'' to summon this creature.'
+  spawnWeight: 1

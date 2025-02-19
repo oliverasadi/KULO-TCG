@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9747e2743189362479fe32d85a8865e0, type: 3}
+  m_Name: Return of the Cats
+  m_EditorClassIdentifier: 
+  cardName: Return of the Cats
+  cardImage: {fileID: 2994220755020714633, guid: 50c345bc9dee8d9408a4b6534f997394, type: 3}
+  category: 1
+  power: 0
+  effectDescription: '"Add 2 Cat creature cards from your graveyard to your hand.'
+  spawnWeight: 1

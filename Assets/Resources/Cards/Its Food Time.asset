@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9747e2743189362479fe32d85a8865e0, type: 3}
+  m_Name: "It\u2019s Food Time"
+  m_EditorClassIdentifier: 
+  cardName: "It\u2019s Food Time"
+  cardImage: {fileID: -4686140212382031360, guid: 768b0784330ee8947931916a212cc578, type: 3}
+  category: 1
+  power: 0
+  effectDescription: All Cat-type creatures gain +200 power until the end of this
+    turn.
+  spawnWeight: 1

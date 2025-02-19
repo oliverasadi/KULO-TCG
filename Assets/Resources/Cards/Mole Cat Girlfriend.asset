@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9747e2743189362479fe32d85a8865e0, type: 3}
+  m_Name: "Mole Cat\u2019s Girlfriend"
+  m_EditorClassIdentifier: 
+  cardName: Mole Cat Girlfriend
+  cardImage: {fileID: -1563933619148205488, guid: b011f259583569e498cbccf62b13b681, type: 3}
+  category: 0
+  power: 1300
+  effectDescription: "\"If \u2018The Cat with the Mole\u2019 is on the field"
+  spawnWeight: 1

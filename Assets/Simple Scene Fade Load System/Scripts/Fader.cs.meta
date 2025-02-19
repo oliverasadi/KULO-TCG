@@ -1,0 +1,17 @@
+fileFormatVersion: 2
+guid: fc74b55a9de3e0e4b8490869beb9118e
+MonoImporter:
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 81753
+  packageName: Simple Fade Scene Transition System
+  packageVersion: 1.2
+  assetPath: Assets/Simple Scene Fade Load System/Scripts/Fader.cs
+  uploadId: 432274
