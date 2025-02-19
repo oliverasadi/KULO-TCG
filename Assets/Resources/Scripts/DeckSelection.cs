@@ -60,7 +60,7 @@ void StartGame()
 {
 if (selectedDeck.Count == maxDeckSize)
 {
-DeckManager.instance.deck = new List<CardSO>(selectedDeck);
+DeckManager.instance.currentDeck = new List<CardSO>(selectedDeck);
 DeckManager.instance.ShuffleDeck();
 DeckManager.instance.DrawStartingHand();
 gameObject.SetActive(false); // Hide deck selection screen

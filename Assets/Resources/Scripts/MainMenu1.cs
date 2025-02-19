@@ -7,6 +7,11 @@ public class MainMenu1 : MonoBehaviour // ✅ Must inherit from MonoBehaviour
     {
         AutoFade.LoadScene("KULO", 0.3f, 0.3f, Color.black); // ✅ Ensure "GameScene" exists in Build Settings
     }
+    public void OpenDeckEditor()
+    {
+        AutoFade.LoadScene("DeckEditorScene"); // ✅ Load deck editor scene
+    }
+
 
     public void ExitGame()
     {
