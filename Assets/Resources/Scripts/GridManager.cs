@@ -1,4 +1,6 @@
 ﻿using System;
+using JetBrains.Annotations;
+using Unity.Mathematics;
 using UnityEngine;
 
 public class GridManager : MonoBehaviour
@@ -11,8 +13,7 @@ public class GridManager : MonoBehaviour
     public Vector2 gridOffset = new Vector2(-1.5f, -1.5f);
 
     [Header("Highlight System")]
-    public GameObject highlightPrefab;
-    private GameObject[,] highlightObjects = new GameObject[3, 3];
+    public bool isHoldingCard;
 
     void Awake()
     {
@@ -20,33 +21,11 @@ public class GridManager : MonoBehaviour
         else Destroy(gameObject);
     }
 
-    void Start()
+    public bool IsValidDropPosition(Vector2Int dropPosition, out int x, out int y)
     {
-        GenerateGridHighlights();
-    }
-
-    private void GenerateGridHighlights()
-    {
-        for (int x = 0; x < 3; x++)
-        {
-            for (int y = 0; y < 3; y++)
-            {
-                Vector3 position = new Vector3(x + gridOffset.x, y + gridOffset.y, 0);
-                highlightObjects[x, y] = Instantiate(highlightPrefab, position, Quaternion.identity);
-                highlightObjects[x, y].SetActive(false); // ✅ Ensure they are initially hidden
-            }
-        }
-    }
-
-    public bool IsValidDropPosition(Vector3 dropPosition, out int x, out int y)
-    {
-        Vector3 worldPos = Camera.main.ScreenToWorldPoint(dropPosition);
-        worldPos.z = 0;
-
-        x = Mathf.RoundToInt(worldPos.x - gridOffset.x);
-        y = Mathf.RoundToInt(worldPos.y - gridOffset.y);
-
-        return x >= 0 && x < 3 && y >= 0 && y < 3 && grid[x, y] == null;
+        x = dropPosition.x;
+        y = dropPosition.y;
+        return grid[x, y] == null;
     }
 
     public bool CanPlaceCard(int x, int y, CardSO card)
@@ -80,40 +59,14 @@ public class GridManager : MonoBehaviour
         GameManager.instance.CheckForWin();
     }
 
-    public void ShowGridHighlights()
+    public void GrabCard()
     {
-        for (int x = 0; x < 3; x++)
-        {
-            for (int y = 0; y < 3; y++)
-            {
-                if (grid[x, y] == null && highlightObjects[x, y] != null)
-                {
-                    highlightObjects[x, y].SetActive(true);
-                }
-            }
-        }
+        isHoldingCard = true;
     }
 
-    public void HideGridHighlights()
+    public void ReleaseCard()
     {
-        for (int x = 0; x < 3; x++)
-        {
-            for (int y = 0; y < 3; y++)
-            {
-                if (highlightObjects[x, y] != null)
-                {
-                    highlightObjects[x, y].SetActive(false);
-                }
-            }
-        }
-    }
-
-    public void HideGridHighlightAt(int x, int y)
-    {
-        if (x >= 0 && x < 3 && y >= 0 && y < 3 && highlightObjects[x, y] != null)
-        {
-            highlightObjects[x, y].SetActive(false);
-        }
+        isHoldingCard = false;
     }
 
     public void ResetGrid()

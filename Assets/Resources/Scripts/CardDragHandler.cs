@@ -10,6 +10,7 @@ public class CardDragHandler : MonoBehaviour, IBeginDragHandler, IDragHandler, I
 
     private CardSO cardData;
     private bool isDragging = false;
+    private bool isDroppedOnValidZone;
 
     void Awake()
     {
@@ -25,7 +26,7 @@ public class CardDragHandler : MonoBehaviour, IBeginDragHandler, IDragHandler, I
             Debug.LogError("❌ Card data is missing in CardHandler!");
             return;
         }
-
+        isDroppedOnValidZone = false;
         isDragging = true;
         originalPosition = rectTransform.position;
         originalParent = transform.parent;
@@ -34,13 +35,14 @@ public class CardDragHandler : MonoBehaviour, IBeginDragHandler, IDragHandler, I
         canvasGroup.blocksRaycasts = false;
         canvasGroup.alpha = 0.7f; // Make it slightly transparent when dragging
 
-        GridManager.instance.ShowGridHighlights(); // ✅ Show available drop areas
+        GridManager.instance.GrabCard(); // ✅ Show available drop areas
     }
 
     public void OnDrag(PointerEventData eventData)
     {
         if (!isDragging) return;
         rectTransform.position = Input.mousePosition;
+
     }
 
     public void OnEndDrag(PointerEventData eventData)
@@ -48,22 +50,39 @@ public class CardDragHandler : MonoBehaviour, IBeginDragHandler, IDragHandler, I
         isDragging = false;
         canvasGroup.blocksRaycasts = true;
         canvasGroup.alpha = 1f;
-
-        if (GridManager.instance.IsValidDropPosition(Input.mousePosition, out int x, out int y))
+        if (!isDroppedOnValidZone)
         {
-            // ✅ Attempt to place the card on the grid
-            GridManager.instance.PlaceCard(x, y, cardData);
-            GridManager.instance.HideGridHighlightAt(x, y); // ✅ Hide highlight at placed position
+            ResetCardPosition(); // Go back if not on a valid drop zone
+        }
 
-            Destroy(gameObject); // Remove from hand after placement
+        GridManager.instance.ReleaseCard();
+
+    }
+
+    public void CheckDroppedCard(Vector2Int position, Transform parrent, out bool isOccupied)
+    {
+        isOccupied = false;
+        if (GridManager.instance.IsValidDropPosition(position, out int x, out int y))
+        {
+            Debug.Log("VALID POSITION");
+            GridManager.instance.PlaceCard(x, y, cardData);
+
+            transform.SetParent(parrent);
+            transform.localPosition = Vector3.zero;
+            isOccupied = true;
+            isDroppedOnValidZone = true;
         }
         else
         {
-            // ❌ Invalid placement, return to original position
-            rectTransform.position = originalPosition;
-            transform.SetParent(originalParent);
+            ResetCardPosition();
         }
+        GridManager.instance.ReleaseCard();
 
-        GridManager.instance.HideGridHighlights(); // ✅ Hide all highlights
+    }
+
+    private void ResetCardPosition()
+    {
+        rectTransform.position = originalPosition;
+        transform.SetParent(originalParent);
     }
 }

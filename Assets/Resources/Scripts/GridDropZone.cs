@@ -1,9 +1,17 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
-public class GridDropZone : MonoBehaviour, IDropHandler
+public class GridDropZone : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerExitHandler
 {
-    public Vector2Int gridPosition; // The position of this slot on the board
+    public Vector2Int gridPosition;
+
+    public Sprite highlightImage;
+    public Sprite normalImage;
+
+    public Image thisImage;
+
+    public bool isOccupied;
 
     public void OnDrop(PointerEventData eventData)
     {
@@ -11,9 +19,35 @@ public class GridDropZone : MonoBehaviour, IDropHandler
 
         if (draggedCard != null)
         {
-            Debug.Log($"Card placed at {gridPosition.x}, {gridPosition.y}");
-            draggedCard.transform.SetParent(transform); // Place the card in the slot
-            draggedCard.transform.localPosition = Vector3.zero; // Snap into place
+            draggedCard.CheckDroppedCard(gridPosition, transform, out bool _isOccupied);
+            isOccupied = _isOccupied;
+            HideHighlights();
         }
+    }
+
+
+    public void ShowHighlight()
+    {
+        if (!isOccupied)
+        {
+            thisImage.sprite = highlightImage;
+        }
+    }
+    public void HideHighlights()
+    {
+        thisImage.sprite = normalImage;
+    }
+
+    public void OnPointerEnter(PointerEventData eventData)
+    {
+        if (GridManager.instance.isHoldingCard)
+        {
+            ShowHighlight();
+        }
+    }
+
+    public void OnPointerExit(PointerEventData eventData)
+    {
+        HideHighlights();
     }
 }
