@@ -1,6 +1,4 @@
 ﻿using System;
-using JetBrains.Annotations;
-using Unity.Mathematics;
 using UnityEngine;
 
 public class GridManager : MonoBehaviour
@@ -14,6 +12,11 @@ public class GridManager : MonoBehaviour
 
     [Header("Highlight System")]
     public bool isHoldingCard;
+
+    [Header("Audio Settings")] // ✅ Added Audio Fields
+    public AudioSource audioSource;  // Drag & assign AudioSource in Inspector
+    public AudioClip placeCardSound; // ✅ Sound when a card is placed
+    public AudioClip removeCardSound; // ✅ Sound when a card is removed
 
     void Awake()
     {
@@ -44,10 +47,11 @@ public class GridManager : MonoBehaviour
             return;
         }
 
-        // ✅ Destroy existing card if needed
+        // ✅ Remove existing card if needed
         if (grid[x, y] != null)
         {
             Debug.Log($"💥 Replacing {grid[x, y].cardName} at {x},{y}!");
+            RemoveCard(x, y); // ✅ Remove existing card
         }
 
         // ✅ Place the new card
@@ -56,7 +60,35 @@ public class GridManager : MonoBehaviour
         cardObject.GetComponent<CardHandler>().SetCard(card);
         grid[x, y] = card; // Store the new card
 
+        PlayCardPlaceSound(); // ✅ Play sound when a card is placed
         GameManager.instance.CheckForWin();
+    }
+
+    private void PlayCardPlaceSound()
+    {
+        if (audioSource != null && placeCardSound != null)
+        {
+            audioSource.PlayOneShot(placeCardSound); // ✅ Play sound effect
+        }
+        else
+        {
+            Debug.LogWarning("⚠️ No AudioSource or Sound Clip assigned in GridManager!");
+        }
+    }
+
+    public void RemoveCard(int x, int y)
+    {
+        if (grid[x, y] != null)
+        {
+            Debug.Log($"🗑️ Removing {grid[x, y].cardName} at {x},{y}.");
+            grid[x, y] = null;
+
+            // ✅ Play remove sound
+            if (audioSource != null && removeCardSound != null)
+            {
+                audioSource.PlayOneShot(removeCardSound);
+            }
+        }
     }
 
     public void GrabCard()
@@ -68,7 +100,6 @@ public class GridManager : MonoBehaviour
     {
         isHoldingCard = false;
     }
-
     public void ResetGrid()
     {
         for (int x = 0; x < 3; x++)
