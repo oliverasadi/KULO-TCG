@@ -5,12 +5,22 @@ using System.Collections.Generic;
 public class AIController : MonoBehaviour
 {
     public static AIController instance;
-    public List<CardSO> aiDeck;
+    public List<CardSO> aiDeck = new List<CardSO>(); // AI deck
+    private bool aiPlayedCreature = false;
+    private bool aiPlayedSpell = false;
 
     void Awake()
     {
         if (instance == null) instance = this;
         else Destroy(gameObject);
+    }
+
+    void Start()
+    {
+        if (aiDeck.Count == 0) // ✅ AI deck is empty, generate a random deck
+        {
+            GenerateRandomAIDeck();
+        }
     }
 
     public void AITakeTurn()
@@ -23,6 +33,10 @@ public class AIController : MonoBehaviour
         yield return new WaitForSeconds(1f); // Simulate thinking time
 
         CardSO[,] grid = GridManager.instance.GetGrid(); // Get current board state
+
+        // Reset AI move tracking
+        aiPlayedCreature = false;
+        aiPlayedSpell = false;
 
         // 1. Try to find a winning move
         Vector2Int bestMove = FindWinningMove(grid);
@@ -39,13 +53,41 @@ public class AIController : MonoBehaviour
 
         if (bestMove.x != -1) // If a valid move is found
         {
-            CardSO selectedCard = GetBestAvailableCreature();
-            if (selectedCard != null)
+            // AI picks a card to play based on turn rules
+            CardSO selectedCard = GetBestAvailableCard();
+            if (selectedCard != null && TurnManager.instance.CanPlayCard(selectedCard))
             {
                 GridManager.instance.PlaceCard(bestMove.x, bestMove.y, selectedCard);
-                TurnManager.instance.EndTurn();
+                TurnManager.instance.RegisterCardPlay(selectedCard);
             }
         }
+
+        yield return new WaitForSeconds(1f); // Simulate AI processing
+
+        // ✅ AI ends turn after making a move
+        TurnManager.instance.EndTurn();
+    }
+
+    private void GenerateRandomAIDeck()
+    {
+        Debug.Log("⚠️ AI deck is empty! Generating a random deck...");
+        aiDeck.Clear();
+        CardSO[] allCards = Resources.LoadAll<CardSO>("Cards"); // ✅ Load all cards from the game
+
+        if (allCards.Length == 0)
+        {
+            Debug.LogError("❌ No available cards found in Resources/Cards!");
+            return;
+        }
+
+        // ✅ Randomly pick 40 cards
+        while (aiDeck.Count < 40)
+        {
+            CardSO randomCard = allCards[Random.Range(0, allCards.Length)];
+            aiDeck.Add(randomCard);
+        }
+
+        Debug.Log($"✅ AI deck generated with {aiDeck.Count} cards.");
     }
 
     private Vector2Int FindWinningMove(CardSO[,] grid)
@@ -56,7 +98,7 @@ public class AIController : MonoBehaviour
             {
                 if (grid[x, y] == null) // If the space is empty
                 {
-                    grid[x, y] = GetBestAvailableCreature();
+                    grid[x, y] = GetBestAvailableCard();
                     if (WinChecker.instance.CheckWinCondition(grid))
                     {
                         grid[x, y] = null; // Undo test move
@@ -77,7 +119,6 @@ public class AIController : MonoBehaviour
             {
                 if (grid[x, y] == null) // If the space is empty
                 {
-                    // ✅ Simulate placing an opponent's piece instead of AI's own piece
                     grid[x, y] = GetOpponentBestMove();
                     if (WinChecker.instance.CheckWinCondition(grid))
                     {
@@ -111,25 +152,41 @@ public class AIController : MonoBehaviour
         return new Vector2Int(-1, -1);
     }
 
-    private CardSO GetBestAvailableCreature()
+    private CardSO GetBestAvailableCard()
     {
-        CardSO bestCard = null;
+        CardSO bestCreature = null;
+        CardSO bestSpell = null;
         float highestPower = 0;
 
         foreach (CardSO card in aiDeck)
         {
-            if (card.category == CardSO.CardCategory.Creature && card.power > highestPower)
+            if (card.category == CardSO.CardCategory.Creature && !aiPlayedCreature && card.power > highestPower)
             {
-                bestCard = card;
+                bestCreature = card;
                 highestPower = card.power;
             }
+            else if (card.category == CardSO.CardCategory.Spell && !aiPlayedSpell)
+            {
+                bestSpell = card;
+            }
         }
-        return bestCard;
+
+        if (bestCreature != null)
+        {
+            aiPlayedCreature = true;
+            return bestCreature;
+        }
+        if (bestSpell != null)
+        {
+            aiPlayedSpell = true;
+            return bestSpell;
+        }
+
+        return null; // AI has no valid move left
     }
 
     private CardSO GetOpponentBestMove()
     {
-        // Placeholder for predicting the best opponent move.
-        return new CardSO { power = 2000 }; // Simulates an opponent's strong move for blocking strategy
+        return new CardSO { power = 2000 }; // Simulate strong opponent move
     }
 }

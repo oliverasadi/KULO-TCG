@@ -13,10 +13,10 @@ public class GridManager : MonoBehaviour
     [Header("Highlight System")]
     public bool isHoldingCard;
 
-    [Header("Audio Settings")] // ✅ Added Audio Fields
-    public AudioSource audioSource;  // Drag & assign AudioSource in Inspector
-    public AudioClip placeCardSound; // ✅ Sound when a card is placed
-    public AudioClip removeCardSound; // ✅ Sound when a card is removed
+    [Header("Audio Settings")]
+    public AudioSource audioSource;
+    public AudioClip placeCardSound;
+    public AudioClip removeCardSound;
 
     void Awake()
     {
@@ -33,6 +33,12 @@ public class GridManager : MonoBehaviour
 
     public bool CanPlaceCard(int x, int y, CardSO card)
     {
+        if (!TurnManager.instance.CanPlayCard(card)) // ✅ Check turn-based rules
+        {
+            Debug.Log($"❌ Cannot place {card.cardName}: Max card type per turn reached!");
+            return false;
+        }
+
         if (grid[x, y] == null) return true; // ✅ Space is empty
 
         // ✅ Compare power values: Allow replacing weaker cards
@@ -41,17 +47,13 @@ public class GridManager : MonoBehaviour
 
     public void PlaceCard(int x, int y, CardSO card)
     {
-        if (!CanPlaceCard(x, y, card))
-        {
-            Debug.Log($"❌ Cannot place {card.cardName} at {x},{y}. Stronger card exists.");
-            return;
-        }
+        if (!CanPlaceCard(x, y, card)) return;
 
         // ✅ Remove existing card if needed
         if (grid[x, y] != null)
         {
             Debug.Log($"💥 Replacing {grid[x, y].cardName} at {x},{y}!");
-            RemoveCard(x, y); // ✅ Remove existing card
+            RemoveCard(x, y);
         }
 
         // ✅ Place the new card
@@ -60,7 +62,8 @@ public class GridManager : MonoBehaviour
         cardObject.GetComponent<CardHandler>().SetCard(card);
         grid[x, y] = card; // Store the new card
 
-        PlayCardPlaceSound(); // ✅ Play sound when a card is placed
+        PlayCardPlaceSound();
+        TurnManager.instance.RegisterCardPlay(card); // ✅ Register turn-based action
         GameManager.instance.CheckForWin();
     }
 
@@ -68,7 +71,7 @@ public class GridManager : MonoBehaviour
     {
         if (audioSource != null && placeCardSound != null)
         {
-            audioSource.PlayOneShot(placeCardSound); // ✅ Play sound effect
+            audioSource.PlayOneShot(placeCardSound);
         }
         else
         {
@@ -100,20 +103,21 @@ public class GridManager : MonoBehaviour
     {
         isHoldingCard = false;
     }
+
+    public CardSO[,] GetGrid()
+    {
+        return grid; // ✅ Ensure this method exists!
+    }
+
     public void ResetGrid()
     {
         for (int x = 0; x < 3; x++)
         {
             for (int y = 0; y < 3; y++)
             {
-                grid[x, y] = null;
+                grid[x, y] = null; // ✅ Clears the grid without errors
             }
         }
         Debug.Log("🔄 Grid Reset!");
-    }
-
-    public CardSO[,] GetGrid()
-    {
-        return grid;
     }
 }

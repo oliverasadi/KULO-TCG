@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 
 public class WinChecker : MonoBehaviour
 {
@@ -10,16 +10,18 @@ if (instance == null) instance = this;
 else Destroy(gameObject);
 }
 
-public bool CheckWinCondition(CardSO[,] grid)
-{
-for (int i = 0; i < 3; i++)
-{
-if (CheckRow(grid, i) || CheckColumn(grid, i)) return true;
-}
-return CheckDiagonals(grid);
-}
+    public bool CheckWinCondition(CardSO[,] grid)
+    {
+        // ✅ Example: Check for a simple win condition (Modify as needed)
+        for (int i = 0; i < 3; i++)
+        {
+            if (grid[i, 0] != null && grid[i, 1] != null && grid[i, 2] != null)
+                return true;
+        }
+        return false;
+    }
 
-private bool CheckRow(CardSO[,] grid, int row)
+    private bool CheckRow(CardSO[,] grid, int row)
 {
 return grid[row, 0] != null && grid[row, 1] != null && grid[row, 2] != null;
 }

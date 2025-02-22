@@ -1,10 +1,10 @@
-using UnityEngine;
+﻿using UnityEngine;
 
 public class TurnManager : MonoBehaviour
 {
     public static TurnManager instance;
 
-    private int currentPlayer = 1; // 1 = Player 1, 2 = Player 2
+    private int currentPlayer = 1; // 1 = Player, 2 = AI
     private bool creaturePlayed = false;
     private bool spellPlayed = false;
 
@@ -16,24 +16,27 @@ public class TurnManager : MonoBehaviour
 
     public void StartTurn()
     {
-        Debug.Log($"Player {currentPlayer}'s turn starts.");
+        Debug.Log($"🕒 Player {currentPlayer}'s turn starts.");
         creaturePlayed = false;
         spellPlayed = false;
-    }
 
-    public int GetCurrentPlayer() => currentPlayer;
+        if (currentPlayer == 2) // ✅ If it's the AI's turn, let AI play
+        {
+            AIController.instance.AITakeTurn();
+        }
+    }
 
     public bool CanPlayCard(CardSO card)
     {
         if (card.category == CardSO.CardCategory.Creature && creaturePlayed)
         {
-            Debug.Log("You have already played a Creature this turn!");
+            Debug.Log("❌ You already played a Creature this turn!");
             return false;
         }
 
         if (card.category == CardSO.CardCategory.Spell && spellPlayed)
         {
-            Debug.Log("You have already played a Spell this turn!");
+            Debug.Log("❌ You already played a Spell this turn!");
             return false;
         }
 
@@ -42,21 +45,28 @@ public class TurnManager : MonoBehaviour
 
     public void RegisterCardPlay(CardSO card)
     {
-        if (card.category == CardSO.CardCategory.Creature) creaturePlayed = true;
-        else if (card.category == CardSO.CardCategory.Spell) spellPlayed = true;
+        if (card.category == CardSO.CardCategory.Creature)
+            creaturePlayed = true;
+        if (card.category == CardSO.CardCategory.Spell)
+            spellPlayed = true;
     }
 
     public void EndTurn()
     {
         currentPlayer = (currentPlayer == 1) ? 2 : 1;
-        Debug.Log($"Turn ended. Now it's Player {currentPlayer}'s turn.");
-        StartTurn(); // Start the next player's turn immediately
+        Debug.Log($"🔄 Turn ended. Now Player {currentPlayer}'s turn.");
+        StartTurn();
     }
 
     public void ResetTurn()
     {
-        currentPlayer = 1; // Reset to Player 1 for a new game
-        Debug.Log("New round starts. Player 1 goes first.");
+        currentPlayer = 1; // ✅ Reset turn to Player 1 at the start of a new round
+        Debug.Log("🔄 Turn Reset: Player 1 starts the new round!");
         StartTurn();
+    }
+
+    public int GetCurrentPlayer()
+    {
+        return currentPlayer;
     }
 }

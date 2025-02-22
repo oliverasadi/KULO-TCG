@@ -622,8 +622,8 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 8300000, guid: ee3b40e3ed5bcdb47a99e7157a0d963d, type: 3}
-  m_Resource: {fileID: 8300000, guid: ee3b40e3ed5bcdb47a99e7157a0d963d, type: 3}
+  m_audioClip: {fileID: 8300000, guid: 94a0bb3f84b1f2946b089101feb12f8b, type: 3}
+  m_Resource: {fileID: 8300000, guid: 94a0bb3f84b1f2946b089101feb12f8b, type: 3}
   m_PlayOnAwake: 1
   m_Volume: 1
   m_Pitch: 1
@@ -805,7 +805,7 @@ Camera:
   m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 2
-  m_BackGroundColor: {r: 0.19215687, g: 0.3019608, b: 0.4745098, a: 0}
+  m_BackGroundColor: {r: 0.65882355, g: 0.63529414, b: 0.5058824, a: 0}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
   m_FOVAxisMode: 0
@@ -1330,6 +1330,7 @@ MonoBehaviour:
   isHoldingCard: 0
   audioSource: {fileID: 669551654}
   placeCardSound: {fileID: 8300000, guid: c1f73ac2b472caf40a7b7a0de9d0cfb6, type: 3}
+  removeCardSound: {fileID: 0}
 --- !u!4 &669551653
 Transform:
   m_ObjectHideFlags: 0

@@ -1251,7 +1251,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d9bddde015268bc419aa229c57e340f4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mainMenuMusic: {fileID: 8300000, guid: 4daf56a2e0e1d964a9eb7a7adf695a4b, type: 3}
+  mainMenuMusic: {fileID: 8300000, guid: f9398b67e8ed7f84d8cf137eb24c124c, type: 3}
   buttonClickSound: {fileID: 8300000, guid: 27f09dcc0f235ca4da615592d081e8f1, type: 3}
 --- !u!4 &1157222910
 Transform:
@@ -2515,7 +2515,7 @@ Camera:
   m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 2
-  m_BackGroundColor: {r: 0.19215687, g: 0.3019608, b: 0.4745098, a: 0}
+  m_BackGroundColor: {r: 0.6603774, g: 0.63725096, b: 0.507743, a: 0}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
   m_FOVAxisMode: 0
