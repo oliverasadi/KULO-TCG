@@ -1326,17 +1326,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cardPrefab: {fileID: 7165986574755316703, guid: c60e37c3ad5112b468fae55268672f1f, type: 3}
   gridOffset: {x: 0.1, y: 0.1}
-  gridCells:
-  - {fileID: 334945132}
-  - {fileID: 584769131}
-  - {fileID: 1759524994}
-  - {fileID: 2140226281}
-  - {fileID: 1695329446}
-  - {fileID: 1553999560}
-  - {fileID: 1871659794}
-  - {fileID: 561953812}
-  - {fileID: 1847598754}
-  pareent: {fileID: 1235993772}
   isHoldingCard: 0
 --- !u!4 &669551653
 Transform:
