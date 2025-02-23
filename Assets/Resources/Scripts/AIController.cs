@@ -56,18 +56,18 @@ public class AIController : MonoBehaviour
             CardSO drawnCard = aiDeck[0];
             aiDeck.RemoveAt(0);
             aiHand.Add(drawnCard);
-            DisplayCardInAIHand(drawnCard);
+            DisplayCardInAIHand(drawnCard, true); // Ensure AI's hand starts face-down
         }
     }
 
-    private void DisplayCardInAIHand(CardSO card)
+    private void DisplayCardInAIHand(CardSO card, bool isFaceDown)
     {
         if (aiHandPanel == null || cardUIPrefab == null) return;
         GameObject cardUI = Instantiate(cardUIPrefab, aiHandPanel);
         CardUI cardUIScript = cardUI.GetComponent<CardUI>();
         if (cardUIScript != null)
         {
-            cardUIScript.SetCardData(card, null); // No deck editor needed for AI
+            cardUIScript.SetCardData(card, isFaceDown);
         }
     }
 
@@ -100,6 +100,7 @@ public class AIController : MonoBehaviour
             if (selectedCard != null && TurnManager.instance.CanPlayCard(selectedCard))
             {
                 GridManager.instance.PlaceCard(bestMove.x, bestMove.y, selectedCard);
+                DisplayCardInAIHand(selectedCard, false); // Flip the card when played
                 TurnManager.instance.RegisterCardPlay(selectedCard);
                 aiHand.Remove(selectedCard);
                 DrawCard(); // Draw a new card after playing

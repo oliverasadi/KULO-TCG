@@ -130,8 +130,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 86610a5dc1826ba418c1d90f08d7f5b3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  cardArtImage: {fileID: 2361588858364672429}
   cardNameText: {fileID: 0}
-  cardButton: {fileID: 0}
+  cardBackSprite: {fileID: -8622259438476403829, guid: 1b4f734b49ecbdf42a2019f3bfb1abe5, type: 3}
   isInDeck: 0
 --- !u!114 &3076055314872575902
 MonoBehaviour:

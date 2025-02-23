@@ -1,61 +1,127 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using System.Collections;
 
 public class CardUI : MonoBehaviour
 {
     [Header("UI Elements")]
+    public Image cardArtImage; // Displays the card image
     public TextMeshProUGUI cardNameText; // Displays the card name
-    public Button cardButton; // The UI button for selecting the card
 
+    public Sprite cardBackSprite; // Assign in Prefab Inspector // Holds the back of the card sprite
     private CardSO cardData; // Stores the card's ScriptableObject data
-    private DeckEditor deckEditor;
-    public bool isInDeck = false; // Checks if the card is in the deck
+    private bool isFaceDown = false;
+    public bool isInDeck = false; // Track if card is in deck
 
-    public void SetCardData(CardSO card, DeckEditor editor)
+    void Start()
     {
-        if (card == null || editor == null)
+        LoadCardBack();
+    }
+
+    private void LoadCardBack()
+    {
+        if (cardBackSprite == null)
         {
-            Debug.LogError("❌ Card data or DeckEditor reference is missing!");
+            cardBackSprite = Resources.Load<Sprite>("CardArt/CardBack"); // Supports .jpeg and .jpg
+            if (cardBackSprite == null)
+            {
+                Debug.LogError("❌ Card back image not found! Ensure it's in Resources/CardArt/CardBack.png");
+            }
+        }
+    }
+
+    public void SetCardData(CardSO card, bool setFaceDown = false)
+    {
+        if (card == null)
+        {
+            Debug.LogError("❌ Card data is missing!");
             return;
         }
 
         cardData = card;
-        deckEditor = editor;
+        isInDeck = false;
 
-        if (cardNameText != null)
-            cardNameText.text = card.cardName;
-        else
-            Debug.LogError($"❌ cardNameText is not assigned in {gameObject.name}!");
-
-        if (cardButton != null)
+        if (cardData != null)
         {
-            cardButton.onClick.RemoveAllListeners(); // Clear previous listeners
-            cardButton.onClick.AddListener(OnCardClicked);
+            Debug.Log($"✅ Card name set: {card.cardName}");
         }
         else
         {
-            Debug.LogError($"❌ Button component missing on {gameObject.name}!");
+            Debug.LogError($"❌ cardNameText is not assigned in {gameObject.name}!");
+        }
+
+        if (cardArtImage != null)
+        {
+            if (setFaceDown)
+            {
+                SetFaceDown();
+            }
+            else if (cardData.cardImage != null)
+            {
+                cardArtImage.sprite = cardData.cardImage;
+            }
+        }
+        else
+        {
+            Debug.LogError($"Card Art Missing for {cardData.cardName}");
         }
     }
 
-    private void OnCardClicked()
+    public void SetFaceDown()
     {
-        if (cardData == null || deckEditor == null)
+        isFaceDown = true;
+        if (cardArtImage != null && cardBackSprite != null)
         {
-            Debug.LogError("❌ Missing card data or deckEditor!");
-            return;
+            cardArtImage.sprite = cardBackSprite;
         }
+    }
 
-        if (isInDeck)
+    public void RevealCard()
+    {
+        if (isFaceDown)
         {
-            deckEditor.RemoveCardFromDeck(cardData, gameObject);
-            isInDeck = false;
+            isFaceDown = false;
+            StartCoroutine(FlipCardAnimationWithRotation());
         }
         else
         {
-            deckEditor.AddCardToDeck(cardData);
-            isInDeck = true;
+            if (cardArtImage != null && cardData != null && cardData.cardImage != null)
+            {
+                cardArtImage.sprite = cardData.cardImage;
+            }
         }
+    }
+
+    private IEnumerator FlipCardAnimationWithRotation()
+    {
+        float duration = 0.5f;
+        float time = 0;
+
+        while (time < duration / 2)
+        {
+            float angle = Mathf.Lerp(0, 90, time / (duration / 2));
+            transform.rotation = Quaternion.Euler(0, angle, 0);
+            time += Time.deltaTime;
+            yield return null;
+        }
+
+        if (cardArtImage != null && cardData != null && cardData.cardImage != null)
+        {
+            cardArtImage.sprite = cardData.cardImage;
+        }
+
+        yield return null; // Ensures UI updates before continuing
+
+        time = 0;
+        while (time < duration / 2)
+        {
+            float angle = Mathf.Lerp(90, 0, time / (duration / 2));
+            transform.rotation = Quaternion.Euler(0, angle, 0);
+            time += Time.deltaTime;
+            yield return null;
+        }
+
+        isFaceDown = false;
     }
 }

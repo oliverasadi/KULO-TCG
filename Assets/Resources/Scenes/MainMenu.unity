@@ -930,6 +930,7 @@ GameObject:
   - component: {fileID: 824944839}
   - component: {fileID: 824944838}
   - component: {fileID: 824944841}
+  - component: {fileID: 824944842}
   m_Layer: 5
   m_Name: ExitButton
   m_TagString: Untagged
@@ -1089,6 +1090,20 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   audioSource: {fileID: 864033351}
   clickSound: {fileID: 8300000, guid: 27f09dcc0f235ca4da615592d081e8f1, type: 3}
+--- !u!114 &824944842
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 824944836}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 350aa047a095dd344bd11a30215b1e05, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  scaleFactor: 1.2
+  animationSpeed: 0.2
 --- !u!1 &864033349
 GameObject:
   m_ObjectHideFlags: 0
@@ -1572,6 +1587,7 @@ GameObject:
   - component: {fileID: 1401910580}
   - component: {fileID: 1401910579}
   - component: {fileID: 1401910578}
+  - component: {fileID: 1401910582}
   m_Layer: 5
   m_Name: Multiplayer
   m_TagString: Untagged
@@ -1731,6 +1747,20 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1401910576}
   m_CullTransparentMesh: 1
+--- !u!114 &1401910582
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1401910576}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 350aa047a095dd344bd11a30215b1e05, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  scaleFactor: 1.2
+  animationSpeed: 0.2
 --- !u!1 &1425605469
 GameObject:
   m_ObjectHideFlags: 0
@@ -1882,6 +1912,7 @@ GameObject:
   - component: {fileID: 1449502441}
   - component: {fileID: 1449502440}
   - component: {fileID: 1449502443}
+  - component: {fileID: 1449502444}
   m_Layer: 5
   m_Name: PlayButton
   m_TagString: Untagged
@@ -2041,6 +2072,20 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   audioSource: {fileID: 864033351}
   clickSound: {fileID: 8300000, guid: 27f09dcc0f235ca4da615592d081e8f1, type: 3}
+--- !u!114 &1449502444
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1449502438}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 350aa047a095dd344bd11a30215b1e05, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  scaleFactor: 1.2
+  animationSpeed: 0.2
 --- !u!1 &1499986934
 GameObject:
   m_ObjectHideFlags: 0
@@ -2054,6 +2099,7 @@ GameObject:
   - component: {fileID: 1499986938}
   - component: {fileID: 1499986937}
   - component: {fileID: 1499986936}
+  - component: {fileID: 1499986940}
   m_Layer: 5
   m_Name: Settings
   m_TagString: Untagged
@@ -2213,6 +2259,20 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1499986934}
   m_CullTransparentMesh: 1
+--- !u!114 &1499986940
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1499986934}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 350aa047a095dd344bd11a30215b1e05, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  scaleFactor: 1.2
+  animationSpeed: 0.2
 --- !u!1 &1620747546 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 15e821499753ada42b3c27329da9a9cd, type: 3}
@@ -2320,6 +2380,7 @@ GameObject:
   - component: {fileID: 1998701447}
   - component: {fileID: 1998701446}
   - component: {fileID: 1998701445}
+  - component: {fileID: 1998701449}
   m_Layer: 5
   m_Name: Deck Editor
   m_TagString: Untagged
@@ -2479,6 +2540,20 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1998701443}
   m_CullTransparentMesh: 1
+--- !u!114 &1998701449
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1998701443}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 350aa047a095dd344bd11a30215b1e05, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  scaleFactor: 1.2
+  animationSpeed: 0.2
 --- !u!1 &2129622809
 GameObject:
   m_ObjectHideFlags: 0
