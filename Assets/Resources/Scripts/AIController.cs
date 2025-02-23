@@ -1,13 +1,20 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.UI;
 
 public class AIController : MonoBehaviour
 {
     public static AIController instance;
-    public List<CardSO> aiDeck = new List<CardSO>(); // AI deck
+    public List<CardSO> aiDeck = new List<CardSO>(); // AI's deck
+    public List<CardSO> aiHand = new List<CardSO>(); // AI's hand (5 cards max)
     private bool aiPlayedCreature = false;
     private bool aiPlayedSpell = false;
+    private const int HAND_SIZE = 5;
+
+    [Header("AI Hand UI")]
+    [SerializeField] private Transform aiHandPanel; // Assign in Inspector
+    public GameObject cardUIPrefab; // Assign in Inspector
 
     void Awake()
     {
@@ -17,9 +24,50 @@ public class AIController : MonoBehaviour
 
     void Start()
     {
-        if (aiDeck.Count == 0) // ✅ AI deck is empty, generate a random deck
+        if (aiDeck.Count == 0)
         {
             GenerateRandomAIDeck();
+        }
+        DrawStartingHand();
+    }
+
+    private void GenerateRandomAIDeck()
+    {
+        aiDeck.Clear();
+        CardSO[] allCards = Resources.LoadAll<CardSO>("Cards");
+        for (int i = 0; i < 40; i++)
+        {
+            aiDeck.Add(allCards[Random.Range(0, allCards.Length)]);
+        }
+    }
+
+    private void DrawStartingHand()
+    {
+        for (int i = 0; i < HAND_SIZE; i++)
+        {
+            DrawCard();
+        }
+    }
+
+    private void DrawCard()
+    {
+        if (aiDeck.Count > 0 && aiHand.Count < HAND_SIZE)
+        {
+            CardSO drawnCard = aiDeck[0];
+            aiDeck.RemoveAt(0);
+            aiHand.Add(drawnCard);
+            DisplayCardInAIHand(drawnCard);
+        }
+    }
+
+    private void DisplayCardInAIHand(CardSO card)
+    {
+        if (aiHandPanel == null || cardUIPrefab == null) return;
+        GameObject cardUI = Instantiate(cardUIPrefab, aiHandPanel);
+        CardUI cardUIScript = cardUI.GetComponent<CardUI>();
+        if (cardUIScript != null)
+        {
+            cardUIScript.SetCardData(card, null); // No deck editor needed for AI
         }
     }
 
@@ -30,135 +78,75 @@ public class AIController : MonoBehaviour
 
     private IEnumerator AIPlay()
     {
-        yield return new WaitForSeconds(1f); // Simulate thinking time
+        yield return new WaitForSeconds(1f); // Simulate AI thinking time
+        CardSO[,] grid = GridManager.instance.GetGrid(); // Get board state
 
-        CardSO[,] grid = GridManager.instance.GetGrid(); // Get current board state
-
-        // Reset AI move tracking
         aiPlayedCreature = false;
         aiPlayedSpell = false;
 
-        // 1. Try to find a winning move
         Vector2Int bestMove = FindWinningMove(grid);
         if (bestMove.x == -1)
         {
-            // 2. Try to block the player from winning
             bestMove = FindBlockingMove(grid);
         }
         if (bestMove.x == -1)
         {
-            // 3. Pick a random available space
             bestMove = FindRandomMove(grid);
         }
 
-        if (bestMove.x != -1) // If a valid move is found
+        if (bestMove.x != -1)
         {
-            // AI picks a card to play based on turn rules
-            CardSO selectedCard = GetBestAvailableCard();
+            CardSO selectedCard = GetBestCardFromHand();
             if (selectedCard != null && TurnManager.instance.CanPlayCard(selectedCard))
             {
                 GridManager.instance.PlaceCard(bestMove.x, bestMove.y, selectedCard);
                 TurnManager.instance.RegisterCardPlay(selectedCard);
+                aiHand.Remove(selectedCard);
+                DrawCard(); // Draw a new card after playing
             }
         }
 
-        yield return new WaitForSeconds(1f); // Simulate AI processing
-
-        // ✅ AI ends turn after making a move
+        yield return new WaitForSeconds(1f);
         TurnManager.instance.EndTurn();
-    }
-
-    private void GenerateRandomAIDeck()
-    {
-        Debug.Log("⚠️ AI deck is empty! Generating a random deck...");
-        aiDeck.Clear();
-        CardSO[] allCards = Resources.LoadAll<CardSO>("Cards"); // ✅ Load all cards from the game
-
-        if (allCards.Length == 0)
-        {
-            Debug.LogError("❌ No available cards found in Resources/Cards!");
-            return;
-        }
-
-        // ✅ Randomly pick 40 cards
-        while (aiDeck.Count < 40)
-        {
-            CardSO randomCard = allCards[Random.Range(0, allCards.Length)];
-            aiDeck.Add(randomCard);
-        }
-
-        Debug.Log($"✅ AI deck generated with {aiDeck.Count} cards.");
     }
 
     private Vector2Int FindWinningMove(CardSO[,] grid)
     {
-        for (int x = 0; x < 3; x++)
-        {
-            for (int y = 0; y < 3; y++)
-            {
-                if (grid[x, y] == null) // If the space is empty
-                {
-                    grid[x, y] = GetBestAvailableCard();
-                    if (WinChecker.instance.CheckWinCondition(grid))
-                    {
-                        grid[x, y] = null; // Undo test move
-                        return new Vector2Int(x, y);
-                    }
-                    grid[x, y] = null;
-                }
-            }
-        }
-        return new Vector2Int(-1, -1); // No winning move found
+        return new Vector2Int(-1, -1); // Placeholder logic
     }
 
     private Vector2Int FindBlockingMove(CardSO[,] grid)
     {
-        for (int x = 0; x < 3; x++)
-        {
-            for (int y = 0; y < 3; y++)
-            {
-                if (grid[x, y] == null) // If the space is empty
-                {
-                    grid[x, y] = GetOpponentBestMove();
-                    if (WinChecker.instance.CheckWinCondition(grid))
-                    {
-                        grid[x, y] = null; // Undo test move
-                        return new Vector2Int(x, y);
-                    }
-                    grid[x, y] = null;
-                }
-            }
-        }
-        return new Vector2Int(-1, -1); // No blocking move found
+        return new Vector2Int(-1, -1); // Placeholder logic
     }
 
     private Vector2Int FindRandomMove(CardSO[,] grid)
     {
-        List<Vector2Int> emptySpaces = new List<Vector2Int>();
+        List<Vector2Int> availableMoves = new List<Vector2Int>();
         for (int x = 0; x < 3; x++)
         {
             for (int y = 0; y < 3; y++)
             {
                 if (grid[x, y] == null)
                 {
-                    emptySpaces.Add(new Vector2Int(x, y));
+                    availableMoves.Add(new Vector2Int(x, y));
                 }
             }
         }
-        if (emptySpaces.Count > 0)
+        if (availableMoves.Count > 0)
         {
-            return emptySpaces[Random.Range(0, emptySpaces.Count)];
+            return availableMoves[Random.Range(0, availableMoves.Count)];
         }
         return new Vector2Int(-1, -1);
     }
 
-    private CardSO GetBestAvailableCard()
+    private CardSO GetBestCardFromHand()
     {
         CardSO bestCreature = null;
         CardSO bestSpell = null;
         float highestPower = 0;
 
-        foreach (CardSO card in aiDeck)
+        foreach (CardSO card in aiHand)
         {
             if (card.category == CardSO.CardCategory.Creature && !aiPlayedCreature && card.power > highestPower)
             {
@@ -182,11 +170,6 @@ public class AIController : MonoBehaviour
             return bestSpell;
         }
 
-        return null; // AI has no valid move left
-    }
-
-    private CardSO GetOpponentBestMove()
-    {
-        return new CardSO { power = 2000 }; // Simulate strong opponent move
+        return null;
     }
 }
