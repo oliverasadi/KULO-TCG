@@ -1,9 +1,10 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 
 public class TurnManager : MonoBehaviour
 {
     public static TurnManager instance;
-
+    public Button endTurnButton; // Assign in Inspector
     private int currentPlayer = 1; // 1 = Player, 2 = AI
     private bool creaturePlayed = false;
     private bool spellPlayed = false;
@@ -12,6 +13,11 @@ public class TurnManager : MonoBehaviour
     {
         if (instance == null) instance = this;
         else Destroy(gameObject);
+    }
+
+    void Start()
+    {
+        endTurnButton.onClick.AddListener(EndTurn); // Link the button
     }
 
     public void StartTurn()

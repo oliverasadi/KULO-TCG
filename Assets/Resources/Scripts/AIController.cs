@@ -99,8 +99,8 @@ public class AIController : MonoBehaviour
             CardSO selectedCard = GetBestCardFromHand();
             if (selectedCard != null && TurnManager.instance.CanPlayCard(selectedCard))
             {
+                Debug.Log($"AI plays {selectedCard.cardName} at {bestMove.x}, {bestMove.y}");
                 GridManager.instance.PlaceCard(bestMove.x, bestMove.y, selectedCard);
-                DisplayCardInAIHand(selectedCard, false); // Flip the card when played
                 TurnManager.instance.RegisterCardPlay(selectedCard);
                 aiHand.Remove(selectedCard);
                 DrawCard(); // Draw a new card after playing
@@ -108,7 +108,7 @@ public class AIController : MonoBehaviour
         }
 
         yield return new WaitForSeconds(1f);
-        TurnManager.instance.EndTurn();
+        TurnManager.instance.EndTurn(); // AI ends its turn, player can press "End Turn" button again
     }
 
     private Vector2Int FindWinningMove(CardSO[,] grid)
