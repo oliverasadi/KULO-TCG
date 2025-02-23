@@ -5,6 +5,7 @@ public class TurnManager : MonoBehaviour
 {
     public static TurnManager instance;
     public Button endTurnButton; // Assign in Inspector
+    public DeckManager deckManager; //Assign in Inspector
     private int currentPlayer = 1; // 1 = Player, 2 = AI
     private bool creaturePlayed = false;
     private bool spellPlayed = false;
@@ -17,7 +18,7 @@ public class TurnManager : MonoBehaviour
 
     void Start()
     {
-        endTurnButton.onClick.AddListener(EndTurn); // Link the button
+        endTurnButton.onClick.AddListener(PlayerEndTurn); // Link the button
     }
 
     public void StartTurn()
@@ -57,6 +58,11 @@ public class TurnManager : MonoBehaviour
             spellPlayed = true;
     }
 
+    public void PlayerEndTurn()
+    {
+        deckManager.DrawCard();
+        EndTurn();
+    }
     public void EndTurn()
     {
         currentPlayer = (currentPlayer == 1) ? 2 : 1;

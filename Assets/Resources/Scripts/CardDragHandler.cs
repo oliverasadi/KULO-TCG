@@ -8,7 +8,7 @@ public class CardDragHandler : MonoBehaviour, IBeginDragHandler, IDragHandler, I
     private Vector3 originalPosition;
     private Transform originalParent;
 
-    private CardSO cardData;
+    public CardHandler cardHandler;
     private bool isDragging = false;
     private bool isDroppedOnValidZone;
 
@@ -16,12 +16,12 @@ public class CardDragHandler : MonoBehaviour, IBeginDragHandler, IDragHandler, I
     {
         canvasGroup = GetComponent<CanvasGroup>();
         rectTransform = GetComponent<RectTransform>();
-        cardData = GetComponent<CardHandler>().GetCardData();
+        cardHandler = GetComponent<CardHandler>();
     }
 
     public void OnBeginDrag(PointerEventData eventData)
     {
-        if (cardData == null)
+        if (cardHandler.cardData== null)
         {
             Debug.LogError("❌ Card data is missing in CardHandler!");
             return;
@@ -59,15 +59,16 @@ public class CardDragHandler : MonoBehaviour, IBeginDragHandler, IDragHandler, I
 
     }
 
-    public void CheckDroppedCard(Vector2Int position, Transform parrent, out bool isOccupied)
+    public void CheckDroppedCard(Vector2Int position, Transform parent, out bool isOccupied)
     {
         isOccupied = false;
-        if (GridManager.instance.IsValidDropPosition(position, out int x, out int y))
+        if (GridManager.instance.IsValidDropPosition(position, out int x, out int y)
+            && GridManager.instance.CanPlaceCard(x, y, cardHandler.GetCardData()))
         {
             Debug.Log("VALID POSITION");
-            GridManager.instance.PlaceCard(x, y, cardData);
+            GridManager.instance.PlaceCard(x, y, cardHandler.GetCardData());
 
-            transform.SetParent(parrent);
+            transform.SetParent(parent);
             transform.localPosition = Vector3.zero;
             isOccupied = true;
             isDroppedOnValidZone = true;

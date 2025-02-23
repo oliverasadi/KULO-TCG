@@ -44,7 +44,7 @@ public class CardUI : MonoBehaviour
 
         if (cardData != null)
         {
-            Debug.Log($"✅ Card name set: {card.cardName}");
+            Debug.Log($"✅ Card name set: {cardData.cardName}");
         }
         else
         {

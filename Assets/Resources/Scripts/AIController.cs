@@ -7,7 +7,7 @@ public class AIController : MonoBehaviour
 {
     public static AIController instance;
     public List<CardSO> aiDeck = new List<CardSO>(); // AI's deck
-    public List<CardSO> aiHand = new List<CardSO>(); // AI's hand (5 cards max)
+    public List<CardHandler> aiHandCardHandlers = new List<CardHandler>(); // AI hand's Card Handlers (5 cards max)
     private bool aiPlayedCreature = false;
     private bool aiPlayedSpell = false;
     private const int HAND_SIZE = 5;
@@ -51,11 +51,10 @@ public class AIController : MonoBehaviour
 
     private void DrawCard()
     {
-        if (aiDeck.Count > 0 && aiHand.Count < HAND_SIZE)
+        if (aiDeck.Count > 0 && aiHandCardHandlers.Count < HAND_SIZE)
         {
             CardSO drawnCard = aiDeck[0];
             aiDeck.RemoveAt(0);
-            aiHand.Add(drawnCard);
             DisplayCardInAIHand(drawnCard, true); // Ensure AI's hand starts face-down
         }
     }
@@ -69,6 +68,7 @@ public class AIController : MonoBehaviour
         {
             cardUIScript.SetCardData(card, isFaceDown);
         }
+        aiHandCardHandlers.Add(cardUI.GetComponent<CardHandler>());
     }
 
     public void AITakeTurn()
@@ -96,13 +96,22 @@ public class AIController : MonoBehaviour
 
         if (bestMove.x != -1)
         {
-            CardSO selectedCard = GetBestCardFromHand();
+            CardHandler selectedCardHandler = GetBestCardFromHand();
+            CardSO selectedCard = selectedCardHandler.cardData;
+            
             if (selectedCard != null && TurnManager.instance.CanPlayCard(selectedCard))
             {
                 Debug.Log($"AI plays {selectedCard.cardName} at {bestMove.x}, {bestMove.y}");
                 GridManager.instance.PlaceCard(bestMove.x, bestMove.y, selectedCard);
+                
+                selectedCardHandler.transform.SetParent(GameObject.Find(("GridCell_"+bestMove.x.ToString()+"_"+bestMove.y.ToString())).transform);
+                selectedCardHandler.transform.localPosition = Vector3.zero;
+                selectedCardHandler.GetComponentInParent<CardUI>().RevealCard();
+                
                 TurnManager.instance.RegisterCardPlay(selectedCard);
-                aiHand.Remove(selectedCard);
+                
+                aiHandCardHandlers.Remove(selectedCardHandler);
+                
                 DrawCard(); // Draw a new card after playing
             }
         }
@@ -141,22 +150,23 @@ public class AIController : MonoBehaviour
         return new Vector2Int(-1, -1);
     }
 
-    private CardSO GetBestCardFromHand()
+    private CardHandler GetBestCardFromHand()
     {
-        CardSO bestCreature = null;
-        CardSO bestSpell = null;
+        CardHandler bestCreature = null;
+        CardHandler bestSpell = null;
         float highestPower = 0;
 
-        foreach (CardSO card in aiHand)
+        foreach (CardHandler cardHandler in aiHandCardHandlers)
         {
+            CardSO card = cardHandler.cardData;
             if (card.category == CardSO.CardCategory.Creature && !aiPlayedCreature && card.power > highestPower)
             {
-                bestCreature = card;
+                bestCreature = cardHandler;
                 highestPower = card.power;
             }
             else if (card.category == CardSO.CardCategory.Spell && !aiPlayedSpell)
             {
-                bestSpell = card;
+                bestSpell = cardHandler;
             }
         }
 
@@ -170,7 +180,6 @@ public class AIController : MonoBehaviour
             aiPlayedSpell = true;
             return bestSpell;
         }
-
         return null;
     }
 }

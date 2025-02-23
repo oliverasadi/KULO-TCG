@@ -47,12 +47,10 @@ public class GridManager : MonoBehaviour
 
     public void PlaceCard(int x, int y, CardSO card)
     {
-        if (!CanPlaceCard(x, y, card)) return;
-
         // ✅ Remove existing card if needed
         if (grid[x, y] != null)
         {
-            Debug.Log($"💥 Replacing {grid[x, y].cardName} at {x},{y}!");
+            Debug.Log($"💥 Replacing {grid[x, y] .cardName} at {x},{y}!");
             RemoveCard(x, y);
         }
 
@@ -61,6 +59,7 @@ public class GridManager : MonoBehaviour
         GameObject cardObject = Instantiate(cardPrefab, snapPosition, Quaternion.identity);
         cardObject.GetComponent<CardHandler>().SetCard(card);
         grid[x, y] = card; // Store the new card
+        Debug.Log($"✅ Placing {card.cardName} at {x},{y}!");
 
         PlayCardPlaceSound();
         TurnManager.instance.RegisterCardPlay(card); // ✅ Register turn-based action
