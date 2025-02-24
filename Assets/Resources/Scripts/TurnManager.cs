@@ -5,10 +5,10 @@ public class TurnManager : MonoBehaviour
 {
     public static TurnManager instance;
     public Button endTurnButton; // Assign in Inspector
-    public DeckManager deckManager; //Assign in Inspector
     private int currentPlayer = 1; // 1 = Player, 2 = AI
     private bool creaturePlayed = false;
     private bool spellPlayed = false;
+    private DeckManager deckManager; // Reference to DeckManager
 
     void Awake()
     {
@@ -18,7 +18,9 @@ public class TurnManager : MonoBehaviour
 
     void Start()
     {
-        endTurnButton.onClick.AddListener(PlayerEndTurn); // Link the button
+        endTurnButton.onClick.AddListener(PlayerEndTurn); // Link button to EndTurn
+        deckManager = FindObjectOfType<DeckManager>(); // Ensure DeckManager is referenced
+        StartTurn();
     }
 
     public void StartTurn()
@@ -27,7 +29,18 @@ public class TurnManager : MonoBehaviour
         creaturePlayed = false;
         spellPlayed = false;
 
-        if (currentPlayer == 2) // ✅ If it's the AI's turn, let AI play
+        if (currentPlayer == 1) // ✅ Player's turn, draw a card
+        {
+            if (deckManager != null)
+            {
+                deckManager.DrawCard();
+            }
+            else
+            {
+                Debug.LogError("❌ DeckManager not found! Make sure it's in the scene.");
+            }
+        }
+        else if (currentPlayer == 2) // ✅ AI's turn
         {
             AIController.instance.AITakeTurn();
         }
@@ -60,9 +73,9 @@ public class TurnManager : MonoBehaviour
 
     public void PlayerEndTurn()
     {
-        deckManager.DrawCard();
-        EndTurn();
+        EndTurn(); // ✅ Player will now only draw at the start of their turn
     }
+
     public void EndTurn()
     {
         currentPlayer = (currentPlayer == 1) ? 2 : 1;
