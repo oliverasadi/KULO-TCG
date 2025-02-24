@@ -50,7 +50,7 @@ public class DeckEditor : MonoBehaviour
         {
             GameObject cardButton = Instantiate(cardButtonPrefab, availableCardsPanel);
             CardUI cardUI = cardButton.GetComponent<CardUI>();
-            cardUI.SetCardData(card, this);
+            cardUI.SetCardData(card, false);
         }
     }
 
