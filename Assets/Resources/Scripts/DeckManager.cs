@@ -107,7 +107,7 @@ public class DeckManager : MonoBehaviour
         }
     }
 
-    // ✅ Spawn a card in the player's hand
+    // ✅ Spawn a card in the player's hand and assign card data to both CardHandler and CardUI.
     public void SpawnCard(CardSO cardData)
     {
         if (cardSpawnArea == null)
@@ -121,7 +121,8 @@ public class DeckManager : MonoBehaviour
 
         if (handler != null)
         {
-            handler.SetCard(cardData);
+            // Option B: Set the card on the CardHandler, which in turn updates CardUI.
+            handler.SetCard(cardData, false);
         }
         else
         {
