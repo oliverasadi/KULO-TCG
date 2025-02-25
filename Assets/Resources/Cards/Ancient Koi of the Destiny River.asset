@@ -13,8 +13,10 @@ MonoBehaviour:
   m_Name: Ancient Koi of the Destiny River
   m_EditorClassIdentifier: 
   cardName: Ancient Koi of the Destiny River
-  cardImage: {fileID: 58909096416755592, guid: 358fe9f301a26f5449f74d8b9bc243bd, type: 3}
   category: 0
   power: 2600
   effectDescription: '"EVOLUTION: To summon this card'
-  spawnWeight: 1
+  cardImage: {fileID: 58909096416755592, guid: 358fe9f301a26f5449f74d8b9bc243bd, type: 3}
+  cardNumber: OGN-50
+  creatureType: Koi
+  baseOrEvo: 1

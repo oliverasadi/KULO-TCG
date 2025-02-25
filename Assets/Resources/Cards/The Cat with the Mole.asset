@@ -13,8 +13,10 @@ MonoBehaviour:
   m_Name: The Cat with the Mole
   m_EditorClassIdentifier: 
   cardName: The Cat with the Mole
-  cardImage: {fileID: -5765902510023883411, guid: 9f6e141efb3ca3643a52ebd2d2675f32, type: 3}
   category: 0
   power: 2100
   effectDescription: 'EVOLUTION: Sacrifice 1 ''Baby Mole Cat'' to summon this creature.'
-  spawnWeight: 1
+  cardImage: {fileID: -5765902510023883411, guid: 9f6e141efb3ca3643a52ebd2d2675f32, type: 3}
+  cardNumber: OGN-01
+  creatureType: Cat
+  baseOrEvo: 1

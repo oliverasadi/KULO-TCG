@@ -13,8 +13,10 @@ MonoBehaviour:
   m_Name: Baidi the Sleepy Sphinx
   m_EditorClassIdentifier: 
   cardName: Baidi the Sleepy Sphinx
-  cardImage: {fileID: 5361851872418395546, guid: 115b74d1d72f63845925c296fcc581d8, type: 3}
   category: 0
   power: 1400
   effectDescription: Draw a card when this card is summoned.
-  spawnWeight: 1
+  cardImage: {fileID: 5361851872418395546, guid: 115b74d1d72f63845925c296fcc581d8, type: 3}
+  cardNumber: OGN-13
+  creatureType: Cat
+  baseOrEvo: 0

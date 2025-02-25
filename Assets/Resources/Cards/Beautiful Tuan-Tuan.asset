@@ -13,9 +13,11 @@ MonoBehaviour:
   m_Name: Beautiful Tuan-Tuan
   m_EditorClassIdentifier: 
   cardName: Beautiful Tuan-Tuan
-  cardImage: {fileID: -7325985804073441562, guid: 44e39b9c68c9e5f48a29ba41ea03545f, type: 3}
   category: 0
   power: 2000
   effectDescription: "\"EVOLUTION: Sacrifice 1 \u2018Baby Tuan\u2019 to summon this
     creature."
-  spawnWeight: 1
+  cardImage: {fileID: -7325985804073441562, guid: 44e39b9c68c9e5f48a29ba41ea03545f, type: 3}
+  cardNumber: OGN-12
+  creatureType: Cat
+  baseOrEvo: 1

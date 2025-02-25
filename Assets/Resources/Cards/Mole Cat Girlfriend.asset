@@ -13,8 +13,10 @@ MonoBehaviour:
   m_Name: "Mole Cat\u2019s Girlfriend"
   m_EditorClassIdentifier: 
   cardName: Mole Cat Girlfriend
-  cardImage: {fileID: -1563933619148205488, guid: b011f259583569e498cbccf62b13b681, type: 3}
   category: 0
   power: 1300
   effectDescription: "\"If \u2018The Cat with the Mole\u2019 is on the field"
-  spawnWeight: 1
+  cardImage: {fileID: -1563933619148205488, guid: b011f259583569e498cbccf62b13b681, type: 3}
+  cardNumber: 
+  creatureType: Cat
+  baseOrEvo: 0

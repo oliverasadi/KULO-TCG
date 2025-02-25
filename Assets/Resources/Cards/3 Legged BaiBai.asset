@@ -13,9 +13,11 @@ MonoBehaviour:
   m_Name: 3 Legged BaiBai
   m_EditorClassIdentifier: 
   cardName: 3 Legged BaiBai
-  cardImage: {fileID: -555536879773090580, guid: 657efaea711f4684a8f4a2a8a933466a, type: 3}
   category: 0
   power: 1400
   effectDescription: Choose up to 3 cards on the field. Each of the chosen cards
     gains +100 power as long as this card remains on the field.
-  spawnWeight: 1
+  cardImage: {fileID: -555536879773090580, guid: 657efaea711f4684a8f4a2a8a933466a, type: 3}
+  cardNumber: OGN-15
+  creatureType: Cat
+  baseOrEvo: 0

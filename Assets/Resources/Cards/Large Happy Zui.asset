@@ -13,9 +13,11 @@ MonoBehaviour:
   m_Name: Large Happy Zui
   m_EditorClassIdentifier: 
   cardName: Large Happy Zui
-  cardImage: {fileID: 7173768577386584756, guid: af67935fb4f3e6445ac46b9a2373e6e3, type: 3}
   category: 0
   power: 1800
   effectDescription: This card loses -100 power for each other Cat-type creature
     you control on the field.
-  spawnWeight: 1
+  cardImage: {fileID: 7173768577386584756, guid: af67935fb4f3e6445ac46b9a2373e6e3, type: 3}
+  cardNumber: 
+  creatureType: Cat
+  baseOrEvo: 0

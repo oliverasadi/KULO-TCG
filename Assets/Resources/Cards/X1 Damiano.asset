@@ -13,8 +13,10 @@ MonoBehaviour:
   m_Name: X1 Damiano
   m_EditorClassIdentifier: 
   cardName: X1 Damiano
-  cardImage: {fileID: -5521510965238334999, guid: 87c43a3cde3fa10469edd5a18c18b17d, type: 3}
   category: 0
   power: 2400
   effectDescription: '"After this card is summoned'
-  spawnWeight: 1
+  cardImage: {fileID: -5521510965238334999, guid: 87c43a3cde3fa10469edd5a18c18b17d, type: 3}
+  cardNumber: 
+  creatureType: Cat
+  baseOrEvo: 0

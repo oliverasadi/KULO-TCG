@@ -13,9 +13,11 @@ MonoBehaviour:
   m_Name: Mustache Cat Hero
   m_EditorClassIdentifier: 
   cardName: Mustache Cat Hero
-  cardImage: {fileID: -1358433520399601867, guid: f33d905a1542a584bb30124b37f8a31d, type: 3}
   category: 0
   power: 1200
   effectDescription: This card gains +100 power for each card your opponent controls
     on the field.
-  spawnWeight: 1
+  cardImage: {fileID: -1358433520399601867, guid: f33d905a1542a584bb30124b37f8a31d, type: 3}
+  cardNumber: 
+  creatureType: Cat
+  baseOrEvo: 0

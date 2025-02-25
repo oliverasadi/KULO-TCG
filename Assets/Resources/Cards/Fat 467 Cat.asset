@@ -13,8 +13,10 @@ MonoBehaviour:
   m_Name: Fat 467 Cat
   m_EditorClassIdentifier: 
   cardName: Fat 467 Cat
-  cardImage: {fileID: 534048477439852426, guid: bd5e210ec35bceb44b7489f0edbe002d, type: 3}
   category: 0
   power: 2000
   effectDescription: '"EVOLUTION :'
-  spawnWeight: 1
+  cardImage: {fileID: 534048477439852426, guid: bd5e210ec35bceb44b7489f0edbe002d, type: 3}
+  cardNumber: 
+  creatureType: Cat
+  baseOrEvo: 1

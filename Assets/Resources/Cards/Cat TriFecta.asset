@@ -13,8 +13,10 @@ MonoBehaviour:
   m_Name: Cat TriFecta
   m_EditorClassIdentifier: 
   cardName: Cat TriFecta
-  cardImage: {fileID: -7449844136455925965, guid: 8f7c593cb156feb4f8501dc74a707371, type: 3}
   category: 0
   power: 3000
   effectDescription: '"EVOLUTION: To play this card'
-  spawnWeight: 1
+  cardImage: {fileID: -7449844136455925965, guid: 8f7c593cb156feb4f8501dc74a707371, type: 3}
+  cardNumber: OGN-19
+  creatureType: Cat
+  baseOrEvo: 1

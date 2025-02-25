@@ -13,9 +13,11 @@ MonoBehaviour:
   m_Name: 1000 Year Old Crab
   m_EditorClassIdentifier: 
   cardName: 1000 Year Old Crab
-  cardImage: {fileID: 2840790326406775574, guid: b232a36cc5e245048a85c56c247a0ad4, type: 3}
   category: 0
   power: 2000
   effectDescription: '"This card can only be played if you have no other cards on
     the field. To place it'
-  spawnWeight: 1
+  cardImage: {fileID: 2840790326406775574, guid: b232a36cc5e245048a85c56c247a0ad4, type: 3}
+  cardNumber: OGN-51
+  creatureType: Su Beast
+  baseOrEvo: 0

@@ -13,9 +13,11 @@ MonoBehaviour:
   m_Name: Bonzai Beast Lvl 1
   m_EditorClassIdentifier: 
   cardName: Bonsai Beast Lvl 1
-  cardImage: {fileID: 6354156992694588072, guid: 48d940b89ea8f7c429f7da9dfb86538c, type: 3}
   category: 0
   power: 1500
   effectDescription: Decrease the power card by 100 for each turn this is on the
     field.
-  spawnWeight: 1
+  cardImage: {fileID: 6354156992694588072, guid: 48d940b89ea8f7c429f7da9dfb86538c, type: 3}
+  cardNumber: OGN-43
+  creatureType: Su Beast
+  baseOrEvo: 0

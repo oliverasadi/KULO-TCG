@@ -13,8 +13,10 @@ MonoBehaviour:
   m_Name: Bonzai Beast Lvl 3
   m_EditorClassIdentifier: 
   cardName: Bonsai Beast Lvl 3
-  cardImage: {fileID: -3260920301099544853, guid: e3dd162bc12b52444a773c889c00204b, type: 3}
   category: 0
   power: 3000
   effectDescription: '"EVOLUTION: To summon this card'
-  spawnWeight: 1
+  cardImage: {fileID: -3260920301099544853, guid: e3dd162bc12b52444a773c889c00204b, type: 3}
+  cardNumber: OGN-45
+  creatureType: Su Beast
+  baseOrEvo: 1
