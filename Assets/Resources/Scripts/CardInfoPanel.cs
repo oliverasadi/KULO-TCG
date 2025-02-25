@@ -10,12 +10,16 @@ public class CardInfoPanel : MonoBehaviour, IPointerClickHandler
     public Image cardImage;
     public TextMeshProUGUI cardNameText;
     public TextMeshProUGUI cardDescriptionText;
-    public TextMeshProUGUI cardPowerText;     // New field for displaying the power value.
+
+    // (Optional) UI element for power or other stats can be added here.
 
     // Tracks if the panel is visible and which card is currently displayed.
     private bool isVisible = false;
     private CardSO currentCard = null;
-    public float fadeDuration = 0.3f;         // Animation duration for fade in/out.
+    public float fadeDuration = 0.3f;         // Duration for fade in/out.
+
+    // Reference to the card image animation coroutine.
+    private Coroutine cardImageAnimationCoroutine;
 
     void Start()
     {
@@ -59,8 +63,6 @@ public class CardInfoPanel : MonoBehaviour, IPointerClickHandler
             cardNameText.text = card.cardName;
         if (cardDescriptionText != null)
             cardDescriptionText.text = card.effectDescription;
-        if (cardPowerText != null)
-            cardPowerText.text = card.power.ToString(); // Display the power value.
 
         // Animate the panel's fade-in.
         if (canvasGroup != null)
@@ -72,6 +74,12 @@ public class CardInfoPanel : MonoBehaviour, IPointerClickHandler
         }
 
         isVisible = true;
+
+        // Start the card image pulsing animation.
+        if (cardImage != null)
+        {
+            cardImageAnimationCoroutine = StartCoroutine(AnimateCardImage());
+        }
     }
 
     public void HidePanel()
@@ -86,6 +94,17 @@ public class CardInfoPanel : MonoBehaviour, IPointerClickHandler
 
         isVisible = false;
         currentCard = null;
+
+        // Stop the card image animation and reset its scale.
+        if (cardImageAnimationCoroutine != null)
+        {
+            StopCoroutine(cardImageAnimationCoroutine);
+            cardImageAnimationCoroutine = null;
+            if (cardImage != null)
+            {
+                cardImage.transform.localScale = Vector3.one; // Reset scale (assumes original scale is 1).
+            }
+        }
     }
 
     // Coroutine to fade the CanvasGroup's alpha value.
@@ -99,6 +118,24 @@ public class CardInfoPanel : MonoBehaviour, IPointerClickHandler
             yield return null;
         }
         canvasGroup.alpha = end;
+    }
+
+    // Coroutine to animate the card image with a subtle pulsing effect.
+    private IEnumerator AnimateCardImage()
+    {
+        Vector3 originalScale = cardImage.transform.localScale;
+        float amplitude = 0.05f; // Adjust for how much pulsing (5% change).
+        float speed = 2f;        // Adjust for pulsation speed.
+
+        while (isVisible)
+        {
+            float scaleFactor = 1f + amplitude * Mathf.Sin(Time.time * speed);
+            cardImage.transform.localScale = originalScale * scaleFactor;
+            yield return null;
+        }
+
+        // Ensure the scale resets when the animation ends.
+        cardImage.transform.localScale = originalScale;
     }
 
     // Implement IPointerClickHandler so that a right-click on the panel hides it.
