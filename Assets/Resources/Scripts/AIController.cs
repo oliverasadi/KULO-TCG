@@ -98,26 +98,39 @@ public class AIController : MonoBehaviour
         {
             CardHandler selectedCardHandler = GetBestCardFromHand();
             CardSO selectedCard = selectedCardHandler.cardData;
-            
+
             if (selectedCard != null && TurnManager.instance.CanPlayCard(selectedCard))
             {
                 Debug.Log($"AI plays {selectedCard.cardName} at {bestMove.x}, {bestMove.y}");
+
+                // Place the card on the grid.
                 GridManager.instance.PlaceCard(bestMove.x, bestMove.y, selectedCard);
-                
-                selectedCardHandler.transform.SetParent(GameObject.Find(("GridCell_"+bestMove.x.ToString()+"_"+bestMove.y.ToString())).transform);
-                selectedCardHandler.transform.localPosition = Vector3.zero;
+
+                // Set the card's parent to the corresponding grid cell.
+                Transform gridCellTransform = GameObject.Find("GridCell_" + bestMove.x + "_" + bestMove.y)?.transform;
+                if (gridCellTransform != null)
+                {
+                    selectedCardHandler.transform.SetParent(gridCellTransform);
+                    selectedCardHandler.transform.localPosition = Vector3.zero;
+                }
+
+                // Reveal the card if it was face-down.
                 selectedCardHandler.GetComponentInParent<CardUI>().RevealCard();
-                
+
+                // Register the card play for turn management.
                 TurnManager.instance.RegisterCardPlay(selectedCard);
-                
+
+                // Trigger the overlay preview of the played card.
+                CardPreviewManager.Instance.ShowCardPreview(selectedCard);
+
+                // Remove the card from the AI's hand and draw a new one.
                 aiHandCardHandlers.Remove(selectedCardHandler);
-                
-                DrawCard(); // Draw a new card after playing
+                DrawCard();
             }
         }
 
         yield return new WaitForSeconds(1f);
-        TurnManager.instance.EndTurn(); // AI ends its turn, player can press "End Turn" button again
+        TurnManager.instance.EndTurn(); // End AI's turn
     }
 
     private Vector2Int FindWinningMove(CardSO[,] grid)

@@ -21,7 +21,7 @@ public class CardDragHandler : MonoBehaviour, IBeginDragHandler, IDragHandler, I
 
     public void OnBeginDrag(PointerEventData eventData)
     {
-        if (cardHandler.cardData== null)
+        if (cardHandler.cardData == null)
         {
             Debug.LogError("❌ Card data is missing in CardHandler!");
             return;
@@ -30,19 +30,18 @@ public class CardDragHandler : MonoBehaviour, IBeginDragHandler, IDragHandler, I
         isDragging = true;
         originalPosition = rectTransform.position;
         originalParent = transform.parent;
-        transform.SetParent(transform.root); // Move to top level UI to avoid masking issues
+        transform.SetParent(transform.root); // Move to top-level UI to avoid masking issues
 
         canvasGroup.blocksRaycasts = false;
-        canvasGroup.alpha = 0.7f; // Make it slightly transparent when dragging
+        canvasGroup.alpha = 0.7f; // Make it slightly transparent while dragging
 
-        GridManager.instance.GrabCard(); // ✅ Show available drop areas
+        GridManager.instance.GrabCard(); // Show available drop areas
     }
 
     public void OnDrag(PointerEventData eventData)
     {
         if (!isDragging) return;
         rectTransform.position = Input.mousePosition;
-
     }
 
     public void OnEndDrag(PointerEventData eventData)
@@ -52,11 +51,9 @@ public class CardDragHandler : MonoBehaviour, IBeginDragHandler, IDragHandler, I
         canvasGroup.alpha = 1f;
         if (!isDroppedOnValidZone)
         {
-            ResetCardPosition(); // Go back if not on a valid drop zone
+            ResetCardPosition(); // Revert position if not dropped on a valid zone
         }
-
         GridManager.instance.ReleaseCard();
-
     }
 
     public void CheckDroppedCard(Vector2Int position, Transform parent, out bool isOccupied)
@@ -72,13 +69,15 @@ public class CardDragHandler : MonoBehaviour, IBeginDragHandler, IDragHandler, I
             transform.localPosition = Vector3.zero;
             isOccupied = true;
             isDroppedOnValidZone = true;
+
+            // Trigger the overlay preview for the played card.
+            CardPreviewManager.Instance.ShowCardPreview(cardHandler.GetCardData());
         }
         else
         {
             ResetCardPosition();
         }
         GridManager.instance.ReleaseCard();
-
     }
 
     private void ResetCardPosition()
