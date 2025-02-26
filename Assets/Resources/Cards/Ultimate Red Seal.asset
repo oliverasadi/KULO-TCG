@@ -22,3 +22,6 @@ MonoBehaviour:
   creatureType: Wax
   baseOrEvo: 0
   extraDetails: 'DOB: 1994, GPS: Lion Island, Weight: 100.0kg, Height: 100.35m.'
+  requiresSacrifice: 1
+  sacrificeCardName: 
+  sacrificeCount: 3

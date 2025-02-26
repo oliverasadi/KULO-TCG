@@ -22,3 +22,6 @@ MonoBehaviour:
   creatureType: Cat
   baseOrEvo: 1
   extraDetails: 'DOB: Ancient Era, GPS: Gulu Island, Weight: 10.0kg, Height: 0.50m.'
+  requiresSacrifice: 1
+  sacrificeCardName: 
+  sacrificeCount: 3

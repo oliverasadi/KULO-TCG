@@ -59,19 +59,32 @@ public class CardDragHandler : MonoBehaviour, IBeginDragHandler, IDragHandler, I
     public void CheckDroppedCard(Vector2Int position, Transform parent, out bool isOccupied)
     {
         isOccupied = false;
-        if (GridManager.instance.IsValidDropPosition(position, out int x, out int y)
-            && GridManager.instance.CanPlaceCard(x, y, cardHandler.GetCardData()))
+        // Check if the drop position is valid and the card can be placed (including evolution/sacrifice checks)
+        if (GridManager.instance.IsValidDropPosition(position, out int x, out int y) &&
+            GridManager.instance.CanPlaceCard(x, y, cardHandler.GetCardData()))
         {
             Debug.Log("VALID POSITION");
+            // Attempt to place the card; this call will handle sacrifice requirements if needed.
             GridManager.instance.PlaceCard(x, y, cardHandler.GetCardData());
 
-            transform.SetParent(parent);
-            transform.localPosition = Vector3.zero;
-            isOccupied = true;
-            isDroppedOnValidZone = true;
+            // Verify if placement was successful by checking the grid.
+            CardSO[,] grid = GridManager.instance.GetGrid();
+            if (grid[x, y] == cardHandler.GetCardData())
+            {
+                // Placement successful
+                transform.SetParent(parent);
+                transform.localPosition = Vector3.zero;
+                isOccupied = true;
+                isDroppedOnValidZone = true;
 
-            // Trigger the overlay preview for the played card.
-            CardPreviewManager.Instance.ShowCardPreview(cardHandler.GetCardData());
+                // Trigger the overlay preview for the played card.
+                CardPreviewManager.Instance.ShowCardPreview(cardHandler.GetCardData());
+            }
+            else
+            {
+                // Placement failed (e.g. sacrifice requirements were not met)
+                ResetCardPosition();
+            }
         }
         else
         {
@@ -80,7 +93,7 @@ public class CardDragHandler : MonoBehaviour, IBeginDragHandler, IDragHandler, I
         GridManager.instance.ReleaseCard();
     }
 
-    private void ResetCardPosition()
+    public void ResetCardPosition()
     {
         rectTransform.position = originalPosition;
         transform.SetParent(originalParent);

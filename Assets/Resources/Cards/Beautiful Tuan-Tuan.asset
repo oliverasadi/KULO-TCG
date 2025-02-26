@@ -22,3 +22,6 @@ MonoBehaviour:
   creatureType: Cat
   baseOrEvo: 1
   extraDetails: 'DOB: 2018, GPS: Gulu Island, Weight: 4.8kg, Height: 0.22m.'
+  requiresSacrifice: 1
+  sacrificeCardName: Baby Tuan
+  sacrificeCount: 1

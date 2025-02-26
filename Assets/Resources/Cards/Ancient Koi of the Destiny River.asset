@@ -24,3 +24,6 @@ MonoBehaviour:
   baseOrEvo: 1
   extraDetails: 'DOB: Unknown, GPS: Legendary Koi River, Weight: 10.8kg, Height:
     3.27m.'
+  requiresSacrifice: 1
+  sacrificeCardName: 
+  sacrificeCount: 3

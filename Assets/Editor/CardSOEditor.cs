@@ -6,7 +6,7 @@ public class CardSOEditor : Editor
 {
     public override void OnInspectorGUI()
     {
-        // Update the serialized object
+        // Update the serialized object.
         serializedObject.Update();
 
         // Draw common fields for all cards.
@@ -26,10 +26,20 @@ public class CardSOEditor : Editor
             EditorGUILayout.PropertyField(serializedObject.FindProperty("creatureType"));
             EditorGUILayout.PropertyField(serializedObject.FindProperty("baseOrEvo"));
             EditorGUILayout.PropertyField(serializedObject.FindProperty("extraDetails"));
-        }
-        // If the card is a Spell, you can choose to show spell-specific fields here if desired.
 
-        // Apply changes to the serialized object
+            // Evolution / Sacrifice Requirements Section
+            EditorGUILayout.Space();
+            EditorGUILayout.LabelField("Evolution / Sacrifice Requirements", EditorStyles.boldLabel);
+            EditorGUILayout.PropertyField(serializedObject.FindProperty("requiresSacrifice"));
+            if (serializedObject.FindProperty("requiresSacrifice").boolValue)
+            {
+                // Draw the list of sacrifice requirements.
+                EditorGUILayout.PropertyField(serializedObject.FindProperty("sacrificeRequirements"), true);
+            }
+        }
+        // For Spell cards, add spell-specific fields if needed.
+
+        // Apply changes to the serialized object.
         serializedObject.ApplyModifiedProperties();
     }
 }

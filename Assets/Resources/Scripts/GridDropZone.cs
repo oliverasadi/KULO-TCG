@@ -13,19 +13,58 @@ public class GridDropZone : MonoBehaviour, IDropHandler, IPointerEnterHandler, I
     public void OnDrop(PointerEventData eventData)
     {
         CardDragHandler draggedCard = eventData.pointerDrag.GetComponent<CardDragHandler>();
+        if (draggedCard == null) return;
 
-        if (draggedCard != null)
+        // Get the card data from the dragged card.
+        CardSO selectedCard = draggedCard.cardHandler.GetCardData();
+
+        // --- Check for Sacrifice Requirements ---
+        if (selectedCard.requiresSacrifice &&
+            selectedCard.sacrificeRequirements != null &&
+            selectedCard.sacrificeRequirements.Count > 0)
         {
-            // Attempt to drop the card at this grid position.
-            draggedCard.CheckDroppedCard(gridPosition, transform, out bool _isOccupied);
-            isOccupied = _isOccupied;
-            HideHighlights();
+            CardSO[,] currentField = GridManager.instance.GetGrid();
 
-            // If the drop was successful, trigger the overlay preview.
-            if (isOccupied)
+            // For each requirement in the list, make sure the field has enough matching cards.
+            foreach (var req in selectedCard.sacrificeRequirements)
             {
-                CardPreviewManager.Instance.ShowCardPreview(draggedCard.cardHandler.GetCardData());
+                int foundCount = 0;
+                // Count cards on the field that satisfy this requirement.
+                for (int i = 0; i < 3; i++)
+                {
+                    for (int j = 0; j < 3; j++)
+                    {
+                        if (currentField[i, j] != null)
+                        {
+                            bool match = req.matchByCreatureType
+                                ? (currentField[i, j].creatureType == req.requiredCardName)
+                                : (currentField[i, j].cardName == req.requiredCardName);
+
+                            if (match)
+                                foundCount++;
+                        }
+                    }
+                }
+                // If not enough matches, reject the play.
+                if (foundCount < req.count)
+                {
+                    Debug.Log($"Cannot summon {selectedCard.cardName}. " +
+                              $"Requirement not met for '{req.requiredCardName}' (need {req.count}, found {foundCount}).");
+                    draggedCard.ResetCardPosition();
+                    return;
+                }
             }
+        }
+
+        // --- Attempt to Drop the Card ---
+        draggedCard.CheckDroppedCard(gridPosition, transform, out bool _isOccupied);
+        isOccupied = _isOccupied;
+        HideHighlights();
+
+        // If the drop was successful, trigger the overlay preview.
+        if (isOccupied)
+        {
+            CardPreviewManager.Instance.ShowCardPreview(selectedCard);
         }
     }
 

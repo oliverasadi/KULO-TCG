@@ -7,7 +7,8 @@ public class GridManager : MonoBehaviour
 
     [Header("Grid Settings")]
     public GameObject cardPrefab;
-    private CardSO[,] grid = new CardSO[3, 3]; // Stores placed cards
+    private CardSO[,] grid = new CardSO[3, 3]; // Stores placed card data.
+    private GameObject[,] gridObjects = new GameObject[3, 3]; // Stores instantiated card GameObjects.
     public Vector2 gridOffset = new Vector2(-1.5f, -1.5f);
 
     [Header("Highlight System")]
@@ -20,8 +21,10 @@ public class GridManager : MonoBehaviour
 
     void Awake()
     {
-        if (instance == null) instance = this;
-        else Destroy(gameObject);
+        if (instance == null)
+            instance = this;
+        else
+            Destroy(gameObject);
     }
 
     public bool IsValidDropPosition(Vector2Int dropPosition, out int x, out int y)
@@ -33,36 +36,93 @@ public class GridManager : MonoBehaviour
 
     public bool CanPlaceCard(int x, int y, CardSO card)
     {
-        if (!TurnManager.instance.CanPlayCard(card)) // ✅ Check turn-based rules
+        if (!TurnManager.instance.CanPlayCard(card)) // Check turn-based rules.
         {
             Debug.Log($"❌ Cannot place {card.cardName}: Max card type per turn reached!");
             return false;
         }
 
-        if (grid[x, y] == null) return true; // ✅ Space is empty
+        if (grid[x, y] == null)
+            return true; // Space is empty.
 
-        // ✅ Compare power values: Allow replacing weaker cards
+        // Compare power values: Allow replacing weaker cards.
         return grid[x, y].power < card.power;
     }
 
     public void PlaceCard(int x, int y, CardSO card)
     {
-        // ✅ Remove existing card if needed
+        // --- Evolution / Sacrifice Requirement Check ---
+        if (card.requiresSacrifice && card.sacrificeRequirements != null && card.sacrificeRequirements.Count > 0)
+        {
+            // For each sacrifice requirement, check if it is met on the field.
+            foreach (SacrificeRequirement req in card.sacrificeRequirements)
+            {
+                int foundCount = 0;
+                // Count cards in the grid that satisfy the requirement.
+                for (int i = 0; i < 3; i++)
+                {
+                    for (int j = 0; j < 3; j++)
+                    {
+                        if (grid[i, j] != null)
+                        {
+                            bool matches = req.matchByCreatureType
+                                ? (grid[i, j].creatureType == req.requiredCardName)
+                                : (grid[i, j].cardName == req.requiredCardName);
+                            if (matches)
+                                foundCount++;
+                        }
+                    }
+                }
+                if (foundCount < req.count)
+                {
+                    Debug.Log($"Cannot place {card.cardName}: Requires sacrificing {req.count} {(req.matchByCreatureType ? "Cat" : req.requiredCardName)} card(s), but only {foundCount} found.");
+                    return; // Do not allow placement.
+                }
+            }
+
+            // All requirements are met. Now sacrifice the required cards.
+            foreach (SacrificeRequirement req in card.sacrificeRequirements)
+            {
+                int sacrificed = 0;
+                for (int i = 0; i < 3 && sacrificed < req.count; i++)
+                {
+                    for (int j = 0; j < 3 && sacrificed < req.count; j++)
+                    {
+                        if (grid[i, j] != null)
+                        {
+                            bool matches = req.matchByCreatureType
+                                ? (grid[i, j].creatureType == req.requiredCardName)
+                                : (grid[i, j].cardName == req.requiredCardName);
+                            if (matches)
+                            {
+                                Debug.Log($"Sacrificing {grid[i, j].cardName} at ({i},{j}) for {card.cardName}.");
+                                RemoveCard(i, j);
+                                sacrificed++;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        // --- Standard Placement ---
+        // If the target grid cell is already occupied, remove the existing card.
         if (grid[x, y] != null)
         {
-            Debug.Log($"💥 Replacing {grid[x, y] .cardName} at {x},{y}!");
+            Debug.Log($"💥 Replacing {grid[x, y].cardName} at {x},{y}!");
             RemoveCard(x, y);
         }
 
-        // ✅ Place the new card
+        // Place the new card.
         Vector3 snapPosition = new Vector3(x + gridOffset.x, y + gridOffset.y, 0);
         GameObject cardObject = Instantiate(cardPrefab, snapPosition, Quaternion.identity);
         cardObject.GetComponent<CardHandler>().SetCard(card);
-        grid[x, y] = card; // Store the new card
+        grid[x, y] = card; // Store the new card data.
+        gridObjects[x, y] = cardObject; // Store the associated GameObject.
         Debug.Log($"✅ Placing {card.cardName} at {x},{y}!");
 
         PlayCardPlaceSound();
-        TurnManager.instance.RegisterCardPlay(card); // ✅ Register turn-based action
+        TurnManager.instance.RegisterCardPlay(card); // Register turn-based action.
         GameManager.instance.CheckForWin();
     }
 
@@ -82,10 +142,15 @@ public class GridManager : MonoBehaviour
     {
         if (grid[x, y] != null)
         {
-            Debug.Log($"🗑️ Removing {grid[x, y].cardName} at {x},{y}.");
+            Debug.Log($"🗑️ Removing {grid[x, y].cardName} at ({x},{y}).");
             grid[x, y] = null;
-
-            // ✅ Play remove sound
+            // Destroy the card GameObject if it exists.
+            if (gridObjects[x, y] != null)
+            {
+                Destroy(gridObjects[x, y]);
+                gridObjects[x, y] = null;
+            }
+            // Play remove sound.
             if (audioSource != null && removeCardSound != null)
             {
                 audioSource.PlayOneShot(removeCardSound);
@@ -105,7 +170,7 @@ public class GridManager : MonoBehaviour
 
     public CardSO[,] GetGrid()
     {
-        return grid; // ✅ Ensure this method exists!
+        return grid; // Ensure this method exists.
     }
 
     public void ResetGrid()
@@ -114,7 +179,12 @@ public class GridManager : MonoBehaviour
         {
             for (int y = 0; y < 3; y++)
             {
-                grid[x, y] = null; // ✅ Clears the grid without errors
+                if (gridObjects[x, y] != null)
+                {
+                    Destroy(gridObjects[x, y]);
+                    gridObjects[x, y] = null;
+                }
+                grid[x, y] = null;
             }
         }
         Debug.Log("🔄 Grid Reset!");
