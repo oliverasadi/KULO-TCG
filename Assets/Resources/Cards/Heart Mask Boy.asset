@@ -13,9 +13,12 @@ MonoBehaviour:
   m_Name: Heart Mask Boy
   m_EditorClassIdentifier: 
   cardName: Heart Mask Boy
-  cardImage: {fileID: 1257136585316704121, guid: c72595baedaa074459c1f5f3cfe9bee0, type: 3}
   category: 0
   power: 1200
   effectDescription: '"After this card has remained on the field for one of your
     opponent''s turns'
-  spawnWeight: 1
+  cardImage: {fileID: 1257136585316704121, guid: c72595baedaa074459c1f5f3cfe9bee0, type: 3}
+  cardNumber: OGN-27
+  creatureType: Wax
+  baseOrEvo: 0
+  extraDetails: 'DOB: Unknown, GPS: Mystical Hills, Weight: 4.5kg, Height: 1.20m.'

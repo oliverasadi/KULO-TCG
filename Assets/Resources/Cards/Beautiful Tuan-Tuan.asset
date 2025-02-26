@@ -21,3 +21,4 @@ MonoBehaviour:
   cardNumber: OGN-12
   creatureType: Cat
   baseOrEvo: 1
+  extraDetails: 'DOB: 2018, GPS: Gulu Island, Weight: 4.8kg, Height: 0.22m.'

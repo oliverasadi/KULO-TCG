@@ -13,9 +13,12 @@ MonoBehaviour:
   m_Name: Jump the Fence
   m_EditorClassIdentifier: 
   cardName: Jump the Fence
-  cardImage: {fileID: -2599277667772448035, guid: ddddc2b6c4f9b5d4f970c667764e50ee, type: 3}
   category: 1
   power: 0
   effectDescription: "You can move the creature \u2018Baby Mole Cat\u2019 or \u2018The
     Cat with the Mole\u2019 to any open position on the field."
-  spawnWeight: 1
+  cardImage: {fileID: -2599277667772448035, guid: ddddc2b6c4f9b5d4f970c667764e50ee, type: 3}
+  cardNumber: OGN-07
+  creatureType: 
+  baseOrEvo: 0
+  extraDetails: 

@@ -13,9 +13,12 @@ MonoBehaviour:
   m_Name: Tatami Chaos
   m_EditorClassIdentifier: 
   cardName: Tatami Chaos
-  cardImage: {fileID: 4156462814730520639, guid: 1186a1728899b1d46b436b3a186e7f24, type: 3}
   category: 0
   power: 1300
   effectDescription: All cards you control and place adjacent to this card gain +100
     power.
-  spawnWeight: 1
+  cardImage: {fileID: 4156462814730520639, guid: 1186a1728899b1d46b436b3a186e7f24, type: 3}
+  cardNumber: OGN-40
+  creatureType: Wax
+  baseOrEvo: 0
+  extraDetails: 'DOB: 1995, GPS: Wax Society, Weight: 76.0kg, Height: 1.77m.'

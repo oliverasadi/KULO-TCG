@@ -13,8 +13,11 @@ MonoBehaviour:
   m_Name: Ocean Lei-Gong
   m_EditorClassIdentifier: 
   cardName: Ocean Lei-Gong
-  cardImage: {fileID: -7630442949487943749, guid: 1cf21d2ff33e9a141a51540b8a44172f, type: 3}
   category: 0
   power: 1500
-  effectDescription: N/A
-  spawnWeight: 1
+  effectDescription: 
+  cardImage: {fileID: -7630442949487943749, guid: 1cf21d2ff33e9a141a51540b8a44172f, type: 3}
+  cardNumber: OGN-26
+  creatureType: Wax
+  baseOrEvo: 0
+  extraDetails: 'DOB: Unknown, GPS: Thunder Bay, Weight: 6.5kg, Height: 0.27m'

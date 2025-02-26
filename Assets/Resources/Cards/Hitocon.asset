@@ -13,8 +13,12 @@ MonoBehaviour:
   m_Name: Hitocon
   m_EditorClassIdentifier: 
   cardName: Hitocon
-  cardImage: {fileID: -1195984194731586747, guid: 14b532cabce9d1445841492221684f58, type: 3}
   category: 0
   power: 1500
-  effectDescription: "\"If \u2018Conomi\u2019 or \u2018Rawnjima\u2019 is on the field"
-  spawnWeight: 1
+  effectDescription: "If \u2018Conomi\u2019 or \u2018Rawnjima\u2019 is on the field,
+    this card gains +200 power."
+  cardImage: {fileID: -1195984194731586747, guid: 14b532cabce9d1445841492221684f58, type: 3}
+  cardNumber: OGN-22
+  creatureType: Wax
+  baseOrEvo: 0
+  extraDetails: 'DOB: 1267 B.C, GPS: Wax Village, Weight: 5.5kg, Height: 2.23m.'

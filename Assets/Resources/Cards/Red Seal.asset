@@ -13,8 +13,11 @@ MonoBehaviour:
   m_Name: Red Seal
   m_EditorClassIdentifier: 
   cardName: Red Seal
-  cardImage: {fileID: -5075560014524144143, guid: abb81dd9b669a3c4493e16ca13cc2424, type: 3}
   category: 0
   power: 1400
   effectDescription: N/A
-  spawnWeight: 1
+  cardImage: {fileID: -5075560014524144143, guid: abb81dd9b669a3c4493e16ca13cc2424, type: 3}
+  cardNumber: OGN-37
+  creatureType: Wax
+  baseOrEvo: 0
+  extraDetails: 'DOB: 2017, GPS: Lion Island, Weight: 305.0kg, Height: 1.35m.'

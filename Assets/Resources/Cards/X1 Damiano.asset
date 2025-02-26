@@ -15,8 +15,10 @@ MonoBehaviour:
   cardName: X1 Damiano
   category: 0
   power: 2400
-  effectDescription: '"After this card is summoned'
+  effectDescription: After this card is summoned, it is immediately sent to the graveyard. 
+    (This action does not trigger a win condition.)
   cardImage: {fileID: -5521510965238334999, guid: 87c43a3cde3fa10469edd5a18c18b17d, type: 3}
-  cardNumber: 
+  cardNumber: OGN-11
   creatureType: Cat
   baseOrEvo: 0
+  extraDetails: 'DOB: Unknown, GPS: Gulu Island, Weight: 5.0kg, Height: 0.30m.'

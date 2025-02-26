@@ -13,8 +13,12 @@ MonoBehaviour:
   m_Name: Ultimate Red Seal
   m_EditorClassIdentifier: 
   cardName: Ultimate Red Seal
-  cardImage: {fileID: -8641784713208657438, guid: f7078e9a1a4dc7540a1f033909b68d7d, type: 3}
   category: 0
   power: 3300
-  effectDescription: '"EVOLUTION: To summon this card'
-  spawnWeight: 1
+  effectDescription: "EVOLUTION: To summon this card, remove 3 of your \u2018Red
+    Seal\u2019 cards from either the field or your hand."
+  cardImage: {fileID: -8641784713208657438, guid: f7078e9a1a4dc7540a1f033909b68d7d, type: 3}
+  cardNumber: OGN-38
+  creatureType: Wax
+  baseOrEvo: 0
+  extraDetails: 'DOB: 1994, GPS: Lion Island, Weight: 100.0kg, Height: 100.35m.'

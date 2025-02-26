@@ -14,7 +14,6 @@ public class CSVCardImporter : MonoBehaviour
     {
         { "Creature", CardSO.CardCategory.Creature },
         { "Spell", CardSO.CardCategory.Spell },
-        { "Evolution", CardSO.CardCategory.Evolution }
     };
 
     [ContextMenu("Generate Cards")]

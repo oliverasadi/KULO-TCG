@@ -13,9 +13,12 @@ MonoBehaviour:
   m_Name: Ecchikitten
   m_EditorClassIdentifier: 
   cardName: Ecchikitten
-  cardImage: {fileID: 8603547527433571717, guid: 8b707f89c3e43a9419210aa5ce5664bb, type: 3}
   category: 0
   power: 1300
   effectDescription: This card decreases the power of all opponent's creatures directly
     north and south of it by -300.
-  spawnWeight: 1
+  cardImage: {fileID: 8603547527433571717, guid: 8b707f89c3e43a9419210aa5ce5664bb, type: 3}
+  cardNumber: OGN-34
+  creatureType: Wax
+  baseOrEvo: 0
+  extraDetails: 'DOB: 1996 GPS: Deep Wax Hole, Weight: 3.6kg, Height: 1.64m.'

@@ -13,9 +13,12 @@ MonoBehaviour:
   m_Name: Rawnjima
   m_EditorClassIdentifier: 
   cardName: Rawnjima
-  cardImage: {fileID: -5076847204959855743, guid: 6c7d3d2f20beeae4ca5f3996d4064435, type: 3}
   category: 0
   power: 1400
-  effectDescription: "\"If \u2018Hitocon\u2019 or \u2018Rawnjima\u2019 is on the
-    field"
-  spawnWeight: 1
+  effectDescription: "If \u2018Hitocon\u2019 or \u2018Rawnjima\u2019 is on the field,
+    this card gains +200 power."
+  cardImage: {fileID: -5076847204959855743, guid: 6c7d3d2f20beeae4ca5f3996d4064435, type: 3}
+  cardNumber: OGN-21
+  creatureType: Wax
+  baseOrEvo: 0
+  extraDetails: 'DOB: 867 B.C, GPS: Wax Pole, Weight: 6.0kg, Height: 5.24m.'

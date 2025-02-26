@@ -17,6 +17,7 @@ MonoBehaviour:
   power: 2000
   effectDescription: '"EVOLUTION :'
   cardImage: {fileID: 534048477439852426, guid: bd5e210ec35bceb44b7489f0edbe002d, type: 3}
-  cardNumber: 
+  cardNumber: OGN-17
   creatureType: Cat
   baseOrEvo: 1
+  extraDetails: 'DOB: 2016, GPS: Gulu City, Weight: 7.5kg, Height: 0.22m.'

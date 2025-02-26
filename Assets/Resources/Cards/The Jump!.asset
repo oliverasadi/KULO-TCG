@@ -13,9 +13,12 @@ MonoBehaviour:
   m_Name: The Jump!
   m_EditorClassIdentifier: 
   cardName: The Jump!
-  cardImage: {fileID: -7587560258652497073, guid: 8a385a465c12de349949498b934ea592, type: 3}
   category: 1
   power: 0
   effectDescription: Move one of your cards on the field to a position one space
     higher or lower than an opponent's card.
-  spawnWeight: 1
+  cardImage: {fileID: -7587560258652497073, guid: 8a385a465c12de349949498b934ea592, type: 3}
+  cardNumber: OGN-36
+  creatureType: 
+  baseOrEvo: 0
+  extraDetails: 

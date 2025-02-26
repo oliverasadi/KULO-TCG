@@ -13,8 +13,11 @@ MonoBehaviour:
   m_Name: Mango Lango
   m_EditorClassIdentifier: 
   cardName: Mango Lango
-  cardImage: {fileID: -5813170508577497683, guid: d6c7de86cf0e2204b90df1224cd60280, type: 3}
   category: 0
   power: 1800
   effectDescription: This card loses -400 power at the end of each turn.
-  spawnWeight: 1
+  cardImage: {fileID: -5813170508577497683, guid: d6c7de86cf0e2204b90df1224cd60280, type: 3}
+  cardNumber: OGN-23
+  creatureType: Wax
+  baseOrEvo: 0
+  extraDetails: 'DOB: 2023, GPS: Tropical Island, Weight: 8.0kg, Height: 0.45m.'

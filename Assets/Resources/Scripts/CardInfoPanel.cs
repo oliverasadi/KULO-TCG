@@ -10,15 +10,15 @@ public class CardInfoPanel : MonoBehaviour, IPointerClickHandler
     public Image cardImage;
     public TextMeshProUGUI cardNameText;
     public TextMeshProUGUI cardDescriptionText;
-
-    // (Optional) UI element for power or other stats can be added here.
+    public TextMeshProUGUI cardPowerText;     // Displays the card's power.
+    public TextMeshProUGUI extraDetailsText;  // Displays extra details for creature cards.
 
     // Tracks if the panel is visible and which card is currently displayed.
     private bool isVisible = false;
     private CardSO currentCard = null;
     public float fadeDuration = 0.3f;         // Duration for fade in/out.
 
-    // Reference to the card image animation coroutine.
+    // Reference to the card image pulsing animation coroutine.
     private Coroutine cardImageAnimationCoroutine;
 
     void Start()
@@ -63,6 +63,16 @@ public class CardInfoPanel : MonoBehaviour, IPointerClickHandler
             cardNameText.text = card.cardName;
         if (cardDescriptionText != null)
             cardDescriptionText.text = card.effectDescription;
+        if (cardPowerText != null)
+            cardPowerText.text = card.power.ToString();  // Display the power value.
+        if (extraDetailsText != null)
+        {
+            // Show extra details only for creature cards.
+            if (card.category == CardSO.CardCategory.Creature)
+                extraDetailsText.text = card.extraDetails;
+            else
+                extraDetailsText.text = ""; // Optionally clear for non-creatures.
+        }
 
         // Animate the panel's fade-in.
         if (canvasGroup != null)
@@ -102,7 +112,7 @@ public class CardInfoPanel : MonoBehaviour, IPointerClickHandler
             cardImageAnimationCoroutine = null;
             if (cardImage != null)
             {
-                cardImage.transform.localScale = Vector3.one; // Reset scale (assumes original scale is 1).
+                cardImage.transform.localScale = Vector3.one; // Reset scale.
             }
         }
     }
@@ -124,8 +134,8 @@ public class CardInfoPanel : MonoBehaviour, IPointerClickHandler
     private IEnumerator AnimateCardImage()
     {
         Vector3 originalScale = cardImage.transform.localScale;
-        float amplitude = 0.05f; // Adjust for how much pulsing (5% change).
-        float speed = 2f;        // Adjust for pulsation speed.
+        float amplitude = 0.05f; // Adjust for pulsing magnitude.
+        float speed = 2f;        // Adjust for pulsing speed.
 
         while (isVisible)
         {
@@ -133,8 +143,7 @@ public class CardInfoPanel : MonoBehaviour, IPointerClickHandler
             cardImage.transform.localScale = originalScale * scaleFactor;
             yield return null;
         }
-
-        // Ensure the scale resets when the animation ends.
+        // Reset scale when done.
         cardImage.transform.localScale = originalScale;
     }
 

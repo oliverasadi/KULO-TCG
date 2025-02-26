@@ -13,8 +13,15 @@ MonoBehaviour:
   m_Name: Showa Boy
   m_EditorClassIdentifier: 
   cardName: Showa Boy
-  cardImage: {fileID: 8448365239506394038, guid: 93ff0e2a160cad64ca0a654dbed488f9, type: 3}
   category: 0
   power: 1300
   effectDescription: All cards adjacent to this card gain +100.
-  spawnWeight: 1
+  cardImage: {fileID: 8448365239506394038, guid: 93ff0e2a160cad64ca0a654dbed488f9, type: 3}
+  cardNumber: OGN-39
+  creatureType: Wax
+  baseOrEvo: 0
+  extraDetails: 'Add 2 Cat creature cards from your graveyard to your hand.
+
+
+    You
+    cannot play any cards during your next turn.'

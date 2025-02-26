@@ -13,10 +13,13 @@ MonoBehaviour:
   m_Name: Pamyu Poo
   m_EditorClassIdentifier: 
   cardName: Pamyu Poo
-  cardImage: {fileID: -1761447855150284595, guid: e171749602614fe429b249ad4fe58d90, type: 3}
   category: 1
   power: 0
   effectDescription: Select an opponent's card on the field that is directly north
     or south of a card you control. Decrease its power by -500 until the end of this
     turn.
-  spawnWeight: 1
+  cardImage: {fileID: -1761447855150284595, guid: e171749602614fe429b249ad4fe58d90, type: 3}
+  cardNumber: OGN-32
+  creatureType: 
+  baseOrEvo: 0
+  extraDetails: 

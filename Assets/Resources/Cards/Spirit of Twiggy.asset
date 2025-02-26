@@ -13,8 +13,11 @@ MonoBehaviour:
   m_Name: Spirit of Twiggy
   m_EditorClassIdentifier: 
   cardName: Spirit of Twiggy
-  cardImage: {fileID: 5955112406199880182, guid: 75220d38eb25d124bb709d2e9aaed942, type: 3}
   category: 1
   power: 0
   effectDescription: Add a spell card from your graveyard to your hand.
-  spawnWeight: 1
+  cardImage: {fileID: 5955112406199880182, guid: 75220d38eb25d124bb709d2e9aaed942, type: 3}
+  cardNumber: OGN-04
+  creatureType: 
+  baseOrEvo: 0
+  extraDetails: 

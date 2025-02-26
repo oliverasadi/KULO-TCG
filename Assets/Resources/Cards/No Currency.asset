@@ -13,8 +13,11 @@ MonoBehaviour:
   m_Name: No Currency
   m_EditorClassIdentifier: 
   cardName: No Currency
-  cardImage: {fileID: -202533923593063007, guid: 67f40b633d02f4a4e9cd28ca2b4927dd, type: 3}
   category: 1
   power: 0
   effectDescription: '"If you have fewer cards in your hand than your opponent'
-  spawnWeight: 1
+  cardImage: {fileID: -202533923593063007, guid: 67f40b633d02f4a4e9cd28ca2b4927dd, type: 3}
+  cardNumber: OGN-31
+  creatureType: 
+  baseOrEvo: 0
+  extraDetails: 

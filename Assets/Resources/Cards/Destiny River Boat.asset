@@ -13,9 +13,12 @@ MonoBehaviour:
   m_Name: Destiny River Boat
   m_EditorClassIdentifier: 
   cardName: Destiny River Boat
-  cardImage: {fileID: -2721523529193208593, guid: cd11f1b69c7b5a841a69321d5843a723, type: 3}
   category: 1
   power: 0
   effectDescription: Move one of your cards on the field two zones north or south
     to a free zone.
-  spawnWeight: 1
+  cardImage: {fileID: -2721523529193208593, guid: cd11f1b69c7b5a841a69321d5843a723, type: 3}
+  cardNumber: OGN-41
+  creatureType: 
+  baseOrEvo: 0
+  extraDetails: 

@@ -15,8 +15,10 @@ MonoBehaviour:
   cardName: Bonsai Beast Lvl 2
   category: 0
   power: 2100
-  effectDescription: '"EVOLUTION: To summon this card'
+  effectDescription: "\"EVOLUTION: To summon this card, sacrifice \u2018Bonsai Beast
+    Lvl.1\u2019.   Decrease the power card by 100 for each turn this is on the field.\""
   cardImage: {fileID: -3247769480817636165, guid: 97f79e5ac4afd7e48b9782e53bcd4405, type: 3}
   cardNumber: OGN-44
   creatureType: Su Beast
   baseOrEvo: 0
+  extraDetails: 'DOB: 2025, GPS: Su River, Weight: 6.5kg, Height: 0.70m.'

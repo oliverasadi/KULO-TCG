@@ -15,8 +15,10 @@ MonoBehaviour:
   cardName: Cat TriFecta
   category: 0
   power: 3000
-  effectDescription: '"EVOLUTION: To play this card'
+  effectDescription: 'EVOLUTION: To play this card, remove any 3 Cat cards from either
+    the field or your hand.'
   cardImage: {fileID: -7449844136455925965, guid: 8f7c593cb156feb4f8501dc74a707371, type: 3}
   cardNumber: OGN-19
   creatureType: Cat
   baseOrEvo: 1
+  extraDetails: 'DOB: Ancient Era, GPS: Gulu Island, Weight: 10.0kg, Height: 0.50m.'

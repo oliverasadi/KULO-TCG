@@ -13,9 +13,12 @@ MonoBehaviour:
   m_Name: Cat Friends
   m_EditorClassIdentifier: 
   cardName: Cat Friends
-  cardImage: {fileID: 5791523260125451457, guid: 99f33b0d44077a843bdfd014b70a1b5d, type: 3}
   category: 1
   power: 0
   effectDescription: "\"If you control 2 or more \u2018Cat\u2019 type cards on the
     field"
-  spawnWeight: 1
+  cardImage: {fileID: 5791523260125451457, guid: 99f33b0d44077a843bdfd014b70a1b5d, type: 3}
+  cardNumber: OGN-08
+  creatureType: 
+  baseOrEvo: 0
+  extraDetails: 

@@ -13,8 +13,12 @@ MonoBehaviour:
   m_Name: Old Fisherman
   m_EditorClassIdentifier: 
   cardName: Old Fisherman
-  cardImage: {fileID: 8009992165411760689, guid: 2559a543477567c4392235e8c03c4d3f, type: 3}
   category: 0
   power: 1500
   effectDescription: 
-  spawnWeight: 1
+  cardImage: {fileID: 8009992165411760689, guid: 2559a543477567c4392235e8c03c4d3f, type: 3}
+  cardNumber: OGN-52
+  creatureType: Fisherman
+  baseOrEvo: 0
+  extraDetails: "DOB: 1935, GPS: Fisherman\u2019s Wharf, Weight: 65.0kg, Height:
+    1.75m"

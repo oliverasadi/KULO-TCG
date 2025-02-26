@@ -13,8 +13,12 @@ MonoBehaviour:
   m_Name: Return of the Cats
   m_EditorClassIdentifier: 
   cardName: Return of the Cats
-  cardImage: {fileID: 2994220755020714633, guid: 50c345bc9dee8d9408a4b6534f997394, type: 3}
   category: 1
   power: 0
-  effectDescription: '"Add 2 Cat creature cards from your graveyard to your hand.'
-  spawnWeight: 1
+  effectDescription: Add 2 Cat creature cards from your graveyard to your hand. 
+    You cannot play any cards during your next turn.
+  cardImage: {fileID: 2994220755020714633, guid: 50c345bc9dee8d9408a4b6534f997394, type: 3}
+  cardNumber: OGN-09
+  creatureType: 
+  baseOrEvo: 0
+  extraDetails: 

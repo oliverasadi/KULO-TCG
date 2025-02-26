@@ -13,9 +13,12 @@ MonoBehaviour:
   m_Name: Fish Feeding Frenzy
   m_EditorClassIdentifier: 
   cardName: Fish Feeding Frenzy
-  cardImage: {fileID: -2713804392163231790, guid: 65ea4b8ee3ff3604b88ca67f76807ff3, type: 3}
   category: 1
   power: 0
   effectDescription: "All your cards with \u201CKoi\u201D in their name gain +300
     power until the end of your opponent's next turn."
-  spawnWeight: 1
+  cardImage: {fileID: -2713804392163231790, guid: 65ea4b8ee3ff3604b88ca67f76807ff3, type: 3}
+  cardNumber: OGN-57
+  creatureType: 
+  baseOrEvo: 0
+  extraDetails: 

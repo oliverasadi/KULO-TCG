@@ -13,8 +13,11 @@ MonoBehaviour:
   m_Name: Lion Island
   m_EditorClassIdentifier: 
   cardName: Lion Island
-  cardImage: {fileID: -8288566396435538473, guid: f876559bcb609ea4db444de7865c298a, type: 3}
   category: 1
   power: 0
   effectDescription: Increase all of your cards by +200 for the opponents next turn.
-  spawnWeight: 1
+  cardImage: {fileID: -8288566396435538473, guid: f876559bcb609ea4db444de7865c298a, type: 3}
+  cardNumber: OGN-25
+  creatureType: 
+  baseOrEvo: 0
+  extraDetails: 

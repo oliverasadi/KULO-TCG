@@ -18,6 +18,7 @@ MonoBehaviour:
   effectDescription: This card loses -100 power for each other Cat-type creature
     you control on the field.
   cardImage: {fileID: 7173768577386584756, guid: af67935fb4f3e6445ac46b9a2373e6e3, type: 3}
-  cardNumber: 
+  cardNumber: OGN-14
   creatureType: Cat
   baseOrEvo: 0
+  extraDetails: 'DOB: 2024, GPS: Gulu Island, Weight: 7.0kg, Height: 0.40m.'

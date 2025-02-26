@@ -13,9 +13,12 @@ MonoBehaviour:
   m_Name: Conomi
   m_EditorClassIdentifier: 
   cardName: Conomi
-  cardImage: {fileID: 2189286072710716206, guid: 3889314538547e242862ed95e1a782de, type: 3}
   category: 0
   power: 1400
-  effectDescription: "\"If \u2018Hitocon\u2019 or \u2018Rawnjima\u2019 is on the
-    field"
-  spawnWeight: 1
+  effectDescription: "If \u2018Hitocon\u2019 or \u2018Rawnjima\u2019 is on the field,
+    this card gains +200 power."
+  cardImage: {fileID: 2189286072710716206, guid: 3889314538547e242862ed95e1a782de, type: 3}
+  cardNumber: OGN-24
+  creatureType: Wax
+  baseOrEvo: 0
+  extraDetails: 'DOB: 467 B.C, GPS: Wax Desert, Weight: 5.3kg, Height: 5.22m.'

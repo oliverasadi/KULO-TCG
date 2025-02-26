@@ -13,9 +13,12 @@ MonoBehaviour:
   m_Name: The Granted Wish - Perfected Soil
   m_EditorClassIdentifier: 
   cardName: The Granted Wish - Perfected Soil
-  cardImage: {fileID: -3458310890391639656, guid: a2b3bba5fb3ac4b438c9421c7c1f3587, type: 3}
   category: 1
   power: 0
   effectDescription: For your next two turns all your cards on field and in hand
     gain +300 power.
-  spawnWeight: 1
+  cardImage: {fileID: -3458310890391639656, guid: a2b3bba5fb3ac4b438c9421c7c1f3587, type: 3}
+  cardNumber: OGN-56
+  creatureType: 
+  baseOrEvo: 0
+  extraDetails: 

@@ -15,9 +15,10 @@ MonoBehaviour:
   cardName: What a Catch
   category: 1
   power: 0
-  effectDescription: "\"If you control a card with \u201CFisherman\u201D in its name
+  effectDescription: "If you control a card with \u201CFisherman\u201D in its name
     on the field"
   cardImage: {fileID: 5774935110988402319, guid: be9366704c9a9b3488fb4510cb6d5cbd, type: 3}
-  cardNumber: 
+  cardNumber: OGN-54
   creatureType: 
   baseOrEvo: 0
+  extraDetails: 

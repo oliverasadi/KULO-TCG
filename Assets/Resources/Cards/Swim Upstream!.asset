@@ -13,9 +13,12 @@ MonoBehaviour:
   m_Name: Swim Upstream!
   m_EditorClassIdentifier: 
   cardName: Swim Upstream!
-  cardImage: {fileID: -4453010894188204318, guid: eff7e493afe1a534ea4c7cf164a3f1b6, type: 3}
   category: 1
   power: 0
   effectDescription: "Move one card with \u201CKoi\u201D in its name up or down one
     space to an empty zone."
-  spawnWeight: 1
+  cardImage: {fileID: -4453010894188204318, guid: eff7e493afe1a534ea4c7cf164a3f1b6, type: 3}
+  cardNumber: OGN-55
+  creatureType: 
+  baseOrEvo: 0
+  extraDetails: 

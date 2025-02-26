@@ -13,9 +13,12 @@ MonoBehaviour:
   m_Name: Heart Mask Boy Lvl 3
   m_EditorClassIdentifier: 
   cardName: Heart Mask Boy Lvl 3
-  cardImage: {fileID: 5523859765984264331, guid: 4ed40ccdc5189c4498800b8f39c4b72c, type: 3}
   category: 0
   power: 2800
   effectDescription: '"EVOLUTION: Sacrifice ''Heart Mask Boy Lvl 2'' form the field.Increase
     the power of all cards in your hand and on the field by +200'
-  spawnWeight: 1
+  cardImage: {fileID: 5523859765984264331, guid: 4ed40ccdc5189c4498800b8f39c4b72c, type: 3}
+  cardNumber: OGN-29
+  creatureType: Wax
+  baseOrEvo: 0
+  extraDetails: 'DOB: Unknown, GPS: Mystical Summit, Weight: 500.8kg, Height: 70.30m.'

@@ -18,6 +18,7 @@ MonoBehaviour:
   effectDescription: This card gains +100 power for each card your opponent controls
     on the field.
   cardImage: {fileID: -1358433520399601867, guid: f33d905a1542a584bb30124b37f8a31d, type: 3}
-  cardNumber: 
+  cardNumber: OGN-16
   creatureType: Cat
   baseOrEvo: 0
+  extraDetails: 'DOB: 2024, GPS: Hidden Gulu Forest, Weight: 4.7kg, Height: 0.25m.'

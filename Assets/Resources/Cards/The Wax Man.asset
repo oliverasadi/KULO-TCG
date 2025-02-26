@@ -13,8 +13,11 @@ MonoBehaviour:
   m_Name: The Wax Man
   m_EditorClassIdentifier: 
   cardName: The Wax Man
-  cardImage: {fileID: -3047204546146683538, guid: c75d6c20de7053649b8fc5b149519f3e, type: 3}
   category: 0
   power: 1400
-  effectDescription: '"When this creature is summoned'
-  spawnWeight: 1
+  effectDescription: When this creature is summoned, draw 1 card.
+  cardImage: {fileID: -3047204546146683538, guid: c75d6c20de7053649b8fc5b149519f3e, type: 3}
+  cardNumber: OGN-35
+  creatureType: Wax
+  baseOrEvo: 0
+  extraDetails: 'DOB: 1995, GPS: WaxBrough, Weight: 79.0kg, Height: 1.75m.'

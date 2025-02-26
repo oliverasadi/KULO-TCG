@@ -13,9 +13,12 @@ MonoBehaviour:
   m_Name: Legendary White Tiger of the Pagoda
   m_EditorClassIdentifier: 
   cardName: Legendary White Tiger of the Pagoda
-  cardImage: {fileID: -5423513443202243085, guid: caa735988f930ff4cb0ed21dd528b362, type: 3}
   category: 0
   power: 3500
   effectDescription: "EVOLUTION: This card can only be summoned by Swimming White
     Tiger Cub\u2019s effect"
-  spawnWeight: 1
+  cardImage: {fileID: -5423513443202243085, guid: caa735988f930ff4cb0ed21dd528b362, type: 3}
+  cardNumber: OGN-59
+  creatureType: Su Beast
+  baseOrEvo: 1
+  extraDetails: 'DOB: Ancient Era, GPS: Pagoda Heights, Weight: 15.0kg, Height: 0.60m.'

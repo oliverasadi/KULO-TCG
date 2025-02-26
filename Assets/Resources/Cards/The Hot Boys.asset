@@ -13,9 +13,11 @@ MonoBehaviour:
   m_Name: The Hot Boys
   m_EditorClassIdentifier: 
   cardName: The Hot Boys
-  cardImage: {fileID: -9207507128361240288, guid: 42597761f2e618d4db11ca5d91115b5d, type: 3}
   category: 0
   power: 0
-  effectDescription: '"This card gains +300 power for each other creature on the
-    field'
-  spawnWeight: 1
+  effectDescription: This card gains +300 power for each other creature on the field
+  cardImage: {fileID: -9207507128361240288, guid: 42597761f2e618d4db11ca5d91115b5d, type: 3}
+  cardNumber: OGN-33
+  creatureType: Wax
+  baseOrEvo: 0
+  extraDetails: 'DOB: 1993 GPS: Bonito Wax Ashes, Weight: 0.0kg, Height: 1.83m'

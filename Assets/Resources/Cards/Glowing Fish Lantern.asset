@@ -13,8 +13,11 @@ MonoBehaviour:
   m_Name: Glowing Fish Lantern
   m_EditorClassIdentifier: 
   cardName: Glowing Fish Lantern
-  cardImage: {fileID: 1598120117302816562, guid: 1a5c652cb4ecb5043af8cdebb90e0adb, type: 3}
   category: 0
   power: 1500
   effectDescription: 
-  spawnWeight: 1
+  cardImage: {fileID: 1598120117302816562, guid: 1a5c652cb4ecb5043af8cdebb90e0adb, type: 3}
+  cardNumber: OGN-58
+  creatureType: Su Beast
+  baseOrEvo: 0
+  extraDetails: 'DOB: 2024, GPS: Su River Bridge, Weight: 2.8kg, Height: 0.18m'

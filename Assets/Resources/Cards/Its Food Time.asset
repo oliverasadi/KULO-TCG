@@ -10,12 +10,14 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9747e2743189362479fe32d85a8865e0, type: 3}
-  m_Name: "It\u2019s Food Time"
+  m_Name: Its Food Time
   m_EditorClassIdentifier: 
   cardName: "It\u2019s Food Time"
-  cardImage: {fileID: -4686140212382031360, guid: 768b0784330ee8947931916a212cc578, type: 3}
   category: 1
   power: 0
   effectDescription: All Cat-type creatures gain +200 power until the end of this
     turn.
-  spawnWeight: 1
+  cardImage: {fileID: -4686140212382031360, guid: 768b0784330ee8947931916a212cc578, type: 3}
+  cardNumber: OGN-05
+  creatureType: 
+  baseOrEvo: 0
