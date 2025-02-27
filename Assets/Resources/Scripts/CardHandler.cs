@@ -10,8 +10,10 @@ public class CardHandler : MonoBehaviour
     public bool isAI = false;
 
     // Optionally include a parameter for whether the card should start face-down
-    public void SetCard(CardSO card, bool setFaceDown = false)
+    public void SetCard(CardSO card, bool setFaceDown = false, bool isAICard = false)
     {
+        isAI = isAICard;
+        
         if (card == null)
         {
             Debug.LogError("SetCard was given a null card!");

@@ -127,7 +127,7 @@ public class DeckManager : MonoBehaviour
         if (handler != null)
         {
             // Option B: Set the card on the CardHandler, which in turn updates CardUI.
-            handler.SetCard(cardData, false);
+            handler.SetCard(cardData, false,false);
         }
         else
         {

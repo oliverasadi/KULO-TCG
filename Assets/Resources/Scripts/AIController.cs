@@ -15,6 +15,7 @@ public class AIController : MonoBehaviour
     [Header("AI Hand UI")]
     [SerializeField] private Transform aiHandPanel; // Assign in Inspector
     public GameObject cardUIPrefab; // Assign in Inspector
+    
 
     void Awake()
     {
@@ -59,6 +60,10 @@ public class AIController : MonoBehaviour
             aiDeck.RemoveAt(0);
             // Cards in the AI hand start face-down.
             DisplayCardInAIHand(drawnCard, true);
+            
+            // Update player deck count UI.
+            if (AIDeckZone.instance != null)
+                AIDeckZone.instance.UpdateDeckCount(aiDeck.Count);
         }
     }
 
@@ -70,7 +75,7 @@ public class AIController : MonoBehaviour
         CardHandler cardHandler = cardUI.GetComponent<CardHandler>();
         if (cardHandler != null)
         {
-            cardHandler.SetCard(card, isFaceDown);
+            cardHandler.SetCard(card, isFaceDown, true);
         }
         else
         {
