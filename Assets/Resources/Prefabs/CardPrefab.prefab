@@ -93,7 +93,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   cardArtImage: {fileID: 2361588858364672429}
-  cardData: {fileID: 11400000, guid: 57adc6a195c4fa64ea748642ce229806, type: 2}
+  cardData: {fileID: 0}
 --- !u!114 &9139353195035063985
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -106,6 +106,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8a7f13603b615dd47a7a033322064881, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  cardHandler: {fileID: 0}
 --- !u!225 &9184000235202373409
 CanvasGroup:
   m_ObjectHideFlags: 0
@@ -134,6 +135,8 @@ MonoBehaviour:
   cardNameText: {fileID: 0}
   cardBackSprite: {fileID: -8622259438476403829, guid: 1b4f734b49ecbdf42a2019f3bfb1abe5, type: 3}
   isInDeck: 0
+  cardInfoPanel: {fileID: 0}
+  isSelected: 0
 --- !u!114 &3076055314872575902
 MonoBehaviour:
   m_ObjectHideFlags: 0

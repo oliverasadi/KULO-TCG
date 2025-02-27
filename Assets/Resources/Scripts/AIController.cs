@@ -63,12 +63,18 @@ public class AIController : MonoBehaviour
     {
         if (aiHandPanel == null || cardUIPrefab == null) return;
         GameObject cardUI = Instantiate(cardUIPrefab, aiHandPanel);
-        CardUI cardUIScript = cardUI.GetComponent<CardUI>();
-        if (cardUIScript != null)
+        CardHandler cardHandler = cardUI.GetComponent<CardHandler>();
+
+        if (cardHandler != null)
         {
-            cardUIScript.SetCardData(card, isFaceDown);
+            cardHandler.SetCard(card, isFaceDown); // Correctly assign the AI card data
         }
-        aiHandCardHandlers.Add(cardUI.GetComponent<CardHandler>());
+        else
+        {
+            Debug.LogError("AIController: CardHandler component missing on instantiated AI card!");
+        }
+
+        aiHandCardHandlers.Add(cardHandler);
     }
 
     public void AITakeTurn()
@@ -186,13 +192,18 @@ public class AIController : MonoBehaviour
         if (bestCreature != null)
         {
             aiPlayedCreature = true;
+            Debug.Log($"AI SELECTED CREATURE: {bestCreature.cardData.cardName}");
             return bestCreature;
         }
         if (bestSpell != null)
         {
             aiPlayedSpell = true;
+            Debug.Log($"AI SELECTED SPELL: {bestSpell.cardData.cardName}");
             return bestSpell;
         }
+
+        Debug.LogWarning("AIController: No playable card found in AI hand!");
         return null;
     }
 }
+

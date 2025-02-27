@@ -116,7 +116,16 @@ public class GridManager : MonoBehaviour
         // Place the new card.
         Vector3 snapPosition = new Vector3(x + gridOffset.x, y + gridOffset.y, 0);
         GameObject cardObject = Instantiate(cardPrefab, snapPosition, Quaternion.identity);
-        cardObject.GetComponent<CardHandler>().SetCard(card);
+        CardHandler cardHandler = cardObject.GetComponent<CardHandler>();
+
+        if (cardHandler != null)
+        {
+            cardHandler.SetCard(card);
+        }
+        else
+        {
+            Debug.LogError("GridManager: CardHandler component missing on instantiated card!");
+        }
         grid[x, y] = card; // Store the new card data.
         gridObjects[x, y] = cardObject; // Store the associated GameObject.
         Debug.Log($"✅ Placing {card.cardName} at {x},{y}!");
