@@ -30,12 +30,12 @@ public class CardDragHandler : MonoBehaviour, IBeginDragHandler, IDragHandler, I
         isDragging = true;
         originalPosition = rectTransform.position;
         originalParent = transform.parent;
-        transform.SetParent(transform.root); // Move to top-level UI to avoid masking issues
+        transform.SetParent(transform.root, false); // Move to top-level UI to avoid masking issues
 
         canvasGroup.blocksRaycasts = false;
-        canvasGroup.alpha = 0.7f; // Make it slightly transparent while dragging
+        canvasGroup.alpha = 0.7f; // Slightly transparent while dragging
 
-        GridManager.instance.GrabCard(); // Show available drop areas
+        GridManager.instance.GrabCard();
     }
 
     public void OnDrag(PointerEventData eventData)
@@ -49,40 +49,36 @@ public class CardDragHandler : MonoBehaviour, IBeginDragHandler, IDragHandler, I
         isDragging = false;
         canvasGroup.blocksRaycasts = true;
         canvasGroup.alpha = 1f;
-        if (!isDroppedOnValidZone)
+
+        // If we're still under the original parent, the drop wasn't valid
+        if (transform.parent == originalParent)
         {
-            ResetCardPosition(); // Revert position if not dropped on a valid zone
+            ResetCardPosition();
         }
         GridManager.instance.ReleaseCard();
     }
 
-    public void CheckDroppedCard(Vector2Int position, Transform parent, out bool isOccupied)
+    public void CheckDroppedCard(Vector2Int position, Transform cellParent, out bool isOccupied)
     {
         isOccupied = false;
-        // Check if the drop position is valid and the card can be placed (including evolution/sacrifice checks)
-        if (GridManager.instance.IsValidDropPosition(position, out int x, out int y) &&
-            GridManager.instance.CanPlaceCard(x, y, cardHandler.GetCardData()))
-        {
-            Debug.Log("VALID POSITION");
-            // Attempt to place the card; this call will handle sacrifice requirements if needed.
-            GridManager.instance.PlaceCard(x, y, cardHandler.GetCardData());
+        CardSO cardData = cardHandler.GetCardData();
 
-            // Verify if placement was successful by checking the grid.
-            CardSO[,] grid = GridManager.instance.GetGrid();
-            if (grid[x, y] == cardHandler.GetCardData())
+        // Check if the drop position is valid and the card can be placed
+        if (GridManager.instance.IsValidDropPosition(position, out int x, out int y) &&
+            GridManager.instance.CanPlaceCard(x, y, cardData))
+        {
+            Debug.Log($"[CardDragHandler] Attempting to place {cardData.cardName} at {x},{y}");
+            // Re-parent this card to the actual cell using PlaceExistingCard
+            bool placed = GridManager.instance.PlaceExistingCard(x, y, gameObject, cardData, cellParent);
+
+            if (placed)
             {
-                // Placement successful
-                transform.SetParent(parent);
-                transform.localPosition = Vector3.zero;
                 isOccupied = true;
                 isDroppedOnValidZone = true;
-
-                // Trigger the overlay preview for the played card.
-                CardPreviewManager.Instance.ShowCardPreview(cardHandler.GetCardData());
+                CardPreviewManager.Instance.ShowCardPreview(cardData);
             }
             else
             {
-                // Placement failed (e.g. sacrifice requirements were not met)
                 ResetCardPosition();
             }
         }
@@ -90,12 +86,11 @@ public class CardDragHandler : MonoBehaviour, IBeginDragHandler, IDragHandler, I
         {
             ResetCardPosition();
         }
-        GridManager.instance.ReleaseCard();
     }
 
     public void ResetCardPosition()
     {
         rectTransform.position = originalPosition;
-        transform.SetParent(originalParent);
+        transform.SetParent(originalParent, false);
     }
 }

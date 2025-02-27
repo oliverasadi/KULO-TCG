@@ -6,6 +6,9 @@ public class CardHandler : MonoBehaviour
     public Image cardArtImage;
     public CardSO cardData;
 
+    // New field to indicate if this card belongs to the AI.
+    public bool isAI = false;
+
     // Optionally include a parameter for whether the card should start face-down
     public void SetCard(CardSO card, bool setFaceDown = false)
     {

@@ -7,7 +7,7 @@ public class AIController : MonoBehaviour
 {
     public static AIController instance;
     public List<CardSO> aiDeck = new List<CardSO>(); // AI's deck
-    public List<CardHandler> aiHandCardHandlers = new List<CardHandler>(); // AI hand's Card Handlers (5 cards max)
+    public List<CardHandler> aiHandCardHandlers = new List<CardHandler>(); // AI hand's Card Handlers (max 5 cards)
     private bool aiPlayedCreature = false;
     private bool aiPlayedSpell = false;
     private const int HAND_SIZE = 5;
@@ -18,8 +18,10 @@ public class AIController : MonoBehaviour
 
     void Awake()
     {
-        if (instance == null) instance = this;
-        else Destroy(gameObject);
+        if (instance == null)
+            instance = this;
+        else
+            Destroy(gameObject);
     }
 
     void Start()
@@ -55,26 +57,61 @@ public class AIController : MonoBehaviour
         {
             CardSO drawnCard = aiDeck[0];
             aiDeck.RemoveAt(0);
-            DisplayCardInAIHand(drawnCard, true); // Ensure AI's hand starts face-down
+            // Cards in the AI hand start face-down.
+            DisplayCardInAIHand(drawnCard, true);
         }
     }
 
     private void DisplayCardInAIHand(CardSO card, bool isFaceDown)
     {
-        if (aiHandPanel == null || cardUIPrefab == null) return;
+        if (aiHandPanel == null || cardUIPrefab == null)
+            return;
         GameObject cardUI = Instantiate(cardUIPrefab, aiHandPanel);
         CardHandler cardHandler = cardUI.GetComponent<CardHandler>();
-
         if (cardHandler != null)
         {
-            cardHandler.SetCard(card, isFaceDown); // Correctly assign the AI card data
+            cardHandler.SetCard(card, isFaceDown);
         }
         else
         {
             Debug.LogError("AIController: CardHandler component missing on instantiated AI card!");
         }
-
         aiHandCardHandlers.Add(cardHandler);
+    }
+
+    // Helper method: Checks if the card's sacrifice requirements are met on the grid.
+    private bool IsCardPlayable(CardSO card)
+    {
+        // If the card does not require sacrifice, it's playable.
+        if (!card.requiresSacrifice || card.sacrificeRequirements == null || card.sacrificeRequirements.Count == 0)
+            return true;
+
+        CardSO[,] grid = GridManager.instance.GetGrid();
+        // Loop through each sacrifice requirement.
+        foreach (var req in card.sacrificeRequirements)
+        {
+            int foundCount = 0;
+            for (int i = 0; i < 3; i++)
+            {
+                for (int j = 0; j < 3; j++)
+                {
+                    if (grid[i, j] != null)
+                    {
+                        bool match = req.matchByCreatureType ?
+                            (grid[i, j].creatureType == req.requiredCardName) :
+                            (grid[i, j].cardName == req.requiredCardName);
+                        if (match)
+                            foundCount++;
+                    }
+                }
+            }
+            if (foundCount < req.count)
+            {
+                Debug.Log($"[AIController] {card.cardName} is not playable; sacrifice requirement for {req.requiredCardName} not met (need {req.count}, found {foundCount}).");
+                return false;
+            }
+        }
+        return true;
     }
 
     public void AITakeTurn()
@@ -85,7 +122,7 @@ public class AIController : MonoBehaviour
     private IEnumerator AIPlay()
     {
         yield return new WaitForSeconds(1f); // Simulate AI thinking time
-        CardSO[,] grid = GridManager.instance.GetGrid(); // Get board state
+        CardSO[,] grid = GridManager.instance.GetGrid();
 
         aiPlayedCreature = false;
         aiPlayedSpell = false;
@@ -102,36 +139,23 @@ public class AIController : MonoBehaviour
 
         if (bestMove.x != -1)
         {
-            CardHandler selectedCardHandler = GetBestCardFromHand();
-            CardSO selectedCard = selectedCardHandler.cardData;
-
-            if (selectedCard != null && TurnManager.instance.CanPlayCard(selectedCard))
+            // Find the best playable card from hand.
+            CardHandler selectedCardHandler = GetBestPlayableCardFromHand();
+            if (selectedCardHandler != null)
             {
-                Debug.Log($"AI plays {selectedCard.cardName} at {bestMove.x}, {bestMove.y}");
-
-                // Place the card on the grid.
-                GridManager.instance.PlaceCard(bestMove.x, bestMove.y, selectedCard);
-
-                // Set the card's parent to the corresponding grid cell.
-                Transform gridCellTransform = GameObject.Find("GridCell_" + bestMove.x + "_" + bestMove.y)?.transform;
-                if (gridCellTransform != null)
+                CardSO selectedCard = selectedCardHandler.cardData;
+                if (selectedCard != null && TurnManager.instance.CanPlayCard(selectedCard))
                 {
-                    selectedCardHandler.transform.SetParent(gridCellTransform);
-                    selectedCardHandler.transform.localPosition = Vector3.zero;
+                    Debug.Log($"AI plays {selectedCard.cardName} at {bestMove.x}, {bestMove.y}");
+                    PlaceAICardOnGrid(bestMove.x, bestMove.y, selectedCardHandler);
+                    // Remove the played card from AI's hand and draw a new one.
+                    aiHandCardHandlers.Remove(selectedCardHandler);
+                    DrawCard();
                 }
-
-                // Reveal the card if it was face-down.
-                selectedCardHandler.GetComponentInParent<CardUI>().RevealCard();
-
-                // Register the card play for turn management.
-                TurnManager.instance.RegisterCardPlay(selectedCard);
-
-                // Trigger the overlay preview of the played card.
-                CardPreviewManager.Instance.ShowCardPreview(selectedCard);
-
-                // Remove the card from the AI's hand and draw a new one.
-                aiHandCardHandlers.Remove(selectedCardHandler);
-                DrawCard();
+            }
+            else
+            {
+                Debug.Log("AIController: No playable card found in AI hand!");
             }
         }
 
@@ -139,14 +163,81 @@ public class AIController : MonoBehaviour
         TurnManager.instance.EndTurn(); // End AI's turn
     }
 
+    // Helper method: Finds the best playable card in the AI hand (that satisfies sacrifice requirements).
+    private CardHandler GetBestPlayableCardFromHand()
+    {
+        CardHandler bestCandidate = null;
+        // Try creatures first, then spells.
+        float highestPower = 0;
+        foreach (CardHandler ch in aiHandCardHandlers)
+        {
+            CardSO card = ch.cardData;
+            if (card.category == CardSO.CardCategory.Creature && !aiPlayedCreature && card.power > highestPower && IsCardPlayable(card))
+            {
+                bestCandidate = ch;
+                highestPower = card.power;
+            }
+        }
+        if (bestCandidate != null)
+        {
+            aiPlayedCreature = true;
+            Debug.Log($"AI SELECTED CREATURE: {bestCandidate.cardData.cardName}");
+            return bestCandidate;
+        }
+
+        // If no creature is found, try spells.
+        foreach (CardHandler ch in aiHandCardHandlers)
+        {
+            CardSO card = ch.cardData;
+            if (card.category == CardSO.CardCategory.Spell && !aiPlayedSpell && IsCardPlayable(card))
+            {
+                bestCandidate = ch;
+                break;
+            }
+        }
+        if (bestCandidate != null)
+        {
+            aiPlayedSpell = true;
+            Debug.Log($"AI SELECTED SPELL: {bestCandidate.cardData.cardName}");
+            return bestCandidate;
+        }
+        return null;
+    }
+
+    // Helper method: Finds the grid cell by name and places the card there.
+    private void PlaceAICardOnGrid(int x, int y, CardHandler cardHandler)
+    {
+        string cellName = $"GridCell_{x}_{y}";
+        GameObject cellObj = GameObject.Find(cellName);
+        if (cellObj != null)
+        {
+            Transform cellParent = cellObj.transform;
+            GridManager.instance.PlaceExistingCard(x, y, cardHandler.gameObject, cardHandler.cardData, cellParent);
+            // After placing, reveal the card.
+            CardUI cardUI = cardHandler.GetComponent<CardUI>();
+            if (cardUI != null)
+            {
+                cardUI.RevealCard();
+            }
+            // Also, show card preview.
+            CardPreviewManager.Instance.ShowCardPreview(cardHandler.cardData);
+        }
+        else
+        {
+            Debug.LogError($"[AIController] Could not find a cell named '{cellName}' for the AI to place a card!");
+        }
+    }
+
     private Vector2Int FindWinningMove(CardSO[,] grid)
     {
-        return new Vector2Int(-1, -1); // Placeholder logic
+        // Placeholder logic for a winning move.
+        return new Vector2Int(-1, -1);
     }
 
     private Vector2Int FindBlockingMove(CardSO[,] grid)
     {
-        return new Vector2Int(-1, -1); // Placeholder logic
+        // Placeholder logic for a blocking move.
+        return new Vector2Int(-1, -1);
     }
 
     private Vector2Int FindRandomMove(CardSO[,] grid)
@@ -168,42 +259,4 @@ public class AIController : MonoBehaviour
         }
         return new Vector2Int(-1, -1);
     }
-
-    private CardHandler GetBestCardFromHand()
-    {
-        CardHandler bestCreature = null;
-        CardHandler bestSpell = null;
-        float highestPower = 0;
-
-        foreach (CardHandler cardHandler in aiHandCardHandlers)
-        {
-            CardSO card = cardHandler.cardData;
-            if (card.category == CardSO.CardCategory.Creature && !aiPlayedCreature && card.power > highestPower)
-            {
-                bestCreature = cardHandler;
-                highestPower = card.power;
-            }
-            else if (card.category == CardSO.CardCategory.Spell && !aiPlayedSpell)
-            {
-                bestSpell = cardHandler;
-            }
-        }
-
-        if (bestCreature != null)
-        {
-            aiPlayedCreature = true;
-            Debug.Log($"AI SELECTED CREATURE: {bestCreature.cardData.cardName}");
-            return bestCreature;
-        }
-        if (bestSpell != null)
-        {
-            aiPlayedSpell = true;
-            Debug.Log($"AI SELECTED SPELL: {bestSpell.cardData.cardName}");
-            return bestSpell;
-        }
-
-        Debug.LogWarning("AIController: No playable card found in AI hand!");
-        return null;
-    }
 }
-

@@ -23,5 +23,7 @@ MonoBehaviour:
   baseOrEvo: 0
   extraDetails: 'DOB: Unknown, GPS: Mystical Summit, Weight: 500.8kg, Height: 70.30m.'
   requiresSacrifice: 1
-  sacrificeCardName: Heart Mask Boy Lvl 3
-  sacrificeCount: 1
+  sacrificeRequirements:
+  - requiredCardName: Heart Mask Boy Lvl 2
+    matchByCreatureType: 0
+    count: 1

@@ -22,3 +22,8 @@ MonoBehaviour:
   creatureType: Su Beast
   baseOrEvo: 1
   extraDetails: 'DOB: Ancient Era, GPS: Pagoda Heights, Weight: 15.0kg, Height: 0.60m.'
+  requiresSacrifice: 1
+  sacrificeRequirements:
+  - requiredCardName: Swmming White Tiger Cub
+    matchByCreatureType: 0
+    count: 1

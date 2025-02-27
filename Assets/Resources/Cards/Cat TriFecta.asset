@@ -23,5 +23,7 @@ MonoBehaviour:
   baseOrEvo: 1
   extraDetails: 'DOB: Ancient Era, GPS: Gulu Island, Weight: 10.0kg, Height: 0.50m.'
   requiresSacrifice: 1
-  sacrificeCardName: 
-  sacrificeCount: 3
+  sacrificeRequirements:
+  - requiredCardName: 
+    matchByCreatureType: 1
+    count: 3

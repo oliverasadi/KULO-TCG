@@ -22,5 +22,7 @@ MonoBehaviour:
   baseOrEvo: 1
   extraDetails: 'DOB: 2024 GPS: Gulu Island Height: 5kg Height: 0.23m'
   requiresSacrifice: 1
-  sacrificeCardName: Baby Mole Cat
-  sacrificeCount: 1
+  sacrificeRequirements:
+  - requiredCardName: Baby Mole Cat
+    matchByCreatureType: 0
+    count: 1

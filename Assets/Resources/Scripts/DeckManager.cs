@@ -100,12 +100,17 @@ public class DeckManager : MonoBehaviour
             CardSO drawnCard = currentDeck[0];
             currentDeck.RemoveAt(0);
             SpawnCard(drawnCard);
+
+            // Update player deck count UI.
+            if (DeckZone.instance != null)
+                DeckZone.instance.UpdateDeckCount(currentDeck.Count);
         }
         else
         {
             Debug.LogWarning("⚠️ Deck is empty! No more cards to draw.");
         }
     }
+
 
     // ✅ Spawn a card in the player's hand and assign card data to both CardHandler and CardUI.
     public void SpawnCard(CardSO cardData)

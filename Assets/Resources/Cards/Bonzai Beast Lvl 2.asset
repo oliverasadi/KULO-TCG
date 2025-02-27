@@ -23,5 +23,7 @@ MonoBehaviour:
   baseOrEvo: 0
   extraDetails: 'DOB: 2025, GPS: Su River, Weight: 6.5kg, Height: 0.70m.'
   requiresSacrifice: 1
-  sacrificeCardName: Bonsai Beast Lvl 1
-  sacrificeCount: 1
+  sacrificeRequirements:
+  - requiredCardName: Bonsai Beast Lvl 2
+    matchByCreatureType: 0
+    count: 1

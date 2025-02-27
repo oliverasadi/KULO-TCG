@@ -22,5 +22,7 @@ MonoBehaviour:
   baseOrEvo: 1
   extraDetails: 'DOB: 2016, GPS: Gulu City, Weight: 7.5kg, Height: 0.22m.'
   requiresSacrifice: 1
-  sacrificeCardName: 467 Cat
-  sacrificeCount: 1
+  sacrificeRequirements:
+  - requiredCardName: 467 Cat
+    matchByCreatureType: 0
+    count: 1
