@@ -28,4 +28,4 @@ MonoBehaviour:
   sacrificeRequirements:
   - requiredCardName: Koi Dad, Koi Mum, Koi Child
     matchByCreatureType: 0
-    count: 0
+    count: 1

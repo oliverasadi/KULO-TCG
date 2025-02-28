@@ -24,6 +24,6 @@ MonoBehaviour:
   extraDetails: 'DOB: Ancient Era, GPS: Gulu Island, Weight: 10.0kg, Height: 0.50m.'
   requiresSacrifice: 1
   sacrificeRequirements:
-  - requiredCardName: 
+  - requiredCardName: Cat
     matchByCreatureType: 1
     count: 3
