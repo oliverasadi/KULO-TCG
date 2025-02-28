@@ -32,8 +32,8 @@ public class GridManager : MonoBehaviour
     }
 
     // Simplified logic:
-    // If the cell is empty, enforce turn rule.
-    // If occupied by an opponent's creature, allow replacement only if new card's power is higher.
+    // - If cell is empty, enforce turn rule.
+    // - If occupied by an opponent's creature, allow replacement if new card's power is >= occupant's power.
     public bool CanPlaceCard(int x, int y, CardSO card)
     {
         int currentPlayer = TurnManager.instance.GetCurrentPlayer();
@@ -52,8 +52,8 @@ public class GridManager : MonoBehaviour
                 if ((currentPlayer == 1 && occupantHandler.isAI) ||
                     (currentPlayer == 2 && !occupantHandler.isAI))
                 {
-                    // Replacement move: allow if new card's power is greater.
-                    bool allowed = card.power > grid[x, y].power;
+                    // Replacement move: allow if new card's power is greater or equal.
+                    bool allowed = card.power >= grid[x, y].power;
                     Debug.Log($"[GridManager] Replacement move at ({x},{y}): occupant power = {grid[x, y].power}, new card power = {card.power}. Allowed: {allowed}");
                     return allowed;
                 }
@@ -65,9 +65,10 @@ public class GridManager : MonoBehaviour
 
     /// <summary>
     /// Places a card into the specified cell.
-    /// If the cell is occupied by an opponent's creature and your card's power is higher,
-    /// that creature is replaced (destroyed) by your card.
-    /// For Spell cards, after placement, a removal coroutine sends them to the grave.
+    /// If the cell is occupied by an opponent's creature:
+    ///   - If your card's power is greater, it replaces the opponent's card.
+    ///   - If your card's power is equal, both cards are destroyed.
+    /// Replacement moves count as your creature play for the turn.
     /// </summary>
     public bool PlaceExistingCard(int x, int y, GameObject cardObj, CardSO cardData, Transform cellParent)
     {
@@ -79,7 +80,7 @@ public class GridManager : MonoBehaviour
             foreach (var req in cardData.sacrificeRequirements)
             {
                 int foundCount = 0;
-                // Loop over entire grid to count matching cards.
+                // Loop over the entire grid to count matching cards.
                 for (int i = 0; i < 3; i++)
                 {
                     for (int j = 0; j < 3; j++)
@@ -127,18 +128,46 @@ public class GridManager : MonoBehaviour
         }
         // ---- END OF SACRIFICE CHECK ----
 
-        // If the target cell is occupied, allow replacement only if new card's power is higher.
+        // Replacement move if the target cell is occupied.
         if (grid[x, y] != null)
         {
-            if (grid[x, y].power >= cardData.power)
+            // If occupant's power is greater, disallow the move.
+            if (grid[x, y].power > cardData.power)
             {
-                Debug.Log($"Cannot replace {grid[x, y].cardName} at ({x},{y}) because its power ({grid[x, y].power}) is not lower than {cardData.cardName}'s power ({cardData.power}).");
+                Debug.Log($"Cannot replace {grid[x, y].cardName} at ({x},{y}) because its power ({grid[x, y].power}) is higher than {cardData.cardName}'s power ({cardData.power}).");
                 return false;
             }
-            Debug.Log($"[GridManager] Replacing {grid[x, y].cardName} at ({x},{y}) with {cardData.cardName}.");
-            CardHandler occupantHandler = gridObjects[x, y].GetComponent<CardHandler>();
-            bool occupantIsAI = (occupantHandler != null) ? occupantHandler.isAI : false;
-            RemoveCard(x, y, occupantIsAI);
+            // If the powers are equal, destroy both.
+            else if (grid[x, y].power == cardData.power)
+            {
+                Debug.Log($"Same power at ({x},{y}). Destroying both {grid[x, y].cardName} and {cardData.cardName}.");
+                // Remove the opponent's card.
+                CardHandler occupantHandler = gridObjects[x, y].GetComponent<CardHandler>();
+                bool occupantIsAI = (occupantHandler != null) ? occupantHandler.isAI : false;
+                RemoveCard(x, y, occupantIsAI);
+                // Also send the new card to the grave.
+                if (TurnManager.instance.GetCurrentPlayer() == 1)
+                {
+                    if (GraveZone.instance != null)
+                        GraveZone.instance.AddCardToGrave(cardObj);
+                }
+                else
+                {
+                    if (AIGraveZone.instance != null)
+                        AIGraveZone.instance.AddCardToGrave(cardObj);
+                }
+                // Register the creature play.
+                TurnManager.instance.RegisterCardPlay(cardData);
+                return true;
+            }
+            // Otherwise, if your card's power is higher, replace normally.
+            else
+            {
+                Debug.Log($"[GridManager] Replacing {grid[x, y].cardName} at ({x},{y}) with {cardData.cardName}.");
+                CardHandler occupantHandler = gridObjects[x, y].GetComponent<CardHandler>();
+                bool occupantIsAI = (occupantHandler != null) ? occupantHandler.isAI : false;
+                RemoveCard(x, y, occupantIsAI);
+            }
         }
 
         // Re-parent and center the new card.
@@ -160,12 +189,12 @@ public class GridManager : MonoBehaviour
         grid[x, y] = cardData;
         gridObjects[x, y] = cardObj;
 
-        // Register this play as your creature play.
+        // Register this play as your creature play (counts as your one creature for the turn).
         TurnManager.instance.RegisterCardPlay(cardData);
         if (audioSource != null && placeCardSound != null)
             audioSource.PlayOneShot(placeCardSound);
 
-        Debug.Log($"[GridManager] Placed {cardData.cardName} at ({x},{y}). Category = {cardData.category}");
+        Debug.Log($"[GridManager] Placed {cardData.cardName} at ({x},{y}).");
 
         // Trigger a semi-transparent highlight for non-spell cards.
         if (cardData.category != CardSO.CardCategory.Spell)
@@ -182,6 +211,7 @@ public class GridManager : MonoBehaviour
                 }
             }
         }
+
         // For Spell cards, schedule removal so they go to the grave.
         if (cardData.category == CardSO.CardCategory.Spell)
         {
@@ -274,6 +304,12 @@ public class GridManager : MonoBehaviour
     public CardSO[,] GetGrid()
     {
         return grid;
+    }
+
+    // New public method for accessing gridObjects
+    public GameObject[,] GetGridObjects()
+    {
+        return gridObjects;
     }
 
     public void ResetGrid()
