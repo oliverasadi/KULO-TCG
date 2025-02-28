@@ -1,6 +1,6 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using TMPro; // Use this if you're using TextMeshProUGUI
+using TMPro; // Using TextMeshProUGUI
 
 public class GameManager : MonoBehaviour
 {
@@ -27,6 +27,9 @@ public class GameManager : MonoBehaviour
     void Start()
     {
         UpdateRoundsUI();
+        // Make sure the status text is inactive initially.
+        if (gameStatusText != null)
+            gameStatusText.gameObject.SetActive(false);
         StartGame();
     }
 
@@ -45,7 +48,6 @@ public class GameManager : MonoBehaviour
     // Call this method after each move to check if the current grid meets the win condition.
     public void CheckForWin()
     {
-        // Log the grid state for debugging (optional)
         Debug.Log("[GameManager] Checking win condition...");
         if (WinChecker.instance.CheckWinCondition(GridManager.instance.GetGrid()))
         {
@@ -59,19 +61,23 @@ public class GameManager : MonoBehaviour
 
             UpdateRoundsUI();
 
-            // If a player has won enough rounds, the game is over.
             if (roundsWonP1 >= totalRoundsToWin || roundsWonP2 >= totalRoundsToWin)
             {
                 Debug.Log("[GameManager] Player " + winningPlayer + " wins the game!");
                 if (gameStatusText != null)
+                {
+                    gameStatusText.gameObject.SetActive(true);
                     gameStatusText.text = "Player " + winningPlayer + " wins the game!";
-                // Restart game after a delay
-                Invoke("RestartGame", 3f);
+                }
+                Invoke("RestartGame", 3f); // Restart full game after 3 seconds
             }
             else
             {
                 if (gameStatusText != null)
+                {
+                    gameStatusText.gameObject.SetActive(true);
                     gameStatusText.text = "Player " + winningPlayer + " wins the round!";
+                }
                 // Do not reset the grid; just reset the turn.
                 Invoke("StartNewRound", 2f);
             }
@@ -82,12 +88,15 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    // Updated StartNewRound: Only resets the turn (grid remains intact).
+    // Updated StartNewRound: Only resets the turn (grid remains intact) and deactivates the status text.
     void StartNewRound()
     {
         TurnManager.instance.ResetTurn();
         if (gameStatusText != null)
+        {
             gameStatusText.text = "";
+            gameStatusText.gameObject.SetActive(false);
+        }
     }
 
     void RestartGame()
