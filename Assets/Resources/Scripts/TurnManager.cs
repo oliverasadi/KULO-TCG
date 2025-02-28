@@ -10,6 +10,12 @@ public class TurnManager : MonoBehaviour
     private bool spellPlayed = false;
     private DeckManager deckManager; // Reference to DeckManager
 
+    // Expose creaturePlayed via a public property.
+    public bool CreaturePlayed
+    {
+        get { return creaturePlayed; }
+    }
+
     void Awake()
     {
         if (instance == null) instance = this;
@@ -29,7 +35,7 @@ public class TurnManager : MonoBehaviour
         creaturePlayed = false;
         spellPlayed = false;
 
-        if (currentPlayer == 1) // ✅ Player's turn, draw a card
+        if (currentPlayer == 1) // Player's turn, draw a card
         {
             if (deckManager != null)
             {
@@ -40,7 +46,7 @@ public class TurnManager : MonoBehaviour
                 Debug.LogError("❌ DeckManager not found! Make sure it's in the scene.");
             }
         }
-        else if (currentPlayer == 2) // ✅ AI's turn
+        else if (currentPlayer == 2) // AI's turn
         {
             AIController.instance.AITakeTurn();
         }
@@ -73,7 +79,7 @@ public class TurnManager : MonoBehaviour
 
     public void PlayerEndTurn()
     {
-        EndTurn(); // ✅ Player will now only draw at the start of their turn
+        EndTurn(); // Player will now only draw at the start of their turn
     }
 
     public void EndTurn()
@@ -85,7 +91,7 @@ public class TurnManager : MonoBehaviour
 
     public void ResetTurn()
     {
-        currentPlayer = 1; // ✅ Reset turn to Player 1 at the start of a new round
+        currentPlayer = 1; // Reset turn to Player 1 at the start of a new round
         Debug.Log("🔄 Turn Reset: Player 1 starts the new round!");
         StartTurn();
     }

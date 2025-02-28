@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cardName: Baby Mole Cat
   category: 0
-  power: 1200
+  power: 1400
   effectDescription: '"If this card remains on the field after one of your opponent''s
     turns'
   cardImage: {fileID: -1018232336473460897, guid: ee78f6dfaae033a4bb8354aea6e6ab92, type: 3}
@@ -22,3 +22,5 @@ MonoBehaviour:
   creatureType: Cat
   baseOrEvo: 0
   extraDetails: 'DOB: 2024 GPS: Gulu Island Height: 2kg Height: 0.23m'
+  requiresSacrifice: 0
+  sacrificeRequirements: []
