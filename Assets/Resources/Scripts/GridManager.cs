@@ -175,6 +175,26 @@ public class GridManager : MonoBehaviour
 
         Debug.Log($"✅ Placed {cardData.cardName} at {x},{y}. Category = {cardData.category}");
 
+        // Only trigger the highlight effect if the card is not a Spell.
+        if (cardData.category != CardSO.CardCategory.Spell)
+        {
+            // Determine the flash color: green for human, red for AI.
+            Color baseColor = (TurnManager.instance.GetCurrentPlayer() == 1) ? Color.green : Color.red;
+            // Set transparency to 20% by setting alpha to 0.2f.
+            Color flashColor = new Color(baseColor.r, baseColor.g, baseColor.b, 0.2f);
+
+            // Trigger the grid cell highlight effect.
+            GameObject cellObj = GameObject.Find($"GridCell_{x}_{y}");
+            if (cellObj != null)
+            {
+                GridCellHighlighter highlighter = cellObj.GetComponent<GridCellHighlighter>();
+                if (highlighter != null)
+                {
+                    highlighter.FlashHighlight(flashColor);
+                }
+            }
+        }
+
         // If it's a Spell, schedule removal.
         if (cardData.category == CardSO.CardCategory.Spell)
         {
