@@ -11,7 +11,7 @@ public class GridCellHighlighter : MonoBehaviour
     // Duration for the highlight effect.
     public float highlightDuration = 0.5f;
 
-    // Cache default values if needed.
+    // Cached default values.
     private Color defaultOutlineColor;
     private Color defaultHighlightColor;
 
@@ -32,7 +32,7 @@ public class GridCellHighlighter : MonoBehaviour
         }
     }
 
-    // New method that accepts a color parameter.
+    // Flash the highlight with the given color.
     public void FlashHighlight(Color flashColor)
     {
         StartCoroutine(HighlightRoutine(flashColor));
@@ -61,6 +61,12 @@ public class GridCellHighlighter : MonoBehaviour
         yield return new WaitForSeconds(highlightDuration);
 
         // Revert changes.
+        ResetHighlight();
+    }
+
+    // Immediately resets the cell's visuals to their default state.
+    public void ResetHighlight()
+    {
         if (outlineComponent != null)
         {
             outlineComponent.enabled = false;

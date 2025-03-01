@@ -66,8 +66,8 @@ public class GridManager : MonoBehaviour
     /// <summary>
     /// Places a card into the specified cell.
     /// If the cell is occupied by an opponent's creature:
-    ///   - If your card's power is greater, it replaces the opponent's card.
-    ///   - If your card's power is equal, both cards are destroyed.
+    ///   - If your card's power is greater, it replaces the occupant.
+    ///   - If your card's power is equal, both cards are destroyed and the cell visuals are reset.
     /// Replacement moves count as your creature play for the turn.
     /// </summary>
     public bool PlaceExistingCard(int x, int y, GameObject cardObj, CardSO cardData, Transform cellParent)
@@ -131,13 +131,11 @@ public class GridManager : MonoBehaviour
         // Replacement move if the target cell is occupied.
         if (grid[x, y] != null)
         {
-            // If occupant's power is greater, disallow the move.
             if (grid[x, y].power > cardData.power)
             {
                 Debug.Log($"Cannot replace {grid[x, y].cardName} at ({x},{y}) because its power ({grid[x, y].power}) is higher than {cardData.cardName}'s power ({cardData.power}).");
                 return false;
             }
-            // If the powers are equal, destroy both.
             else if (grid[x, y].power == cardData.power)
             {
                 Debug.Log($"Same power at ({x},{y}). Destroying both {grid[x, y].cardName} and {cardData.cardName}.");
@@ -146,7 +144,13 @@ public class GridManager : MonoBehaviour
                 bool occupantIsAI = (occupantHandler != null) ? occupantHandler.isAI : false;
                 RemoveCard(x, y, occupantIsAI);
                 // Also send the new card to the grave.
-                if (TurnManager.instance.GetCurrentPlayer() == 1)
+                bool newCardIsAI = (TurnManager.instance.GetCurrentPlayer() == 2);
+                CardHandler newCardHandler = cardObj.GetComponent<CardHandler>();
+                if (newCardHandler != null)
+                {
+                    newCardHandler.isAI = newCardIsAI;
+                }
+                if (!newCardIsAI)
                 {
                     if (GraveZone.instance != null)
                         GraveZone.instance.AddCardToGrave(cardObj);
@@ -158,9 +162,12 @@ public class GridManager : MonoBehaviour
                 }
                 // Register the creature play.
                 TurnManager.instance.RegisterCardPlay(cardData);
+
+                // Reset the cell's visual (since both cards are removed).
+                ResetCellVisual(x, y);
+
                 return true;
             }
-            // Otherwise, if your card's power is higher, replace normally.
             else
             {
                 Debug.Log($"[GridManager] Replacing {grid[x, y].cardName} at ({x},{y}) with {cardData.cardName}.");
@@ -189,7 +196,16 @@ public class GridManager : MonoBehaviour
         grid[x, y] = cardData;
         gridObjects[x, y] = cardObj;
 
-        // Register this play as your creature play (counts as your one creature for the turn).
+        // Force the new card's ownership based on current player.
+        bool newOwnerIsAI = (TurnManager.instance.GetCurrentPlayer() == 2);
+        Debug.Log($"[GridManager] Forcing ownership for {cardData.cardName}: isAI = {newOwnerIsAI}");
+        CardHandler handler = cardObj.GetComponent<CardHandler>();
+        if (handler != null)
+        {
+            handler.isAI = newOwnerIsAI;
+        }
+
+        // Register the creature play (counts as your one creature for the turn).
         TurnManager.instance.RegisterCardPlay(cardData);
         if (audioSource != null && placeCardSound != null)
             audioSource.PlayOneShot(placeCardSound);
@@ -199,7 +215,7 @@ public class GridManager : MonoBehaviour
         // Trigger a semi-transparent highlight for non-spell cards.
         if (cardData.category != CardSO.CardCategory.Spell)
         {
-            Color baseColor = (TurnManager.instance.GetCurrentPlayer() == 1) ? Color.green : Color.red;
+            Color baseColor = newOwnerIsAI ? Color.red : Color.green;
             Color flashColor = new Color(baseColor.r, baseColor.g, baseColor.b, 0.2f);
             GameObject cellObj = GameObject.Find($"GridCell_{x}_{y}");
             if (cellObj != null)
@@ -306,7 +322,7 @@ public class GridManager : MonoBehaviour
         return grid;
     }
 
-    // New public method for accessing gridObjects
+    // New public method for accessing gridObjects.
     public GameObject[,] GetGridObjects()
     {
         return gridObjects;
@@ -333,5 +349,20 @@ public class GridManager : MonoBehaviour
             }
         }
         Debug.Log("[GridManager] Grid Reset!");
+    }
+
+    // Helper method: Resets the visual of a cell at (x, y) by calling ResetHighlight on its GridCellHighlighter.
+    private void ResetCellVisual(int x, int y)
+    {
+        GameObject cellObj = GameObject.Find($"GridCell_{x}_{y}");
+        if (cellObj != null)
+        {
+            GridCellHighlighter highlighter = cellObj.GetComponent<GridCellHighlighter>();
+            if (highlighter != null)
+            {
+                highlighter.ResetHighlight();
+                Debug.Log($"[GridManager] Reset visual for cell ({x},{y}).");
+            }
+        }
     }
 }

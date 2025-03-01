@@ -554,8 +554,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -380, y: 18}
-  m_SizeDelta: {x: -1800.2529, y: -905.5692}
+  m_AnchoredPosition: {x: -380, y: 25.62519}
+  m_SizeDelta: {x: -1800.2529, y: -1171.1265}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &281941122
 MonoBehaviour:
@@ -681,6 +681,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   totalRoundsToWin: 3
+  rowUsed: 000000
+  colUsed: 000000
+  diagUsed: 0000
   roundsWonTextP1: {fileID: 1929268686}
   roundsWonTextP2: {fileID: 890056302}
   gameStatusText: {fileID: 986409907}
@@ -1101,8 +1104,8 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 8300000, guid: 94a0bb3f84b1f2946b089101feb12f8b, type: 3}
-  m_Resource: {fileID: 8300000, guid: 94a0bb3f84b1f2946b089101feb12f8b, type: 3}
+  m_audioClip: {fileID: 8300000, guid: 4daf56a2e0e1d964a9eb7a7adf695a4b, type: 3}
+  m_Resource: {fileID: 8300000, guid: 4daf56a2e0e1d964a9eb7a7adf695a4b, type: 3}
   m_PlayOnAwake: 1
   m_Volume: 1
   m_Pitch: 1
@@ -2225,7 +2228,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   audioSource: {fileID: 669551654}
-  placeCardSound: {fileID: 8300000, guid: c1f73ac2b472caf40a7b7a0de9d0cfb6, type: 3}
+  placeCardSound: {fileID: 8300000, guid: 1b00d8dc7d3df8d439a6305d3a63f9b2, type: 3}
   removeCardSound: {fileID: 8300000, guid: 583d5dec202e38846b578c3fb40521da, type: 3}
   isHoldingCard: 0
 --- !u!4 &669551653
@@ -2253,8 +2256,8 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 8300000, guid: c1f73ac2b472caf40a7b7a0de9d0cfb6, type: 3}
-  m_Resource: {fileID: 8300000, guid: c1f73ac2b472caf40a7b7a0de9d0cfb6, type: 3}
+  m_audioClip: {fileID: 8300000, guid: 1b00d8dc7d3df8d439a6305d3a63f9b2, type: 3}
+  m_Resource: {fileID: 8300000, guid: 1b00d8dc7d3df8d439a6305d3a63f9b2, type: 3}
   m_PlayOnAwake: 0
   m_Volume: 1
   m_Pitch: 1
@@ -2611,7 +2614,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -592, y: 256}
+  m_AnchoredPosition: {x: -516, y: 256}
   m_SizeDelta: {x: 200, y: 96.5787}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &890056302
@@ -2701,7 +2704,7 @@ MonoBehaviour:
   m_VertexBufferAutoSizeReduction: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: 0, y: 0, z: -103.34627, w: 0}
+  m_margin: {x: 0, y: 0, z: 10.447685, w: 0}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_hasFontAssetChanged: 0
@@ -3519,8 +3522,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -380, y: 206.54419}
-  m_SizeDelta: {x: -1800.2529, y: -905.5692}
+  m_AnchoredPosition: {x: -380, y: 217.04535}
+  m_SizeDelta: {x: -1800.2529, y: -1167.0527}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1220570550
 MonoBehaviour:
@@ -4068,16 +4071,16 @@ RectTransform:
   m_LocalScale: {x: 0, y: 0, z: 0}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 1150614027}
-  - {fileID: 1343560586}
-  - {fileID: 464331697}
-  - {fileID: 1748507546}
   - {fileID: 1603854723}
   - {fileID: 1760835941}
   - {fileID: 1220570549}
   - {fileID: 281941121}
   - {fileID: 1929268685}
   - {fileID: 890056301}
+  - {fileID: 1150614027}
+  - {fileID: 1343560586}
+  - {fileID: 464331697}
+  - {fileID: 1748507546}
   - {fileID: 986409906}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -4790,8 +4793,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 377.35574, y: -209.34421}
-  m_SizeDelta: {x: -1800.2529, y: -905.5692}
+  m_AnchoredPosition: {x: 377.3557, y: -212.49301}
+  m_SizeDelta: {x: -1800.2529, y: -1177.9482}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1603854724
 MonoBehaviour:
@@ -5453,8 +5456,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 377.3557, y: -20.800049}
-  m_SizeDelta: {x: -1800.2529, y: -905.5692}
+  m_AnchoredPosition: {x: 377.3557, y: -28}
+  m_SizeDelta: {x: -1800.2529, y: -1176.044}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1760835942
 MonoBehaviour:
@@ -6226,7 +6229,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 574, y: -246}
+  m_AnchoredPosition: {x: 574, y: -222}
   m_SizeDelta: {x: 200, y: 96.5787}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1929268686
@@ -6316,7 +6319,7 @@ MonoBehaviour:
   m_VertexBufferAutoSizeReduction: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: 0, y: 0, z: -103.34627, w: 0}
+  m_margin: {x: 0, y: 0, z: 22.553307, w: 0}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_hasFontAssetChanged: 0
