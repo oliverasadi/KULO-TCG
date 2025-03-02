@@ -94,6 +94,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cardArtImage: {fileID: 2361588858364672429}
   cardData: {fileID: 0}
+  isAI: 0
 --- !u!114 &9139353195035063985
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -134,8 +135,11 @@ MonoBehaviour:
   cardArtImage: {fileID: 2361588858364672429}
   cardNameText: {fileID: 0}
   cardBackSprite: {fileID: -8622259438476403829, guid: 1b4f734b49ecbdf42a2019f3bfb1abe5, type: 3}
+  cardData: {fileID: 0}
   isInDeck: 0
   cardInfoPanel: {fileID: 0}
+  summonMenuPrefab: {fileID: 741744460718482826, guid: 2d61f35e4987c864fb1a44c5e1901305, type: 3}
+  summonMenuOffset: {x: 0, y: 191.7}
   isSelected: 0
 --- !u!114 &3076055314872575902
 MonoBehaviour:

@@ -45,31 +45,24 @@ public class GridManager : MonoBehaviour
         }
         else
         {
-            // Check if the occupant belongs to the opponent.
+            // Check occupant ownership.
             CardHandler occupantHandler = gridObjects[x, y].GetComponent<CardHandler>();
             if (occupantHandler != null)
             {
                 if ((currentPlayer == 1 && occupantHandler.isAI) ||
                     (currentPlayer == 2 && !occupantHandler.isAI))
                 {
-                    // Replacement move: allow if new card's power is greater or equal.
+                    // Replacement move: allow if new card's power is >= occupant's power.
                     bool allowed = card.power >= grid[x, y].power;
-                    Debug.Log($"[GridManager] Replacement move at ({x},{y}): occupant power = {grid[x, y].power}, new card power = {card.power}. Allowed: {allowed}");
+                    Debug.Log($"[GridManager] Replacement at ({x},{y}): occupant power = {grid[x, y].power}, new card power = {card.power}, allowed = {allowed}");
                     return allowed;
                 }
             }
-            // If occupant is on the same side, disallow.
+            // Occupant is same side, disallow.
             return false;
         }
     }
 
-    /// <summary>
-    /// Places a card into the specified cell.
-    /// If the cell is occupied by an opponent's creature:
-    ///   - If your card's power is greater, it replaces the occupant.
-    ///   - If your card's power is equal, both cards are destroyed and the cell visuals are reset.
-    /// Replacement moves count as your creature play for the turn.
-    /// </summary>
     public bool PlaceExistingCard(int x, int y, GameObject cardObj, CardSO cardData, Transform cellParent)
     {
         Debug.Log($"[GridManager] Attempting to place {cardData.cardName} at ({x},{y}) under {cellParent.name}. Category: {cardData.category}");
@@ -80,7 +73,6 @@ public class GridManager : MonoBehaviour
             foreach (var req in cardData.sacrificeRequirements)
             {
                 int foundCount = 0;
-                // Loop over the entire grid to count matching cards.
                 for (int i = 0; i < 3; i++)
                 {
                     for (int j = 0; j < 3; j++)
@@ -90,19 +82,18 @@ public class GridManager : MonoBehaviour
                             bool match = req.matchByCreatureType
                                 ? (grid[i, j].creatureType == req.requiredCardName)
                                 : (grid[i, j].cardName == req.requiredCardName);
-                            if (match)
-                                foundCount++;
+                            if (match) foundCount++;
                         }
                     }
                 }
                 Debug.Log($"[Sacrifice Check] For {req.requiredCardName}: found {foundCount}, need {req.count}.");
                 if (foundCount < req.count)
                 {
-                    Debug.Log($"Cannot place {cardData.cardName}: Sacrifice requirement not met for {req.requiredCardName} (need {req.count}, found {foundCount}).");
+                    Debug.Log($"Cannot place {cardData.cardName}: requirement not met for {req.requiredCardName} (need {req.count}, found {foundCount}).");
                     return false;
                 }
             }
-            // Perform sacrifices.
+            // Perform the sacrifices.
             foreach (var req in cardData.sacrificeRequirements)
             {
                 int sacrificed = 0;
@@ -126,53 +117,46 @@ public class GridManager : MonoBehaviour
                 }
             }
         }
-        // ---- END OF SACRIFICE CHECK ----
+        // ---- END SACRIFICE CHECK ----
 
-        // Replacement move if the target cell is occupied.
+        // If occupant is present, handle replacement logic.
         if (grid[x, y] != null)
         {
             if (grid[x, y].power > cardData.power)
             {
-                Debug.Log($"Cannot replace {grid[x, y].cardName} at ({x},{y}) because its power ({grid[x, y].power}) is higher than {cardData.cardName}'s power ({cardData.power}).");
+                Debug.Log($"Cannot replace {grid[x, y].cardName} at ({x},{y}) - occupant power {grid[x, y].power} > {cardData.power}.");
                 return false;
             }
             else if (grid[x, y].power == cardData.power)
             {
-                Debug.Log($"Same power at ({x},{y}). Destroying both {grid[x, y].cardName} and {cardData.cardName}.");
-                // Remove the opponent's card.
+                Debug.Log($"Equal power at ({x},{y}). Destroying both occupant and new card.");
                 CardHandler occupantHandler = gridObjects[x, y].GetComponent<CardHandler>();
-                bool occupantIsAI = (occupantHandler != null) ? occupantHandler.isAI : false;
+                bool occupantIsAI = occupantHandler != null && occupantHandler.isAI;
                 RemoveCard(x, y, occupantIsAI);
-                // Also send the new card to the grave.
+
                 bool newCardIsAI = (TurnManager.instance.GetCurrentPlayer() == 2);
                 CardHandler newCardHandler = cardObj.GetComponent<CardHandler>();
-                if (newCardHandler != null)
+                if (newCardHandler != null) newCardHandler.isAI = newCardIsAI;
+
+                // Move the new card to grave as well, since both are destroyed.
+                if (newCardIsAI)
                 {
-                    newCardHandler.isAI = newCardIsAI;
-                }
-                if (!newCardIsAI)
-                {
-                    if (GraveZone.instance != null)
-                        GraveZone.instance.AddCardToGrave(cardObj);
+                    if (AIGraveZone.instance != null) AIGraveZone.instance.AddCardToGrave(cardObj);
                 }
                 else
                 {
-                    if (AIGraveZone.instance != null)
-                        AIGraveZone.instance.AddCardToGrave(cardObj);
+                    if (GraveZone.instance != null) GraveZone.instance.AddCardToGrave(cardObj);
                 }
-                // Register the creature play.
+
                 TurnManager.instance.RegisterCardPlay(cardData);
-
-                // Reset the cell's visual (since both cards are removed).
                 ResetCellVisual(x, y);
-
                 return true;
             }
             else
             {
-                Debug.Log($"[GridManager] Replacing {grid[x, y].cardName} at ({x},{y}) with {cardData.cardName}.");
+                Debug.Log($"[GridManager] Replacing occupant {grid[x, y].cardName} at ({x},{y}) with {cardData.cardName} (higher power).");
                 CardHandler occupantHandler = gridObjects[x, y].GetComponent<CardHandler>();
-                bool occupantIsAI = (occupantHandler != null) ? occupantHandler.isAI : false;
+                bool occupantIsAI = occupantHandler != null && occupantHandler.isAI;
                 RemoveCard(x, y, occupantIsAI);
             }
         }
@@ -196,26 +180,22 @@ public class GridManager : MonoBehaviour
         grid[x, y] = cardData;
         gridObjects[x, y] = cardObj;
 
-        // Force the new card's ownership based on current player.
-        bool newOwnerIsAI = (TurnManager.instance.GetCurrentPlayer() == 2);
-        Debug.Log($"[GridManager] Forcing ownership for {cardData.cardName}: isAI = {newOwnerIsAI}");
+        // Force ownership for new card.
+        bool newOwnerIsAI2 = (TurnManager.instance.GetCurrentPlayer() == 2);
+        Debug.Log($"[GridManager] Forcing ownership for {cardData.cardName}: isAI = {newOwnerIsAI2}");
         CardHandler handler = cardObj.GetComponent<CardHandler>();
-        if (handler != null)
-        {
-            handler.isAI = newOwnerIsAI;
-        }
+        if (handler != null) handler.isAI = newOwnerIsAI2;
 
-        // Register the creature play (counts as your one creature for the turn).
+        // Mark the card as played.
         TurnManager.instance.RegisterCardPlay(cardData);
-        if (audioSource != null && placeCardSound != null)
-            audioSource.PlayOneShot(placeCardSound);
+        if (audioSource != null && placeCardSound != null) audioSource.PlayOneShot(placeCardSound);
 
         Debug.Log($"[GridManager] Placed {cardData.cardName} at ({x},{y}).");
 
-        // Trigger a semi-transparent highlight for non-spell cards.
+        // Flash highlight if it's not a Spell.
         if (cardData.category != CardSO.CardCategory.Spell)
         {
-            Color baseColor = newOwnerIsAI ? Color.red : Color.green;
+            Color baseColor = newOwnerIsAI2 ? Color.red : Color.green;
             Color flashColor = new Color(baseColor.r, baseColor.g, baseColor.b, 0.2f);
             GameObject cellObj = GameObject.Find($"GridCell_{x}_{y}");
             if (cellObj != null)
@@ -228,11 +208,11 @@ public class GridManager : MonoBehaviour
             }
         }
 
-        // For Spell cards, schedule removal so they go to the grave.
+        // If it's a Spell, schedule removal.
         if (cardData.category == CardSO.CardCategory.Spell)
         {
             bool isAI = (TurnManager.instance.GetCurrentPlayer() == 2);
-            Debug.Log($"[GridManager] Starting removal coroutine for Spell: {cardData.cardName}");
+            Debug.Log($"[GridManager] Removing spell {cardData.cardName} soon.");
             StartCoroutine(RemoveSpellAfterDelay(x, y, cardData, isAI));
         }
         else
@@ -254,7 +234,7 @@ public class GridManager : MonoBehaviour
         }
         else
         {
-            Debug.Log($"[GridManager] {card.cardName} is no longer at ({x},{y}) at removal time.");
+            Debug.Log($"[GridManager] {card.cardName} is no longer at ({x},{y}) by removal time.");
         }
     }
 
@@ -282,7 +262,7 @@ public class GridManager : MonoBehaviour
             }
             else
             {
-                Debug.LogWarning($"[GridManager] Could not find grid cell 'GridCell_{x}_{y}' in the hierarchy.");
+                Debug.LogWarning($"[GridManager] Could not find 'GridCell_{x}_{y}' in the hierarchy.");
             }
 
             if (isAI)
@@ -322,7 +302,6 @@ public class GridManager : MonoBehaviour
         return grid;
     }
 
-    // New public method for accessing gridObjects.
     public GameObject[,] GetGridObjects()
     {
         return gridObjects;
@@ -351,7 +330,6 @@ public class GridManager : MonoBehaviour
         Debug.Log("[GridManager] Grid Reset!");
     }
 
-    // Helper method: Resets the visual of a cell at (x, y) by calling ResetHighlight on its GridCellHighlighter.
     private void ResetCellVisual(int x, int y)
     {
         GameObject cellObj = GameObject.Find($"GridCell_{x}_{y}");
@@ -364,5 +342,71 @@ public class GridManager : MonoBehaviour
                 Debug.Log($"[GridManager] Reset visual for cell ({x},{y}).");
             }
         }
+    }
+
+    // ------------------------------------------------
+    // NEW METHODS for Sacrifice/Evolution placeholders
+    // ------------------------------------------------
+
+    /// <summary>
+    /// Highlights valid sacrifice cards on the field.
+    /// E.g., loop over the player's creatures, check conditions, and visually mark them.
+    /// </summary>
+    public void HighlightEligibleSacrifices()
+    {
+        Debug.Log("[GridManager] HighlightEligibleSacrifices called. Implement logic to highlight valid sacrifice cards.");
+        // Example:
+        // for (int x=0; x<3; x++){
+        //   for (int y=0; y<3; y++){
+        //     if (grid[x,y] != null && gridObjects[x,y] != null){
+        //       // If it's the player's creature, highlight it
+        //       // Possibly check card type or name
+        //       // Add an outline or color highlight
+        //     }
+        //   }
+        // }
+    }
+
+    /// <summary>
+    /// Removes a sacrifice card from the board (like a partial remove).
+    /// Could be used by SacrificeManager.
+    /// </summary>
+    public void RemoveSacrificeCard(GameObject card)
+    {
+        Debug.Log("[GridManager] RemoveSacrificeCard called with " + card.name);
+        // 1) Find the card's position in the grid
+        // 2) Remove it (grid[x,y] = null, gridObjects[x,y] = null)
+        // 3) Move it to the grave or destroy it
+        // For example:
+        // for(int x=0; x<3; x++){
+        //   for(int y=0; y<3; y++){
+        //     if(gridObjects[x,y] == card){
+        //       RemoveCard(x,y,false); // if it's the player's card
+        //       return;
+        //     }
+        //   }
+        // }
+    }
+
+    /// <summary>
+    /// Clears any highlights placed for sacrifice selection.
+    /// E.g., remove outlines from previously highlighted cards.
+    /// </summary>
+    public void ClearSacrificeHighlights()
+    {
+        Debug.Log("[GridManager] ClearSacrificeHighlights called. Implement logic to un-highlight any sacrifice candidates.");
+        // Similar approach: loop over board, if a card was highlighted, revert it
+    }
+
+    /// <summary>
+    /// Places the evolved card at a specific location (like the position of a sacrificed card).
+    /// </summary>
+    public void PlaceEvolutionCard(CardUI evoCard, Vector2 targetPos)
+    {
+        Debug.Log("[GridManager] PlaceEvolutionCard called for " + evoCard.cardData.cardName + " at " + targetPos);
+        // 1) Convert targetPos to a grid cell or find the nearest cell
+        // 2) Possibly call PlaceExistingCard(...) with that cell
+        // This is up to your design. If you want to exactly replace a single sacrificed card's position,
+        // pass the x,y of that card to PlaceExistingCard.
     }
 }

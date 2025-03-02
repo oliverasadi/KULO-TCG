@@ -7,24 +7,27 @@ using UnityEngine.EventSystems;
 public class CardUI : MonoBehaviour, IPointerClickHandler
 {
     [Header("UI Elements")]
-    public Image cardArtImage; // Displays the card image
-    public TextMeshProUGUI cardNameText; // Displays the card name
+    public Image cardArtImage;                // Displays the card image
+    public TextMeshProUGUI cardNameText;        // Displays the card name
 
-    public Sprite cardBackSprite; // Holds the back of the card sprite (assign in Prefab Inspector)
-    private CardSO cardData; // Stores the card's ScriptableObject data
+    public Sprite cardBackSprite;             // Card back sprite (assign in Prefab Inspector)
+    public CardSO cardData;                  // The card's ScriptableObject data
     private bool isFaceDown = false;
-    public bool isInDeck = false; // Track if card is in deck
+    public bool isInDeck = false;             // Track if the card is in deck
 
     [Header("Card Info Popup")]
-    // Reference to your pop-up panel's controller
-    public CardInfoPanel cardInfoPanel;
-    // Flag to indicate if this card is selected (set via your hover/selection logic)
-    public bool isSelected = false;
+    public CardInfoPanel cardInfoPanel;       // Reference to the pop-up panel's controller
+
+    // --- New Fields for Summoning ---
+    public GameObject summonMenuPrefab;       // Assign a prefab for the summon menu (under a Canvas)
+
+    // Optionally store additional info for evolution summoning (like target cell indices)
+    // public int targetCellX, targetCellY;
 
     void Start()
     {
         LoadCardBack();
-        // Fallback: if no CardInfoPanel assigned in the Inspector, try to find one in the scene.
+        // Fallback: if no CardInfoPanel is assigned in the Inspector, try to find one in the scene.
         if (cardInfoPanel == null)
         {
             cardInfoPanel = FindObjectOfType<CardInfoPanel>();
@@ -47,7 +50,7 @@ public class CardUI : MonoBehaviour, IPointerClickHandler
         }
     }
 
-    // This method is called (typically by CardHandler) to assign and update the card data.
+    // This method is called to assign and update the card data.
     public void SetCardData(CardSO card, bool setFaceDown = false)
     {
         if (card == null)
@@ -142,37 +145,99 @@ public class CardUI : MonoBehaviour, IPointerClickHandler
         isFaceDown = false;
     }
 
-    // Detect right-clicks on the card to show its info.
+    // IPointerClickHandler implementation.
+    // Right-click shows card info, left-click opens the summon menu.
     public void OnPointerClick(PointerEventData eventData)
     {
+        if (cardData == null)
+        {
+            Debug.LogError($"CardUI: cardData is null on {gameObject.name}. Ensure SetCardData is called.");
+            return;
+        }
+
         if (eventData.button == PointerEventData.InputButton.Right)
         {
-            if (cardData == null)
-            {
-                Debug.LogError($"CardUI: cardData is null on {gameObject.name}. Ensure SetCardData is called.");
-                return;
-            }
             if (cardInfoPanel != null)
-            {
                 cardInfoPanel.ShowCardInfo(cardData);
-            }
+        }
+        else if (eventData.button == PointerEventData.InputButton.Left)
+        {
+            // Open Summon Menu for the card in hand.
+            ShowSummonMenu();
+        }
+    }
+    // Add this field near the top of your CardUI class:
+    public Vector2 summonMenuOffset = new Vector2(0, 20f);
+
+    private void ShowSummonMenu()
+    {
+        if (summonMenuPrefab == null)
+        {
+            Debug.LogError("Summon Menu Prefab is not assigned in CardUI.");
+            return;
+        }
+
+        // Find the Canvas in the scene.
+        Canvas canvas = FindObjectOfType<Canvas>();
+        if (canvas == null)
+        {
+            Debug.LogError("No Canvas found in the scene!");
+            return;
+        }
+
+        // Instantiate the SummonMenu as a child of the Canvas.
+        GameObject menuInstance = Instantiate(summonMenuPrefab, canvas.transform);
+
+        // Get the RectTransform of the card and the menu.
+        RectTransform cardRect = GetComponent<RectTransform>();
+        RectTransform menuRect = menuInstance.GetComponent<RectTransform>();
+        if (menuRect != null && cardRect != null)
+        {
+            // Convert the card's world position to screen point.
+            Vector2 cardScreenPos = RectTransformUtility.WorldToScreenPoint(null, cardRect.position);
+
+            // Convert screen point to local point in the Canvas.
+            Vector2 localPoint;
+            RectTransformUtility.ScreenPointToLocalPointInRectangle(
+                canvas.transform as RectTransform,
+                cardScreenPos,
+                canvas.renderMode == RenderMode.ScreenSpaceOverlay ? null : canvas.worldCamera,
+                out localPoint);
+
+            // Add the inspector-adjustable offset.
+            localPoint += summonMenuOffset;
+
+            menuRect.anchoredPosition = localPoint;
+        }
+        else
+        {
+            Debug.LogWarning("Missing RectTransform on card or menu.");
+        }
+
+        // Initialize the SummonMenu with this CardUI reference.
+        SummonMenu summonMenu = menuInstance.GetComponent<SummonMenu>();
+        if (summonMenu != null)
+        {
+            summonMenu.Initialize(this);
+        }
+        else
+        {
+            Debug.LogError("SummonMenu component is missing on the instantiated menu prefab.");
         }
     }
 
+
+
+    // Update method: if selected and space is pressed, show info (kept from original)
     void Update()
     {
-        // If this card is selected and the spacebar is pressed, show its info.
         if (isSelected && Input.GetKeyDown(KeyCode.Space))
         {
-            if (cardData == null)
-            {
-                Debug.LogError($"CardUI: cardData is null on {gameObject.name}. Ensure SetCardData is called.");
-                return;
-            }
             if (cardInfoPanel != null)
-            {
                 cardInfoPanel.ShowCardInfo(cardData);
-            }
         }
     }
+
+    // Flag indicating if this card is selected (e.g., via hover logic)
+    public bool isSelected = false;
 }
