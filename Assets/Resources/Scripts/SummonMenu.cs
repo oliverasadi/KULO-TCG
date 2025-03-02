@@ -1,22 +1,39 @@
 using UnityEngine;
 using UnityEngine.UI;
-using TMPro;
+using TMPro; // If using TextMeshProUGUI
 
 public class SummonMenu : MonoBehaviour
 {
+    public static SummonMenu currentMenu; // Tracks the currently open menu
+
     public Button summonButton;
     public Button selectSacrificesButton;
     public Button cancelButton;
     public TextMeshProUGUI sacrificeInfoText; // Displays required sacrifices info
 
-    private CardUI cardUI; // The card this menu is for
+    public CardUI cardUI; // The card this menu is for
+
+    void Awake()
+    {
+        // If a menu is already open, destroy it.
+        if (currentMenu != null)
+        {
+            Destroy(currentMenu.gameObject);
+        }
+        currentMenu = this;
+    }
+
+    void OnDestroy()
+    {
+        if (currentMenu == this)
+            currentMenu = null;
+    }
 
     // Call this from CardUI's ShowSummonMenu() to initialize the menu.
     public void Initialize(CardUI card)
     {
         cardUI = card;
 
-        // If the card requires sacrifice (e.g., it's an evolution card), show the sacrifice option.
         if (cardUI.cardData.requiresSacrifice)
         {
             selectSacrificesButton.gameObject.SetActive(true);
@@ -42,7 +59,7 @@ public class SummonMenu : MonoBehaviour
     private void OnSummon()
     {
         Debug.Log("Summon button clicked for " + cardUI.cardData.cardName);
-        // TODO: Call your GridManager placement logic.
+        // TODO: Call your GridManager placement logic here.
         Destroy(gameObject); // Close the menu.
     }
 
@@ -61,7 +78,7 @@ public class SummonMenu : MonoBehaviour
         Destroy(gameObject); // Close the menu.
     }
 
-    // New method to be called when the background is clicked.
+    // Optional: You can add a method here to close the menu if a background click is detected.
     public void OnBackgroundClick()
     {
         Debug.Log("Background clicked. Closing Summon Menu.");

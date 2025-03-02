@@ -19,15 +19,11 @@ public class CardUI : MonoBehaviour, IPointerClickHandler
     public CardInfoPanel cardInfoPanel;       // Reference to the pop-up panel's controller
 
     // --- New Fields for Summoning ---
-    public GameObject summonMenuPrefab;       // Assign a prefab for the summon menu (under a Canvas)
-
-    // Optionally store additional info for evolution summoning (like target cell indices)
-    // public int targetCellX, targetCellY;
+    public GameObject summonMenuPrefab;       // Assign a prefab for the summon menu (should be under the Canvas)
 
     void Start()
     {
         LoadCardBack();
-        // Fallback: if no CardInfoPanel is assigned in the Inspector, try to find one in the scene.
         if (cardInfoPanel == null)
         {
             cardInfoPanel = FindObjectOfType<CardInfoPanel>();
@@ -42,7 +38,7 @@ public class CardUI : MonoBehaviour, IPointerClickHandler
     {
         if (cardBackSprite == null)
         {
-            cardBackSprite = Resources.Load<Sprite>("CardArt/CardBack"); // Supports .jpeg and .jpg
+            cardBackSprite = Resources.Load<Sprite>("CardArt/CardBack");
             if (cardBackSprite == null)
             {
                 Debug.LogError("❌ Card back image not found! Ensure it's in Resources/CardArt/CardBack.png");
@@ -50,7 +46,6 @@ public class CardUI : MonoBehaviour, IPointerClickHandler
         }
     }
 
-    // This method is called to assign and update the card data.
     public void SetCardData(CardSO card, bool setFaceDown = false)
     {
         if (card == null)
@@ -145,8 +140,6 @@ public class CardUI : MonoBehaviour, IPointerClickHandler
         isFaceDown = false;
     }
 
-    // IPointerClickHandler implementation.
-    // Right-click shows card info, left-click opens the summon menu.
     public void OnPointerClick(PointerEventData eventData)
     {
         if (cardData == null)
@@ -162,12 +155,24 @@ public class CardUI : MonoBehaviour, IPointerClickHandler
         }
         else if (eventData.button == PointerEventData.InputButton.Left)
         {
-            // Open Summon Menu for the card in hand.
+            // Check if a SummonMenu is already open.
+            if (SummonMenu.currentMenu != null)
+            {
+                // If the current open menu belongs to this card, toggle it off.
+                if (SummonMenu.currentMenu.cardUI == this)
+                {
+                    Destroy(SummonMenu.currentMenu.gameObject);
+                    return;
+                }
+                else
+                {
+                    // Otherwise, close the existing menu.
+                    Destroy(SummonMenu.currentMenu.gameObject);
+                }
+            }
             ShowSummonMenu();
         }
     }
-    // Add this field near the top of your CardUI class:
-    public Vector2 summonMenuOffset = new Vector2(0, 20f);
 
     private void ShowSummonMenu()
     {
@@ -188,25 +193,28 @@ public class CardUI : MonoBehaviour, IPointerClickHandler
         // Instantiate the SummonMenu as a child of the Canvas.
         GameObject menuInstance = Instantiate(summonMenuPrefab, canvas.transform);
 
+        // Move SummonMenu to the top of the hierarchy to ensure it's on top.
+        menuInstance.transform.SetAsLastSibling();
+
         // Get the RectTransform of the card and the menu.
         RectTransform cardRect = GetComponent<RectTransform>();
         RectTransform menuRect = menuInstance.GetComponent<RectTransform>();
         if (menuRect != null && cardRect != null)
         {
-            // Convert the card's world position to screen point.
+            // Convert the card's world position to a screen point.
             Vector2 cardScreenPos = RectTransformUtility.WorldToScreenPoint(null, cardRect.position);
 
-            // Convert screen point to local point in the Canvas.
+            // Convert the screen point to local point in the Canvas.
             Vector2 localPoint;
             RectTransformUtility.ScreenPointToLocalPointInRectangle(
                 canvas.transform as RectTransform,
                 cardScreenPos,
                 canvas.renderMode == RenderMode.ScreenSpaceOverlay ? null : canvas.worldCamera,
-                out localPoint);
+                out localPoint
+            );
 
-            // Add the inspector-adjustable offset.
+            // Add an inspector-adjustable offset (set in CardUI).
             localPoint += summonMenuOffset;
-
             menuRect.anchoredPosition = localPoint;
         }
         else
@@ -214,7 +222,7 @@ public class CardUI : MonoBehaviour, IPointerClickHandler
             Debug.LogWarning("Missing RectTransform on card or menu.");
         }
 
-        // Initialize the SummonMenu with this CardUI reference.
+        // Initialize the menu with this CardUI reference.
         SummonMenu summonMenu = menuInstance.GetComponent<SummonMenu>();
         if (summonMenu != null)
         {
@@ -227,8 +235,9 @@ public class CardUI : MonoBehaviour, IPointerClickHandler
     }
 
 
+    // Public field to allow adjusting the summon menu offset in the Inspector.
+    public Vector2 summonMenuOffset = new Vector2(0, 20f);
 
-    // Update method: if selected and space is pressed, show info (kept from original)
     void Update()
     {
         if (isSelected && Input.GetKeyDown(KeyCode.Space))
@@ -238,6 +247,5 @@ public class CardUI : MonoBehaviour, IPointerClickHandler
         }
     }
 
-    // Flag indicating if this card is selected (e.g., via hover logic)
     public bool isSelected = false;
 }
