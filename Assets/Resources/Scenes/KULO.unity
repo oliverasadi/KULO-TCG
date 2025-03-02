@@ -687,6 +687,9 @@ MonoBehaviour:
   roundsWonTextP1: {fileID: 1929268686}
   roundsWonTextP2: {fileID: 890056302}
   gameStatusText: {fileID: 986409907}
+  audioSource: {fileID: 471026465}
+  roundWinClip: {fileID: 8300000, guid: f381450b87607aa4b8caccfc95dd6606, type: 3}
+  gameWinClip: {fileID: 8300000, guid: 82ef8f059aa56b548baa430c6b82bd78, type: 3}
 --- !u!114 &325760557
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3415,7 +3418,7 @@ MonoBehaviour:
           m_FloatArgument: 0
           m_StringArgument: 
           m_BoolArgument: 0
-        m_CallState: 1
+        m_CallState: 0
 --- !u!114 &1185549404
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3423,7 +3426,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1185549402}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8ae7917dfffb385408dae86228b7f166, type: 3}
   m_Name: 

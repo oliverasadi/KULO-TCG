@@ -21,6 +21,11 @@ public class GameManager : MonoBehaviour
     public TextMeshProUGUI roundsWonTextP2;   // Assign in Inspector
     public TextMeshProUGUI gameStatusText;    // For status messages (e.g., "Player 1 wins the round!")
 
+    [Header("Audio Clips")]
+    public AudioSource audioSource;      // Assign an AudioSource in the Inspector
+    public AudioClip roundWinClip;       // Clip to play when a round is won
+    public AudioClip gameWinClip;        // Clip to play when the game is won
+
     void Awake()
     {
         if (instance == null)
@@ -60,6 +65,12 @@ public class GameManager : MonoBehaviour
             int winningPlayer = TurnManager.instance.GetCurrentPlayer();
             Debug.Log("[GameManager] Win condition met! Player " + winningPlayer + " wins the round.");
 
+            // Play round win sound.
+            if (audioSource != null && roundWinClip != null)
+            {
+                audioSource.PlayOneShot(roundWinClip);
+            }
+
             // Mark the winning line as used.
             MarkWinningLine();
 
@@ -78,6 +89,11 @@ public class GameManager : MonoBehaviour
                 {
                     gameStatusText.gameObject.SetActive(true);
                     gameStatusText.text = "Player " + winningPlayer + " wins the game!";
+                }
+                // Play game win sound.
+                if (audioSource != null && gameWinClip != null)
+                {
+                    audioSource.PlayOneShot(gameWinClip);
                 }
                 Invoke("RestartGame", 3f);
             }
