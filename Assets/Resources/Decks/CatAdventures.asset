@@ -1,0 +1,56 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7a3f2cec2517eb241b44c21068f8f6bc, type: 3}
+  m_Name: CatAdventures
+  m_EditorClassIdentifier: 
+  deckName: 'Cat Adventures '
+  cardEntries:
+  - card: {fileID: 11400000, guid: 57adc6a195c4fa64ea748642ce229806, type: 2}
+    quantity: 1
+  - card: {fileID: 11400000, guid: d475d9e1aa7e6574ba1f23a6b5c54232, type: 2}
+    quantity: 3
+  - card: {fileID: 11400000, guid: 3a6b9cfbc60b5b841b1276d12c3cfd5e, type: 2}
+    quantity: 3
+  - card: {fileID: 11400000, guid: bb71b7c4fcd90f64e8468dc72054eb66, type: 2}
+    quantity: 3
+  - card: {fileID: 11400000, guid: 1ec5d69b2d263fb488ef7ebb64879034, type: 2}
+    quantity: 1
+  - card: {fileID: 11400000, guid: 889b571d6eb667b46b572c99f7cf7fbd, type: 2}
+    quantity: 2
+  - card: {fileID: 11400000, guid: 637822ef217f1244caaabb03ecbff612, type: 2}
+    quantity: 1
+  - card: {fileID: 11400000, guid: 17cbf12bffdc00b40b6b2815065d3886, type: 2}
+    quantity: 3
+  - card: {fileID: 11400000, guid: 337c5522e5c8e0b4b97c3a49324b0de2, type: 2}
+    quantity: 2
+  - card: {fileID: 11400000, guid: e10495d216566eb4fb542e9cd4277479, type: 2}
+    quantity: 2
+  - card: {fileID: 11400000, guid: f03c6eb78e119db4eac4a6cb30b04f5e, type: 2}
+    quantity: 1
+  - card: {fileID: 11400000, guid: 8dccf5ec3f545c543a2897aa084334be, type: 2}
+    quantity: 1
+  - card: {fileID: 11400000, guid: eb5a07f9b2cf4784694d2bbdbd867203, type: 2}
+    quantity: 1
+  - card: {fileID: 11400000, guid: e434d8e6a1903724bb3799d894b17304, type: 2}
+    quantity: 2
+  - card: {fileID: 11400000, guid: 42ece4833eb662045ae2c03cc5b40118, type: 2}
+    quantity: 1
+  - card: {fileID: 11400000, guid: b32446ab4653f514e8bb490463dc978c, type: 2}
+    quantity: 2
+  - card: {fileID: 11400000, guid: cc38671a624719a4791e5a5b6fc23119, type: 2}
+    quantity: 3
+  - card: {fileID: 11400000, guid: 62c9a21e04a6c4848a36df62ff6020f3, type: 2}
+    quantity: 3
+  - card: {fileID: 11400000, guid: 14427a9a0268fee4dbaca14f24510c2a, type: 2}
+    quantity: 2
+  - card: {fileID: 11400000, guid: d1b51133c00a31f44a3f39d2404f9c75, type: 2}
+    quantity: 3

@@ -58,7 +58,7 @@ public class GridManager : MonoBehaviour
                     return allowed;
                 }
             }
-            // Occupant is same side, disallow.
+            // Occupant is on the same side, disallow.
             return false;
         }
     }
@@ -109,8 +109,13 @@ public class GridManager : MonoBehaviour
                             if (match)
                             {
                                 Debug.Log($"Sacrificing {grid[i, j].cardName} at ({i},{j}) for {cardData.cardName}.");
-                                RemoveCard(i, j, false);
-                                sacrificed++;
+                                // Only sacrifice if it is the player's card.
+                                CardHandler ch = gridObjects[i, j].GetComponent<CardHandler>();
+                                if (ch != null && !ch.isAI)
+                                {
+                                    RemoveCard(i, j, false);
+                                    sacrificed++;
+                                }
                             }
                         }
                     }
@@ -124,7 +129,7 @@ public class GridManager : MonoBehaviour
         {
             if (grid[x, y].power > cardData.power)
             {
-                Debug.Log($"Cannot replace {grid[x, y].cardName} at ({x},{y}) - occupant power {grid[x, y].power} > {cardData.power}.");
+                Debug.Log($"Cannot replace {grid[x, y].cardName} at ({x},{y}) - occupant power {grid[x, y].power} > {cardData.cardName}'s power ({cardData.power}).");
                 return false;
             }
             else if (grid[x, y].power == cardData.power)
@@ -138,7 +143,6 @@ public class GridManager : MonoBehaviour
                 CardHandler newCardHandler = cardObj.GetComponent<CardHandler>();
                 if (newCardHandler != null) newCardHandler.isAI = newCardIsAI;
 
-                // Move the new card to grave as well, since both are destroyed.
                 if (newCardIsAI)
                 {
                     if (AIGraveZone.instance != null) AIGraveZone.instance.AddCardToGrave(cardObj);
@@ -186,13 +190,11 @@ public class GridManager : MonoBehaviour
         CardHandler handler = cardObj.GetComponent<CardHandler>();
         if (handler != null) handler.isAI = newOwnerIsAI2;
 
-        // Mark the card as played.
         TurnManager.instance.RegisterCardPlay(cardData);
         if (audioSource != null && placeCardSound != null) audioSource.PlayOneShot(placeCardSound);
 
         Debug.Log($"[GridManager] Placed {cardData.cardName} at ({x},{y}).");
 
-        // Flash highlight if it's not a Spell.
         if (cardData.category != CardSO.CardCategory.Spell)
         {
             Color baseColor = newOwnerIsAI2 ? Color.red : Color.green;
@@ -208,7 +210,6 @@ public class GridManager : MonoBehaviour
             }
         }
 
-        // If it's a Spell, schedule removal.
         if (cardData.category == CardSO.CardCategory.Spell)
         {
             bool isAI = (TurnManager.instance.GetCurrentPlayer() == 2);
@@ -350,52 +351,67 @@ public class GridManager : MonoBehaviour
 
     /// <summary>
     /// Highlights valid sacrifice cards on the field.
-    /// E.g., loop over the player's creatures, check conditions, and visually mark them.
+    /// Only the player's cards (where CardHandler.isAI is false) are considered.
     /// </summary>
     public void HighlightEligibleSacrifices()
     {
-        Debug.Log("[GridManager] HighlightEligibleSacrifices called. Implement logic to highlight valid sacrifice cards.");
-        // Example:
-        // for (int x=0; x<3; x++){
-        //   for (int y=0; y<3; y++){
-        //     if (grid[x,y] != null && gridObjects[x,y] != null){
-        //       // If it's the player's creature, highlight it
-        //       // Possibly check card type or name
-        //       // Add an outline or color highlight
-        //     }
-        //   }
-        // }
-    }
-
-    /// <summary>
-    /// Removes a sacrifice card from the board (like a partial remove).
-    /// Could be used by SacrificeManager.
-    /// </summary>
-    public void RemoveSacrificeCard(GameObject card)
-    {
-        Debug.Log("[GridManager] RemoveSacrificeCard called with " + card.name);
-        // 1) Find the card's position in the grid
-        // 2) Remove it (grid[x,y] = null, gridObjects[x,y] = null)
-        // 3) Move it to the grave or destroy it
-        // For example:
-        // for(int x=0; x<3; x++){
-        //   for(int y=0; y<3; y++){
-        //     if(gridObjects[x,y] == card){
-        //       RemoveCard(x,y,false); // if it's the player's card
-        //       return;
-        //     }
-        //   }
-        // }
+        Debug.Log("[GridManager] HighlightEligibleSacrifices called.");
+        for (int x = 0; x < 3; x++)
+        {
+            for (int y = 0; y < 3; y++)
+            {
+                if (grid[x, y] != null && gridObjects[x, y] != null)
+                {
+                    CardHandler ch = gridObjects[x, y].GetComponent<CardHandler>();
+                    if (ch != null && !ch.isAI) // Only player's cards
+                    {
+                        ch.ShowSacrificeHighlight(); // Implement this in CardHandler to highlight the card
+                    }
+                }
+            }
+        }
     }
 
     /// <summary>
     /// Clears any highlights placed for sacrifice selection.
-    /// E.g., remove outlines from previously highlighted cards.
     /// </summary>
     public void ClearSacrificeHighlights()
     {
-        Debug.Log("[GridManager] ClearSacrificeHighlights called. Implement logic to un-highlight any sacrifice candidates.");
-        // Similar approach: loop over board, if a card was highlighted, revert it
+        Debug.Log("[GridManager] ClearSacrificeHighlights called.");
+        for (int x = 0; x < 3; x++)
+        {
+            for (int y = 0; y < 3; y++)
+            {
+                if (gridObjects[x, y] != null)
+                {
+                    CardHandler ch = gridObjects[x, y].GetComponent<CardHandler>();
+                    if (ch != null)
+                    {
+                        ch.HideSacrificeHighlight(); // Implement this in CardHandler to revert the highlight
+                    }
+                }
+            }
+        }
+    }
+
+    /// <summary>
+    /// Finds and removes the given sacrifice card from the board.
+    /// Only considers player's cards.
+    /// </summary>
+    public void RemoveSacrificeCard(GameObject card)
+    {
+        Debug.Log("[GridManager] RemoveSacrificeCard called for " + card.name);
+        for (int x = 0; x < 3; x++)
+        {
+            for (int y = 0; y < 3; y++)
+            {
+                if (gridObjects[x, y] == card)
+                {
+                    RemoveCard(x, y, false); // false indicates it's a player's card.
+                    return;
+                }
+            }
+        }
     }
 
     /// <summary>
@@ -404,9 +420,9 @@ public class GridManager : MonoBehaviour
     public void PlaceEvolutionCard(CardUI evoCard, Vector2 targetPos)
     {
         Debug.Log("[GridManager] PlaceEvolutionCard called for " + evoCard.cardData.cardName + " at " + targetPos);
-        // 1) Convert targetPos to a grid cell or find the nearest cell
-        // 2) Possibly call PlaceExistingCard(...) with that cell
-        // This is up to your design. If you want to exactly replace a single sacrificed card's position,
-        // pass the x,y of that card to PlaceExistingCard.
+        // For demonstration purposes, let's choose a fixed cell.
+        // In practice, you would convert targetPos to the nearest grid cell.
+        int x = 1, y = 1;
+        PlaceExistingCard(x, y, evoCard.gameObject, evoCard.cardData, evoCard.transform.parent);
     }
 }

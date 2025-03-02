@@ -1,2 +1,17 @@
 fileFormatVersion: 2
 guid: 86610a5dc1826ba418c1d90f08d7f5b3
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - cardArtImage: {instanceID: 0}
+  - cardNameText: {instanceID: 0}
+  - cardBackSprite: {instanceID: 0}
+  - cardData: {instanceID: 0}
+  - cardInfoPanel: {instanceID: 0}
+  - summonMenuPrefab: {fileID: 741744460718482826, guid: 2d61f35e4987c864fb1a44c5e1901305, type: 3}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

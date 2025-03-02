@@ -16,6 +16,7 @@ GameObject:
   - component: {fileID: 9184000235202373409}
   - component: {fileID: 8294996736213442743}
   - component: {fileID: 3076055314872575902}
+  - component: {fileID: -18695656884280633}
   m_Layer: 7
   m_Name: CardPrefab
   m_TagString: Untagged
@@ -95,6 +96,7 @@ MonoBehaviour:
   cardArtImage: {fileID: 2361588858364672429}
   cardData: {fileID: 0}
   isAI: 0
+  sacrificeOutline: {fileID: -18695656884280633}
 --- !u!114 &9139353195035063985
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -139,7 +141,7 @@ MonoBehaviour:
   isInDeck: 0
   cardInfoPanel: {fileID: 0}
   summonMenuPrefab: {fileID: 741744460718482826, guid: 2d61f35e4987c864fb1a44c5e1901305, type: 3}
-  summonMenuOffset: {x: 0, y: 191.7}
+  summonMenuOffset: {x: 0, y: 226.1}
   isSelected: 0
 --- !u!114 &3076055314872575902
 MonoBehaviour:
@@ -155,3 +157,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   scaleFactor: 1.2
   animationSpeed: 0.2
+--- !u!114 &-18695656884280633
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7165986574755316703}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e19747de3f5aca642ab2be37e372fb86, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_EffectColor: {r: 0.8190829, g: 0.9339623, b: 0, a: 0.5}
+  m_EffectDistance: {x: 4.59, y: 3.86}
+  m_UseGraphicAlpha: 1

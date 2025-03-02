@@ -15,8 +15,8 @@ public class SummonMenu : MonoBehaviour
 
     void Awake()
     {
-        // If a menu is already open, destroy it.
-        if (currentMenu != null)
+        // If a menu is already open and it's not this one, close it.
+        if (currentMenu != null && currentMenu != this)
         {
             Destroy(currentMenu.gameObject);
         }
@@ -34,7 +34,13 @@ public class SummonMenu : MonoBehaviour
     {
         cardUI = card;
 
-        if (cardUI.cardData.requiresSacrifice)
+        if (cardUI == null)
+        {
+            Debug.LogError("SummonMenu.Initialize: CardUI reference is null.");
+            return;
+        }
+
+        if (cardUI.cardData != null && cardUI.cardData.requiresSacrifice)
         {
             selectSacrificesButton.gameObject.SetActive(true);
             summonButton.gameObject.SetActive(false);
@@ -58,30 +64,37 @@ public class SummonMenu : MonoBehaviour
     // Called when "Summon" is clicked (for cards that don't require sacrifice).
     private void OnSummon()
     {
+        if (cardUI == null || cardUI.cardData == null)
+        {
+            Debug.LogError("OnSummon: CardUI or cardData is null.");
+            Destroy(gameObject);
+            return;
+        }
         Debug.Log("Summon button clicked for " + cardUI.cardData.cardName);
-        // TODO: Call your GridManager placement logic here.
+        // TODO: Call your placement logic in GridManager here.
         Destroy(gameObject); // Close the menu.
     }
 
     // Called when "Select Sacrifices" is clicked (for evolution/sacrifice cards).
     private void OnSelectSacrifices()
     {
+        if (cardUI == null || cardUI.cardData == null)
+        {
+            Debug.LogError("OnSelectSacrifices: CardUI or cardData is null.");
+            Destroy(gameObject);
+            return;
+        }
         Debug.Log("Select Sacrifices clicked for " + cardUI.cardData.cardName);
-        // TODO: Notify SacrificeManager to start sacrifice selection.
-        // SacrificeManager.instance.StartSacrificeSelection(cardUI);
+        SacrificeManager.instance.StartSacrificeSelection(cardUI);
         Destroy(gameObject); // Close the menu.
     }
 
     private void OnCancel()
     {
-        Debug.Log("Summon menu canceled for " + cardUI.cardData.cardName);
+        if (cardUI != null && cardUI.cardData != null)
+            Debug.Log("Summon menu canceled for " + cardUI.cardData.cardName);
+        else
+            Debug.Log("Summon menu canceled.");
         Destroy(gameObject); // Close the menu.
-    }
-
-    // Optional: You can add a method here to close the menu if a background click is detected.
-    public void OnBackgroundClick()
-    {
-        Debug.Log("Background clicked. Closing Summon Menu.");
-        Destroy(gameObject);
     }
 }
