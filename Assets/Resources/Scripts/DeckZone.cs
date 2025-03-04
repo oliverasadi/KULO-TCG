@@ -1,6 +1,5 @@
 using UnityEngine;
 using TMPro;
-
 public class DeckZone : MonoBehaviour
 {
     public static DeckZone instance;

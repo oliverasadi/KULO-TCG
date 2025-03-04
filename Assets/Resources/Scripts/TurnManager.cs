@@ -1,14 +1,20 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using Mirror.Examples.CCU;
+using UnityEngine;
 using UnityEngine.UI;
 
 public class TurnManager : MonoBehaviour
 {
     public static TurnManager instance;
+    public static PlayerManager currentPlayerManager;
+    
     public Button endTurnButton; // Assign in Inspector
-    private int currentPlayer = 1; // 1 = Player, 2 = AI
-    private bool creaturePlayed = false;
-    private bool spellPlayed = false;
-    private DeckManager deckManager; // Reference to DeckManager
+    public int currentPlayer = 1; // 1 = Player, 2 = AI
+    public bool creaturePlayed = false;
+    public bool spellPlayed = false;
+    
+    public PlayerManager playerManager1; // Reference to PlayerManagerForPLayer1
+    public PlayerManager playerManager2; // Reference to PlayerManagerForPLayer1
 
     // Expose creaturePlayed via a public property.
     public bool CreaturePlayed
@@ -25,31 +31,33 @@ public class TurnManager : MonoBehaviour
     void Start()
     {
         endTurnButton.onClick.AddListener(PlayerEndTurn); // Link button to EndTurn
-        deckManager = FindObjectOfType<DeckManager>(); // Ensure DeckManager is referenced
-        StartTurn();
+        StartTurn(); //Don't double draw on first turn
+    }
+    
+    PlayerManager SelectPlayerManager()
+    {
+        if (currentPlayer == 1) return playerManager1;
+        else return playerManager2;
     }
 
-    public void StartTurn()
+    public void StartTurn(bool drawCard = true)
     {
         Debug.Log($"🕒 Player {currentPlayer}'s turn starts.");
         creaturePlayed = false;
         spellPlayed = false;
 
-        if (currentPlayer == 1) // Player's turn, draw a card
+        currentPlayerManager = SelectPlayerManager();
+        
+        if (currentPlayerManager != null && drawCard)
         {
-            if (deckManager != null)
-            {
-                deckManager.DrawCard();
-            }
-            else
-            {
-                Debug.LogError("❌ DeckManager not found! Make sure it's in the scene.");
-            }
+            currentPlayerManager.DrawCard();
         }
-        else if (currentPlayer == 2) // AI's turn
+        else
         {
-            AIController.instance.AITakeTurn();
+            Debug.LogError("❌ PlayerManager not found! Make sure it's in the scene.");
         }
+        
+        currentPlayerManager.pc.StartTurn();
     }
 
     public bool CanPlayCard(CardSO card)

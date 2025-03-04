@@ -1,26 +1,32 @@
 using UnityEngine;
+using TMPro;
 
-public class AIGraveZone : MonoBehaviour
+public class PlayerZones : MonoBehaviour
 {
-    public static AIGraveZone instance;
-    public Transform graveContainer; // UI container for AI's grave cards
+    public TextMeshProUGUI deckCountText; // Assign a UI Text element in the Inspector
+    public Transform graveContainer; // UI container for player's grave cards
 
-    void Awake()
+    private int deckCount;
+
+    //Deck Zone
+
+    public void UpdateDeckCount(int count)
     {
-        if (instance == null)
-            instance = this;
-        else
-            Destroy(gameObject);
+        deckCount = count;
+        if (deckCountText != null)
+            deckCountText.text = $"Deck: {deckCount}";
     }
+
+    //Grave Zone
 
     public void AddCardToGrave(GameObject cardObj)
     {
         if (graveContainer == null)
         {
-            Debug.LogError("AIGraveZone: Missing graveContainer.");
+            Debug.LogError("Player Missing graveContainer.");
             return;
         }
-        // Re-parent the card to the AI grave container.
+        // Re-parent the card to the grave container.
         cardObj.transform.SetParent(graveContainer, false);
         // Remove any drag functionality.
         CardDragHandler dragHandler = cardObj.GetComponent<CardDragHandler>();
@@ -33,6 +39,7 @@ public class AIGraveZone : MonoBehaviour
         else
             cardObj.transform.localPosition = Vector3.zero;
 
-        Debug.Log($"Card moved to AI grave: {cardObj.name}");
+        Debug.Log($"Card moved to grave: {cardObj.name}");
     }
 }
+

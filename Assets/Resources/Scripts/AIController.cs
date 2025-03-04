@@ -1,89 +1,23 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
-using UnityEngine.UI;
-
-public class AIController : MonoBehaviour
+public class AIController : PlayerController
 {
-    public static AIController instance;
-    public List<CardSO> aiDeck = new List<CardSO>(); // AI's deck
-    public List<CardHandler> aiHandCardHandlers = new List<CardHandler>(); // AI hand's Card Handlers (max 5 cards)
-    private bool aiPlayedCreature = false;
-    private bool aiPlayedSpell = false;
-    private const int HAND_SIZE = 5;
-
-    [Header("AI Hand UI")]
-    [SerializeField] private Transform aiHandPanel; // Assign in Inspector
-    public GameObject cardUIPrefab; // Assign in Inspector
+    TurnManager tm;
+    public PlayerManager pm;
     
-
-    void Awake()
-    {
-        if (instance == null)
-            instance = this;
-        else
-            Destroy(gameObject);
-    }
-
+    // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        if (aiDeck.Count == 0)
-        {
-            GenerateRandomAIDeck();
-        }
-        DrawStartingHand();
+        tm = TurnManager.instance;
     }
 
-    private void GenerateRandomAIDeck()
+    // Update is called once per frame
+    void Update()
     {
-        aiDeck.Clear();
-        CardSO[] allCards = Resources.LoadAll<CardSO>("Cards");
-        for (int i = 0; i < 40; i++)
-        {
-            aiDeck.Add(allCards[Random.Range(0, allCards.Length)]);
-        }
+        
     }
-
-    private void DrawStartingHand()
-    {
-        for (int i = 0; i < HAND_SIZE; i++)
-        {
-            DrawCard();
-        }
-    }
-
-    private void DrawCard()
-    {
-        if (aiDeck.Count > 0 && aiHandCardHandlers.Count < HAND_SIZE)
-        {
-            CardSO drawnCard = aiDeck[0];
-            aiDeck.RemoveAt(0);
-            // Cards in the AI hand start face-down.
-            DisplayCardInAIHand(drawnCard, true);
-            
-            // Update player deck count UI.
-            if (AIDeckZone.instance != null)
-                AIDeckZone.instance.UpdateDeckCount(aiDeck.Count);
-        }
-    }
-
-    private void DisplayCardInAIHand(CardSO card, bool isFaceDown)
-    {
-        if (aiHandPanel == null || cardUIPrefab == null)
-            return;
-        GameObject cardUI = Instantiate(cardUIPrefab, aiHandPanel);
-        CardHandler cardHandler = cardUI.GetComponent<CardHandler>();
-        if (cardHandler != null)
-        {
-            cardHandler.SetCard(card, isFaceDown, true);
-        }
-        else
-        {
-            Debug.LogError("AIController: CardHandler component missing on instantiated AI card!");
-        }
-        aiHandCardHandlers.Add(cardHandler);
-    }
-
+    
     // Helper method: Checks if the card's sacrifice requirements are met on the grid.
     private bool IsCardPlayable(CardSO card)
     {
@@ -119,7 +53,7 @@ public class AIController : MonoBehaviour
         return true;
     }
 
-    public void AITakeTurn()
+    public override void StartTurn()
     {
         StartCoroutine(AIPlay());
     }
@@ -128,9 +62,6 @@ public class AIController : MonoBehaviour
     {
         yield return new WaitForSeconds(1f); // Simulate AI thinking time
         CardSO[,] grid = GridManager.instance.GetGrid();
-
-        aiPlayedCreature = false;
-        aiPlayedSpell = false;
 
         Vector2Int bestMove = FindWinningMove(grid);
         if (bestMove.x == -1)
@@ -154,8 +85,7 @@ public class AIController : MonoBehaviour
                     Debug.Log($"AI plays {selectedCard.cardName} at {bestMove.x}, {bestMove.y}");
                     PlaceAICardOnGrid(bestMove.x, bestMove.y, selectedCardHandler);
                     // Remove the played card from AI's hand and draw a new one.
-                    aiHandCardHandlers.Remove(selectedCardHandler);
-                    DrawCard();
+                    pm.cardHandlers.Remove(selectedCardHandler);
                 }
             }
             else
@@ -165,7 +95,7 @@ public class AIController : MonoBehaviour
         }
 
         yield return new WaitForSeconds(1f);
-        TurnManager.instance.EndTurn(); // End AI's turn
+        EndTurn(); // End AI's turn
     }
 
     // Helper method: Finds the best playable card in the AI hand (that satisfies sacrifice requirements).
@@ -174,10 +104,10 @@ public class AIController : MonoBehaviour
         CardHandler bestCandidate = null;
         // Try creatures first, then spells.
         float highestPower = 0;
-        foreach (CardHandler ch in aiHandCardHandlers)
+        foreach (CardHandler ch in pm.cardHandlers)
         {
             CardSO card = ch.cardData;
-            if (card.category == CardSO.CardCategory.Creature && !aiPlayedCreature && card.power > highestPower && IsCardPlayable(card))
+            if (card.category == CardSO.CardCategory.Creature && !tm.creaturePlayed  && card.power > highestPower && IsCardPlayable(card))
             {
                 bestCandidate = ch;
                 highestPower = card.power;
@@ -185,16 +115,15 @@ public class AIController : MonoBehaviour
         }
         if (bestCandidate != null)
         {
-            aiPlayedCreature = true;
             Debug.Log($"AI SELECTED CREATURE: {bestCandidate.cardData.cardName}");
             return bestCandidate;
         }
 
         // If no creature is found, try spells.
-        foreach (CardHandler ch in aiHandCardHandlers)
+        foreach (CardHandler ch in pm.cardHandlers)
         {
             CardSO card = ch.cardData;
-            if (card.category == CardSO.CardCategory.Spell && !aiPlayedSpell && IsCardPlayable(card))
+            if (card.category == CardSO.CardCategory.Spell && !tm.spellPlayed && IsCardPlayable(card))
             {
                 bestCandidate = ch;
                 break;
@@ -202,7 +131,6 @@ public class AIController : MonoBehaviour
         }
         if (bestCandidate != null)
         {
-            aiPlayedSpell = true;
             Debug.Log($"AI SELECTED SPELL: {bestCandidate.cardData.cardName}");
             return bestCandidate;
         }
@@ -231,6 +159,11 @@ public class AIController : MonoBehaviour
         {
             Debug.LogError($"[AIController] Could not find a cell named '{cellName}' for the AI to place a card!");
         }
+        
+        if (cardHandler.cardData.category == CardSO.CardCategory.Creature)
+            tm.creaturePlayed = true;
+        else if (cardHandler.cardData.category == CardSO.CardCategory.Spell)
+            tm.spellPlayed = true;
     }
 
     private Vector2Int FindWinningMove(CardSO[,] grid)

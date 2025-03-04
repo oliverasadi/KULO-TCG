@@ -1,6 +1,5 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
-
 public class DeckManager : MonoBehaviour
 {
     public static DeckManager instance;
@@ -16,8 +15,6 @@ public class DeckManager : MonoBehaviour
 
     [Header("Game Deck & UI")]
     public List<CardSO> currentDeck = new List<CardSO>(); // The deck currently in use for the game
-    public GameObject cardPrefab; // Prefab for the card UI representation
-    public Transform cardSpawnArea; // The UI area where drawn cards are displayed
 
     private void Awake()
     {
@@ -25,31 +22,16 @@ public class DeckManager : MonoBehaviour
             instance = this;
         else
             Destroy(gameObject);
+        
+        //Load Cards
+        LoadAllCards();
+        LoadAvailableDecks(); // Load external decks from Resources/Decks
+        LoadDecks();         // Load saved decks from PlayerPrefs
     }
 
     private void Start()
     {
-        LoadAllCards();
-        LoadAvailableDecks(); // Load external decks from Resources/Decks
-        LoadDecks();         // Load saved decks from PlayerPrefs
 
-        // Prefer loading an external deck if available.
-        if (availableDecks.Count > 0)
-        {
-            // For example, load the first external deck:
-            LoadDeck(availableDecks[0]);
-        }
-        else if (savedDecks.Count > 0)
-        {
-            // Otherwise, load the first saved deck.
-            LoadDeck(savedDecks[0].deckName);
-        }
-        else
-        {
-            GenerateRandomDeck();
-        }
-        ShuffleDeck();
-        DrawStartingHand();
     }
 
     /// <summary>
@@ -91,90 +73,21 @@ public class DeckManager : MonoBehaviour
     /// <summary>
     /// Generates a random deck by selecting cards randomly from allAvailableCards.
     /// </summary>
-    public void GenerateRandomDeck()
+    public List<CardSO> GenerateRandomDeck()
     {
-        currentDeck.Clear();
         List<CardSO> tempPool = new List<CardSO>(allAvailableCards);
-
+        
+        List<CardSO> returnDeck = new List<CardSO>();
         for (int i = 0; i < maxDeckSize; i++)
         {
             if (tempPool.Count == 0)
                 break;
             int randomIndex = Random.Range(0, tempPool.Count);
-            currentDeck.Add(tempPool[randomIndex]);
+            returnDeck.Add(tempPool[randomIndex]);
             tempPool.RemoveAt(randomIndex);
         }
         Debug.Log("✅ Random deck generated!");
-    }
-
-    /// <summary>
-    /// Shuffles the current deck.
-    /// </summary>
-    public void ShuffleDeck()
-    {
-        for (int i = 0; i < currentDeck.Count; i++)
-        {
-            CardSO temp = currentDeck[i];
-            int randomIndex = Random.Range(i, currentDeck.Count);
-            currentDeck[i] = currentDeck[randomIndex];
-            currentDeck[randomIndex] = temp;
-        }
-        Debug.Log("✅ Deck shuffled!");
-    }
-
-    /// <summary>
-    /// Draws the starting hand by drawing 5 cards.
-    /// </summary>
-    public void DrawStartingHand()
-    {
-        for (int i = 0; i < 5; i++)
-        {
-            DrawCard();
-        }
-    }
-
-    /// <summary>
-    /// Draws a card from the current deck.
-    /// </summary>
-    public void DrawCard()
-    {
-        if (currentDeck.Count > 0)
-        {
-            CardSO drawnCard = currentDeck[0];
-            currentDeck.RemoveAt(0);
-            SpawnCard(drawnCard);
-
-            if (DeckZone.instance != null)
-                DeckZone.instance.UpdateDeckCount(currentDeck.Count);
-        }
-        else
-        {
-            Debug.LogWarning("⚠️ Deck is empty! No more cards to draw.");
-        }
-    }
-
-    /// <summary>
-    /// Spawns a card in the player's hand and assigns its data.
-    /// </summary>
-    public void SpawnCard(CardSO cardData)
-    {
-        if (cardSpawnArea == null)
-        {
-            Debug.LogError("❌ Card Spawn Area is not assigned!");
-            return;
-        }
-
-        GameObject newCard = Instantiate(cardPrefab, cardSpawnArea);
-        CardHandler handler = newCard.GetComponent<CardHandler>();
-
-        if (handler != null)
-        {
-            handler.SetCard(cardData, false, false);
-        }
-        else
-        {
-            Debug.LogError("❌ CardHandler component is missing on CardPrefab!");
-        }
+        return returnDeck;
     }
 
     /// <summary>
@@ -208,42 +121,46 @@ public class DeckManager : MonoBehaviour
     /// <summary>
     /// Loads a specific deck by name from the saved decks.
     /// </summary>
-    public void LoadDeck(string deckName)
+    public List<CardSO> LoadDeck(string deckName)
     {
+        List<CardSO> returnDeck = new List<CardSO>();
+        
         DeckData selectedDeck = savedDecks.Find(deck => deck.deckName == deckName);
         if (selectedDeck == null)
         {
             Debug.LogError($"❌ Deck '{deckName}' not found!");
-            return;
+            return returnDeck;
         }
-
-        currentDeck.Clear();
+        
         foreach (string cardName in selectedDeck.cardNames)
         {
             CardSO foundCard = allAvailableCards.Find(card => card.cardName == cardName);
             if (foundCard != null)
             {
-                currentDeck.Add(foundCard);
+                returnDeck.Add(foundCard);
             }
         }
-        Debug.Log($"✅ Loaded deck '{deckName}' with {currentDeck.Count} cards.");
+        Debug.Log($"✅ Loaded deck '{deckName}' with {returnDeck.Count} cards.");
+
+        return returnDeck;
     }
 
     /// <summary>
     /// Loads a deck from a DeckDataSO asset.
     /// </summary>
-    public void LoadDeck(DeckDataSO deckData)
+    public List<CardSO> LoadDeck(DeckDataSO deckData)
     {
-        currentDeck.Clear();
+        List<CardSO> returnDeck = new List<CardSO>();
         foreach (CardEntry entry in deckData.cardEntries)
         {
             for (int i = 0; i < entry.quantity; i++)
             {
                 if (entry.card != null)
-                    currentDeck.Add(entry.card);
+                    returnDeck.Add(entry.card);
             }
         }
-        Debug.Log($"Loaded deck '{deckData.deckName}' with {currentDeck.Count} cards.");
+        Debug.Log($"Loaded deck '{deckData.deckName}' with {returnDeck.Count} cards.");
+        return returnDeck;
     }
 
     /// <summary>

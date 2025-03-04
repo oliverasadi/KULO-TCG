@@ -143,14 +143,7 @@ public class GridManager : MonoBehaviour
                 CardHandler newCardHandler = cardObj.GetComponent<CardHandler>();
                 if (newCardHandler != null) newCardHandler.isAI = newCardIsAI;
 
-                if (newCardIsAI)
-                {
-                    if (AIGraveZone.instance != null) AIGraveZone.instance.AddCardToGrave(cardObj);
-                }
-                else
-                {
-                    if (GraveZone.instance != null) GraveZone.instance.AddCardToGrave(cardObj);
-                }
+                if (newCardHandler.cardOwner.zones != null) newCardHandler.cardOwner.zones.AddCardToGrave(cardObj);
 
                 TurnManager.instance.RegisterCardPlay(cardData);
                 ResetCellVisual(x, y);
@@ -265,22 +258,13 @@ public class GridManager : MonoBehaviour
             {
                 Debug.LogWarning($"[GridManager] Could not find 'GridCell_{x}_{y}' in the hierarchy.");
             }
-
-            if (isAI)
-            {
-                if (AIGraveZone.instance != null)
-                    AIGraveZone.instance.AddCardToGrave(cardObj);
-                else
-                    Debug.LogError("AIGraveZone instance is null!");
-            }
+            
+            PlayerManager co = cardObj.GetComponent<CardHandler>().cardOwner;
+            if(co != null)
+                co.zones.AddCardToGrave(cardObj);
             else
-            {
-                if (GraveZone.instance != null)
-                    GraveZone.instance.AddCardToGrave(cardObj);
-                else
-                    Debug.LogError("GraveZone instance is null!");
-            }
-
+                Debug.LogError("Zones instance is null!");
+            
             if (audioSource != null && removeCardSound != null)
                 audioSource.PlayOneShot(removeCardSound);
 

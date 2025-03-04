@@ -5,6 +5,7 @@ public class CardHandler : MonoBehaviour
 {
     public Image cardArtImage;
     public CardSO cardData;
+    public PlayerManager cardOwner;
 
     // Indicates if this card belongs to the AI.
     public bool isAI = false;
