@@ -7,14 +7,17 @@ public class TurnManager : MonoBehaviour
 {
     public static TurnManager instance;
     public static PlayerManager currentPlayerManager;
-    
+
     public Button endTurnButton; // Assign in Inspector
     public int currentPlayer = 1; // 1 = Player, 2 = AI
     public bool creaturePlayed = false;
     public bool spellPlayed = false;
-    
-    public PlayerManager playerManager1; // Reference to PlayerManagerForPLayer1
-    public PlayerManager playerManager2; // Reference to PlayerManagerForPLayer1
+
+    public PlayerManager playerManager1; // Reference to PlayerManager for Player 1
+    public PlayerManager playerManager2; // Reference to PlayerManager for Player 2
+
+    // Flag to control card draw on turn start.
+    private bool skipDrawOnTurnStart = false;
 
     // Expose creaturePlayed via a public property.
     public bool CreaturePlayed
@@ -31,13 +34,12 @@ public class TurnManager : MonoBehaviour
     void Start()
     {
         endTurnButton.onClick.AddListener(PlayerEndTurn); // Link button to EndTurn
-        StartTurn(); //Don't double draw on first turn
+        StartTurn(); // Start the first turn (card draw will occur)
     }
-    
+
     PlayerManager SelectPlayerManager()
     {
-        if (currentPlayer == 1) return playerManager1;
-        else return playerManager2;
+        return (currentPlayer == 1) ? playerManager1 : playerManager2;
     }
 
     public void StartTurn(bool drawCard = true)
@@ -47,16 +49,27 @@ public class TurnManager : MonoBehaviour
         spellPlayed = false;
 
         currentPlayerManager = SelectPlayerManager();
-        
-        if (currentPlayerManager != null && drawCard)
+
+        if (currentPlayerManager != null)
         {
-            currentPlayerManager.DrawCard();
+            if (drawCard)
+            {
+                if (!skipDrawOnTurnStart)
+                {
+                    currentPlayerManager.DrawCard();
+                }
+                else
+                {
+                    // Skip drawing a card on turn start due to round reset.
+                    skipDrawOnTurnStart = false; // Reset flag for future turns.
+                }
+            }
         }
         else
         {
             Debug.LogError("❌ PlayerManager not found! Make sure it's in the scene.");
         }
-        
+
         currentPlayerManager.pc.StartTurn();
     }
 
@@ -87,7 +100,7 @@ public class TurnManager : MonoBehaviour
 
     public void PlayerEndTurn()
     {
-        EndTurn(); // Player will now only draw at the start of their turn
+        EndTurn(); // End turn; new turn logic will run.
     }
 
     public void EndTurn()
@@ -101,6 +114,7 @@ public class TurnManager : MonoBehaviour
     {
         currentPlayer = 1; // Reset turn to Player 1 at the start of a new round
         Debug.Log("🔄 Turn Reset: Player 1 starts the new round!");
+        skipDrawOnTurnStart = true; // Set flag to skip drawing a card immediately after round reset
         StartTurn();
     }
 

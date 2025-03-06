@@ -23,19 +23,15 @@ public class SacrificeManager : MonoBehaviour
     // Called when the player chooses to evolve a card.
     public void StartSacrificeSelection(CardUI evoCard)
     {
-        if (evoCard == null)
+        if (evoCard == null || evoCard.cardData == null)
         {
-            Debug.LogError("StartSacrificeSelection: evoCard is null!");
+            Debug.LogError("StartSacrificeSelection: evoCard or cardData is null!");
             return;
         }
-        if (evoCard.cardData == null)
-        {
-            Debug.LogError("StartSacrificeSelection: cardData is null in evoCard!");
-            return;
-        }
+
         if (evoCard.cardData.sacrificeRequirements == null || evoCard.cardData.sacrificeRequirements.Count == 0)
         {
-            Debug.LogError("StartSacrificeSelection: No sacrifice requirements found in cardData!");
+            Debug.LogError($"StartSacrificeSelection: {evoCard.cardData.cardName} has no sacrifice requirements.");
             return;
         }
 
@@ -43,13 +39,12 @@ public class SacrificeManager : MonoBehaviour
         requiredSacrifices = evoCard.cardData.sacrificeRequirements[0].count;
         selectedSacrifices.Clear();
 
-        // Highlight eligible sacrifice cards on the board.
         if (GridManager.instance != null)
-            GridManager.instance.HighlightEligibleSacrifices();
+            GridManager.instance.HighlightEligibleSacrifices(currentEvolutionCard);
         else
             Debug.LogError("StartSacrificeSelection: GridManager.instance is null!");
 
-        Debug.Log("[SacrificeManager] Sacrifice selection mode activated. Required sacrifices: " + requiredSacrifices);
+        Debug.Log($"[SacrificeManager] Activated sacrifice mode for {evoCard.cardData.cardName}. Requires {requiredSacrifices} sacrifices.");
     }
 
     // Called when a valid sacrifice card is clicked.
@@ -73,40 +68,66 @@ public class SacrificeManager : MonoBehaviour
         // Check if we've reached the required number of sacrifices.
         if (selectedSacrifices.Count >= requiredSacrifices)
         {
-            CompleteSacrificeSelection();
+            // Instead of immediately completing the sacrifice, show a confirmation prompt.
+            ShowSacrificeConfirmation();
         }
+    }
+
+    // Displays a confirmation prompt to the player.
+    private void ShowSacrificeConfirmation()
+    {
+        Debug.Log("[SacrificeManager] Please confirm your sacrifice selection for " + currentEvolutionCard.cardData.cardName);
+        // TODO: Replace the auto-confirm with your own confirmation UI logic.
+        // For now, auto-confirm after 1 second.
+        Invoke("CompleteSacrificeSelection", 1f);
     }
 
     private void CompleteSacrificeSelection()
     {
-        // Remove each selected sacrifice from the board.
+        // 1. Find the grid coordinates of the FIRST sacrifice card
+        int targetX = -1, targetY = -1;
+        GameObject firstSacrifice = selectedSacrifices[0];
+
+        GameObject[,] gridObjs = GridManager.instance.GetGridObjects();
+        for (int x = 0; x < 3; x++)
+        {
+            for (int y = 0; y < 3; y++)
+            {
+                if (gridObjs[x, y] == firstSacrifice)
+                {
+                    targetX = x;
+                    targetY = y;
+                    break;
+                }
+            }
+            if (targetX != -1) break;
+        }
+        Debug.Log($"[SacrificeManager] Coordinates of first sacrifice: ({targetX}, {targetY})");
+
+        // 2. Remove each selected sacrifice from the board
         foreach (GameObject sacrifice in selectedSacrifices)
         {
-            if (GridManager.instance != null)
-                GridManager.instance.RemoveSacrificeCard(sacrifice);
+            GridManager.instance.RemoveSacrificeCard(sacrifice);
         }
 
-        if (selectedSacrifices.Count > 0)
+        // 3. Place the evolution card at the freed cell
+        if (targetX != -1 && targetY != -1)
         {
-            // Use the position of the first sacrificed card as the target position.
-            Vector2 targetPos = selectedSacrifices[0].transform.position;
-            if (GridManager.instance != null)
-                GridManager.instance.PlaceEvolutionCard(currentEvolutionCard, targetPos);
-            else
-                Debug.LogError("CompleteSacrificeSelection: GridManager.instance is null!");
+            // Use a new method in GridManager that places the card at (targetX, targetY).
+            GridManager.instance.PerformEvolutionAtCoords(currentEvolutionCard, targetX, targetY);
         }
         else
         {
-            Debug.LogError("CompleteSacrificeSelection: No sacrifices selected!");
+            Debug.LogError("[SacrificeManager] Could not find valid coordinates for the sacrifice. Evolution canceled.");
         }
 
-        if (GridManager.instance != null)
-            GridManager.instance.ClearSacrificeHighlights();
-
+        // Clear highlights, log, reset
+        GridManager.instance.ClearSacrificeHighlights();
         Debug.Log("[SacrificeManager] Sacrifice selection complete. Evolution card summoned.");
         currentEvolutionCard = null;
         selectedSacrifices.Clear();
     }
+
 
     // Optionally, a method to cancel sacrifice selection.
     public void CancelSacrificeSelection()
@@ -116,5 +137,26 @@ public class SacrificeManager : MonoBehaviour
         selectedSacrifices.Clear();
         currentEvolutionCard = null;
         Debug.Log("[SacrificeManager] Sacrifice selection cancelled.");
+    }
+
+    // New method to check if a card is a valid sacrifice for the current evolution.
+    public bool IsValidSacrifice(CardUI card)
+    {
+        if (currentEvolutionCard == null || card == null || card.cardData == null)
+        {
+            return false;
+        }
+
+        foreach (var req in currentEvolutionCard.cardData.sacrificeRequirements)
+        {
+            bool match = req.matchByCreatureType
+                ? (card.cardData.creatureType == req.requiredCardName)
+                : (card.cardData.cardName == req.requiredCardName);
+
+            if (match)
+                return true;
+        }
+
+        return false;
     }
 }

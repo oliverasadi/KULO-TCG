@@ -32,7 +32,7 @@ public class GridManager : MonoBehaviour
     }
 
     // Simplified logic:
-    // - If cell is empty, enforce turn rule.
+    // - If cell is empty, enforce one creature/one spell rule.
     // - If occupied by an opponent's creature, allow replacement if new card's power is >= occupant's power.
     public bool CanPlaceCard(int x, int y, CardSO card)
     {
@@ -93,7 +93,9 @@ public class GridManager : MonoBehaviour
                     return false;
                 }
             }
-            // Perform the sacrifices.
+            // At this point, sacrifice requirements are met.
+            // TODO: Insert confirmation UI here.
+            // If the player confirms the sacrifice, then perform the following:
             foreach (var req in cardData.sacrificeRequirements)
             {
                 int sacrificed = 0;
@@ -258,13 +260,13 @@ public class GridManager : MonoBehaviour
             {
                 Debug.LogWarning($"[GridManager] Could not find 'GridCell_{x}_{y}' in the hierarchy.");
             }
-            
+
             PlayerManager co = cardObj.GetComponent<CardHandler>().cardOwner;
-            if(co != null)
+            if (co != null)
                 co.zones.AddCardToGrave(cardObj);
             else
                 Debug.LogError("Zones instance is null!");
-            
+
             if (audioSource != null && removeCardSound != null)
                 audioSource.PlayOneShot(removeCardSound);
 
@@ -337,19 +339,38 @@ public class GridManager : MonoBehaviour
     /// Highlights valid sacrifice cards on the field.
     /// Only the player's cards (where CardHandler.isAI is false) are considered.
     /// </summary>
-    public void HighlightEligibleSacrifices()
+    public void HighlightEligibleSacrifices(CardUI evoCard)
     {
-        Debug.Log("[GridManager] HighlightEligibleSacrifices called.");
-        for (int x = 0; x < 3; x++)
+        if (evoCard == null || evoCard.cardData == null || evoCard.cardData.sacrificeRequirements == null)
         {
-            for (int y = 0; y < 3; y++)
+            Debug.LogError("HighlightEligibleSacrifices: Invalid evoCard or missing sacrifice requirements.");
+            return;
+        }
+
+        Debug.Log($"[GridManager] Highlighting valid sacrifices for evolving {evoCard.cardData.cardName}");
+
+        foreach (var req in evoCard.cardData.sacrificeRequirements)
+        {
+            for (int x = 0; x < 3; x++)
             {
-                if (grid[x, y] != null && gridObjects[x, y] != null)
+                for (int y = 0; y < 3; y++)
                 {
-                    CardHandler ch = gridObjects[x, y].GetComponent<CardHandler>();
-                    if (ch != null && !ch.isAI) // Only player's cards
+                    if (grid[x, y] != null && gridObjects[x, y] != null)
                     {
-                        ch.ShowSacrificeHighlight(); // Implement this in CardHandler to highlight the card
+                        CardHandler ch = gridObjects[x, y].GetComponent<CardHandler>();
+
+                        if (ch != null && !ch.isAI) // Only highlight player’s cards
+                        {
+                            bool match = req.matchByCreatureType
+                                ? (grid[x, y].creatureType == req.requiredCardName)
+                                : (grid[x, y].cardName == req.requiredCardName);
+
+                            if (match)
+                            {
+                                ch.ShowSacrificeHighlight(); // Highlights only valid sacrifices
+                                Debug.Log($"[Sacrifice Highlight] {grid[x, y].cardName} is a valid sacrifice.");
+                            }
+                        }
                     }
                 }
             }
@@ -371,7 +392,7 @@ public class GridManager : MonoBehaviour
                     CardHandler ch = gridObjects[x, y].GetComponent<CardHandler>();
                     if (ch != null)
                     {
-                        ch.HideSacrificeHighlight(); // Implement this in CardHandler to revert the highlight
+                        ch.HideSacrificeHighlight();
                     }
                 }
             }
@@ -391,7 +412,7 @@ public class GridManager : MonoBehaviour
             {
                 if (gridObjects[x, y] == card)
                 {
-                    RemoveCard(x, y, false); // false indicates it's a player's card.
+                    RemoveCard(x, y, false);
                     return;
                 }
             }
@@ -399,14 +420,75 @@ public class GridManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Places the evolved card at a specific location (like the position of a sacrificed card).
+    /// Places the evolved card at the position of the first sacrificed card (by reading the parent's transform).
+    /// </summary>
+    public void PerformEvolution(CardUI evoCard, GameObject firstSacrifice)
+    {
+        // The existing method that tries to parse the parent's name.
+        // Left intact if you want to keep it for other flows.
+        // For the new recommended approach, see PerformEvolutionAtCoords below.
+        // ...
+    }
+
+    /// <summary>
+    /// A more reliable method: places the evolved card at explicit (x,y) coordinates in the grid.
+    /// </summary>
+    public void PerformEvolutionAtCoords(CardUI evoCard, int x, int y)
+    {
+        // 1. Find the grid cell object
+        GameObject cellObj = GameObject.Find($"GridCell_{x}_{y}");
+        if (cellObj == null)
+        {
+            Debug.LogError($"PerformEvolutionAtCoords: Could not find GridCell_{x}_{y}");
+            return;
+        }
+        Debug.Log($"PerformEvolutionAtCoords: Placing {evoCard.cardData.cardName} at GridCell_{x}_{y}");
+
+        // 2. Re-parent the evolution card to that cell
+        evoCard.transform.SetParent(cellObj.transform, false);
+
+        // 3. Reset anchoring/position
+        RectTransform rt = evoCard.GetComponent<RectTransform>();
+        if (rt != null)
+        {
+            rt.anchorMin = new Vector2(0.5f, 0.5f);
+            rt.anchorMax = new Vector2(0.5f, 0.5f);
+            rt.pivot = new Vector2(0.5f, 0.5f);
+            rt.anchoredPosition = Vector2.zero;
+        }
+        else
+        {
+            evoCard.transform.localPosition = Vector3.zero;
+        }
+
+        // 4. Update grid references
+        grid[x, y] = evoCard.cardData;
+        gridObjects[x, y] = evoCard.gameObject;
+
+        // 5. Mark the cell as occupied
+        GridDropZone dz = cellObj.GetComponent<GridDropZone>();
+        if (dz != null)
+        {
+            dz.isOccupied = true;
+        }
+        else
+        {
+            Debug.LogWarning("PerformEvolutionAtCoords: No GridDropZone on target cell.");
+        }
+
+        // 6. Register the evolution as a played card
+        TurnManager.instance.RegisterCardPlay(evoCard.cardData);
+
+        Debug.Log($"[GridManager] Evolution complete: {evoCard.cardData.cardName} placed at ({x},{y}).");
+    }
+
+    /// <summary>
+    /// Default evolution method placeholder.
     /// </summary>
     public void PlaceEvolutionCard(CardUI evoCard, Vector2 targetPos)
     {
         Debug.Log("[GridManager] PlaceEvolutionCard called for " + evoCard.cardData.cardName + " at " + targetPos);
-        // For demonstration purposes, let's choose a fixed cell.
-        // In practice, you would convert targetPos to the nearest grid cell.
-        int x = 1, y = 1;
-        PlaceExistingCard(x, y, evoCard.gameObject, evoCard.cardData, evoCard.transform.parent);
+        // For demonstration purposes, you might decide which cell to target based on targetPos.
+        // In practice, you would capture that reference during sacrifice selection.
     }
 }
