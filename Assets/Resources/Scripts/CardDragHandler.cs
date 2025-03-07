@@ -21,6 +21,14 @@ public class CardDragHandler : MonoBehaviour, IBeginDragHandler, IDragHandler, I
 
     public void OnBeginDrag(PointerEventData eventData)
     {
+        // Prevent dragging if this card belongs to the AI.
+        if (cardHandler != null && cardHandler.isAI)
+        {
+            Debug.Log("Dragging on an AI card is disabled.");
+            eventData.pointerDrag = null; // Cancel the drag event without resetting the card.
+            return;
+        }
+
         if (cardHandler.cardData == null)
         {
             Debug.LogError("❌ Card data is missing in CardHandler!");
@@ -40,17 +48,21 @@ public class CardDragHandler : MonoBehaviour, IBeginDragHandler, IDragHandler, I
 
     public void OnDrag(PointerEventData eventData)
     {
-        if (!isDragging) return;
+        if (!isDragging)
+            return;
         rectTransform.position = Input.mousePosition;
     }
 
     public void OnEndDrag(PointerEventData eventData)
     {
+        if (!isDragging)
+            return;
+
         isDragging = false;
         canvasGroup.blocksRaycasts = true;
         canvasGroup.alpha = 1f;
 
-        // If we're still under the original parent, the drop wasn't valid
+        // If still under the original parent, the drop wasn't valid.
         if (transform.parent == originalParent)
         {
             ResetCardPosition();
@@ -63,12 +75,10 @@ public class CardDragHandler : MonoBehaviour, IBeginDragHandler, IDragHandler, I
         isOccupied = false;
         CardSO cardData = cardHandler.GetCardData();
 
-        // Check if the drop position is valid and the card can be placed
         if (GridManager.instance.IsValidDropPosition(position, out int x, out int y) &&
             GridManager.instance.CanPlaceCard(x, y, cardData))
         {
             Debug.Log($"[CardDragHandler] Attempting to place {cardData.cardName} at {x},{y}");
-            // Re-parent this card to the actual cell using PlaceExistingCard
             bool placed = GridManager.instance.PlaceExistingCard(x, y, gameObject, cardData, cellParent);
 
             if (placed)

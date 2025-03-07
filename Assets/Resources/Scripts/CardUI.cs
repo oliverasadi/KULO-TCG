@@ -146,6 +146,15 @@ public class CardUI : MonoBehaviour, IPointerClickHandler
 
     public void OnPointerClick(PointerEventData eventData)
     {
+        // Prevent interactions if this card belongs to the AI.
+        CardHandler handler = GetComponent<CardHandler>();
+        if (handler != null && handler.isAI)
+        {
+            // Optionally log that this card cannot be interacted with.
+            Debug.Log("Attempted interaction on AI card ignored.");
+            return;
+        }
+
         if (cardData == null)
         {
             Debug.LogError($"CardUI: cardData is null on {gameObject.name}. Ensure SetCardData is called.");
@@ -175,6 +184,7 @@ public class CardUI : MonoBehaviour, IPointerClickHandler
             ShowSummonMenu();
         }
     }
+
 
     private void ShowSummonMenu()
     {
