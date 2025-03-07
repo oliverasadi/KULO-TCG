@@ -24,6 +24,7 @@ MonoBehaviour:
   baseOrEvo: 1
   extraDetails: 'DOB: Unknown, GPS: Legendary Koi River, Weight: 10.8kg, Height:
     3.27m.'
+  effects: []
   requiresSacrifice: 1
   sacrificeRequirements:
   - requiredCardName: Koi Dad, Koi Mum, Koi Child

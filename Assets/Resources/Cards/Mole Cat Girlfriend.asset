@@ -21,3 +21,13 @@ MonoBehaviour:
   creatureType: Cat
   baseOrEvo: 0
   extraDetails: 'DOB: 2024, GPS: Hidden Gulu Forest, Weight: 4.7kg, Height: 0.25m.'
+  inlineEffects:
+  - effectType: 3
+    cardsToDraw: 0
+    powerChange: 0
+    requiredCreatureNames: []
+    maxTargets: 0
+  effects:
+  - {fileID: 11400000, guid: 1ae5681af2144d14b8cdca3df7fccd48, type: 2}
+  requiresSacrifice: 0
+  sacrificeRequirements: []

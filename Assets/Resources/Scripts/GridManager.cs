@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using UnityEngine;
+using TMPro;
 
 public class GridManager : MonoBehaviour
 {
@@ -23,7 +24,6 @@ public class GridManager : MonoBehaviour
             Destroy(gameObject);
     }
 
-    // Always allow drop; detailed validation occurs in CanPlaceCard.
     public bool IsValidDropPosition(Vector2Int dropPosition, out int x, out int y)
     {
         x = dropPosition.x;
@@ -31,34 +31,27 @@ public class GridManager : MonoBehaviour
         return true;
     }
 
-    // Simplified logic:
-    // - If cell is empty, enforce one creature/one spell rule.
-    // - If occupied by an opponent's creature, allow replacement if new card's power is >= occupant's power.
     public bool CanPlaceCard(int x, int y, CardSO card)
     {
         int currentPlayer = TurnManager.instance.GetCurrentPlayer();
 
         if (grid[x, y] == null)
         {
-            // Normal move: enforce one creature/one spell rule.
             return TurnManager.instance.CanPlayCard(card);
         }
         else
         {
-            // Check occupant ownership.
             CardHandler occupantHandler = gridObjects[x, y].GetComponent<CardHandler>();
             if (occupantHandler != null)
             {
                 if ((currentPlayer == 1 && occupantHandler.isAI) ||
                     (currentPlayer == 2 && !occupantHandler.isAI))
                 {
-                    // Replacement move: allow if new card's power is >= occupant's power.
                     bool allowed = card.power >= grid[x, y].power;
                     Debug.Log($"[GridManager] Replacement at ({x},{y}): occupant power = {grid[x, y].power}, new card power = {card.power}, allowed = {allowed}");
                     return allowed;
                 }
             }
-            // Occupant is on the same side, disallow.
             return false;
         }
     }
@@ -93,9 +86,6 @@ public class GridManager : MonoBehaviour
                     return false;
                 }
             }
-            // At this point, sacrifice requirements are met.
-            // TODO: Insert confirmation UI here.
-            // If the player confirms the sacrifice, then perform the following:
             foreach (var req in cardData.sacrificeRequirements)
             {
                 int sacrificed = 0;
@@ -111,7 +101,6 @@ public class GridManager : MonoBehaviour
                             if (match)
                             {
                                 Debug.Log($"Sacrificing {grid[i, j].cardName} at ({i},{j}) for {cardData.cardName}.");
-                                // Only sacrifice if it is the player's card.
                                 CardHandler ch = gridObjects[i, j].GetComponent<CardHandler>();
                                 if (ch != null && !ch.isAI)
                                 {
@@ -126,7 +115,6 @@ public class GridManager : MonoBehaviour
         }
         // ---- END SACRIFICE CHECK ----
 
-        // If occupant is present, handle replacement logic.
         if (grid[x, y] != null)
         {
             if (grid[x, y].power > cardData.power)
@@ -160,7 +148,6 @@ public class GridManager : MonoBehaviour
             }
         }
 
-        // Re-parent and center the new card.
         cardObj.transform.SetParent(cellParent, false);
         RectTransform rt = cardObj.GetComponent<RectTransform>();
         if (rt != null)
@@ -175,20 +162,34 @@ public class GridManager : MonoBehaviour
             cardObj.transform.localPosition = Vector3.zero;
         }
 
-        // Update grid references.
         grid[x, y] = cardData;
         gridObjects[x, y] = cardObj;
 
-        // Force ownership for new card.
         bool newOwnerIsAI2 = (TurnManager.instance.GetCurrentPlayer() == 2);
         Debug.Log($"[GridManager] Forcing ownership for {cardData.cardName}: isAI = {newOwnerIsAI2}");
         CardHandler handler = cardObj.GetComponent<CardHandler>();
         if (handler != null) handler.isAI = newOwnerIsAI2;
 
         TurnManager.instance.RegisterCardPlay(cardData);
-        if (audioSource != null && placeCardSound != null) audioSource.PlayOneShot(placeCardSound);
+        if (audioSource != null && placeCardSound != null)
+            audioSource.PlayOneShot(placeCardSound);
 
         Debug.Log($"[GridManager] Placed {cardData.cardName} at ({x},{y}).");
+
+        // --- Floating Text Display ---
+        if (FloatingTextManager.instance != null)
+        {
+            // Instantiate floating text as a child of the card.
+            GameObject floatingText = Instantiate(
+                FloatingTextManager.instance.floatingTextPrefab,
+                cardObj.transform.position,
+                Quaternion.identity,
+                cardObj.transform);
+            floatingText.transform.localPosition = new Vector3(0, 50f, 0); // Adjust offset as needed.
+            TextMeshProUGUI tmp = floatingText.GetComponent<TextMeshProUGUI>();
+            if (tmp != null)
+                tmp.text = "Power: " + cardData.power;
+        }
 
         if (cardData.category != CardSO.CardCategory.Spell)
         {
@@ -242,6 +243,13 @@ public class GridManager : MonoBehaviour
             GameObject cardObj = gridObjects[x, y];
 
             Debug.Log($"[GridManager] Removing {removedCard.cardName} at ({x},{y}).");
+
+            // Destroy any FloatingText children attached to this card.
+            FloatingText[] floatingTexts = cardObj.GetComponentsInChildren<FloatingText>(true);
+            foreach (FloatingText ft in floatingTexts)
+            {
+                Destroy(ft.gameObject);
+            }
 
             grid[x, y] = null;
             gridObjects[x, y] = null;
@@ -335,10 +343,6 @@ public class GridManager : MonoBehaviour
     // NEW METHODS for Sacrifice/Evolution placeholders
     // ------------------------------------------------
 
-    /// <summary>
-    /// Highlights valid sacrifice cards on the field.
-    /// Only the player's cards (where CardHandler.isAI is false) are considered.
-    /// </summary>
     public void HighlightEligibleSacrifices(CardUI evoCard)
     {
         if (evoCard == null || evoCard.cardData == null || evoCard.cardData.sacrificeRequirements == null)
@@ -359,7 +363,7 @@ public class GridManager : MonoBehaviour
                     {
                         CardHandler ch = gridObjects[x, y].GetComponent<CardHandler>();
 
-                        if (ch != null && !ch.isAI) // Only highlight player’s cards
+                        if (ch != null && !ch.isAI)
                         {
                             bool match = req.matchByCreatureType
                                 ? (grid[x, y].creatureType == req.requiredCardName)
@@ -367,7 +371,7 @@ public class GridManager : MonoBehaviour
 
                             if (match)
                             {
-                                ch.ShowSacrificeHighlight(); // Highlights only valid sacrifices
+                                ch.ShowSacrificeHighlight();
                                 Debug.Log($"[Sacrifice Highlight] {grid[x, y].cardName} is a valid sacrifice.");
                             }
                         }
@@ -377,9 +381,6 @@ public class GridManager : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// Clears any highlights placed for sacrifice selection.
-    /// </summary>
     public void ClearSacrificeHighlights()
     {
         Debug.Log("[GridManager] ClearSacrificeHighlights called.");
@@ -399,10 +400,6 @@ public class GridManager : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// Finds and removes the given sacrifice card from the board.
-    /// Only considers player's cards.
-    /// </summary>
     public void RemoveSacrificeCard(GameObject card)
     {
         Debug.Log("[GridManager] RemoveSacrificeCard called for " + card.name);
@@ -419,23 +416,13 @@ public class GridManager : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// Places the evolved card at the position of the first sacrificed card (by reading the parent's transform).
-    /// </summary>
     public void PerformEvolution(CardUI evoCard, GameObject firstSacrifice)
     {
-        // The existing method that tries to parse the parent's name.
-        // Left intact if you want to keep it for other flows.
-        // For the new recommended approach, see PerformEvolutionAtCoords below.
-        // ...
+        // Existing method placeholder...
     }
 
-    /// <summary>
-    /// A more reliable method: places the evolved card at explicit (x,y) coordinates in the grid.
-    /// </summary>
     public void PerformEvolutionAtCoords(CardUI evoCard, int x, int y)
     {
-        // 1. Find the grid cell object
         GameObject cellObj = GameObject.Find($"GridCell_{x}_{y}");
         if (cellObj == null)
         {
@@ -444,10 +431,7 @@ public class GridManager : MonoBehaviour
         }
         Debug.Log($"PerformEvolutionAtCoords: Placing {evoCard.cardData.cardName} at GridCell_{x}_{y}");
 
-        // 2. Re-parent the evolution card to that cell
         evoCard.transform.SetParent(cellObj.transform, false);
-
-        // 3. Reset anchoring/position
         RectTransform rt = evoCard.GetComponent<RectTransform>();
         if (rt != null)
         {
@@ -461,11 +445,9 @@ public class GridManager : MonoBehaviour
             evoCard.transform.localPosition = Vector3.zero;
         }
 
-        // 4. Update grid references
         grid[x, y] = evoCard.cardData;
         gridObjects[x, y] = evoCard.gameObject;
 
-        // 5. Mark the cell as occupied
         GridDropZone dz = cellObj.GetComponent<GridDropZone>();
         if (dz != null)
         {
@@ -476,19 +458,28 @@ public class GridManager : MonoBehaviour
             Debug.LogWarning("PerformEvolutionAtCoords: No GridDropZone on target cell.");
         }
 
-        // 6. Register the evolution as a played card
         TurnManager.instance.RegisterCardPlay(evoCard.cardData);
+
+        // --- Floating Text for Evo Card ---
+        if (FloatingTextManager.instance != null)
+        {
+            GameObject floatingText = Instantiate(
+                FloatingTextManager.instance.floatingTextPrefab,
+                evoCard.gameObject.transform.position,
+                Quaternion.identity,
+                evoCard.gameObject.transform);
+            floatingText.transform.localPosition = new Vector3(0, 50f, 0);
+            TextMeshProUGUI tmp = floatingText.GetComponent<TextMeshProUGUI>();
+            if (tmp != null)
+                tmp.text = "Power: " + evoCard.cardData.power;
+        }
 
         Debug.Log($"[GridManager] Evolution complete: {evoCard.cardData.cardName} placed at ({x},{y}).");
     }
 
-    /// <summary>
-    /// Default evolution method placeholder.
-    /// </summary>
     public void PlaceEvolutionCard(CardUI evoCard, Vector2 targetPos)
     {
         Debug.Log("[GridManager] PlaceEvolutionCard called for " + evoCard.cardData.cardName + " at " + targetPos);
-        // For demonstration purposes, you might decide which cell to target based on targetPos.
-        // In practice, you would capture that reference during sacrifice selection.
+        // Implementation as needed...
     }
 }

@@ -16,6 +16,24 @@ public class CardSOEditor : Editor
         EditorGUILayout.PropertyField(serializedObject.FindProperty("cardImage"));
         EditorGUILayout.PropertyField(serializedObject.FindProperty("effectDescription"));
 
+        // Draw the asset-based Effects list.
+        EditorGUILayout.Space();
+        EditorGUILayout.LabelField("Card Effects (Assets)", EditorStyles.boldLabel);
+        EditorGUILayout.PropertyField(serializedObject.FindProperty("effects"), true);
+
+        // Draw the inline effects list (if present)
+        SerializedProperty inlineEffectsProp = serializedObject.FindProperty("inlineEffects");
+        if (inlineEffectsProp != null)
+        {
+            EditorGUILayout.Space();
+            EditorGUILayout.LabelField("Inline Card Effects", EditorStyles.boldLabel);
+            EditorGUILayout.PropertyField(inlineEffectsProp, true);
+        }
+        else
+        {
+            EditorGUILayout.HelpBox("No Inline Effects field found. Make sure your CardSO script has a 'public List<CardEffectData> inlineEffects;' field.", MessageType.Info);
+        }
+
         // Get a reference to the target CardSO instance.
         CardSO cardSO = (CardSO)target;
 
@@ -33,7 +51,6 @@ public class CardSOEditor : Editor
             EditorGUILayout.PropertyField(serializedObject.FindProperty("requiresSacrifice"));
             if (serializedObject.FindProperty("requiresSacrifice").boolValue)
             {
-                // Draw the list of sacrifice requirements.
                 EditorGUILayout.PropertyField(serializedObject.FindProperty("sacrificeRequirements"), true);
             }
         }

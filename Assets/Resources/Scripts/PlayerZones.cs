@@ -4,12 +4,11 @@ using TMPro;
 public class PlayerZones : MonoBehaviour
 {
     public TextMeshProUGUI deckCountText; // Assign a UI Text element in the Inspector
-    public Transform graveContainer; // UI container for player's grave cards
+    public Transform graveContainer;      // UI container for player's grave cards
 
     private int deckCount;
 
-    //Deck Zone
-
+    // Updates the deck count UI.
     public void UpdateDeckCount(int count)
     {
         deckCount = count;
@@ -17,22 +16,31 @@ public class PlayerZones : MonoBehaviour
             deckCountText.text = $"Deck: {deckCount}";
     }
 
-    //Grave Zone
-
+    // Moves a card to the grave zone.
     public void AddCardToGrave(GameObject cardObj)
     {
         if (graveContainer == null)
         {
-            Debug.LogError("Player Missing graveContainer.");
+            Debug.LogError("PlayerZones: Missing graveContainer.");
             return;
         }
+
+        // Remove any floating text objects attached to the card.
+        FloatingText[] floatingTexts = cardObj.GetComponentsInChildren<FloatingText>(true);
+        foreach (FloatingText ft in floatingTexts)
+        {
+            Destroy(ft.gameObject);
+        }
+
         // Re-parent the card to the grave container.
         cardObj.transform.SetParent(graveContainer, false);
+
         // Remove any drag functionality.
         CardDragHandler dragHandler = cardObj.GetComponent<CardDragHandler>();
         if (dragHandler != null)
             Destroy(dragHandler);
-        // Reset its position relative to the grave container.
+
+        // Reset the card's position relative to the grave container.
         RectTransform rt = cardObj.GetComponent<RectTransform>();
         if (rt != null)
             rt.anchoredPosition = Vector2.zero;
@@ -42,4 +50,3 @@ public class PlayerZones : MonoBehaviour
         Debug.Log($"Card moved to grave: {cardObj.name}");
     }
 }
-

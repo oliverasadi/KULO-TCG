@@ -16,14 +16,20 @@ public class CardSO : ScriptableObject
 
     // NEW FIELDS
     public string cardNumber;      // e.g., "OGN-01"
-    public string creatureType;    // e.g., "Dragon," "Beast," etc.
+    public string creatureType;    // e.g., "Dragon", "Beast", etc.
 
     public enum BaseOrEvo { Base, Evolution }
     public BaseOrEvo baseOrEvo;    // Indicates whether this card is a base creature or an evolution
 
-    // New extra field for creature cards only.
     [TextArea]
     public string extraDetails;
+
+    // --- Card Effects ---
+    [Header("Card Effects (Inline)")]
+    public List<CardEffectDataValues> inlineEffects;  // Inline effect data container
+
+    [Header("Card Effects (Asset)")]
+    public List<CardEffect> effects;  // Asset-based effects (derived ScriptableObjects)
 
     // --- Evolution / Sacrifice Requirements ---
     [Header("Evolution / Sacrifice Requirements")]
@@ -36,7 +42,6 @@ public class CardSO : ScriptableObject
         if (!requiresSacrifice || baseCard == null)
             return false;
 
-        // Iterate through each requirement and check for a match.
         foreach (var req in sacrificeRequirements)
         {
             bool match = req.matchByCreatureType
@@ -49,7 +54,6 @@ public class CardSO : ScriptableObject
     }
 }
 
-// SacrificeRequirement class can either be in a separate file or included here.
 [Serializable]
 public class SacrificeRequirement
 {
@@ -58,4 +62,35 @@ public class SacrificeRequirement
     public string requiredCardName;
     public bool matchByCreatureType;
     public int count;
+}
+
+/// <summary>
+/// Inline effect data container. Configure effect parameters directly on the card.
+/// This class is now renamed to CardEffectDataValues to avoid conflicts.
+/// </summary>
+[Serializable]
+public class CardEffectDataValues
+{
+    public enum EffectType
+    {
+        None,
+        DrawOnSummon,
+        MultipleTargetPowerBoost,
+        ConditionalPowerBoost
+        // Add additional effect types as needed.
+    }
+
+    public EffectType effectType = EffectType.None;
+
+    // Parameters for a DrawOnSummon effect.
+    public int cardsToDraw = 1;
+
+    // Parameters for power boost effects.
+    public int powerChange = 0; // e.g., +100 or +200
+
+    // For conditional effects: list of required creature names (e.g., for hitocon).
+    public List<string> requiredCreatureNames = new List<string>();
+
+    // For multiple target boosts: maximum number of targets allowed.
+    public int maxTargets = 0;
 }

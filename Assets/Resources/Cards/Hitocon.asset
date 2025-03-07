@@ -22,3 +22,14 @@ MonoBehaviour:
   creatureType: Wax
   baseOrEvo: 0
   extraDetails: 'DOB: 1267 B.C, GPS: Wax Village, Weight: 5.5kg, Height: 2.23m.'
+  inlineEffects:
+  - effectType: 3
+    cardsToDraw: 0
+    powerChange: 200
+    requiredCreatureNames:
+    - Conomi
+    - Rawnjima
+    maxTargets: 0
+  effects: []
+  requiresSacrifice: 0
+  sacrificeRequirements: []

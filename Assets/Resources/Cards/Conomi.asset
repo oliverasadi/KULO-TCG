@@ -22,3 +22,14 @@ MonoBehaviour:
   creatureType: Wax
   baseOrEvo: 0
   extraDetails: 'DOB: 467 B.C, GPS: Wax Desert, Weight: 5.3kg, Height: 5.22m.'
+  inlineEffects:
+  - effectType: 3
+    cardsToDraw: 0
+    powerChange: 200
+    requiredCreatureNames:
+    - Hitocon
+    - Rawnjima
+    maxTargets: 0
+  effects: []
+  requiresSacrifice: 0
+  sacrificeRequirements: []
