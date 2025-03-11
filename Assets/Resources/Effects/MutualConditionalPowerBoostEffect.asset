@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 180181748f8383e4dbdff205813df2a7, type: 3}
-  m_Name: MoleCatGirlfriendBoost
+  m_Name: MutualConditionalPowerBoostEffect
   m_EditorClassIdentifier: 
-  powerIncrease: 0
+  powerIncrease: 500
   requiredCardName: 

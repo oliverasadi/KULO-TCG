@@ -10,21 +10,22 @@ public class CardEffectData
         None,
         DrawOnSummon,
         MultipleTargetPowerBoost,
+        MutualConditionalPowerBoostEffect,
         ConditionalPowerBoost,
-        // You can add more effect types as needed.
+        ReplaceAfterOpponentTurn
+            
+
     }
 
     public EffectType effectType = EffectType.None;
-
-    // For DrawOnSummon:
     public int cardsToDraw = 1;
-
-    // For Power Boost effects:
-    public int powerChange = 0; // e.g., +100 or +200
-
-    // For conditional power boost (e.g., "if X or Y is on the field")
     public List<string> requiredCreatureNames = new List<string>();
-
-    // For multiple target boost (e.g., choose up to 3 cards to boost)
     public int maxTargets = 0;
+    public string replacementCardName = "";
+    public int replacementDelay = 0;
+    public bool blockAdditionalPlays = false;
+
+    // Added field from CardSO.cs:
+    public List<CardSO> requiredCardAssets = new List<CardSO>();
+    public int powerChange = 0;
 }

@@ -3,6 +3,7 @@ using UnityEngine.UI;
 using TMPro;
 using System.Collections;
 using UnityEngine.EventSystems;
+using System.Collections.Generic;
 
 public class CardUI : MonoBehaviour, IPointerClickHandler
 {
@@ -24,6 +25,9 @@ public class CardUI : MonoBehaviour, IPointerClickHandler
     // --- New Fields for Summoning ---
     public GameObject summonMenuPrefab;       // Assign a prefab for the summon menu (should be under the Canvas)
     public Vector2 summonMenuOffset = new Vector2(0, 20f); // Offset for positioning the summon menu
+
+    // NEW: Runtime current power value; used during gameplay without modifying the base power.
+    public int currentPower;
 
     void Start()
     {
@@ -60,6 +64,8 @@ public class CardUI : MonoBehaviour, IPointerClickHandler
 
         cardData = card;
         isInDeck = false;
+        // Initialize runtime power from the base power.
+        currentPower = card.power;
 
         Debug.Log($"✅ CardUI: Card data set for {gameObject.name} - {cardData.cardName}");
         if (cardNameText != null)
@@ -146,11 +152,9 @@ public class CardUI : MonoBehaviour, IPointerClickHandler
 
     public void OnPointerClick(PointerEventData eventData)
     {
-        // Prevent interactions if this card belongs to the AI.
         CardHandler handler = GetComponent<CardHandler>();
         if (handler != null && handler.isAI)
         {
-            // Optionally log that this card cannot be interacted with.
             Debug.Log("Attempted interaction on AI card ignored.");
             return;
         }
@@ -168,7 +172,6 @@ public class CardUI : MonoBehaviour, IPointerClickHandler
         }
         else if (eventData.button == PointerEventData.InputButton.Left)
         {
-            // If a SummonMenu is already open, close it (toggle behavior).
             if (SummonMenu.currentMenu != null)
             {
                 if (SummonMenu.currentMenu.cardUI == this)
@@ -185,7 +188,6 @@ public class CardUI : MonoBehaviour, IPointerClickHandler
         }
     }
 
-
     private void ShowSummonMenu()
     {
         if (summonMenuPrefab == null)
@@ -194,8 +196,6 @@ public class CardUI : MonoBehaviour, IPointerClickHandler
             return;
         }
 
-        // Determine if the card is on the field based on its parent.
-        // Assuming grid cells are named with "GridCell" in their name.
         if (transform.parent != null && transform.parent.name.Contains("GridCell"))
         {
             isOnField = true;
@@ -205,7 +205,6 @@ public class CardUI : MonoBehaviour, IPointerClickHandler
             isOnField = false;
         }
 
-        // Find the Canvas in the scene.
         Canvas canvas = FindObjectOfType<Canvas>();
         if (canvas == null)
         {
@@ -213,11 +212,9 @@ public class CardUI : MonoBehaviour, IPointerClickHandler
             return;
         }
 
-        // Instantiate the SummonMenu as a child of the Canvas.
         GameObject menuInstance = Instantiate(summonMenuPrefab, canvas.transform);
-        menuInstance.transform.SetAsLastSibling(); // Ensure it's on top.
+        menuInstance.transform.SetAsLastSibling();
 
-        // Position the menu near the card.
         RectTransform cardRect = GetComponent<RectTransform>();
         RectTransform menuRect = menuInstance.GetComponent<RectTransform>();
         if (menuRect != null && cardRect != null)
@@ -238,7 +235,6 @@ public class CardUI : MonoBehaviour, IPointerClickHandler
             Debug.LogWarning("Missing RectTransform on card or menu.");
         }
 
-        // Initialize the menu with this CardUI reference.
         SummonMenu summonMenu = menuInstance.GetComponent<SummonMenu>();
         if (summonMenu != null)
         {
@@ -260,4 +256,113 @@ public class CardUI : MonoBehaviour, IPointerClickHandler
     }
 
     public bool isSelected = false;
+
+    // --- Updated Methods for Calculating Effective Power Using Runtime currentPower ---
+    // This method now live-scans the field for synergy using requiredCreatureNames.
+    public int CalculateEffectivePower()
+    {
+        int effectivePower = currentPower; // Use the runtime base power
+
+        // Loop through each inline effect for ConditionalPowerBoost and add synergy dynamically.
+        foreach (var effect in cardData.inlineEffects)
+        {
+            if (effect.effectType == CardEffectData.EffectType.ConditionalPowerBoost)
+            {
+                int synergyCount = 0;
+                // Check if there are any typed required names.
+                if (effect.requiredCreatureNames != null && effect.requiredCreatureNames.Count > 0)
+                {
+                    CardSO[,] gridArray = GridManager.instance.GetGrid();
+                    GameObject[,] gridObjs = GridManager.instance.GetGridObjects();
+                    CardHandler myHandler = GetComponent<CardHandler>();
+
+                    for (int i = 0; i < gridArray.GetLength(0); i++)
+                    {
+                        for (int j = 0; j < gridArray.GetLength(1); j++)
+                        {
+                            if (gridArray[i, j] == null)
+                                continue;
+                            if (gridObjs[i, j] == this.gameObject)
+                                continue; // skip self
+
+                            foreach (string reqName in effect.requiredCreatureNames)
+                            {
+                                if (gridArray[i, j].cardName == reqName)
+                                {
+                                    CardHandler candidate = gridObjs[i, j].GetComponent<CardHandler>();
+                                    if (candidate != null && myHandler != null && candidate.cardOwner == myHandler.cardOwner)
+                                    {
+                                        synergyCount++;
+                                        break; // Count each cell only once.
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                // Apply the boost for every synergy match.
+                if (synergyCount > 0)
+                {
+                    effectivePower += effect.powerChange * synergyCount;
+                }
+            }
+        }
+        return effectivePower;
+    }
+
+    // Counts friendly cards that match any of the CardSO references provided.
+    private int CountOtherCardsBySynergy(List<CardSO> requiredCards)
+    {
+        int count = 0;
+        CardSO[,] gridArray = GridManager.instance.GetGrid();
+        GameObject[,] gridObjs = GridManager.instance.GetGridObjects();
+
+        for (int x = 0; x < gridArray.GetLength(0); x++)
+        {
+            for (int y = 0; y < gridArray.GetLength(1); y++)
+            {
+                if (gridArray[x, y] == null)
+                    continue;
+                if (gridObjs[x, y] == this.gameObject)
+                    continue;
+                foreach (CardSO reqCard in requiredCards)
+                {
+                    if (reqCard != null && gridArray[x, y].cardName == reqCard.cardName)
+                    {
+                        CardHandler handler = gridObjs[x, y].GetComponent<CardHandler>();
+                        if (handler != null && handler.cardOwner == GetComponent<CardHandler>().cardOwner)
+                        {
+                            count++;
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+        return count;
+    }
+
+    // Counts all cards on the field that are controlled by the opponent.
+    private int CountOpponentCards()
+    {
+        int count = 0;
+        CardSO[,] gridArray = GridManager.instance.GetGrid();
+        GameObject[,] gridObjs = GridManager.instance.GetGridObjects();
+        var myOwner = GetComponent<CardHandler>().cardOwner;
+
+        for (int x = 0; x < gridArray.GetLength(0); x++)
+        {
+            for (int y = 0; y < gridArray.GetLength(1); y++)
+            {
+                if (gridArray[x, y] == null)
+                    continue;
+                CardHandler handler = gridObjs[x, y].GetComponent<CardHandler>();
+                if (handler != null && handler.cardOwner != myOwner)
+                {
+                    count++;
+                }
+            }
+        }
+        return count;
+    }
 }

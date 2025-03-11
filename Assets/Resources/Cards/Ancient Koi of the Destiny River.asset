@@ -24,6 +24,16 @@ MonoBehaviour:
   baseOrEvo: 1
   extraDetails: 'DOB: Unknown, GPS: Legendary Koi River, Weight: 10.8kg, Height:
     3.27m.'
+  inlineEffects:
+  - effectType: 0
+    cardsToDraw: 0
+    requiredCreatureNames: []
+    maxTargets: 0
+    replacementCardName: 
+    replacementDelay: 0
+    blockAdditionalPlays: 0
+    requiredCardAssets: []
+    powerChange: 0
   effects: []
   requiresSacrifice: 1
   sacrificeRequirements:

@@ -22,5 +22,15 @@ MonoBehaviour:
   creatureType: Cat
   baseOrEvo: 0
   extraDetails: 'DOB: 2024 GPS: Gulu Island Height: 2kg Height: 0.23m'
+  inlineEffects:
+  - effectType: 4
+    cardsToDraw: 0
+    powerChange: 0
+    requiredCreatureNames: []
+    maxTargets: 0
+    replacementCardName: The Cat with the Mole
+    replacementDelay: 1
+    blockAdditionalPlays: 0
+  effects: []
   requiresSacrifice: 0
   sacrificeRequirements: []

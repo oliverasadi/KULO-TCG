@@ -22,6 +22,15 @@ MonoBehaviour:
   creatureType: Cat
   baseOrEvo: 0
   extraDetails: 'DOB: 2017, GPS: Gulu Island, Weight: 3.8kg, Height: 0.20m.'
+  inlineEffects:
+  - effectType: 2
+    cardsToDraw: 0
+    powerChange: 100
+    requiredCreatureNames: []
+    maxTargets: 3
+    replacementCardName: 
+    replacementDelay: 0
+    blockAdditionalPlays: 0
   effects: []
   requiresSacrifice: 0
   sacrificeRequirements: []

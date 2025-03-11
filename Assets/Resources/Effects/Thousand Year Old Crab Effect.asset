@@ -9,8 +9,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 180181748f8383e4dbdff205813df2a7, type: 3}
-  m_Name: MoleCatGirlfriendBoost
+  m_Script: {fileID: 11500000, guid: 95229c4c9a2cc6347b28d692cbf590de, type: 3}
+  m_Name: Thousand Year Old Crab Effect
   m_EditorClassIdentifier: 
-  powerIncrease: 0
-  requiredCardName: 
+  discardCost: 2

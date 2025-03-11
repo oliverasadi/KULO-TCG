@@ -22,5 +22,8 @@ MonoBehaviour:
   creatureType: Su Beast
   baseOrEvo: 0
   extraDetails: 'DOB: 2025, GPS: Su River, Weight:1.5kg, Height: 0.23m.'
+  inlineEffects: []
+  effects:
+  - {fileID: 11400000, guid: d5035bbb74d0634468bbba4789657b47, type: 2}
   requiresSacrifice: 0
   sacrificeRequirements: []

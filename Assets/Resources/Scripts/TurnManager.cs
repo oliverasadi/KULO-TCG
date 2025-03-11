@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Mirror.Examples.CCU;
 using UnityEngine;
 using UnityEngine.UI;
@@ -7,6 +8,8 @@ public class TurnManager : MonoBehaviour
 {
     public static TurnManager instance;
     public static PlayerManager currentPlayerManager;
+
+    public PlayerManager localPlayerManager; // New field for the local player's manager
 
     public Button endTurnButton; // Assign in Inspector
     public int currentPlayer = 1; // 1 = Player, 2 = AI
@@ -19,6 +22,12 @@ public class TurnManager : MonoBehaviour
     // Flag to control card draw on turn start.
     private bool skipDrawOnTurnStart = false;
 
+    // Assume the local player is player 1.
+    public int localPlayerNumber = 1;
+
+    // Event to be fired at the end of an opponent's turn.
+    public event Action OnOpponentTurnEnd;
+
     // Expose creaturePlayed via a public property.
     public bool CreaturePlayed
     {
@@ -27,12 +36,17 @@ public class TurnManager : MonoBehaviour
 
     void Awake()
     {
-        if (instance == null) instance = this;
-        else Destroy(gameObject);
+        if (instance == null)
+            instance = this;
+        else
+            Destroy(gameObject);
     }
 
     void Start()
     {
+        // Assign the local player's manager based on localPlayerNumber.
+        localPlayerManager = (localPlayerNumber == 1) ? playerManager1 : playerManager2;
+
         endTurnButton.onClick.AddListener(PlayerEndTurn); // Link button to EndTurn
         StartTurn(); // Start the first turn (card draw will occur)
     }
@@ -105,8 +119,16 @@ public class TurnManager : MonoBehaviour
 
     public void EndTurn()
     {
+        int endingPlayer = currentPlayer;
         currentPlayer = (currentPlayer == 1) ? 2 : 1;
         Debug.Log($"🔄 Turn ended. Now Player {currentPlayer}'s turn.");
+
+        // If the turn that ended was not the local player's turn, then it was the opponent's turn.
+        if (endingPlayer != localPlayerNumber)
+        {
+            OnOpponentTurnEnd?.Invoke();
+        }
+
         StartTurn();
     }
 
@@ -121,5 +143,13 @@ public class TurnManager : MonoBehaviour
     public int GetCurrentPlayer()
     {
         return currentPlayer;
+    }
+
+    // Blocks any additional card plays for the remainder of the turn.
+    public void BlockAdditionalCardPlays()
+    {
+        creaturePlayed = true;
+        spellPlayed = true;
+        Debug.Log("Additional card plays blocked for this turn.");
     }
 }

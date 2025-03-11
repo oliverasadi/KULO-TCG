@@ -121,11 +121,6 @@ public class SacrificeManager : MonoBehaviour
             Debug.LogError("[SacrificeManager] Could not find valid coordinates for the sacrifice. Evolution canceled.");
         }
 
-        // Clear highlights, log, reset
-        GridManager.instance.ClearSacrificeHighlights();
-        Debug.Log("[SacrificeManager] Sacrifice selection complete. Evolution card summoned.");
-        currentEvolutionCard = null;
-        selectedSacrifices.Clear();
     }
 
 

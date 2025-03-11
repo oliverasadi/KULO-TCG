@@ -22,12 +22,16 @@ MonoBehaviour:
   baseOrEvo: 0
   extraDetails: 'DOB: 2024, GPS: Hidden Gulu Forest, Weight: 4.7kg, Height: 0.25m.'
   inlineEffects:
-  - effectType: 3
+  - effectType: 4
     cardsToDraw: 0
-    powerChange: 0
-    requiredCreatureNames: []
+    requiredCreatureNames:
+    - The Cat with the Mole
     maxTargets: 0
-  effects:
-  - {fileID: 11400000, guid: 1ae5681af2144d14b8cdca3df7fccd48, type: 2}
+    replacementCardName: 
+    replacementDelay: 0
+    blockAdditionalPlays: 0
+    requiredCardAssets: []
+    powerChange: 500
+  effects: []
   requiresSacrifice: 0
   sacrificeRequirements: []

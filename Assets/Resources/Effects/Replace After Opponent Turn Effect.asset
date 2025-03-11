@@ -9,10 +9,8 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fe70daab79534c746bebc6c31ea16c04, type: 3}
-  m_Name: ConditionalPowerBoostEffect
+  m_Script: {fileID: 11500000, guid: 649588ab74e9c83489da5f722b8b3551, type: 3}
+  m_Name: Replace After Opponent Turn Effect
   m_EditorClassIdentifier: 
-  boostAmount: 0
-  requiredCardNames:
-  - 
-  - 
+  replacementCardName: 
+  blockAdditionalPlays: 1

@@ -22,3 +22,14 @@ MonoBehaviour:
   creatureType: Wax
   baseOrEvo: 0
   extraDetails: 'DOB: 867 B.C, GPS: Wax Pole, Weight: 6.0kg, Height: 5.24m.'
+  inlineEffects:
+  - effectType: 3
+    cardsToDraw: 0
+    powerChange: 200
+    requiredCreatureNames:
+    - Hitocon
+    - Rawnjima
+    maxTargets: 0
+  effects: []
+  requiresSacrifice: 0
+  sacrificeRequirements: []

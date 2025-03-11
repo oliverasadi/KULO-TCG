@@ -26,10 +26,12 @@ public class CardSO : ScriptableObject
 
     // --- Card Effects ---
     [Header("Card Effects (Inline)")]
-    public List<CardEffectDataValues> inlineEffects;  // Inline effect data container
+    // Inline effect data container; use this to set effect parameters directly on the card.
+    public List<CardEffectData> inlineEffects;
 
     [Header("Card Effects (Asset)")]
-    public List<CardEffect> effects;  // Asset-based effects (derived ScriptableObjects)
+    // Asset-based effects allow you to re-use common effects across cards.
+    public List<CardEffect> effects;
 
     // --- Evolution / Sacrifice Requirements ---
     [Header("Evolution / Sacrifice Requirements")]
@@ -57,40 +59,9 @@ public class CardSO : ScriptableObject
 [Serializable]
 public class SacrificeRequirement
 {
-    // Use requiredCardName as the identifier. If matchByCreatureType is true,
-    // the requirement will be checked against the card's creatureType instead.
+    // The required card identifier. If matchByCreatureType is true,
+    // this is compared against the card's creatureType.
     public string requiredCardName;
     public bool matchByCreatureType;
     public int count;
-}
-
-/// <summary>
-/// Inline effect data container. Configure effect parameters directly on the card.
-/// This class is now renamed to CardEffectDataValues to avoid conflicts.
-/// </summary>
-[Serializable]
-public class CardEffectDataValues
-{
-    public enum EffectType
-    {
-        None,
-        DrawOnSummon,
-        MultipleTargetPowerBoost,
-        ConditionalPowerBoost
-        // Add additional effect types as needed.
-    }
-
-    public EffectType effectType = EffectType.None;
-
-    // Parameters for a DrawOnSummon effect.
-    public int cardsToDraw = 1;
-
-    // Parameters for power boost effects.
-    public int powerChange = 0; // e.g., +100 or +200
-
-    // For conditional effects: list of required creature names (e.g., for hitocon).
-    public List<string> requiredCreatureNames = new List<string>();
-
-    // For multiple target boosts: maximum number of targets allowed.
-    public int maxTargets = 0;
 }

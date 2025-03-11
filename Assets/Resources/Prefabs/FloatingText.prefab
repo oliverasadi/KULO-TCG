@@ -152,4 +152,4 @@ MonoBehaviour:
   textComponent: {fileID: 964666570515078163}
   duration: 9999999
   floatSpeed: {x: 0, y: 0, z: 0}
-  spawnOffset: {x: 0, y: 50, z: 0}
+  sourceCard: {fileID: 0}

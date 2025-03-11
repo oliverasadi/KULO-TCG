@@ -21,6 +21,18 @@ MonoBehaviour:
   creatureType: Cat
   baseOrEvo: 1
   extraDetails: 'DOB: 2024 GPS: Gulu Island Height: 5kg Height: 0.23m'
+  inlineEffects:
+  - effectType: 4
+    cardsToDraw: 0
+    requiredCreatureNames:
+    - Mole Cat Girlfriend
+    maxTargets: 0
+    replacementCardName: 
+    replacementDelay: 0
+    blockAdditionalPlays: 0
+    requiredCardAssets: []
+    powerChange: 500
+  effects: []
   requiresSacrifice: 1
   sacrificeRequirements:
   - requiredCardName: Baby Mole Cat

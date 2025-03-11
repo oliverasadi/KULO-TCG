@@ -365,12 +365,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: abd02feaddcdb2c4a900c30a433a2ca9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  localPlayerManager: {fileID: 0}
   endTurnButton: {fileID: 1185549403}
   currentPlayer: 1
   creaturePlayed: 0
   spellPlayed: 0
   playerManager1: {fileID: 1408794937}
   playerManager2: {fileID: 18294247}
+  localPlayerNumber: 1
 --- !u!1 &187639293
 GameObject:
   m_ObjectHideFlags: 0
@@ -704,6 +706,7 @@ GameObject:
   - component: {fileID: 325760557}
   - component: {fileID: 325760558}
   - component: {fileID: 325760559}
+  - component: {fileID: 325760560}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -767,6 +770,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 36293bfbb81bbe94c91fd63114e12158, type: 2}
   - {fileID: 11400000, guid: 36293bfbb81bbe94c91fd63114e12158, type: 2}
   currentDeck: []
+  cardPrefab: {fileID: 0}
 --- !u!114 &325760558
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -789,6 +793,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 0bb1db13d4120fd42bc7dbe5a9a26ff7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &325760560
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 325760554}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 28cb3597f76b74b39b40b102825752e0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &334945131
@@ -901,7 +917,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   outlineComponent: {fileID: 334945139}
   highlightObject: {fileID: 1814843591}
-  highlightDuration: 100
+  highlightDuration: 99999
 --- !u!114 &334945139
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1747,7 +1763,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   outlineComponent: {fileID: 561953817}
   highlightObject: {fileID: 1641656803}
-  highlightDuration: 100
+  highlightDuration: 99999
 --- !u!114 &561953817
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2011,7 +2027,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   outlineComponent: {fileID: 584769137}
   highlightObject: {fileID: 1295234840}
-  highlightDuration: 100
+  highlightDuration: 99999
 --- !u!114 &584769137
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4708,6 +4724,50 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1493312730}
   m_CullTransparentMesh: 1
+--- !u!1 &1500409577
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1500409579}
+  - component: {fileID: 1500409578}
+  m_Layer: 0
+  m_Name: HandDiscardManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1500409578
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1500409577}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: adf48204177753943829a0121f8d3793, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!4 &1500409579
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1500409577}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -312.73334, y: 522.6965, z: -50.093254}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1532636437
 GameObject:
   m_ObjectHideFlags: 0
@@ -4970,7 +5030,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   outlineComponent: {fileID: 1553999566}
   highlightObject: {fileID: 544617927}
-  highlightDuration: 100
+  highlightDuration: 99999
 --- !u!114 &1553999566
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5384,7 +5444,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   outlineComponent: {fileID: 1695329452}
   highlightObject: {fileID: 1551530333}
-  highlightDuration: 100
+  highlightDuration: 99999
 --- !u!114 &1695329452
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5756,7 +5816,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   outlineComponent: {fileID: 1759525000}
   highlightObject: {fileID: 1483864876}
-  highlightDuration: 100
+  highlightDuration: 99999
 --- !u!114 &1759525000
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6395,7 +6455,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   outlineComponent: {fileID: 1847598759}
   highlightObject: {fileID: 2080912079}
-  highlightDuration: 100
+  highlightDuration: 99999
 --- !u!114 &1847598759
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6521,7 +6581,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   outlineComponent: {fileID: 1871659799}
   highlightObject: {fileID: 441224457}
-  highlightDuration: 100
+  highlightDuration: 99999
 --- !u!114 &1871659799
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6996,7 +7056,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   outlineComponent: {fileID: 2140226287}
   highlightObject: {fileID: 909533450}
-  highlightDuration: 100
+  highlightDuration: 99999
 --- !u!114 &2140226287
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7018,6 +7078,7 @@ SceneRoots:
   m_Roots:
   - {fileID: 519420032}
   - {fileID: 325760555}
+  - {fileID: 1500409579}
   - {fileID: 1235993772}
   - {fileID: 467036695}
   - {fileID: 1482404420}

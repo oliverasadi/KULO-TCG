@@ -22,3 +22,15 @@ MonoBehaviour:
   creatureType: Cat
   baseOrEvo: 0
   extraDetails: 'DOB: 2016, GPS: Gulu City, Weight: 4.5kg, Height: 0.22m.'
+  inlineEffects:
+  - effectType: 4
+    cardsToDraw: 0
+    powerChange: 0
+    requiredCreatureNames: []
+    maxTargets: 0
+    replacementCardName: Fat 467 Cat
+    replacementDelay: 1
+    blockAdditionalPlays: 0
+  effects: []
+  requiresSacrifice: 0
+  sacrificeRequirements: []

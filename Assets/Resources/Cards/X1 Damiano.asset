@@ -22,3 +22,8 @@ MonoBehaviour:
   creatureType: Cat
   baseOrEvo: 0
   extraDetails: 'DOB: Unknown, GPS: Gulu Island, Weight: 5.0kg, Height: 0.30m.'
+  inlineEffects: []
+  effects:
+  - {fileID: 11400000, guid: b0bfbe90b5904b64dbdf104357b0b88c, type: 2}
+  requiresSacrifice: 0
+  sacrificeRequirements: []

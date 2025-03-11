@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
+
 public class DeckManager : MonoBehaviour
 {
     public static DeckManager instance;
@@ -16,22 +17,24 @@ public class DeckManager : MonoBehaviour
     [Header("Game Deck & UI")]
     public List<CardSO> currentDeck = new List<CardSO>(); // The deck currently in use for the game
 
+    [Header("Prefabs")]
+    public GameObject cardPrefab; // Reference to a card prefab for instantiation in effects
+
     private void Awake()
     {
         if (instance == null)
             instance = this;
         else
             Destroy(gameObject);
-        
-        //Load Cards
+
+        // Load Cards, External Decks, and Saved Decks.
         LoadAllCards();
         LoadAvailableDecks(); // Load external decks from Resources/Decks
-        LoadDecks();         // Load saved decks from PlayerPrefs
+        LoadDecks();          // Load saved decks from PlayerPrefs
     }
 
     private void Start()
     {
-
     }
 
     /// <summary>
@@ -76,7 +79,6 @@ public class DeckManager : MonoBehaviour
     public List<CardSO> GenerateRandomDeck()
     {
         List<CardSO> tempPool = new List<CardSO>(allAvailableCards);
-        
         List<CardSO> returnDeck = new List<CardSO>();
         for (int i = 0; i < maxDeckSize; i++)
         {
@@ -124,14 +126,13 @@ public class DeckManager : MonoBehaviour
     public List<CardSO> LoadDeck(string deckName)
     {
         List<CardSO> returnDeck = new List<CardSO>();
-        
         DeckData selectedDeck = savedDecks.Find(deck => deck.deckName == deckName);
         if (selectedDeck == null)
         {
             Debug.LogError($"❌ Deck '{deckName}' not found!");
             return returnDeck;
         }
-        
+
         foreach (string cardName in selectedDeck.cardNames)
         {
             CardSO foundCard = allAvailableCards.Find(card => card.cardName == cardName);
@@ -141,7 +142,6 @@ public class DeckManager : MonoBehaviour
             }
         }
         Debug.Log($"✅ Loaded deck '{deckName}' with {returnDeck.Count} cards.");
-
         return returnDeck;
     }
 
@@ -183,6 +183,27 @@ public class DeckManager : MonoBehaviour
         savedDecks.Add(newDeck);
         SaveDecks();
         Debug.Log($"✅ New deck '{deckName}' created!");
+    }
+
+    /// <summary>
+    /// Finds a card by name in the list of all available cards.
+    /// </summary>
+    public CardSO FindCardByName(string cardName)
+    {
+        return allAvailableCards.Find(card => card.cardName == cardName);
+    }
+
+    /// <summary>
+    /// Returns an array of all available card names.
+    /// </summary>
+    public string[] GetAllCardNames()
+    {
+        List<string> names = new List<string>();
+        foreach (CardSO card in allAvailableCards)
+        {
+            names.Add(card.cardName);
+        }
+        return names.ToArray();
     }
 }
 

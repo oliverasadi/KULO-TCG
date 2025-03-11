@@ -27,6 +27,17 @@ public class FloatingText : MonoBehaviour
         timer += Time.deltaTime;
         // Move upward gradually.
         transform.position += floatSpeed * Time.deltaTime;
+
+        // If sourceCard is assigned, update the text dynamically.
+        if (sourceCard != null)
+        {
+            CardUI cardUI = sourceCard.GetComponent<CardUI>();
+            if (cardUI != null)
+            {
+                textComponent.text = "Power: " + cardUI.CalculateEffectivePower();
+            }
+        }
+
         // Fade out gradually over the duration.
         float alpha = Mathf.Lerp(1f, 0f, timer / duration);
         textComponent.color = new Color(originalColor.r, originalColor.g, originalColor.b, alpha);

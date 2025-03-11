@@ -8,7 +8,7 @@ public class GridCellHighlighter : MonoBehaviour
     public Outline outlineComponent;
     // Child object for a highlight background.
     public GameObject highlightObject;
-    // Duration for the highlight effect.
+    // Duration for the temporary highlight effect.
     public float highlightDuration = 0.5f;
 
     // Cached default values.
@@ -32,7 +32,10 @@ public class GridCellHighlighter : MonoBehaviour
         }
     }
 
-    // Flash the highlight with the given color.
+    /// <summary>
+    /// Temporarily flashes the highlight with the given color.
+    /// After the duration, it resets to the default state.
+    /// </summary>
     public void FlashHighlight(Color flashColor)
     {
         StartCoroutine(HighlightRoutine(flashColor));
@@ -64,7 +67,9 @@ public class GridCellHighlighter : MonoBehaviour
         ResetHighlight();
     }
 
-    // Immediately resets the cell's visuals to their default state.
+    /// <summary>
+    /// Immediately resets the cell's visuals to their default state.
+    /// </summary>
     public void ResetHighlight()
     {
         if (outlineComponent != null)
@@ -80,6 +85,28 @@ public class GridCellHighlighter : MonoBehaviour
             {
                 img.color = defaultHighlightColor;
             }
+        }
+    }
+
+    /// <summary>
+    /// Sets a persistent highlight on the cell with the specified color.
+    /// This highlight will remain until you manually clear it (via ResetHighlight or another method).
+    /// </summary>
+    public void SetPersistentHighlight(Color persistentColor)
+    {
+        if (outlineComponent != null)
+        {
+            outlineComponent.effectColor = persistentColor;
+            outlineComponent.enabled = true;
+        }
+        if (highlightObject != null)
+        {
+            Image img = highlightObject.GetComponent<Image>();
+            if (img != null)
+            {
+                img.color = persistentColor;
+            }
+            highlightObject.SetActive(true);
         }
     }
 }
