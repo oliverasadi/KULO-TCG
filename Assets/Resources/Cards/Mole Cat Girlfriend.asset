@@ -28,9 +28,9 @@ MonoBehaviour:
     - The Cat with the Mole
     maxTargets: 0
     replacementCardName: 
-    replacementDelay: 0
+    turnDelay: 0
     blockAdditionalPlays: 0
-    requiredCardAssets: []
+    promptPrefab: {fileID: 0}
     powerChange: 500
   effects: []
   requiresSacrifice: 0

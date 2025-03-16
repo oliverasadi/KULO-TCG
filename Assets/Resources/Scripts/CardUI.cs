@@ -8,26 +8,30 @@ using System.Collections.Generic;
 public class CardUI : MonoBehaviour, IPointerClickHandler
 {
     [Header("UI Elements")]
-    public Image cardArtImage;                // Displays the card image
-    public TextMeshProUGUI cardNameText;        // Displays the card name
+    public Image cardArtImage;
+    public TextMeshProUGUI cardNameText;
 
-    public Sprite cardBackSprite;             // Card back sprite (assign in Prefab Inspector)
-    public CardSO cardData;                   // The card's ScriptableObject data
+    public Sprite cardBackSprite;
+    public CardSO cardData;
     private bool isFaceDown = false;
-    public bool isInDeck = false;             // Track if the card is in deck
-
-    // New field: indicates if this card is already on the field.
+    public bool isInDeck = false;
     public bool isOnField = false;
 
     [Header("Card Info Popup")]
-    public CardInfoPanel cardInfoPanel;       // Reference to the pop-up panel's controller
+    public CardInfoPanel cardInfoPanel;
 
-    // --- New Fields for Summoning ---
-    public GameObject summonMenuPrefab;       // Assign a prefab for the summon menu (should be under the Canvas)
-    public Vector2 summonMenuOffset = new Vector2(0, 20f); // Offset for positioning the summon menu
+    // Summon Menu
+    public GameObject summonMenuPrefab;
+    public Vector2 summonMenuOffset = new Vector2(0, 20f);
 
-    // NEW: Runtime current power value; used during gameplay without modifying the base power.
+    // Runtime fields
     public int currentPower;
+
+    // Runtime replacement effect fields (for inline ReplaceAfterOpponentTurn)
+    public int replacementTurnDelay = -1; // -1 means no effect by default.
+    public string inlineReplacementCardName = "";
+    public bool inlineBlockAdditionalPlays = false;
+
 
     void Start()
     {
@@ -67,6 +71,22 @@ public class CardUI : MonoBehaviour, IPointerClickHandler
         // Initialize runtime power from the base power.
         currentPower = card.power;
 
+        // Initialize runtime replacement effect parameters from the inline effects.
+        if (cardData.inlineEffects != null)
+        {
+            foreach (var effect in cardData.inlineEffects)
+            {
+                if (effect.effectType == CardEffectData.EffectType.ReplaceAfterOpponentTurn)
+                {
+                    // Copy the turn delay value into our runtime variable.
+                    replacementTurnDelay = effect.turnDelay;
+                    inlineReplacementCardName = effect.replacementCardName;
+                    inlineBlockAdditionalPlays = effect.blockAdditionalPlays;
+                    Debug.Log($"Initialized replacement effect on {card.cardName}: Delay={replacementTurnDelay}, Replacement={inlineReplacementCardName}");
+                }
+            }
+        }
+
         Debug.Log($"✅ CardUI: Card data set for {gameObject.name} - {cardData.cardName}");
         if (cardNameText != null)
             cardNameText.text = cardData.cardName;
@@ -76,23 +96,18 @@ public class CardUI : MonoBehaviour, IPointerClickHandler
         if (cardArtImage != null)
         {
             if (setFaceDown)
-            {
                 SetFaceDown();
-            }
             else if (cardData.cardImage != null)
-            {
                 cardArtImage.sprite = cardData.cardImage;
-            }
             else
-            {
                 Debug.LogError($"CardUI: Card art missing for {cardData.cardName}");
-            }
         }
         else
         {
             Debug.LogError($"CardUI: cardArtImage is not assigned on {gameObject.name}");
         }
     }
+
 
     public void SetFaceDown()
     {
@@ -257,19 +272,18 @@ public class CardUI : MonoBehaviour, IPointerClickHandler
 
     public bool isSelected = false;
 
-    // --- Updated Methods for Calculating Effective Power Using Runtime currentPower ---
-    // This method now live-scans the field for synergy using requiredCreatureNames.
+    // --- Updated Method for Calculating Effective Power ---
+    // This method uses currentPower as the base and then adds synergy dynamically.
     public int CalculateEffectivePower()
     {
-        int effectivePower = currentPower; // Use the runtime base power
+        int effectivePower = currentPower;
 
-        // Loop through each inline effect for ConditionalPowerBoost and add synergy dynamically.
+        // Process inline ConditionalPowerBoost effects.
         foreach (var effect in cardData.inlineEffects)
         {
             if (effect.effectType == CardEffectData.EffectType.ConditionalPowerBoost)
             {
                 int synergyCount = 0;
-                // Check if there are any typed required names.
                 if (effect.requiredCreatureNames != null && effect.requiredCreatureNames.Count > 0)
                 {
                     CardSO[,] gridArray = GridManager.instance.GetGrid();
@@ -283,7 +297,7 @@ public class CardUI : MonoBehaviour, IPointerClickHandler
                             if (gridArray[i, j] == null)
                                 continue;
                             if (gridObjs[i, j] == this.gameObject)
-                                continue; // skip self
+                                continue;
 
                             foreach (string reqName in effect.requiredCreatureNames)
                             {
@@ -293,14 +307,13 @@ public class CardUI : MonoBehaviour, IPointerClickHandler
                                     if (candidate != null && myHandler != null && candidate.cardOwner == myHandler.cardOwner)
                                     {
                                         synergyCount++;
-                                        break; // Count each cell only once.
+                                        break;
                                     }
                                 }
                             }
                         }
                     }
                 }
-                // Apply the boost for every synergy match.
                 if (synergyCount > 0)
                 {
                     effectivePower += effect.powerChange * synergyCount;
@@ -310,7 +323,6 @@ public class CardUI : MonoBehaviour, IPointerClickHandler
         return effectivePower;
     }
 
-    // Counts friendly cards that match any of the CardSO references provided.
     private int CountOtherCardsBySynergy(List<CardSO> requiredCards)
     {
         int count = 0;
@@ -342,7 +354,6 @@ public class CardUI : MonoBehaviour, IPointerClickHandler
         return count;
     }
 
-    // Counts all cards on the field that are controlled by the opponent.
     private int CountOpponentCards()
     {
         int count = 0;

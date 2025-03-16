@@ -1,6 +1,6 @@
+using UnityEngine;
 using System;
 using System.Collections.Generic;
-using UnityEngine;
 
 [Serializable]
 public class CardEffectData
@@ -13,8 +13,6 @@ public class CardEffectData
         MutualConditionalPowerBoostEffect,
         ConditionalPowerBoost,
         ReplaceAfterOpponentTurn
-            
-
     }
 
     public EffectType effectType = EffectType.None;
@@ -22,10 +20,11 @@ public class CardEffectData
     public List<string> requiredCreatureNames = new List<string>();
     public int maxTargets = 0;
     public string replacementCardName = "";
-    public int replacementDelay = 0;
+    public int turnDelay = 0;
     public bool blockAdditionalPlays = false;
 
-    // Added field from CardSO.cs:
-    public List<CardSO> requiredCardAssets = new List<CardSO>();
+    // Add a prompt prefab field
+    public GameObject promptPrefab;  // <-- This allows assigning UI prompts in the Inspector
+
     public int powerChange = 0;
 }

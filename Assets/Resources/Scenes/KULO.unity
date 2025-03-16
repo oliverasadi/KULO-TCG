@@ -365,7 +365,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: abd02feaddcdb2c4a900c30a433a2ca9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  localPlayerManager: {fileID: 0}
   endTurnButton: {fileID: 1185549403}
   currentPlayer: 1
   creaturePlayed: 0
@@ -770,7 +769,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 36293bfbb81bbe94c91fd63114e12158, type: 2}
   - {fileID: 11400000, guid: 36293bfbb81bbe94c91fd63114e12158, type: 2}
   currentDeck: []
-  cardPrefab: {fileID: 0}
+  cardPrefab: {fileID: 7165986574755316703, guid: c60e37c3ad5112b468fae55268672f1f, type: 3}
 --- !u!114 &325760558
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2222,7 +2221,7 @@ Canvas:
   m_OverridePixelPerfect: 0
   m_SortingBucketNormalizedSize: 0
   m_VertexColorAlwaysGammaSpace: 0
-  m_AdditionalShaderChannelsFlag: 0
+  m_AdditionalShaderChannelsFlag: 25
   m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
   m_SortingOrder: 10

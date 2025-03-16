@@ -9,8 +9,6 @@ public class TurnManager : MonoBehaviour
     public static TurnManager instance;
     public static PlayerManager currentPlayerManager;
 
-    public PlayerManager localPlayerManager; // New field for the local player's manager
-
     public Button endTurnButton; // Assign in Inspector
     public int currentPlayer = 1; // 1 = Player, 2 = AI
     public bool creaturePlayed = false;
@@ -44,9 +42,6 @@ public class TurnManager : MonoBehaviour
 
     void Start()
     {
-        // Assign the local player's manager based on localPlayerNumber.
-        localPlayerManager = (localPlayerNumber == 1) ? playerManager1 : playerManager2;
-
         endTurnButton.onClick.AddListener(PlayerEndTurn); // Link button to EndTurn
         StartTurn(); // Start the first turn (card draw will occur)
     }
@@ -120,17 +115,28 @@ public class TurnManager : MonoBehaviour
     public void EndTurn()
     {
         int endingPlayer = currentPlayer;
+        // Switch players
         currentPlayer = (currentPlayer == 1) ? 2 : 1;
         Debug.Log($"🔄 Turn ended. Now Player {currentPlayer}'s turn.");
 
-        // If the turn that ended was not the local player's turn, then it was the opponent's turn.
+        // If the turn that ended was NOT the local player's turn, it was the opponent's turn
+        // so we can still fire OnOpponentTurnEnd if needed:
         if (endingPlayer != localPlayerNumber)
         {
             OnOpponentTurnEnd?.Invoke();
         }
 
+        // Now start the new player's turn
         StartTurn();
+
+        // If the new current player *is* the local player, 
+        // we do a CheckReplacementEffects() so that the UI prompt appears now
+        if (currentPlayer == localPlayerNumber)
+        {
+            GridManager.instance.CheckReplacementEffects();
+        }
     }
+
 
     public void ResetTurn()
     {

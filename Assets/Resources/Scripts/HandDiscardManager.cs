@@ -35,7 +35,7 @@ public class HandDiscardManager : MonoBehaviour
 
         // Optionally, disable other UI interactions in the hand and highlight selectable cards.
         // You might call a method on each CardUI in the local player's hand to enable discard selection mode.
-        PlayerManager localPlayer = TurnManager.instance.localPlayerManager;
+        PlayerManager localPlayer = (TurnManager.instance.localPlayerNumber == 1) ? TurnManager.instance.playerManager1 : TurnManager.instance.playerManager2;
         if (localPlayer == null)
         {
             Debug.LogError("Local PlayerManager not found!");
@@ -77,8 +77,9 @@ public class HandDiscardManager : MonoBehaviour
     private void ProcessDiscard()
     {
         // Get the local player's manager from TurnManager.
-        PlayerManager localPlayer = TurnManager.instance.localPlayerManager;
-        if (localPlayer == null)
+        PlayerManager localPlayer = (TurnManager.instance.localPlayerNumber == 1)
+            ? TurnManager.instance.playerManager1
+            : TurnManager.instance.playerManager2; if (localPlayer == null)
         {
             Debug.LogError("Local PlayerManager not found during discard processing!");
             return;

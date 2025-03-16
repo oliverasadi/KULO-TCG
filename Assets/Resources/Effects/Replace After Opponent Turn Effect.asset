@@ -14,3 +14,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   replacementCardName: 
   blockAdditionalPlays: 1
+  promptPanelPrefab: {fileID: 8867524506416461353, guid: 70388e56cbed5dc479ad555bd0ee7ee8, type: 3}

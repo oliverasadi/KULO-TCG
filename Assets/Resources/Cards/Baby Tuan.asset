@@ -15,22 +15,24 @@ MonoBehaviour:
   cardName: Baby Tuan
   category: 0
   power: 1400
-  effectDescription: '"If this card remains on the field after one of your opponent''s
-    turns'
+  effectDescription: "If this card remains on the field after one of your opponent's
+    turns, you may replace it with \u2018Beautiful Tuan-Tuan\u2019 from your deck
+    or hand. If you do, you cannot play any additional cards during that turn."
   cardImage: {fileID: 6124906917082618470, guid: a51b5085bf6f01e4a89a5f005999b598, type: 3}
   cardNumber: OGN-10
   creatureType: Cat
   baseOrEvo: 0
   extraDetails: 'DOB: 2018, GPS: Gulu Mountain, Weight: 3.2kg, Height: 0.19m.'
   inlineEffects:
-  - effectType: 4
+  - effectType: 5
     cardsToDraw: 0
-    powerChange: 0
     requiredCreatureNames: []
     maxTargets: 0
     replacementCardName: Beautiful Tuan-Tuan
-    replacementDelay: 1
+    turnDelay: 0
     blockAdditionalPlays: 0
+    promptPrefab: {fileID: 8867524506416461353, guid: 70388e56cbed5dc479ad555bd0ee7ee8, type: 3}
+    powerChange: 1
   effects: []
   requiresSacrifice: 0
   sacrificeRequirements: []

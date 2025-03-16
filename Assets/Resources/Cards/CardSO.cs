@@ -65,3 +65,4 @@ public class SacrificeRequirement
     public bool matchByCreatureType;
     public int count;
 }
+

@@ -22,6 +22,17 @@ MonoBehaviour:
   creatureType: Cat
   baseOrEvo: 1
   extraDetails: 'DOB: 2018, GPS: Gulu Island, Weight: 4.8kg, Height: 0.22m.'
+  inlineEffects:
+  - effectType: 0
+    cardsToDraw: 0
+    requiredCreatureNames: []
+    maxTargets: 0
+    replacementCardName: 
+    turnDelay: 0
+    blockAdditionalPlays: 0
+    promptPrefab: {fileID: 0}
+    powerChange: 0
+  effects: []
   requiresSacrifice: 1
   sacrificeRequirements:
   - requiredCardName: Baby Tuan

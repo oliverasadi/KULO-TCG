@@ -6,7 +6,6 @@ public class CardSOEditor : Editor
 {
     public override void OnInspectorGUI()
     {
-        // Update the serialized object.
         serializedObject.Update();
 
         // Draw common fields for all cards.
@@ -16,28 +15,57 @@ public class CardSOEditor : Editor
         EditorGUILayout.PropertyField(serializedObject.FindProperty("cardImage"));
         EditorGUILayout.PropertyField(serializedObject.FindProperty("effectDescription"));
 
-        // Draw the asset-based Effects list.
+        // Draw asset-based effects.
         EditorGUILayout.Space();
         EditorGUILayout.LabelField("Card Effects (Assets)", EditorStyles.boldLabel);
         EditorGUILayout.PropertyField(serializedObject.FindProperty("effects"), true);
 
-        // Draw the inline effects list (if present)
+        // Draw inline effects.
         SerializedProperty inlineEffectsProp = serializedObject.FindProperty("inlineEffects");
         if (inlineEffectsProp != null)
         {
             EditorGUILayout.Space();
             EditorGUILayout.LabelField("Inline Card Effects", EditorStyles.boldLabel);
-            EditorGUILayout.PropertyField(inlineEffectsProp, true);
+            EditorGUI.indentLevel++;
+
+            for (int i = 0; i < inlineEffectsProp.arraySize; i++)
+            {
+                SerializedProperty effectElement = inlineEffectsProp.GetArrayElementAtIndex(i);
+                if (effectElement != null)
+                {
+                    EditorGUILayout.BeginVertical("box");
+
+                    // Always show effect type.
+                    EditorGUILayout.PropertyField(effectElement.FindPropertyRelative("effectType"));
+
+                    // Show common fields.
+                    EditorGUILayout.PropertyField(effectElement.FindPropertyRelative("cardsToDraw"));
+                    EditorGUILayout.PropertyField(effectElement.FindPropertyRelative("requiredCreatureNames"), true);
+                    EditorGUILayout.PropertyField(effectElement.FindPropertyRelative("maxTargets"));
+                    EditorGUILayout.PropertyField(effectElement.FindPropertyRelative("replacementCardName"));
+                    EditorGUILayout.PropertyField(effectElement.FindPropertyRelative("turnDelay"));
+                    EditorGUILayout.PropertyField(effectElement.FindPropertyRelative("blockAdditionalPlays"));
+                    EditorGUILayout.PropertyField(effectElement.FindPropertyRelative("promptPrefab"));
+                    EditorGUILayout.PropertyField(effectElement.FindPropertyRelative("powerChange"));
+
+                    EditorGUILayout.EndVertical();
+                }
+            }
+
+            if (GUILayout.Button("Add Inline Effect"))
+            {
+                inlineEffectsProp.arraySize++;
+            }
+
+            EditorGUI.indentLevel--;
         }
         else
         {
-            EditorGUILayout.HelpBox("No Inline Effects field found. Make sure your CardSO script has a 'public List<CardEffectData> inlineEffects;' field.", MessageType.Info);
+            EditorGUILayout.HelpBox("No Inline Effects field found. Ensure your CardSO script has a public List<CardEffectData> inlineEffects field.", MessageType.Info);
         }
 
-        // Get a reference to the target CardSO instance.
+        // Draw creature-specific fields if card is a Creature.
         CardSO cardSO = (CardSO)target;
-
-        // If the card is a Creature, show creature-specific fields.
         if (cardSO.category == CardSO.CardCategory.Creature)
         {
             EditorGUILayout.PropertyField(serializedObject.FindProperty("power"));
@@ -45,7 +73,6 @@ public class CardSOEditor : Editor
             EditorGUILayout.PropertyField(serializedObject.FindProperty("baseOrEvo"));
             EditorGUILayout.PropertyField(serializedObject.FindProperty("extraDetails"));
 
-            // Evolution / Sacrifice Requirements Section
             EditorGUILayout.Space();
             EditorGUILayout.LabelField("Evolution / Sacrifice Requirements", EditorStyles.boldLabel);
             EditorGUILayout.PropertyField(serializedObject.FindProperty("requiresSacrifice"));
@@ -54,9 +81,7 @@ public class CardSOEditor : Editor
                 EditorGUILayout.PropertyField(serializedObject.FindProperty("sacrificeRequirements"), true);
             }
         }
-        // For Spell cards, add spell-specific fields if needed.
 
-        // Apply changes to the serialized object.
         serializedObject.ApplyModifiedProperties();
     }
 }

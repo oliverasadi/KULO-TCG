@@ -10,72 +10,95 @@ public class ReplaceAfterOpponentTurnEffect : CardEffect
     [Tooltip("If true, no further cards may be played this turn after the replacement.")]
     public bool blockAdditionalPlays = true;
 
-    // This method is called when the effect should start (e.g., when the card is summoned).
+    [Tooltip("The UI prompt prefab to ask the player if they wish to use the effect.")]
+    public GameObject promptPanelPrefab;  // Assign this via the Inspector.
+
+    // Store the delegate so we can unsubscribe properly.
+    private System.Action onOpponentTurnEndAction;
+
     public override void ApplyEffect(CardUI sourceCard)
     {
-        // Subscribe to an opponent turn end event.
-        // (You must implement OnOpponentTurnEnd in your TurnManager.)
-        TurnManager.instance.OnOpponentTurnEnd += () => OnOpponentTurnEnd(sourceCard);
+        // Subscribe to the opponent turn end event.
+        onOpponentTurnEndAction = () => OnOpponentTurnEnd(sourceCard);
+        TurnManager.instance.OnOpponentTurnEnd += onOpponentTurnEndAction;
     }
 
-    // Called when the opponent's turn ends.
     private void OnOpponentTurnEnd(CardUI sourceCard)
     {
-        // Check that the card is still on the field.
+        // Only proceed if the source card is still on the field.
         if (sourceCard != null && sourceCard.isOnField)
         {
-            // For now, simulate a UI prompt by auto-accepting.
-            // Replace this with actual UI logic as needed.
-            bool playerChoosesReplacement = true; // (Auto-accept for now)
-
-            if (playerChoosesReplacement)
+            // Instantiate the prompt panel.
+            GameObject promptInstance = Instantiate(promptPanelPrefab);
+            // Assume the prompt panel has a ReplaceEffectPrompt component.
+            ReplaceEffectPrompt prompt = promptInstance.GetComponent<ReplaceEffectPrompt>();
+            if (prompt != null)
             {
-                // Get the replacement card from deck or hand.
-                CardSO replacementCard = DeckManager.instance.FindCardByName(replacementCardName);
-                if (replacementCard != null)
+                // Subscribe to the response event.
+                prompt.OnResponse.AddListener((bool accepted) =>
                 {
-                    // Determine the grid position of the source card.
-                    Vector2Int gridPos = ParseGridPosition(sourceCard.transform.parent.name);
-                    if (gridPos.x == -1)
+                    if (accepted)
                     {
-                        Debug.LogError("ReplaceAfterOpponentTurnEffect: Unable to determine grid position.");
-                        return;
+                        ExecuteReplacement(sourceCard);
                     }
-
-                    // Remove the source card from the grid.
-                    GridManager.instance.RemoveCard(gridPos.x, gridPos.y, false);
-
-                    // Instantiate the replacement card.
-                    GameObject newCardObj = InstantiateReplacementCard(replacementCard);
-
-                    // Place the new card into the same grid cell.
-                    Transform cellTransform = GameObject.Find($"GridCell_{gridPos.x}_{gridPos.y}").transform;
-                    GridManager.instance.PlaceExistingCard(gridPos.x, gridPos.y, newCardObj, replacementCard, cellTransform);
-
-                    // Optionally block further plays this turn.
-                    if (blockAdditionalPlays)
-                    {
-                        TurnManager.instance.BlockAdditionalCardPlays();
-                    }
-                }
-                else
-                {
-                    Debug.LogError("ReplaceAfterOpponentTurnEffect: Replacement card not found.");
-                }
+                    // Clean up the prompt panel.
+                    Destroy(promptInstance);
+                });
             }
+            else
+            {
+                Debug.LogError("ReplaceAfterOpponentTurnEffect: The prompt prefab is missing the ReplaceEffectPrompt component.");
+            }
+        }
+    }
+
+    private void ExecuteReplacement(CardUI sourceCard)
+    {
+        // Get the replacement card by name.
+        CardSO replacementCard = DeckManager.instance.FindCardByName(replacementCardName);
+        if (replacementCard != null)
+        {
+            // Determine the grid position from the source card's parent.
+            Vector2Int gridPos = ParseGridPosition(sourceCard.transform.parent.name);
+            if (gridPos.x == -1)
+            {
+                Debug.LogError("ReplaceAfterOpponentTurnEffect: Unable to determine grid position.");
+                return;
+            }
+
+            // Remove the source card from the grid.
+            GridManager.instance.RemoveCard(gridPos.x, gridPos.y, false);
+
+            // Instantiate the replacement card.
+            GameObject newCardObj = InstantiateReplacementCard(replacementCard);
+
+            // Place the new card into the same grid cell.
+            Transform cellTransform = GameObject.Find($"GridCell_{gridPos.x}_{gridPos.y}").transform;
+            GridManager.instance.PlaceExistingCard(gridPos.x, gridPos.y, newCardObj, replacementCard, cellTransform);
+
+            // Optionally block further plays this turn.
+            if (blockAdditionalPlays)
+            {
+                TurnManager.instance.BlockAdditionalCardPlays();
+            }
+        }
+        else
+        {
+            Debug.LogError("ReplaceAfterOpponentTurnEffect: Replacement card not found.");
         }
     }
 
     public override void RemoveEffect(CardUI sourceCard)
     {
-        // Unsubscribe from the opponent-turn-end event.
-        TurnManager.instance.OnOpponentTurnEnd -= () => OnOpponentTurnEnd(sourceCard);
+        if (onOpponentTurnEndAction != null)
+        {
+            TurnManager.instance.OnOpponentTurnEnd -= onOpponentTurnEndAction;
+        }
     }
 
     // Helper method to parse grid coordinates from a cell's name (e.g., "GridCell_1_2").
     private Vector2Int ParseGridPosition(string cellName)
     {
-        // Assumes the name format is "GridCell_x_y".
         string[] parts = cellName.Split('_');
         if (parts.Length >= 3 &&
             int.TryParse(parts[1], out int x) &&
@@ -89,7 +112,6 @@ public class ReplaceAfterOpponentTurnEffect : CardEffect
     // Helper method to instantiate the replacement card.
     private GameObject InstantiateReplacementCard(CardSO replacementCard)
     {
-        // Assumes you have a card prefab available via DeckManager.
         GameObject cardPrefab = DeckManager.instance.cardPrefab;
         GameObject newCardObj = Instantiate(cardPrefab);
         CardHandler handler = newCardObj.GetComponent<CardHandler>();
