@@ -668,6 +668,20 @@ public class GridManager : MonoBehaviour
     /// </summary>
     private void ShowInlineReplacementPrompt(CardUI sourceCardUI, int gridX, int gridY, CardEffectData inlineEffect)
     {
+        // Check if the card belongs to the local player.
+        CardHandler cardHandler = sourceCardUI.GetComponent<CardHandler>();
+        if (cardHandler == null)
+        {
+            Debug.LogError("[ShowInlineReplacementPrompt] CardHandler missing on cardUI.");
+            return;
+        }
+        PlayerManager owner = cardHandler.cardOwner;
+        if (owner == null || owner.playerNumber != TurnManager.instance.localPlayerNumber)
+        {
+            Debug.Log("[ShowInlineReplacementPrompt] Not showing prompt because the card does not belong to the local player.");
+            return;
+        }
+
         // Check that the inline effect has a prompt prefab assigned.
         if (inlineEffect.promptPrefab == null)
         {
@@ -713,6 +727,9 @@ public class GridManager : MonoBehaviour
             }
         });
     }
+
+
+
 
 
     /// <summary>
