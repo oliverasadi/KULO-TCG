@@ -9,6 +9,9 @@ public class GridManager : MonoBehaviour
     private CardSO[,] grid = new CardSO[3, 3];
     private GameObject[,] gridObjects = new GameObject[3, 3];
 
+    [Header("Evolution Splash")]
+    public GameObject evolutionSplashPrefab; // <-- Add THIS line here
+
     [Header("Audio")]
     public AudioSource audioSource;
     public AudioClip placeCardSound;
@@ -200,6 +203,15 @@ public class GridManager : MonoBehaviour
             audioSource.PlayOneShot(placeCardSound);
 
         Debug.Log($"[GridManager] Placed {cardData.cardName} at ({x},{y}).");
+        // -------------------------------------------------------------------------
+        // [NEW CODE] Show Evolution Splash right after a successful placement
+        // if card is EVO and we have a baseCardName from the sacrificed card.
+        // -------------------------------------------------------------------------
+        if (cardData.baseOrEvo == CardSO.BaseOrEvo.Evolution)
+        {
+            ShowEvolutionSplash((baseCardName ?? "Base"), cardData.cardName);
+        }
+        // -------------------------------------------------------------------------
 
         // (5) Visual / Text / Spell Removal
         // (a) Floating Text Display.
@@ -329,24 +341,41 @@ public class GridManager : MonoBehaviour
             GameManager.instance.CheckForWin();
         }
 
-        // (C) If it's an evolution & we have a base card name, show floating text
-        if (cardData.baseOrEvo == CardSO.BaseOrEvo.Evolution && !string.IsNullOrEmpty(baseCardName))
-        {
-            if (EvoAnnouncementUI.instance != null)
-            {
-                EvoAnnouncementUI.instance.ShowEvolutionAnnouncement(baseCardName, cardData.cardName);
-            }
-            else
-            {
-                Debug.Log($"CARD EVOLUTION - '{baseCardName}' > '{cardData.cardName}'");
-            }
-        }
-
-
-
         return true;
     }
+    // -------------------------------------------------------------------------
+    // [NEW HELPER] ShowEvolutionSplash
+    // Called if baseCardName != null and this is an Evolution card.
+    // -------------------------------------------------------------------------
+    public void ShowEvolutionSplash(string baseName, string evoName)
+    {
+        Debug.Log($"[GridManager] ShowEvolutionSplash called with baseName='{baseName}', evoName='{evoName}'");
 
+        if (evolutionSplashPrefab == null)
+        {
+            Debug.LogWarning("No evolutionSplashPrefab assigned in GridManager!");
+            return;
+        }
+
+        // Try to find the overlay canvas by name
+        GameObject overlayCanvas = GameObject.Find("OverlayCanvas");
+        if (overlayCanvas == null)
+        {
+            Debug.LogWarning("OverlayCanvas not found. Make sure you have one named OverlayCanvas in the scene.");
+            return;
+        }
+
+        GameObject splashObj = Instantiate(evolutionSplashPrefab, overlayCanvas.transform);
+        EvolutionSplashUI splashUI = splashObj.GetComponent<EvolutionSplashUI>();
+        if (splashUI != null)
+        {
+            splashUI.Setup(baseName, evoName);
+        }
+        else
+        {
+            Debug.LogWarning("EvolutionSplashPrefab is missing an EvolutionSplashUI component!");
+        }
+    }
 
     private bool HasSelfDestructEffect(CardSO cardData)
     {
@@ -856,7 +885,13 @@ public class GridManager : MonoBehaviour
             // IMPORTANT: Call the special method that bypasses normal sacrifice checks!
             PlaceReplacementCard(gridX, gridY, newCardObj, replacementCard, cellTransform);
 
-            // NEW: debug line to confirm the blockAdditional value
+            // If the replacement card is an Evo, show the splash.
+            if (replacementCard.baseOrEvo == CardSO.BaseOrEvo.Evolution)
+            {
+                Debug.Log($"[ExecuteReplacementInline] Attempting ShowEvolutionSplash with oldCardName='{sourceCardUI.cardData.cardName}' and new evo='{replacementCard.cardName}'");
+                GridManager.instance.ShowEvolutionSplash(sourceCardUI.cardData.cardName, replacementCard.cardName);
+            }
+
             Debug.Log($"DEBUG: blockAdditional = {blockAdditional} for {sourceCardUI.cardData.cardName} [inline]");
 
             if (blockAdditional)
@@ -871,6 +906,7 @@ public class GridManager : MonoBehaviour
             Debug.LogError($"[ExecuteReplacementInline] Replacement card not found: {replacementName}");
         }
     }
+
 
     /// <summary>
     /// Instantiates a replacement card object for inline replacement.

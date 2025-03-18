@@ -19,6 +19,8 @@ public class ReplaceAfterOpponentTurnEffect : CardEffect
     public override void ApplyEffect(CardUI sourceCard)
     {
         // Subscribe to the opponent turn end event.
+        Debug.Log($"[ReplaceAfterOpponentTurnEffect] ApplyEffect called for {sourceCard.cardData.cardName}");
+
         onOpponentTurnEndAction = () => OnOpponentTurnEnd(sourceCard);
         TurnManager.instance.OnOpponentTurnEnd += onOpponentTurnEndAction;
     }
@@ -54,38 +56,41 @@ public class ReplaceAfterOpponentTurnEffect : CardEffect
 
     private void ExecuteReplacement(CardUI sourceCard)
     {
-        // Get the replacement card by name.
+        // Log to confirm this method is called
+        Debug.Log($"[ReplaceAfterOpponentTurnEffect] ExecuteReplacement called for '{sourceCard.cardData.cardName}'");
+
+        // 1) Grab occupant's name before removing
+        string oldCardName = sourceCard.cardData.cardName;
+        Debug.Log($"[ReplaceAfterOpponentTurnEffect] oldCardName = '{oldCardName}'");
+
+        // 2) Find and remove occupant
         CardSO replacementCard = DeckManager.instance.FindCardByName(replacementCardName);
-        if (replacementCard != null)
+        if (replacementCard == null)
         {
-            // Determine the grid position from the source card's parent.
-            Vector2Int gridPos = ParseGridPosition(sourceCard.transform.parent.name);
-            if (gridPos.x == -1)
-            {
-                Debug.LogError("ReplaceAfterOpponentTurnEffect: Unable to determine grid position.");
-                return;
-            }
-
-            // Remove the source card from the grid.
-            GridManager.instance.RemoveCard(gridPos.x, gridPos.y, false);
-
-            // Instantiate the replacement card.
-            GameObject newCardObj = InstantiateReplacementCard(replacementCard);
-
-            // Place the new card into the same grid cell.
-            Transform cellTransform = GameObject.Find($"GridCell_{gridPos.x}_{gridPos.y}").transform;
-            GridManager.instance.PlaceExistingCard(gridPos.x, gridPos.y, newCardObj, replacementCard, cellTransform);
-
-            // Optionally block the *next turn* if blockAdditionalPlays is true.
-            if (blockAdditionalPlays)
-            {
-                Debug.Log("Replacing & blocking next turn!");
-                TurnManager.instance.BlockPlaysNextTurn();
-            }
+            Debug.LogError("Replacement card not found!");
+            return;
         }
-        else
+
+        Vector2Int gridPos = ParseGridPosition(sourceCard.transform.parent.name);
+        GridManager.instance.RemoveCard(gridPos.x, gridPos.y, false);
+
+        // 3) Instantiate & place the new card
+        GameObject newCardObj = InstantiateReplacementCard(replacementCard);
+        Transform cellTransform = GameObject.Find($"GridCell_{gridPos.x}_{gridPos.y}").transform;
+        GridManager.instance.PlaceExistingCard(gridPos.x, gridPos.y, newCardObj, replacementCard, cellTransform);
+
+        // 4) If it's an Evolution, show splash
+        if (replacementCard.baseOrEvo == CardSO.BaseOrEvo.Evolution)
         {
-            Debug.LogError("ReplaceAfterOpponentTurnEffect: Replacement card not found.");
+            Debug.Log($"[ReplaceAfterOpponentTurnEffect] Attempting ShowEvolutionSplash with oldCardName='{oldCardName}' and new evo='{replacementCard.cardName}'");
+            GridManager.instance.ShowEvolutionSplash(oldCardName, replacementCard.cardName);
+        }
+
+        // 5) Optionally block the next turn
+        if (blockAdditionalPlays)
+        {
+            Debug.Log("Replacing & blocking next turn!");
+            TurnManager.instance.BlockPlaysNextTurn();
         }
     }
 
