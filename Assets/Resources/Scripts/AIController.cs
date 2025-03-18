@@ -17,16 +17,56 @@ public class AIController : PlayerController
     {
         
     }
-    
+
     // Helper method: Checks if the card's sacrifice requirements are met on the grid.
-    private bool IsCardPlayable(CardSO card)
+private bool IsCardPlayable(CardSO card)
     {
-        // If the card does not require sacrifice, it's playable.
-        if (!card.requiresSacrifice || card.sacrificeRequirements == null || card.sacrificeRequirements.Count == 0)
+        // If this is an evolution card but has no valid base, it’s not playable.
+        if (card.baseOrEvo == CardSO.BaseOrEvo.Evolution)
+        {
+            if (!card.requiresSacrifice || card.sacrificeRequirements == null || card.sacrificeRequirements.Count == 0)
+                return false;
+
+            bool hasValidBase = false;
+            CardSO[,] gameGrid = GridManager.instance.GetGrid(); // Renamed to gameGrid to avoid conflict
+
+            // Loop through the grid to check for a valid base card
+            foreach (var req in card.sacrificeRequirements)
+            {
+                int foundCount = 0;
+                for (int i = 0; i < 3; i++)
+                {
+                    for (int j = 0; j < 3; j++)
+                    {
+                        if (gameGrid[i, j] != null)
+                        {
+                            bool match = req.matchByCreatureType ?
+                                (gameGrid[i, j].creatureType == req.requiredCardName) :
+                                (gameGrid[i, j].cardName == req.requiredCardName);
+                            if (match)
+                                foundCount++;
+                        }
+                    }
+                }
+                if (foundCount >= req.count)
+                {
+                    hasValidBase = true;
+                    break;
+                }
+            }
+
+            if (!hasValidBase)
+            {
+                Debug.Log($"[AIController] {card.cardName} cannot be played; evolution requirements not met.");
+                return false;
+            }
+        }
+
+        // If no sacrifice requirements, it’s playable
+        if (!card.requiresSacrifice || card.sacrificeRequirements.Count == 0)
             return true;
 
-        CardSO[,] grid = GridManager.instance.GetGrid();
-        // Loop through each sacrifice requirement.
+        CardSO[,] fieldGrid = GridManager.instance.GetGrid(); // Renamed to fieldGrid to avoid conflict
         foreach (var req in card.sacrificeRequirements)
         {
             int foundCount = 0;
@@ -34,11 +74,11 @@ public class AIController : PlayerController
             {
                 for (int j = 0; j < 3; j++)
                 {
-                    if (grid[i, j] != null)
+                    if (fieldGrid[i, j] != null)
                     {
                         bool match = req.matchByCreatureType ?
-                            (grid[i, j].creatureType == req.requiredCardName) :
-                            (grid[i, j].cardName == req.requiredCardName);
+                            (fieldGrid[i, j].creatureType == req.requiredCardName) :
+                            (fieldGrid[i, j].cardName == req.requiredCardName);
                         if (match)
                             foundCount++;
                     }
@@ -52,6 +92,7 @@ public class AIController : PlayerController
         }
         return true;
     }
+
 
     public override void StartTurn()
     {

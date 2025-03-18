@@ -7,7 +7,7 @@ public class ReplaceAfterOpponentTurnEffect : CardEffect
     [Tooltip("The name of the card to replace the source card with.")]
     public string replacementCardName;
 
-    [Tooltip("If true, no further cards may be played this turn after the replacement.")]
+    [Tooltip("If true, no further cards may be played for the next turn after the replacement.")]
     public bool blockAdditionalPlays = true;
 
     [Tooltip("The UI prompt prefab to ask the player if they wish to use the effect.")]
@@ -76,10 +76,11 @@ public class ReplaceAfterOpponentTurnEffect : CardEffect
             Transform cellTransform = GameObject.Find($"GridCell_{gridPos.x}_{gridPos.y}").transform;
             GridManager.instance.PlaceExistingCard(gridPos.x, gridPos.y, newCardObj, replacementCard, cellTransform);
 
-            // Optionally block further plays this turn.
+            // Optionally block the *next turn* if blockAdditionalPlays is true.
             if (blockAdditionalPlays)
             {
-                TurnManager.instance.BlockAdditionalCardPlays();
+                Debug.Log("Replacing & blocking next turn!");
+                TurnManager.instance.BlockPlaysNextTurn();
             }
         }
         else

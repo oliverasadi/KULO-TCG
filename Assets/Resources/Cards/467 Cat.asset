@@ -30,9 +30,9 @@ MonoBehaviour:
     maxTargets: 0
     replacementCardName: Fat 467 Cat
     turnDelay: 0
-    blockAdditionalPlays: 0
+    blockAdditionalPlays: 1
     promptPrefab: {fileID: 8867524506416461353, guid: 70388e56cbed5dc479ad555bd0ee7ee8, type: 3}
-    powerChange: 1
+    powerChange: 0
   effects: []
   requiresSacrifice: 0
   sacrificeRequirements: []

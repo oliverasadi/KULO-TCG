@@ -3,7 +3,7 @@ using UnityEngine.UI;
 using TMPro;
 using System.Collections;
 using UnityEngine.EventSystems;
-using System.Collections.Generic;
+using System.Collections.Generic; // Make sure we have this to use List<T>
 
 public class CardUI : MonoBehaviour, IPointerClickHandler
 {
@@ -32,6 +32,8 @@ public class CardUI : MonoBehaviour, IPointerClickHandler
     public string inlineReplacementCardName = "";
     public bool inlineBlockAdditionalPlays = false;
 
+    // NEW: store dynamically created inline effects (e.g. ConditionalPowerBoost) 
+    public List<CardEffect> activeInlineEffects; // used so we can remove them on card removal
 
     void Start()
     {
@@ -78,7 +80,6 @@ public class CardUI : MonoBehaviour, IPointerClickHandler
             {
                 if (effect.effectType == CardEffectData.EffectType.ReplaceAfterOpponentTurn)
                 {
-                    // Copy the turn delay value into our runtime variable.
                     replacementTurnDelay = effect.turnDelay;
                     inlineReplacementCardName = effect.replacementCardName;
                     inlineBlockAdditionalPlays = effect.blockAdditionalPlays;
@@ -107,7 +108,6 @@ public class CardUI : MonoBehaviour, IPointerClickHandler
             Debug.LogError($"CardUI: cardArtImage is not assigned on {gameObject.name}");
         }
     }
-
 
     public void SetFaceDown()
     {
@@ -167,24 +167,19 @@ public class CardUI : MonoBehaviour, IPointerClickHandler
 
     public void OnPointerClick(PointerEventData eventData)
     {
-        CardHandler handler = GetComponent<CardHandler>();
-        if (handler != null && handler.isAI)
-        {
-            Debug.Log("Attempted interaction on AI card ignored.");
-            return;
-        }
-
         if (cardData == null)
         {
             Debug.LogError($"CardUI: cardData is null on {gameObject.name}. Ensure SetCardData is called.");
             return;
         }
 
+        // Right-click to open CardInfoPanel
         if (eventData.button == PointerEventData.InputButton.Right)
         {
             if (cardInfoPanel != null)
                 cardInfoPanel.ShowCardInfo(cardData);
         }
+        // Left-click to open SummonMenu
         else if (eventData.button == PointerEventData.InputButton.Left)
         {
             if (SummonMenu.currentMenu != null)
@@ -272,13 +267,16 @@ public class CardUI : MonoBehaviour, IPointerClickHandler
 
     public bool isSelected = false;
 
+
+
     // --- Updated Method for Calculating Effective Power ---
-    // This method uses currentPower as the base and then adds synergy dynamically.
     public int CalculateEffectivePower()
     {
         int effectivePower = currentPower;
 
-        // Process inline ConditionalPowerBoost effects.
+        // Process inline ConditionalPowerBoost effects (the old synergy approach).
+        // If you're using the new dynamic approach, this might be redundant.
+        // But we'll leave it for now if you want to incorporate synergy from the data alone.
         foreach (var effect in cardData.inlineEffects)
         {
             if (effect.effectType == CardEffectData.EffectType.ConditionalPowerBoost)

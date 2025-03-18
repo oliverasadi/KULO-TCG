@@ -26,6 +26,15 @@ public class TurnManager : MonoBehaviour
     // Event to be fired at the end of an opponent's turn.
     public event Action OnOpponentTurnEnd;
 
+    // NEW: Event fired when a card is played
+    public event Action<CardSO> OnCardPlayed;
+
+    // Additional internal flag to block any more plays for the current turn
+    private bool noAdditionalPlays = false;
+
+    // NEW: If we want to block the *next* turn from some effect, we can store it here
+    private bool blockNextTurn = false;
+
     // Expose creaturePlayed via a public property.
     public bool CreaturePlayed
     {
@@ -42,8 +51,8 @@ public class TurnManager : MonoBehaviour
 
     void Start()
     {
-        endTurnButton.onClick.AddListener(PlayerEndTurn); // Link button to EndTurn
-        StartTurn(); // Start the first turn (card draw will occur)
+        endTurnButton.onClick.AddListener(PlayerEndTurn);
+        StartTurn(); // Start the first turn
     }
 
     PlayerManager SelectPlayerManager()
@@ -54,11 +63,24 @@ public class TurnManager : MonoBehaviour
     public void StartTurn(bool drawCard = true)
     {
         Debug.Log($"🕒 Player {currentPlayer}'s turn starts.");
-        creaturePlayed = false;
-        spellPlayed = false;
+
+        if (blockNextTurn)
+        {
+            noAdditionalPlays = true;
+            creaturePlayed = true;
+            spellPlayed = true;
+            // NEW debug line
+            Debug.Log("Blocking all plays this turn from last turn's effect!");
+            blockNextTurn = false;
+        }
+        else
+        {
+            noAdditionalPlays = false;
+            creaturePlayed = false;
+            spellPlayed = false;
+        }
 
         currentPlayerManager = SelectPlayerManager();
-
         if (currentPlayerManager != null)
         {
             if (drawCard)
@@ -69,8 +91,7 @@ public class TurnManager : MonoBehaviour
                 }
                 else
                 {
-                    // Skip drawing a card on turn start due to round reset.
-                    skipDrawOnTurnStart = false; // Reset flag for future turns.
+                    skipDrawOnTurnStart = false;
                 }
             }
         }
@@ -84,6 +105,12 @@ public class TurnManager : MonoBehaviour
 
     public bool CanPlayCard(CardSO card)
     {
+        if (noAdditionalPlays)
+        {
+            Debug.Log("❌ Additional plays are blocked for this turn!");
+            return false;
+        }
+
         if (card.category == CardSO.CardCategory.Creature && creaturePlayed)
         {
             Debug.Log("❌ You already played a Creature this turn!");
@@ -105,11 +132,14 @@ public class TurnManager : MonoBehaviour
             creaturePlayed = true;
         if (card.category == CardSO.CardCategory.Spell)
             spellPlayed = true;
+
+        // Fire the OnCardPlayed event
+        OnCardPlayed?.Invoke(card);
     }
 
     public void PlayerEndTurn()
     {
-        EndTurn(); // End turn; new turn logic will run.
+        EndTurn();
     }
 
     public void EndTurn()
@@ -119,30 +149,26 @@ public class TurnManager : MonoBehaviour
         currentPlayer = (currentPlayer == 1) ? 2 : 1;
         Debug.Log($"🔄 Turn ended. Now Player {currentPlayer}'s turn.");
 
-        // If the turn that ended was NOT the local player's turn, it was the opponent's turn
-        // so we can still fire OnOpponentTurnEnd if needed:
+        // If the turn that ended was NOT the local player's, we can raise OnOpponentTurnEnd
         if (endingPlayer != localPlayerNumber)
         {
             OnOpponentTurnEnd?.Invoke();
         }
 
-        // Now start the new player's turn
         StartTurn();
 
-        // If the new current player *is* the local player, 
-        // we do a CheckReplacementEffects() so that the UI prompt appears now
+        // If the new current player *is* the local player, check inline replacements
         if (currentPlayer == localPlayerNumber)
         {
             GridManager.instance.CheckReplacementEffects();
         }
     }
 
-
     public void ResetTurn()
     {
-        currentPlayer = 1; // Reset turn to Player 1 at the start of a new round
+        currentPlayer = 1; // Reset to Player 1 at new round start
         Debug.Log("🔄 Turn Reset: Player 1 starts the new round!");
-        skipDrawOnTurnStart = true; // Set flag to skip drawing a card immediately after round reset
+        skipDrawOnTurnStart = true;
         StartTurn();
     }
 
@@ -151,11 +177,19 @@ public class TurnManager : MonoBehaviour
         return currentPlayer;
     }
 
-    // Blocks any additional card plays for the remainder of the turn.
+    // Blocks additional card plays for the remainder of *this* turn
     public void BlockAdditionalCardPlays()
     {
+        noAdditionalPlays = true;
         creaturePlayed = true;
         spellPlayed = true;
         Debug.Log("Additional card plays blocked for this turn.");
+    }
+
+    // NEW: If we want to block the entire *next* turn, call this
+    public void BlockPlaysNextTurn()
+    {
+        Debug.Log("Scheduling a block for next turn!");
+        blockNextTurn = true;
     }
 }

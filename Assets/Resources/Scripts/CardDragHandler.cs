@@ -29,11 +29,22 @@ public class CardDragHandler : MonoBehaviour, IBeginDragHandler, IDragHandler, I
             return;
         }
 
+        // Check if the card is already on the field
+        CardUI ui = GetComponent<CardUI>();
+        if (ui != null && ui.isOnField)
+        {
+            // Unless some card effect has explicitly enabled movement for this card, block dragging.
+            Debug.Log("Cannot drag a card that is already placed on the field.");
+            eventData.pointerDrag = null; // Cancel the drag
+            return;
+        }
+
         if (cardHandler.cardData == null)
         {
             Debug.LogError("❌ Card data is missing in CardHandler!");
             return;
         }
+
         isDroppedOnValidZone = false;
         isDragging = true;
         originalPosition = rectTransform.position;
@@ -45,6 +56,7 @@ public class CardDragHandler : MonoBehaviour, IBeginDragHandler, IDragHandler, I
 
         GridManager.instance.GrabCard();
     }
+
 
     public void OnDrag(PointerEventData eventData)
     {
