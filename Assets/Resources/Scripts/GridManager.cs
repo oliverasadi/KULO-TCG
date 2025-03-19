@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using UnityEngine;
 using TMPro;
+using System.Collections.Generic;
 
 public class GridManager : MonoBehaviour
 {
@@ -288,61 +289,81 @@ public class GridManager : MonoBehaviour
                     Debug.Log($"Applying asset-based effect on {cardUIComp.cardData.cardName}: {effect.GetType().Name}");
                     effect.ApplyEffect(cardUIComp);
                     if (grid[x, y] == null)
-                    {
                         return true;
-                    }
                 }
             }
+
             // (2) Inline Effects.
-            if (cardUIComp.cardData.inlineEffects != null)
+            // Optionally, choose runtime inline effects if available.
+            var inlineEffects = (cardUIComp.runtimeInlineEffects != null && cardUIComp.runtimeInlineEffects.Count > 0)
+                ? cardUIComp.runtimeInlineEffects
+                : cardUIComp.cardData.inlineEffects;
+
+            foreach (var inlineEffect in inlineEffects)
             {
-                // NEW CODE: make sure we have a list for active inline effects
-                if (cardUIComp.activeInlineEffects == null)
-                {
-                    cardUIComp.activeInlineEffects = new System.Collections.Generic.List<CardEffect>();
-                }
+                Debug.Log($"Processing inline effect for {cardUIComp.cardData.cardName} with type {inlineEffect.effectType}");
 
-                foreach (var inlineEffect in cardUIComp.cardData.inlineEffects)
+                // If this card has a DrawOnSummon effect.
+                if (inlineEffect.effectType == CardEffectData.EffectType.DrawOnSummon)
                 {
-                    Debug.Log($"Processing inline effect for {cardUIComp.cardData.cardName} with type {inlineEffect.effectType}");
-
-                    // Existing logic: handle DrawOnSummon, etc.
-                    if (inlineEffect.effectType == CardEffectData.EffectType.DrawOnSummon)
+                    if (TurnManager.currentPlayerManager != null)
                     {
-                        if (TurnManager.currentPlayerManager != null)
+                        for (int i = 0; i < inlineEffect.cardsToDraw; i++)
                         {
-                            for (int i = 0; i < inlineEffect.cardsToDraw; i++)
-                            {
-                                TurnManager.currentPlayerManager.DrawCard();
-                            }
+                            TurnManager.currentPlayerManager.DrawCard();
                         }
                     }
+                }
+                // If it has a ConditionalPowerBoost effect.
+                else if (inlineEffect.effectType == CardEffectData.EffectType.ConditionalPowerBoost)
+                {
+                    Debug.Log("Creating a runtime instance of ConditionalPowerBoostEffect for inline synergy...");
+                    ConditionalPowerBoostEffect synergyEffect = ScriptableObject.CreateInstance<ConditionalPowerBoostEffect>();
 
-                    // handle ConditionalPowerBoost
-                    if (inlineEffect.effectType == CardEffectData.EffectType.ConditionalPowerBoost)
+                    synergyEffect.boostAmount = inlineEffect.powerChange;
+                    synergyEffect.requiredCardNames = inlineEffect.requiredCreatureNames.ToArray();
+
+                    synergyEffect.ApplyEffect(cardUIComp);
+                    cardUIComp.activeInlineEffects.Add(synergyEffect);
+                }
+                // NEW: Check for MultipleTargetPowerBoost inline effect.
+                else if (inlineEffect.effectType == CardEffectData.EffectType.MultipleTargetPowerBoost)
+                {
+                    Debug.Log("Creating a runtime instance of MultipleTargetPowerBoostEffect for target selection...");
+                    // Create a new runtime instance of the effect.
+                    MultipleTargetPowerBoostEffect boostEffect = ScriptableObject.CreateInstance<MultipleTargetPowerBoostEffect>();
+
+                    // Copy the relevant data from the inline effect data.
+                    boostEffect.powerIncrease = inlineEffect.powerChange; // Assuming powerChange holds the boost amount.
+                    boostEffect.targetCards = new List<CardUI>(); // Start with an empty list.
+
+                    if (TargetSelectionManager.Instance != null)
                     {
-                        Debug.Log("Creating a runtime instance of ConditionalPowerBoostEffect for inline synergy...");
-                        ConditionalPowerBoostEffect synergyEffect = ScriptableObject.CreateInstance<ConditionalPowerBoostEffect>();
-
-                        synergyEffect.boostAmount = inlineEffect.powerChange;
-                        synergyEffect.requiredCardNames = inlineEffect.requiredCreatureNames.ToArray();
-
-                        synergyEffect.ApplyEffect(cardUIComp);
-                        cardUIComp.activeInlineEffects.Add(synergyEffect);
+                        TargetSelectionManager.Instance.StartTargetSelection(boostEffect);
+                        Debug.Log("Please click on up to 3 target cards on the board for the boost effect.");
                     }
+                    else
+                    {
+                        Debug.LogWarning("TargetSelectionManager instance not found!");
+                    }
+
+                    // (B) Win Condition Check.
+                    if (cardData.category != CardSO.CardCategory.Spell && grid[x, y] == cardData && !HasSelfDestructEffect(cardData))
+                    {
+                        Debug.Log("[GridManager] Checking for win condition now...");
+                        GameManager.instance.CheckForWin();
+                    }
+
+                    return true;
                 }
             }
         }
 
-        // (B) Win Condition Check.
-        if (cardData.category != CardSO.CardCategory.Spell && grid[x, y] == cardData && !HasSelfDestructEffect(cardData))
-        {
-            Debug.Log("[GridManager] Checking for win condition now...");
-            GameManager.instance.CheckForWin();
-        }
-
+        // Ensure we return true if no other return was triggered.
         return true;
     }
+
+
     // -------------------------------------------------------------------------
     // [NEW HELPER] ShowEvolutionSplash
     // Called if baseCardName != null and this is an Evolution card.

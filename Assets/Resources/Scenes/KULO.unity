@@ -707,6 +707,7 @@ GameObject:
   - component: {fileID: 325760558}
   - component: {fileID: 325760559}
   - component: {fileID: 325760560}
+  - component: {fileID: 325760561}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -807,6 +808,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 28cb3597f76b74b39b40b102825752e0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &325760561
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 325760554}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ddbccd800fa7c4d4e8599f505c2dbbd2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  IsSelectingTargets: 0
+  CurrentBoostEffect: {fileID: 0}
+  MaxTargets: 3
+  targetSelectionUIPrefab: {fileID: 5932106655600038640, guid: 04db69ed002c8604cbf6f1ec9d4588d9, type: 3}
 --- !u!1 &334945131
 GameObject:
   m_ObjectHideFlags: 0

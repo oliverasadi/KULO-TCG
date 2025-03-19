@@ -10,21 +10,22 @@ public class MultipleTargetPowerBoostEffect : CardEffect
 
     public override void ApplyEffect(CardUI sourceCard)
     {
-        Debug.Log($"{sourceCard.cardData.cardName} effect: Boosting selected targets by {powerIncrease} power.");
+        Debug.Log($"Boosting selected targets by {powerIncrease} power.");
         foreach (CardUI target in targetCards)
         {
-            target.cardData.power += powerIncrease;
+            target.temporaryBoost += powerIncrease;
             Debug.Log($"Target {target.cardData.cardName} new power: {target.cardData.power}");
         }
     }
 
     public override void RemoveEffect(CardUI sourceCard)
     {
-        Debug.Log($"{sourceCard.cardData.cardName} effect: Removing power boost of {powerIncrease} from targets.");
+        Debug.Log($"Removing power boost of {powerIncrease} from targets.");
         foreach (CardUI target in targetCards)
         {
-            target.cardData.power -= powerIncrease;
-            Debug.Log($"Target {target.cardData.cardName} reverted power: {target.cardData.power}");
+            target.temporaryBoost -= powerIncrease;
+            Debug.Log($"Target {target.cardData.cardName} reverted effective power: {target.CalculateEffectivePower()}");
         }
     }
 }
+

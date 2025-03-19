@@ -26,6 +26,7 @@ public class CardUI : MonoBehaviour, IPointerClickHandler
 
     // Runtime fields
     public int currentPower;
+    public int temporaryBoost = 0;
 
     // Runtime replacement effect fields (for inline ReplaceAfterOpponentTurn)
     public List<CardEffectData> runtimeInlineEffects;
@@ -191,6 +192,13 @@ public class CardUI : MonoBehaviour, IPointerClickHandler
             return;
         }
 
+        // If we're in target selection mode, add this card as a target.
+        if (TargetSelectionManager.Instance != null && TargetSelectionManager.Instance.IsSelectingTargets)
+        {
+            TargetSelectionManager.Instance.AddTarget(this);
+            return;
+        }
+
         // Right-click to open CardInfoPanel
         if (eventData.button == PointerEventData.InputButton.Right)
         {
@@ -215,6 +223,7 @@ public class CardUI : MonoBehaviour, IPointerClickHandler
             ShowSummonMenu();
         }
     }
+
 
     private void ShowSummonMenu()
     {
@@ -290,11 +299,10 @@ public class CardUI : MonoBehaviour, IPointerClickHandler
     // --- Updated Method for Calculating Effective Power ---
     public int CalculateEffectivePower()
     {
-        int effectivePower = currentPower;
+        // Use the base power from the CardSO plus any temporary boost.
+        int effectivePower = cardData.power + temporaryBoost;
 
-        // Process inline ConditionalPowerBoost effects (the old synergy approach).
-        // If you're using the new dynamic approach, this might be redundant.
-        // But we'll leave it for now if you want to incorporate synergy from the data alone.
+        // Process inline ConditionalPowerBoost effects (synergy approach).
         foreach (var effect in cardData.inlineEffects)
         {
             if (effect.effectType == CardEffectData.EffectType.ConditionalPowerBoost)
@@ -338,6 +346,7 @@ public class CardUI : MonoBehaviour, IPointerClickHandler
         }
         return effectivePower;
     }
+
 
     private int CountOtherCardsBySynergy(List<CardSO> requiredCards)
     {
