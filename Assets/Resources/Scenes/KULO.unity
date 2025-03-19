@@ -372,6 +372,7 @@ MonoBehaviour:
   playerManager1: {fileID: 1408794937}
   playerManager2: {fileID: 18294247}
   localPlayerNumber: 1
+  turnSplashPrefab: {fileID: 5748148297602084476, guid: 2a84139bdbd6a064d9b40b4bb1f92717, type: 3}
 --- !u!1 &187639293
 GameObject:
   m_ObjectHideFlags: 0

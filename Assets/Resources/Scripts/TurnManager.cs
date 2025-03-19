@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using Mirror.Examples.CCU;
 using UnityEngine;
@@ -32,7 +33,7 @@ public class TurnManager : MonoBehaviour
     // Additional internal flag to block any more plays for the current turn
     private bool noAdditionalPlays = false;
 
-    // NEW: If we want to block the *next* turn from some effect, we can store it here
+    // NEW: If we want to block the entire *next* turn, call this
     private bool blockNextTurn = false;
 
     // Expose creaturePlayed via a public property.
@@ -40,6 +41,12 @@ public class TurnManager : MonoBehaviour
     {
         get { return creaturePlayed; }
     }
+
+    // ---------------------------
+    // NEW: Turn Splash reference
+    [Header("Turn Splash")]
+    public GameObject turnSplashPrefab;
+    // ---------------------------
 
     void Awake()
     {
@@ -64,12 +71,15 @@ public class TurnManager : MonoBehaviour
     {
         Debug.Log($"🕒 Player {currentPlayer}'s turn starts.");
 
+        // Show turn start splash
+        string splashMessage = (currentPlayer == localPlayerNumber) ? "Your Turn Start" : "CPU Turn Start";
+        ShowTurnSplash(splashMessage);
+
         if (blockNextTurn)
         {
             noAdditionalPlays = true;
             creaturePlayed = true;
             spellPlayed = true;
-            // NEW debug line
             Debug.Log("Blocking all plays this turn from last turn's effect!");
             blockNextTurn = false;
         }
@@ -144,25 +154,39 @@ public class TurnManager : MonoBehaviour
 
     public void EndTurn()
     {
-        int endingPlayer = currentPlayer;
-        // Switch players
-        currentPlayer = (currentPlayer == 1) ? 2 : 1;
-        Debug.Log($"🔄 Turn ended. Now Player {currentPlayer}'s turn.");
+        // Show turn end splash for the player ending their turn.
+        string splashMessage = (currentPlayer == localPlayerNumber) ? "Your Turn End" : "CPU Turn End";
+        ShowTurnSplash(splashMessage);
 
-        // If the turn that ended was NOT the local player's, we can raise OnOpponentTurnEnd
+        int endingPlayer = currentPlayer;
+        // Fire the OnOpponentTurnEnd event immediately if the turn that ended was not the local player's.
         if (endingPlayer != localPlayerNumber)
         {
             OnOpponentTurnEnd?.Invoke();
         }
 
+        // Instead of immediately switching turns, wait for the splash to finish.
+        StartCoroutine(EndTurnRoutine());
+    }
+
+    private IEnumerator EndTurnRoutine()
+    {
+        // Wait a bit for the end-turn splash to play out.
+        yield return new WaitForSeconds(1.5f);
+
+        // Switch players.
+        currentPlayer = (currentPlayer == 1) ? 2 : 1;
+        Debug.Log($"🔄 Turn ended. Now Player {currentPlayer}'s turn.");
+
         StartTurn();
 
-        // If the new current player *is* the local player, check inline replacements
+        // If the new current player is the local player, check inline replacements.
         if (currentPlayer == localPlayerNumber)
         {
             GridManager.instance.CheckReplacementEffects();
         }
     }
+
 
     public void ResetTurn()
     {
@@ -177,7 +201,7 @@ public class TurnManager : MonoBehaviour
         return currentPlayer;
     }
 
-    // Blocks additional card plays for the remainder of *this* turn
+    // Blocks additional card plays for the remainder of this turn.
     public void BlockAdditionalCardPlays()
     {
         noAdditionalPlays = true;
@@ -186,10 +210,46 @@ public class TurnManager : MonoBehaviour
         Debug.Log("Additional card plays blocked for this turn.");
     }
 
-    // NEW: If we want to block the entire *next* turn, call this
+    // NEW: Block the entire next turn.
     public void BlockPlaysNextTurn()
     {
         Debug.Log("Scheduling a block for next turn!");
         blockNextTurn = true;
     }
+
+    // -------------------------------
+    // Helper method to spawn a turn splash.
+    public void ShowTurnSplash(string message)
+    {
+        Debug.Log($"[TurnManager] ShowTurnSplash called with message: '{message}'");
+
+        if (turnSplashPrefab == null)
+        {
+            Debug.LogWarning("No turnSplashPrefab assigned in TurnManager!");
+            return;
+        }
+
+        // Find the OverlayCanvas. Ensure your canvas is named exactly "OverlayCanvas".
+        GameObject overlayCanvas = GameObject.Find("OverlayCanvas");
+        if (overlayCanvas == null)
+        {
+            Debug.LogWarning("OverlayCanvas not found. Make sure you have one named OverlayCanvas in the scene.");
+            return;
+        }
+
+        // Instantiate the splash prefab as a child of the overlay canvas.
+        GameObject splashObj = Instantiate(turnSplashPrefab, overlayCanvas.transform);
+        TurnSplashUI splashUI = splashObj.GetComponent<TurnSplashUI>();
+        if (splashUI != null)
+        {
+            splashUI.Setup(message);
+        }
+        else
+        {
+            Debug.LogWarning("TurnSplashPrefab is missing a TurnSplashUI component!");
+        }
+    }
+    // -------------------------------
+
+    // ... rest of your TurnManager code ...
 }
