@@ -28,6 +28,8 @@ public class CardUI : MonoBehaviour, IPointerClickHandler
     public int currentPower;
 
     // Runtime replacement effect fields (for inline ReplaceAfterOpponentTurn)
+    public List<CardEffectData> runtimeInlineEffects;
+
     public int replacementTurnDelay = -1; // -1 means no effect by default.
     public string inlineReplacementCardName = "";
     public bool inlineBlockAdditionalPlays = false;
@@ -73,16 +75,31 @@ public class CardUI : MonoBehaviour, IPointerClickHandler
         // Initialize runtime power from the base power.
         currentPower = card.power;
 
-        // Initialize runtime replacement effect parameters from the inline effects.
+        // Create runtime copies of inline effects so modifications won't persist on the asset.
         if (cardData.inlineEffects != null)
         {
+            runtimeInlineEffects = new List<CardEffectData>();
             foreach (var effect in cardData.inlineEffects)
             {
-                if (effect.effectType == CardEffectData.EffectType.ReplaceAfterOpponentTurn)
+                // Create a new instance and copy each field.
+                CardEffectData runtimeEffect = new CardEffectData();
+                runtimeEffect.effectType = effect.effectType;
+                runtimeEffect.cardsToDraw = effect.cardsToDraw;
+                runtimeEffect.requiredCreatureNames = new List<string>(effect.requiredCreatureNames);
+                runtimeEffect.maxTargets = effect.maxTargets;
+                runtimeEffect.replacementCardName = effect.replacementCardName;
+                runtimeEffect.turnDelay = effect.turnDelay;
+                runtimeEffect.blockAdditionalPlays = effect.blockAdditionalPlays;
+                runtimeEffect.promptPrefab = effect.promptPrefab;
+                runtimeEffect.powerChange = effect.powerChange;
+                runtimeInlineEffects.Add(runtimeEffect);
+
+                // If this effect is a ReplaceAfterOpponentTurn effect, initialize the runtime parameters.
+                if (runtimeEffect.effectType == CardEffectData.EffectType.ReplaceAfterOpponentTurn)
                 {
-                    replacementTurnDelay = effect.turnDelay;
-                    inlineReplacementCardName = effect.replacementCardName;
-                    inlineBlockAdditionalPlays = effect.blockAdditionalPlays;
+                    replacementTurnDelay = runtimeEffect.turnDelay;
+                    inlineReplacementCardName = runtimeEffect.replacementCardName;
+                    inlineBlockAdditionalPlays = runtimeEffect.blockAdditionalPlays;
                     Debug.Log($"Initialized replacement effect on {card.cardName}: Delay={replacementTurnDelay}, Replacement={inlineReplacementCardName}");
                 }
             }
@@ -108,6 +125,7 @@ public class CardUI : MonoBehaviour, IPointerClickHandler
             Debug.LogError($"CardUI: cardArtImage is not assigned on {gameObject.name}");
         }
     }
+
 
     public void SetFaceDown()
     {

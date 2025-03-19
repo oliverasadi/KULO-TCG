@@ -758,8 +758,13 @@ public class GridManager : MonoBehaviour
                     if (cardUI == null)
                         continue;
 
+                    // Use runtime inline effects if available, otherwise fall back to the asset inline effects.
+                    var inlineEffects = (cardUI.runtimeInlineEffects != null && cardUI.runtimeInlineEffects.Count > 0)
+                        ? cardUI.runtimeInlineEffects
+                        : cardUI.cardData.inlineEffects;
+
                     // Process each inline effect on this card.
-                    foreach (var inlineEffect in cardUI.cardData.inlineEffects)
+                    foreach (var inlineEffect in inlineEffects)
                     {
                         if (inlineEffect.effectType == CardEffectData.EffectType.ReplaceAfterOpponentTurn)
                         {
@@ -784,10 +789,6 @@ public class GridManager : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// Shows the inline replacement prompt. The prompt prefab is fetched from the inline effect data.
-    /// The prompt is instantiated as a child of the "OverlayCanvas" (which must exist in the scene).
-    /// </summary>
     private void ShowInlineReplacementPrompt(CardUI sourceCardUI, int gridX, int gridY, CardEffectData inlineEffect)
     {
         // Check if the card belongs to the local player.
