@@ -2176,7 +2176,7 @@ GameObject:
   - component: {fileID: 641627817}
   m_Layer: 10
   m_Name: OverlayCanvas
-  m_TagString: Untagged
+  m_TagString: OverlayCanvas
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -4771,6 +4771,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: adf48204177753943829a0121f8d3793, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  handDiscardPanelPrefab: {fileID: 8240422486668592277, guid: 634263a183450b949a072e1802c7b634, type: 3}
+  discardCardButtonPrefab: {fileID: 188249540897752196, guid: 9078d2e51f30f5e43bd45e40a3aafb2b, type: 3}
 --- !u!4 &1500409579
 Transform:
   m_ObjectHideFlags: 0

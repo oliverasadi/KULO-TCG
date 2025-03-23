@@ -71,7 +71,19 @@ public class TurnManager : MonoBehaviour
     {
         Debug.Log($"🕒 Player {currentPlayer}'s turn starts.");
 
-        // Show turn start splash
+        // Get the current player's manager.
+        currentPlayerManager = SelectPlayerManager();
+        if (currentPlayerManager != null)
+        {
+            // Log the current hand count.
+            Debug.Log($"[TurnManager] Player {currentPlayer} has {currentPlayerManager.cardHandlers.Count} card(s) in hand.");
+        }
+        else
+        {
+            Debug.LogError("❌ PlayerManager not found! Make sure it's in the scene.");
+        }
+
+        // Show turn start splash.
         string splashMessage = (currentPlayer == localPlayerNumber) ? "Your Turn Start" : "CPU Turn Start";
         ShowTurnSplash(splashMessage);
 
@@ -90,7 +102,6 @@ public class TurnManager : MonoBehaviour
             spellPlayed = false;
         }
 
-        currentPlayerManager = SelectPlayerManager();
         if (currentPlayerManager != null)
         {
             if (drawCard)
@@ -105,13 +116,10 @@ public class TurnManager : MonoBehaviour
                 }
             }
         }
-        else
-        {
-            Debug.LogError("❌ PlayerManager not found! Make sure it's in the scene.");
-        }
 
         currentPlayerManager.pc.StartTurn();
     }
+
 
     public bool CanPlayCard(CardSO card)
     {
@@ -154,20 +162,43 @@ public class TurnManager : MonoBehaviour
 
     public void EndTurn()
     {
-        // Show turn end splash for the player ending their turn.
+        // Show turn end splash.
         string splashMessage = (currentPlayer == localPlayerNumber) ? "Your Turn End" : "CPU Turn End";
         ShowTurnSplash(splashMessage);
 
         int endingPlayer = currentPlayer;
-        // Fire the OnOpponentTurnEnd event immediately if the turn that ended was not the local player's.
+        PlayerManager endingPM = SelectPlayerManager(); // Get the PlayerManager for the ending player.
+        if (endingPM != null)
+        {
+            if (endingPlayer == localPlayerNumber)
+            {
+                endingPM.EnforceHandLimitWithPrompt();
+            }
+            else
+            {
+                endingPM.EnforceHandLimit(); // For AI, discard automatically.
+            }
+        }
+
         if (endingPlayer != localPlayerNumber)
         {
             OnOpponentTurnEnd?.Invoke();
         }
 
-        // Instead of immediately switching turns, wait for the splash to finish.
+        // Wait until discard mode is finished before switching turns.
+        StartCoroutine(WaitForDiscardThenEndTurn());
+    }
+
+
+    private IEnumerator WaitForDiscardThenEndTurn()
+    {
+        // Wait until discard mode is complete.
+        yield return new WaitUntil(() => HandDiscardManager.Instance == null || !HandDiscardManager.Instance.isDiscarding);
+        // Then continue with the end turn routine.
         StartCoroutine(EndTurnRoutine());
     }
+
+
 
     private IEnumerator EndTurnRoutine()
     {

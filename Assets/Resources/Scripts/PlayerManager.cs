@@ -4,7 +4,6 @@ using System.Collections.Generic;
 
 public class PlayerManager : MonoBehaviour
 {
-
     public enum PlayerTypes { Local, AI, Online };
     public PlayerTypes playerType;
     public int playerNumber;
@@ -169,6 +168,81 @@ public class PlayerManager : MonoBehaviour
         else
         {
             Debug.LogWarning("Attempted to discard a card that is not in hand.");
+        }
+    }
+
+    /// <summary>
+    /// Automatically enforces a maximum hand limit of 10 cards.
+    /// If more than 10 cards are in hand at the end of turn, discards the excess cards.
+    /// </summary>
+    public void EnforceHandLimit()
+    {
+        int maxHandSize = 10;
+        if (cardHandlers.Count > maxHandSize)
+        {
+            int excess = cardHandlers.Count - maxHandSize;
+            Debug.Log($"[PlayerManager] Enforcing hand limit. Discarding {excess} card(s).");
+
+            // Discard from the END of the hand list (the last drawn cards).
+            for (int i = 0; i < excess; i++)
+            {
+                int lastIndex = cardHandlers.Count - 1;
+                CardHandler cardToDiscard = cardHandlers[lastIndex];
+
+                cardHandlers.RemoveAt(lastIndex);
+
+                if (zones != null)
+                {
+                    zones.AddCardToGrave(cardToDiscard.gameObject);
+                    Debug.Log($"[PlayerManager] Discarded excess card: {cardToDiscard.cardData.cardName}");
+                }
+                else
+                {
+                    Debug.LogWarning("[PlayerManager] Zones is null! Cannot discard properly.");
+                }
+            }
+        }
+    }
+
+    /// <summary>
+    /// Prompts the player to choose which cards to discard if their hand exceeds 10 cards.
+    /// This method displays a UI panel (handled by HandDiscardManager) that lets the player
+    /// select exactly the number of excess cards to discard.
+    /// </summary>
+    public void EnforceHandLimitWithPrompt()
+    {
+        int maxHandSize = 10;
+        int inHandCount = 0;
+
+        // Count only cards that are still in hand (not on the board)
+        foreach (CardHandler ch in cardHandlers)
+        {
+            CardUI cardUI = ch.GetComponent<CardUI>();
+            if (cardUI != null && !cardUI.isOnField)
+            {
+                inHandCount++;
+            }
+        }
+
+        Debug.Log($"[PlayerManager] End-of-turn hand count (cards still in hand): {inHandCount}");
+
+        if (inHandCount > maxHandSize)
+        {
+            int excess = inHandCount - maxHandSize;
+            Debug.Log($"[PlayerManager] You must discard {excess} card(s).");
+
+            if (HandDiscardManager.Instance != null)
+            {
+                HandDiscardManager.Instance.BeginDiscardMode(excess, null);
+            }
+            else
+            {
+                Debug.LogError("HandDiscardManager instance not found!");
+            }
+        }
+        else
+        {
+            Debug.Log("[PlayerManager] Hand count is within limit. No discard required.");
         }
     }
 }

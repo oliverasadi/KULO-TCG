@@ -1,2 +1,13 @@
 fileFormatVersion: 2
 guid: adf48204177753943829a0121f8d3793
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - handDiscardPanelPrefab: {instanceID: 0}
+  - discardCardButtonPrefab: {instanceID: 0}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
