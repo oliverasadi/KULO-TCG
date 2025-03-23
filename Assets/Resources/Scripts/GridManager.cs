@@ -193,11 +193,14 @@ public class GridManager : MonoBehaviour
         CardUI ui = cardObj.GetComponent<CardUI>();
         if (ui != null) ui.isOnField = true;
 
-        bool newOwnerIsAI2 = (TurnManager.instance.GetCurrentPlayer() == 2);
-        Debug.Log($"[GridManager] Forcing ownership for {cardData.cardName}: isAI = {newOwnerIsAI2}");
+        // Updated Ownership Assignment:
         CardHandler handler = cardObj.GetComponent<CardHandler>();
         if (handler != null)
-            handler.isAI = newOwnerIsAI2;
+        {
+            bool isAICard = (handler.cardOwner != null && handler.cardOwner.playerType == PlayerManager.PlayerTypes.AI);
+            Debug.Log($"[GridManager] Forcing ownership for {cardData.cardName}: isAI = {isAICard}");
+            handler.isAI = isAICard;
+        }
 
         TurnManager.instance.RegisterCardPlay(cardData);
         if (audioSource != null && placeCardSound != null)
@@ -245,7 +248,7 @@ public class GridManager : MonoBehaviour
             if (cardData.baseOrEvo == CardSO.BaseOrEvo.Evolution)
                 baseColor = Color.green;
             else
-                baseColor = newOwnerIsAI2 ? Color.red : Color.green;
+                baseColor = (handler != null && handler.isAI) ? Color.red : Color.green;
             Color flashColor = new Color(baseColor.r, baseColor.g, baseColor.b, 0.100f);
             GameObject cellObj = GameObject.Find($"GridCell_{x}_{y}");
             if (cellObj != null)
@@ -268,13 +271,20 @@ public class GridManager : MonoBehaviour
         // (c) If it's a Spell, queue up removal.
         if (cardData.category == CardSO.CardCategory.Spell)
         {
-            bool isAI = (TurnManager.instance.GetCurrentPlayer() == 2);
+            bool isAI = (handler != null && handler.isAI);
             Debug.Log($"[GridManager] Removing spell {cardData.cardName} soon.");
             StartCoroutine(RemoveSpellAfterDelay(x, y, cardData, isAI));
         }
         else
         {
             Debug.Log($"[GridManager] {cardData.cardName} remains on the grid.");
+        }
+
+        // NEW: Win Condition Check for Non-Spell Cards
+        if (cardData.category != CardSO.CardCategory.Spell && !HasSelfDestructEffect(cardData))
+        {
+            Debug.Log("[GridManager] Checking for win condition now...");
+            GameManager.instance.CheckForWin();
         }
 
         // (A) Process Effects Immediately.
@@ -294,7 +304,6 @@ public class GridManager : MonoBehaviour
             }
 
             // (2) Inline Effects.
-            // Optionally, choose runtime inline effects if available.
             var inlineEffects = (cardUIComp.runtimeInlineEffects != null && cardUIComp.runtimeInlineEffects.Count > 0)
                 ? cardUIComp.runtimeInlineEffects
                 : cardUIComp.cardData.inlineEffects;
@@ -330,12 +339,10 @@ public class GridManager : MonoBehaviour
                 else if (inlineEffect.effectType == CardEffectData.EffectType.MultipleTargetPowerBoost)
                 {
                     Debug.Log("Creating a runtime instance of MultipleTargetPowerBoostEffect for target selection...");
-                    // Create a new runtime instance of the effect.
                     MultipleTargetPowerBoostEffect boostEffect = ScriptableObject.CreateInstance<MultipleTargetPowerBoostEffect>();
 
-                    // Copy the relevant data from the inline effect data.
-                    boostEffect.powerIncrease = inlineEffect.powerChange; // Assuming powerChange holds the boost amount.
-                    boostEffect.targetCards = new List<CardUI>(); // Start with an empty list.
+                    boostEffect.powerIncrease = inlineEffect.powerChange;
+                    boostEffect.targetCards = new List<CardUI>();
 
                     if (TargetSelectionManager.Instance != null)
                     {
@@ -347,10 +354,20 @@ public class GridManager : MonoBehaviour
                         Debug.LogWarning("TargetSelectionManager instance not found!");
                     }
 
-                    // (B) Win Condition Check.
+                    // (B) Win Condition Check within inline effect.
                     if (cardData.category != CardSO.CardCategory.Spell && grid[x, y] == cardData && !HasSelfDestructEffect(cardData))
                     {
-                        Debug.Log("[GridManager] Checking for win condition now...");
+                        Debug.Log("[PlaceReplacementCard] Checking for win condition now...");
+
+                        // 🔍 Log the column you think should win (e.g., column 1)
+                        for (int i = 0; i < 3; i++)
+                        {
+                            GameObject obj = GridManager.instance.GetGridObjects()[i, 1];
+                            CardHandler ch = obj?.GetComponent<CardHandler>();
+                            var cardName = GridManager.instance.GetGrid()[i, 1]?.cardName;
+                            Debug.Log($"[DEBUG] Column 1 - cell ({i},1): {cardName}, Owner: {ch?.cardOwner?.playerNumber}, isAI: {ch?.isAI}");
+                        }
+
                         GameManager.instance.CheckForWin();
                     }
 
@@ -892,8 +909,13 @@ public class GridManager : MonoBehaviour
             // Remove the source occupant first.
             RemoveCard(gridX, gridY, false);
 
-            // Instantiate the replacement card object.
-            GameObject newCardObj = InstantiateReplacementCardInline(replacementCard);
+            // Pass the original card's owner to the replacement.
+            PlayerManager owner = sourceCardUI.GetComponent<CardHandler>().cardOwner;
+            if (owner == null)
+            {
+                Debug.LogError($"[ExecuteReplacementInline] Source card '{sourceCardUI.cardData.cardName}' has no owner!");
+            }
+            GameObject newCardObj = InstantiateReplacementCardInline(replacementCard, owner);
 
             // Find the cell transform.
             GameObject cellObj = GameObject.Find($"GridCell_{gridX}_{gridY}");
@@ -904,7 +926,7 @@ public class GridManager : MonoBehaviour
             }
             Transform cellTransform = cellObj.transform;
 
-            // IMPORTANT: Call the special method that bypasses normal sacrifice checks!
+            // Place the replacement card.
             PlaceReplacementCard(gridX, gridY, newCardObj, replacementCard, cellTransform);
 
             // If the replacement card is an Evo, show the splash.
@@ -930,10 +952,11 @@ public class GridManager : MonoBehaviour
     }
 
 
+
     /// <summary>
     /// Instantiates a replacement card object for inline replacement.
     /// </summary>
-    private GameObject InstantiateReplacementCardInline(CardSO replacementCard)
+    private GameObject InstantiateReplacementCardInline(CardSO replacementCard, PlayerManager owner)
     {
         GameObject cardPrefab = DeckManager.instance.cardPrefab;
         GameObject newCardObj = Instantiate(cardPrefab);
@@ -941,9 +964,17 @@ public class GridManager : MonoBehaviour
         if (handler != null)
         {
             handler.SetCard(replacementCard, false, false);
+            handler.cardOwner = owner;
+            Debug.Log($"[InstantiateReplacementCardInline] New replacement card '{replacementCard.cardName}' owner set to: {owner?.playerNumber}");
+        }
+        else
+        {
+            Debug.LogError("[InstantiateReplacementCardInline] CardHandler not found on the new card object.");
         }
         return newCardObj;
     }
+
+
     /// <summary>
     /// Places a replacement card into the grid cell, bypassing sacrifice checks.
     /// </summary>
@@ -964,24 +995,28 @@ public class GridManager : MonoBehaviour
             cardObj.transform.localPosition = Vector3.zero;
         }
 
-        // Update grid references & ownership.
+        // Update grid references.
         grid[x, y] = cardData;
         gridObjects[x, y] = cardObj;
 
-        bool newOwnerIsAI2 = (TurnManager.instance.GetCurrentPlayer() == 2);
-        Debug.Log($"[PlaceReplacementCard] Forcing ownership for {cardData.cardName}: isAI = {newOwnerIsAI2}");
+        // Updated Ownership Assignment:
         CardHandler handler = cardObj.GetComponent<CardHandler>();
+        bool isAICard = false;
         if (handler != null)
-            handler.isAI = newOwnerIsAI2;
+        {
+            isAICard = (handler.cardOwner != null && handler.cardOwner.playerType == PlayerManager.PlayerTypes.AI);
+            Debug.Log($"[PlaceReplacementCard] Forcing ownership for {cardData.cardName}: isAI = {isAICard}, owner = {handler.cardOwner?.playerNumber}");
+            handler.isAI = isAICard;
+        }
 
-        // Register the card play and optionally play a sound
+        // Register the card play and optionally play a sound.
         TurnManager.instance.RegisterCardPlay(cardData);
         if (audioSource != null && placeCardSound != null)
             audioSource.PlayOneShot(placeCardSound);
 
         Debug.Log($"[PlaceReplacementCard] Placed {cardData.cardName} at ({x},{y}).");
 
-        // Floating Text
+        // Floating Text Display.
         if (FloatingTextManager.instance != null)
         {
             GameObject floatingText = Instantiate(
@@ -1003,14 +1038,14 @@ public class GridManager : MonoBehaviour
             }
         }
 
-        // If it's not a Spell, highlight the cell
+        // Highlight the cell for non-Spell cards.
         if (cardData.category != CardSO.CardCategory.Spell)
         {
             Color baseColor;
             if (cardData.baseOrEvo == CardSO.BaseOrEvo.Evolution)
                 baseColor = Color.green;
             else
-                baseColor = newOwnerIsAI2 ? Color.red : Color.green;
+                baseColor = isAICard ? Color.red : Color.green;
             Color flashColor = new Color(baseColor.r, baseColor.g, baseColor.b, 0.100f);
             GameObject cellObj = GameObject.Find($"GridCell_{x}_{y}");
             if (cellObj != null)
@@ -1026,23 +1061,22 @@ public class GridManager : MonoBehaviour
             }
         }
 
-        // If it's a Spell, we remove it soon after
+        // For Spell cards, queue removal.
         if (cardData.category == CardSO.CardCategory.Spell)
         {
-            bool isAI = (TurnManager.instance.GetCurrentPlayer() == 2);
             Debug.Log($"[PlaceReplacementCard] Removing spell {cardData.cardName} soon.");
-            StartCoroutine(RemoveSpellAfterDelay(x, y, cardData, isAI));
+            StartCoroutine(RemoveSpellAfterDelay(x, y, cardData, isAICard));
         }
         else
         {
             Debug.Log($"[PlaceReplacementCard] {cardData.cardName} remains on the grid.");
         }
 
-        // Process inline & asset-based effects
+        // Process inline & asset-based effects.
         CardUI cardUIComp = cardObj.GetComponent<CardUI>();
         if (cardUIComp != null)
         {
-            // (1) Asset-based Effects
+            // (1) Asset-based Effects.
             if (cardUIComp.cardData.effects != null)
             {
                 foreach (CardEffect effect in cardUIComp.cardData.effects)
@@ -1054,10 +1088,9 @@ public class GridManager : MonoBehaviour
                 }
             }
 
-            // (2) Inline Effects
+            // (2) Inline Effects.
             if (cardUIComp.cardData.inlineEffects != null)
             {
-                // Ensure we have a list for active inline effects
                 if (cardUIComp.activeInlineEffects == null)
                 {
                     cardUIComp.activeInlineEffects = new System.Collections.Generic.List<CardEffect>();
@@ -1067,7 +1100,7 @@ public class GridManager : MonoBehaviour
                 {
                     Debug.Log($"[PlaceReplacementCard] Processing inline effect for {cardUIComp.cardData.cardName} with type {inlineEffect.effectType}");
 
-                    // Example: If this card has a "DrawOnSummon" effect
+                    // Example: DrawOnSummon effect.
                     if (inlineEffect.effectType == CardEffectData.EffectType.DrawOnSummon)
                     {
                         if (TurnManager.currentPlayerManager != null)
@@ -1078,8 +1111,7 @@ public class GridManager : MonoBehaviour
                             }
                         }
                     }
-
-                    // Handle ConditionalPowerBoost 
+                    // Handle ConditionalPowerBoost effect.
                     if (inlineEffect.effectType == CardEffectData.EffectType.ConditionalPowerBoost)
                     {
                         Debug.Log("Creating a runtime instance of ConditionalPowerBoostEffect for inline synergy...");
@@ -1095,14 +1127,23 @@ public class GridManager : MonoBehaviour
             }
         }
 
-        // If it's not a Spell, check for a potential immediate win
+        // For non-Spell cards, check for an immediate win.
         if (cardData.category != CardSO.CardCategory.Spell && grid[x, y] == cardData && !HasSelfDestructEffect(cardData))
-        {
-            Debug.Log("[PlaceReplacementCard] Checking for win condition now...");
-            GameManager.instance.CheckForWin();
-        }
+            if (cardData.category != CardSO.CardCategory.Spell && grid[x, y] == cardData && !HasSelfDestructEffect(cardData))
+            {
+                Debug.Log("[PlaceReplacementCard] Checking for win condition now...");
 
-     
+                // 🔍 Log the column you think should win (e.g., column 1)
+                for (int i = 0; i < 3; i++)
+                {
+                    GameObject obj = GridManager.instance.GetGridObjects()[i, 1];
+                    CardHandler ch = obj?.GetComponent<CardHandler>();
+                    var cardName = GridManager.instance.GetGrid()[i, 1]?.cardName;
+                    Debug.Log($"[DEBUG] Column 1 - cell ({i},1): {cardName}, Owner: {ch?.cardOwner?.playerNumber}, isAI: {ch?.isAI}");
+                }
+
+                GameManager.instance.CheckForWin();
+            }
 
         return true;
     }

@@ -57,101 +57,68 @@ public class GameManager : MonoBehaviour
     }
 
     // Call this method after each move to check if the board meets a win condition.
+    // Now, we handle multiple lines in one call.
     public void CheckForWin()
     {
         Debug.Log("[GameManager] Checking win condition...");
-        if (WinChecker.instance.CheckWinCondition(GridManager.instance.GetGrid()))
+        // Instead of a bool, WinChecker now returns how many new lines were formed.
+        int newlyFormedLines = WinChecker.instance.CheckWinCondition(GridManager.instance.GetGrid());
+        if (newlyFormedLines > 0)
         {
             int winningPlayer = TurnManager.instance.GetCurrentPlayer();
-            Debug.Log("[GameManager] Win condition met! Player " + winningPlayer + " wins the round.");
+            Debug.Log($"[GameManager] {newlyFormedLines} new winning line(s) formed! Player {winningPlayer} scores.");
 
-            // Play round win sound.
+            // Optionally play a round win sound
             if (audioSource != null && roundWinClip != null)
             {
                 audioSource.PlayOneShot(roundWinClip);
             }
 
-            // Mark the winning line as used.
-            MarkWinningLine();
-
-            // Increment the winner's round win count.
-            if (winningPlayer == 1)
-                roundsWonP1++;
-            else
-                roundsWonP2++;
+            // For each new line, you can increment the winner's "rounds won" or however you want to track it
+            for (int i = 0; i < newlyFormedLines; i++)
+            {
+                if (winningPlayer == 1)
+                    roundsWonP1++;
+                else
+                    roundsWonP2++;
+            }
 
             UpdateRoundsUI();
 
+            // Check if someone reached totalRoundsToWin
             if (roundsWonP1 >= totalRoundsToWin || roundsWonP2 >= totalRoundsToWin)
             {
-                Debug.Log("[GameManager] Player " + winningPlayer + " wins the game!");
+                Debug.Log($"[GameManager] Player {winningPlayer} wins the game!");
                 if (gameStatusText != null)
                 {
                     gameStatusText.gameObject.SetActive(true);
-                    gameStatusText.text = "Player " + winningPlayer + " wins the game!";
+                    gameStatusText.text = $"Player {winningPlayer} wins the game!";
                 }
-                // Play game win sound.
+                // Play game win clip
                 if (audioSource != null && gameWinClip != null)
                 {
                     audioSource.PlayOneShot(gameWinClip);
                 }
+                // Restart the entire game after 3 seconds
                 Invoke("RestartGame", 3f);
             }
             else
             {
+                // If you want only one line per round, or a certain behavior for multiple lines,
+                // you can adjust the logic here. For now, we treat each line as a point and
+                // still end the "round" after awarding them.
                 if (gameStatusText != null)
                 {
                     gameStatusText.gameObject.SetActive(true);
-                    gameStatusText.text = "Player " + winningPlayer + " wins the round!";
+                    gameStatusText.text = $"Player {winningPlayer} wins {newlyFormedLines} line(s)!";
                 }
-                // For the next round, we do not reset the grid (winning cards remain), just reset the turn.
+                // Start a new round in 2 seconds
                 Invoke("StartNewRound", 2f);
             }
         }
         else
         {
-            Debug.Log("[GameManager] No win condition met yet.");
-        }
-    }
-
-    // Marks the first available winning line (row, column, or diagonal) as used.
-    // This is a simple approach – it checks rows first, then columns, then diagonals.
-    private void MarkWinningLine()
-    {
-        CardSO[,] grid = GridManager.instance.GetGrid();
-        // Check rows.
-        for (int i = 0; i < 3; i++)
-        {
-            if (!rowUsed[i] && grid[i, 0] != null && grid[i, 1] != null && grid[i, 2] != null)
-            {
-                rowUsed[i] = true;
-                Debug.Log($"Marking row {i} as used.");
-                return;
-            }
-        }
-        // Check columns.
-        for (int j = 0; j < 3; j++)
-        {
-            if (!colUsed[j] && grid[0, j] != null && grid[1, j] != null && grid[2, j] != null)
-            {
-                colUsed[j] = true;
-                Debug.Log($"Marking column {j} as used.");
-                return;
-            }
-        }
-        // Check main diagonal.
-        if (!diagUsed[0] && grid[0, 0] != null && grid[1, 1] != null && grid[2, 2] != null)
-        {
-            diagUsed[0] = true;
-            Debug.Log("Marking main diagonal as used.");
-            return;
-        }
-        // Check anti-diagonal.
-        if (!diagUsed[1] && grid[0, 2] != null && grid[1, 1] != null && grid[2, 0] != null)
-        {
-            diagUsed[1] = true;
-            Debug.Log("Marking anti-diagonal as used.");
-            return;
+            Debug.Log("[GameManager] No new lines formed this move.");
         }
     }
 
