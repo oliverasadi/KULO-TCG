@@ -14,6 +14,11 @@ public class PlayerManager : MonoBehaviour
     public GameObject cardPrefab; // Prefab for the card UI representation
     public Transform cardSpawnArea; // The UI area where drawn cards are displayed
 
+    [Header("AI Deck Selection")]
+    public DeckDataSO aiSelectedDeck;  // Assign the AI's deck directly from Inspector
+    public DeckDataSO playerSelectedDeck;  // Player deck (Inspector selection)
+
+
     [FormerlySerializedAs("Zones")]
     [Header("Deck Objects")]
     public PlayerZones zones;
@@ -28,37 +33,54 @@ public class PlayerManager : MonoBehaviour
         dm = DeckManager.instance;
         Debug.Log("PlayerManager initialized for playerType: " + playerType);
 
-        // Load deck based on available sources.
         if (playerType == PlayerTypes.AI)
         {
-            currentDeck = dm.GenerateRandomDeck();
+            if (aiSelectedDeck != null)
+            {
+                currentDeck = dm.LoadDeck(aiSelectedDeck);
+                Debug.Log($"✅ AI loaded '{aiSelectedDeck.deckName}' deck from Inspector.");
+            }
+            else
+            {
+                Debug.LogWarning("⚠️ No AI deck selected in Inspector. Generating random deck.");
+                currentDeck = dm.GenerateRandomDeck();
+            }
         }
-        else if (dm.availableDecks != null && dm.availableDecks.Count > 0)
+        else if (playerType == PlayerTypes.Local)
         {
-            // For local players, load the first external deck.
-            currentDeck = dm.LoadDeck(dm.availableDecks[0]);
-        }
-        else if (dm.savedDecks != null && dm.savedDecks.Count > 0)
-        {
-            // Otherwise, load the first saved deck.
-            currentDeck = dm.LoadDeck(dm.savedDecks[0].deckName);
+            if (playerSelectedDeck != null)
+            {
+                currentDeck = dm.LoadDeck(playerSelectedDeck);
+                Debug.Log($"✅ Player loaded '{playerSelectedDeck.deckName}' deck from Inspector.");
+            }
+            else if (dm.availableDecks != null && dm.availableDecks.Count > 0)
+            {
+                currentDeck = dm.LoadDeck(dm.availableDecks[0]);
+                Debug.Log($"⚠️ No player deck selected. Loaded default '{dm.availableDecks[0].deckName}' deck.");
+            }
+            else
+            {
+                Debug.LogWarning("⚠️ No player deck selected or available. Generating random deck.");
+                currentDeck = dm.GenerateRandomDeck();
+            }
         }
         else
         {
+            // Fallback for other player types
             currentDeck = dm.GenerateRandomDeck();
         }
 
-        Debug.Log("Deck loaded. Count before fallback check: " + currentDeck.Count);
         if (currentDeck == null || currentDeck.Count == 0)
         {
-            Debug.LogWarning("Loaded deck is empty. Generating a random deck as fallback.");
+            Debug.LogWarning("Loaded deck is empty. Generating random deck as fallback.");
             currentDeck = dm.GenerateRandomDeck();
         }
-        Debug.Log("Final deck count: " + currentDeck.Count);
 
         ShuffleDeck();
         DrawStartingHand();
     }
+
+
 
     /// <summary>
     /// Shuffles the current deck.

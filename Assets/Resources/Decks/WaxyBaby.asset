@@ -1,0 +1,58 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7a3f2cec2517eb241b44c21068f8f6bc, type: 3}
+  m_Name: WaxyBaby
+  m_EditorClassIdentifier: 
+  deckName: Waxy Baby
+  cardEntries:
+  - card: {fileID: 11400000, guid: e3ee1592fb7e4fa4c8f437a472a94e5a, type: 2}
+    quantity: 3
+  - card: {fileID: 0}
+    quantity: 0
+  - card: {fileID: 11400000, guid: d4dcc344ee74bf241a9bb5ec032c2008, type: 2}
+    quantity: 3
+  - card: {fileID: 11400000, guid: 4a1014c9b9a50f24193f3dbf830d5248, type: 2}
+    quantity: 3
+  - card: {fileID: 11400000, guid: 111d872e01cf0c54da274a69380c2193, type: 2}
+    quantity: 3
+  - card: {fileID: 11400000, guid: 46eaa41752add2f4b89c894e0fce66a3, type: 2}
+    quantity: 3
+  - card: {fileID: 11400000, guid: 20b388751df1206449f621c6edbbf9b2, type: 2}
+    quantity: 3
+  - card: {fileID: 11400000, guid: 0b4cb281386c8a24aa661b89348e8dba, type: 2}
+    quantity: 2
+  - card: {fileID: 11400000, guid: 713f2c811276e5646be14e4f7fca8f0b, type: 2}
+    quantity: 3
+  - card: {fileID: 11400000, guid: ade9e12952142a34698b3f1f999c62e6, type: 2}
+    quantity: 2
+  - card: {fileID: 11400000, guid: 444362cf76a35c9478fe358ab687da41, type: 2}
+    quantity: 3
+  - card: {fileID: 11400000, guid: 7da972883d34b6b4589d42100cd07812, type: 2}
+    quantity: 3
+  - card: {fileID: 11400000, guid: bb178b191f2718747af9245e4dad335b, type: 2}
+    quantity: 1
+  - card: {fileID: 11400000, guid: ec72f5c7dd3ed0147b44d228eab48eeb, type: 2}
+    quantity: 1
+  - card: {fileID: 11400000, guid: da0b75d5fe675364785e843493dfe896, type: 2}
+    quantity: 1
+  - card: {fileID: 11400000, guid: c4c0a756707388e4abe1e41c7118e3da, type: 2}
+    quantity: 1
+  - card: {fileID: 11400000, guid: 923d02f332e6f2c41b751bc10087409e, type: 2}
+    quantity: 1
+  - card: {fileID: 11400000, guid: ec7f306d02a71db4d9bb6dfbb7b5bf0a, type: 2}
+    quantity: 1
+  - card: {fileID: 11400000, guid: c7466dea11c67014f890ad84157cd06b, type: 2}
+    quantity: 1
+  - card: {fileID: 11400000, guid: 51f49fb96626dd74283ad57f6b1b5d32, type: 2}
+    quantity: 1
+  - card: {fileID: 11400000, guid: 8ba94b54b6513224d834c3aa7d3f1ba5, type: 2}
+    quantity: 1

@@ -168,6 +168,8 @@ MonoBehaviour:
   cardHandlers: []
   cardPrefab: {fileID: 1277828652}
   cardSpawnArea: {fileID: 1493312731}
+  aiSelectedDeck: {fileID: 11400000, guid: 004379a8f4811e041bf53318ba0a02d3, type: 2}
+  playerSelectedDeck: {fileID: 0}
   zones: {fileID: 542413023}
   pc: {fileID: 18294246}
 --- !u!4 &18294248
@@ -743,6 +745,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   totalRoundsToWin: 3
+  roundWinDetected: 0
   rowUsed: 000000
   colUsed: 000000
   diagUsed: 0000
@@ -769,7 +772,7 @@ MonoBehaviour:
   savedDecks: []
   availableDecks:
   - {fileID: 11400000, guid: 36293bfbb81bbe94c91fd63114e12158, type: 2}
-  - {fileID: 11400000, guid: 36293bfbb81bbe94c91fd63114e12158, type: 2}
+  - {fileID: 11400000, guid: 004379a8f4811e041bf53318ba0a02d3, type: 2}
   currentDeck: []
   cardPrefab: {fileID: 7165986574755316703, guid: c60e37c3ad5112b468fae55268672f1f, type: 3}
 --- !u!114 &325760558
@@ -4375,6 +4378,8 @@ MonoBehaviour:
   cardHandlers: []
   cardPrefab: {fileID: 1277828652}
   cardSpawnArea: {fileID: 632708204}
+  aiSelectedDeck: {fileID: 0}
+  playerSelectedDeck: {fileID: 11400000, guid: 36293bfbb81bbe94c91fd63114e12158, type: 2}
   zones: {fileID: 892508755}
   pc: {fileID: 1408794936}
 --- !u!1 &1479547986
@@ -4771,6 +4776,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: adf48204177753943829a0121f8d3793, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  isDiscarding: 0
   handDiscardPanelPrefab: {fileID: 8240422486668592277, guid: 634263a183450b949a072e1802c7b634, type: 3}
   discardCardButtonPrefab: {fileID: 188249540897752196, guid: 9078d2e51f30f5e43bd45e40a3aafb2b, type: 3}
 --- !u!4 &1500409579
