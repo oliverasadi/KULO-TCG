@@ -346,13 +346,51 @@ public class GridManager : MonoBehaviour
 
                     if (TargetSelectionManager.Instance != null)
                     {
-                        TargetSelectionManager.Instance.StartTargetSelection(boostEffect);
-                        Debug.Log("Please click on up to 3 target cards on the board for the boost effect.");
+                        CardHandler cardOwnerHandler = cardUIComp.GetComponent<CardHandler>();
+                        bool isAI = cardOwnerHandler != null && cardOwnerHandler.isAI;
+
+
+                        if (isAI)
+                        {
+                            // Automatically pick up to 3 of AI's own cards as targets
+                            List<CardUI> aiTargets = new List<CardUI>();
+                            GameObject[,] gridObjs = GridManager.instance.GetGridObjects();
+
+                            for (int gx = 0; gx < 3; gx++)
+                            {
+                                for (int gy = 0; gy < 3; gy++)
+                                {
+                                    GameObject obj = gridObjs[gx, gy];
+                                    if (obj != null)
+                                    {
+                                        CardHandler ch = obj.GetComponent<CardHandler>();
+                                        CardUI cui = obj.GetComponent<CardUI>();
+                                        if (ch != null && cui != null && ch.isAI)
+                                        {
+                                            aiTargets.Add(cui);
+                                            if (aiTargets.Count >= 3) break;
+                                        }
+                                    }
+                                }
+                                if (aiTargets.Count >= 3) break;
+                            }
+
+                            boostEffect.targetCards = aiTargets;
+                            boostEffect.ApplyEffect(cardUIComp);
+                            Debug.Log($"[AI PowerBoost] Applied effect to {aiTargets.Count} targets.");
+                        }
+                        else
+                        {
+                            // Local player picks targets via UI
+                            TargetSelectionManager.Instance.StartTargetSelection(boostEffect);
+                            Debug.Log("Please click on up to 3 target cards on the board for the boost effect.");
+                        }
                     }
                     else
                     {
                         Debug.LogWarning("TargetSelectionManager instance not found!");
                     }
+
 
                     // (B) Win Condition Check within inline effect.
                     if (cardData.category != CardSO.CardCategory.Spell && grid[x, y] == cardData && !HasSelfDestructEffect(cardData))

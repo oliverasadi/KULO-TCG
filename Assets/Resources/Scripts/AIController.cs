@@ -19,54 +19,66 @@ public class AIController : PlayerController
     }
 
     // Helper method: Checks if the card's sacrifice requirements are met on the grid.
-private bool IsCardPlayable(CardSO card)
+    private bool IsCardPlayable(CardSO card)
     {
-        // If this is an evolution card but has no valid base, it’s not playable.
+        // If the card is an Evolution card, ensure the AI has the required base on its board.
         if (card.baseOrEvo == CardSO.BaseOrEvo.Evolution)
         {
+            // If there are no sacrifice requirements, this EVO card isn't playable.
             if (!card.requiresSacrifice || card.sacrificeRequirements == null || card.sacrificeRequirements.Count == 0)
+            {
+                Debug.Log($"[AIController] Evolution card {card.cardName} is not playable: no sacrifice requirements set.");
                 return false;
+            }
 
             bool hasValidBase = false;
-            CardSO[,] gameGrid = GridManager.instance.GetGrid(); // Renamed to gameGrid to avoid conflict
+            CardSO[,] grid = GridManager.instance.GetGrid();
 
-            // Loop through the grid to check for a valid base card
-            foreach (var req in card.sacrificeRequirements)
+            // Loop over every cell on the board.
+            for (int i = 0; i < grid.GetLength(0); i++)
             {
-                int foundCount = 0;
-                for (int i = 0; i < 3; i++)
+                for (int j = 0; j < grid.GetLength(1); j++)
                 {
-                    for (int j = 0; j < 3; j++)
+                    if (grid[i, j] == null)
+                        continue;
+
+                    // Only consider cells where the card belongs to the AI.
+                    string owner = GetOwnerTagFromCell(i, j);
+                    if (owner != "AI")
+                        continue;
+
+                    // Check each sacrifice requirement.
+                    foreach (var req in card.sacrificeRequirements)
                     {
-                        if (gameGrid[i, j] != null)
+                        bool match = req.matchByCreatureType
+                            ? (grid[i, j].creatureType == req.requiredCardName)
+                            : (grid[i, j].cardName == req.requiredCardName);
+                        if (match)
                         {
-                            bool match = req.matchByCreatureType ?
-                                (gameGrid[i, j].creatureType == req.requiredCardName) :
-                                (gameGrid[i, j].cardName == req.requiredCardName);
-                            if (match)
-                                foundCount++;
+                            hasValidBase = true;
+                            break;
                         }
                     }
+                    if (hasValidBase)
+                        break;
                 }
-                if (foundCount >= req.count)
-                {
-                    hasValidBase = true;
+                if (hasValidBase)
                     break;
-                }
             }
 
             if (!hasValidBase)
             {
-                Debug.Log($"[AIController] {card.cardName} cannot be played; evolution requirements not met.");
+                Debug.Log($"[AIController] Evolution card {card.cardName} is not playable because a valid base is not found on AI's board.");
                 return false;
             }
         }
 
-        // If no sacrifice requirements, it’s playable
+        // If there are no sacrifice requirements at all, it's playable.
         if (!card.requiresSacrifice || card.sacrificeRequirements.Count == 0)
             return true;
 
-        CardSO[,] fieldGrid = GridManager.instance.GetGrid(); // Renamed to fieldGrid to avoid conflict
+        // Check general sacrifice requirements for any card type (creature/spell).
+        CardSO[,] fieldGrid = GridManager.instance.GetGrid();
         foreach (var req in card.sacrificeRequirements)
         {
             int foundCount = 0;
@@ -76,9 +88,13 @@ private bool IsCardPlayable(CardSO card)
                 {
                     if (fieldGrid[i, j] != null)
                     {
-                        bool match = req.matchByCreatureType ?
-                            (fieldGrid[i, j].creatureType == req.requiredCardName) :
-                            (fieldGrid[i, j].cardName == req.requiredCardName);
+                        // Again, only count AI-owned cards
+                        if (GetOwnerTagFromCell(i, j) != "AI")
+                            continue;
+
+                        bool match = req.matchByCreatureType
+                            ? (fieldGrid[i, j].creatureType == req.requiredCardName)
+                            : (fieldGrid[i, j].cardName == req.requiredCardName);
                         if (match)
                             foundCount++;
                     }
@@ -90,8 +106,22 @@ private bool IsCardPlayable(CardSO card)
                 return false;
             }
         }
+
         return true;
     }
+
+    // Helper method to determine who owns a grid cell's card.
+    private string GetOwnerTagFromCell(int x, int y)
+    {
+        GameObject obj = GridManager.instance.GetGridObjects()[x, y];
+        if (obj == null) return "Empty";
+
+        CardHandler ch = obj.GetComponent<CardHandler>();
+        if (ch == null) return "Empty";
+
+        return ch.isAI ? "AI" : "Player";
+    }
+
 
 
     public override void StartTurn()

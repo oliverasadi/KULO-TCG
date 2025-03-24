@@ -10,6 +10,8 @@ public class GameManager : MonoBehaviour
     private int roundsWonP1 = 0;
     private int roundsWonP2 = 0;
     public int totalRoundsToWin = 3; // First to 3 unique wins wins the game
+    public bool roundWinDetected = false; // Add this field at the top of your GameManager
+
 
     // Unique win tracking arrays:
     public bool[] rowUsed = new bool[3];    // rows 0,1,2
@@ -58,23 +60,24 @@ public class GameManager : MonoBehaviour
 
     // Call this method after each move to check if the board meets a win condition.
     // Now, we handle multiple lines in one call.
+
     public void CheckForWin()
     {
         Debug.Log("[GameManager] Checking win condition...");
-        // Instead of a bool, WinChecker now returns how many new lines were formed.
+        // WinChecker returns how many new winning lines were formed.
         int newlyFormedLines = WinChecker.instance.CheckWinCondition(GridManager.instance.GetGrid());
         if (newlyFormedLines > 0)
         {
             int winningPlayer = TurnManager.instance.GetCurrentPlayer();
             Debug.Log($"[GameManager] {newlyFormedLines} new winning line(s) formed! Player {winningPlayer} scores.");
 
-            // Optionally play a round win sound
+            // Play round win sound.
             if (audioSource != null && roundWinClip != null)
             {
                 audioSource.PlayOneShot(roundWinClip);
             }
 
-            // For each new line, you can increment the winner's "rounds won" or however you want to track it
+            // Increment win count for each new line.
             for (int i = 0; i < newlyFormedLines; i++)
             {
                 if (winningPlayer == 1)
@@ -82,10 +85,19 @@ public class GameManager : MonoBehaviour
                 else
                     roundsWonP2++;
             }
-
             UpdateRoundsUI();
 
-            // Check if someone reached totalRoundsToWin
+            // Record that a win has been detected.
+            roundWinDetected = true;
+
+            // Update UI to indicate the win.
+            if (gameStatusText != null)
+            {
+                gameStatusText.gameObject.SetActive(true);
+                gameStatusText.text = $"Player {winningPlayer} wins {newlyFormedLines} line(s)!";
+            }
+
+            // Check if someone reached totalRoundsToWin.
             if (roundsWonP1 >= totalRoundsToWin || roundsWonP2 >= totalRoundsToWin)
             {
                 Debug.Log($"[GameManager] Player {winningPlayer} wins the game!");
@@ -94,33 +106,33 @@ public class GameManager : MonoBehaviour
                     gameStatusText.gameObject.SetActive(true);
                     gameStatusText.text = $"Player {winningPlayer} wins the game!";
                 }
-                // Play game win clip
                 if (audioSource != null && gameWinClip != null)
                 {
                     audioSource.PlayOneShot(gameWinClip);
                 }
-                // Restart the entire game after 3 seconds
                 Invoke("RestartGame", 3f);
             }
             else
             {
-                // If you want only one line per round, or a certain behavior for multiple lines,
-                // you can adjust the logic here. For now, we treat each line as a point and
-                // still end the "round" after awarding them.
-                if (gameStatusText != null)
-                {
-                    gameStatusText.gameObject.SetActive(true);
-                    gameStatusText.text = $"Player {winningPlayer} wins {newlyFormedLines} line(s)!";
-                }
-                // Start a new round in 2 seconds
-                Invoke("StartNewRound", 2f);
+                // Clear the win announcement after 2 seconds.
+                Invoke("ClearWinAnnouncement", 2f);
             }
         }
         else
         {
-            Debug.Log("[GameManager] No new lines formed this move.");
+            Debug.Log("[GameManager] No win condition met yet.");
         }
     }
+
+    private void ClearWinAnnouncement()
+    {
+        if (gameStatusText != null)
+        {
+            gameStatusText.gameObject.SetActive(false);
+        }
+    }
+
+
 
     // Resets only the turn (and leaves winning lines marked so they won't be reused).
     void StartNewRound()
