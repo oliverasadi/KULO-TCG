@@ -7,126 +7,194 @@ public class AdjustPowerAdjacentEffect : CardEffect
 {
     public enum PowerChangeType { Increase, Decrease }
     public PowerChangeType powerChangeType = PowerChangeType.Increase;
+
+    public enum OwnerToAffect { Self, Opponent, Both }
+    public OwnerToAffect ownerToAffect = OwnerToAffect.Both;
+
     public int powerChangeAmount = 100;
 
     public enum AdjacentPosition { North, South, East, West, All }
     public List<AdjacentPosition> targetPositions = new List<AdjacentPosition> { AdjacentPosition.All };
 
+    // Keep a list of all occupant CardUI's we've modified, so we can revert them in RemoveEffect
+    private List<CardUI> affectedCards = new List<CardUI>();
+
     public override void ApplyEffect(CardUI sourceCard)
     {
-        // Detailed logging of card and effect details
-        LogCardDetails(sourceCard);
+        // 1) Clear from any previous usage
+        affectedCards.Clear();
 
-        // Get the position of the card on the grid
+        // 2) Get position of the source card on the grid
         Vector2Int position = GetCardPosition(sourceCard);
+        if (position.x < 0 || position.y < 0)
+        {
+            Debug.LogError($"[{nameof(AdjustPowerAdjacentEffect)}] Source card not found in grid!");
+            return;
+        }
         Debug.Log($"Card positioned at: {position.x}, {position.y}");
 
-        // List to store adjacent positions to apply the effect
+        // 3) Determine all adjacent positions we should affect
         List<Vector2Int> positionsToAdjust = new List<Vector2Int>();
 
         foreach (AdjacentPosition adjPos in targetPositions)
         {
-            // Depending on the position of the card, adjust the valid target positions
             switch (adjPos)
             {
                 case AdjacentPosition.North:
-                    if (position.y < 2) positionsToAdjust.Add(new Vector2Int(position.x, position.y + 1)); // Valid if not at the top row
+                    if (position.y < 2) positionsToAdjust.Add(new Vector2Int(position.x, position.y + 1));
                     break;
                 case AdjacentPosition.South:
-                    if (position.y > 0) positionsToAdjust.Add(new Vector2Int(position.x, position.y - 1)); // Valid if not at the bottom row
+                    if (position.y > 0) positionsToAdjust.Add(new Vector2Int(position.x, position.y - 1));
                     break;
                 case AdjacentPosition.East:
-                    if (position.x < 2) positionsToAdjust.Add(new Vector2Int(position.x + 1, position.y)); // Valid if not at the far right column
+                    if (position.x < 2) positionsToAdjust.Add(new Vector2Int(position.x + 1, position.y));
                     break;
                 case AdjacentPosition.West:
-                    if (position.x > 0) positionsToAdjust.Add(new Vector2Int(position.x - 1, position.y)); // Valid if not at the far left column
+                    if (position.x > 0) positionsToAdjust.Add(new Vector2Int(position.x - 1, position.y));
                     break;
+
                 case AdjacentPosition.All:
+                    // Orthogonals
                     if (position.y < 2) positionsToAdjust.Add(new Vector2Int(position.x, position.y + 1)); // North
                     if (position.y > 0) positionsToAdjust.Add(new Vector2Int(position.x, position.y - 1)); // South
                     if (position.x < 2) positionsToAdjust.Add(new Vector2Int(position.x + 1, position.y)); // East
                     if (position.x > 0) positionsToAdjust.Add(new Vector2Int(position.x - 1, position.y)); // West
+
+                    // Diagonals (NE, NW, SE, SW)
+                    // Note: This snippet assumes a 3x3 grid with valid coords 0..2. If your grid is bigger,
+                    // use e.g. (position.x < gridWidth - 1) rather than (position.x < 2).
+
+                    // NE
+                    if (position.x < 2 && position.y < 2)
+                        positionsToAdjust.Add(new Vector2Int(position.x + 1, position.y + 1));
+                    // NW
+                    if (position.x > 0 && position.y < 2)
+                        positionsToAdjust.Add(new Vector2Int(position.x - 1, position.y + 1));
+                    // SE
+                    if (position.x < 2 && position.y > 0)
+                        positionsToAdjust.Add(new Vector2Int(position.x + 1, position.y - 1));
+                    // SW
+                    if (position.x > 0 && position.y > 0)
+                        positionsToAdjust.Add(new Vector2Int(position.x - 1, position.y - 1));
                     break;
             }
         }
 
-        // Log adjacent positions for debugging
         LogAdjacentPositions(positionsToAdjust);
 
-        // Apply the power change to the selected adjacent positions
+        // 4) For each position, if occupant matches owner filtering, apply the buff/debuff
         foreach (var pos in positionsToAdjust)
         {
-            ApplyPowerChange(pos);
+            CardUI occupantUI = GetCardUIAtPosition(pos);
+            if (occupantUI != null)
+            {
+                // Check if occupant is ours, opponent's, or either
+                if (!ShouldAffect(occupantUI, sourceCard))
+                    continue;
+
+                // Apply a "temporary" buff or debuff. We'll revert it in RemoveEffect
+                int delta = (powerChangeType == PowerChangeType.Increase) ? powerChangeAmount : -powerChangeAmount;
+
+                occupantUI.temporaryBoost += delta;
+                occupantUI.UpdatePower(occupantUI.currentPower + delta);
+
+                affectedCards.Add(occupantUI);
+                Debug.Log($"[{nameof(AdjustPowerAdjacentEffect)}] {sourceCard.cardData.cardName} " +
+                          $"changed power of {occupantUI.cardData.cardName} by {delta} at {pos}.");
+            }
         }
     }
 
-    // Modified GetCardPosition to use the grid coordinates directly
+    public override void RemoveEffect(CardUI sourceCard)
+    {
+        // Revert any occupant changes from this effect
+        foreach (CardUI occupantUI in affectedCards)
+        {
+            if (occupantUI == null) continue;
+
+            int delta = (powerChangeType == PowerChangeType.Increase) ? powerChangeAmount : -powerChangeAmount;
+            occupantUI.temporaryBoost -= delta;
+            occupantUI.UpdatePower(occupantUI.currentPower - delta);
+
+            Debug.Log($"[{nameof(AdjustPowerAdjacentEffect)}] Reverted power change on {occupantUI.cardData.cardName}.");
+        }
+        affectedCards.Clear();
+    }
+
+    // -----------------------------------------------------------
+    // Helper for ownership: only affect occupant if correct side.
+    // -----------------------------------------------------------
+    private bool ShouldAffect(CardUI occupantUI, CardUI sourceCardUI)
+    {
+        CardHandler occupantHandler = occupantUI.GetComponent<CardHandler>();
+        CardHandler sourceHandler = sourceCardUI.GetComponent<CardHandler>();
+        if (occupantHandler == null || sourceHandler == null)
+            return true; // If we can't tell, default to true or skip
+
+        switch (ownerToAffect)
+        {
+            case OwnerToAffect.Self:
+                // occupant must share isAI with source
+                return occupantHandler.isAI == sourceHandler.isAI;
+
+            case OwnerToAffect.Opponent:
+                // occupant must be on the opposite side from source
+                return occupantHandler.isAI != sourceHandler.isAI;
+
+            case OwnerToAffect.Both:
+            default:
+                return true;
+        }
+    }
+
+    // -----------------------------------------
+    // Helper: find occupant card
+    // -----------------------------------------
+    private CardUI GetCardUIAtPosition(Vector2Int pos)
+    {
+        CardSO[,] grid = GridManager.instance.GetGrid();
+        GameObject[,] objs = GridManager.instance.GetGridObjects();
+
+        if (pos.x < 0 || pos.x >= grid.GetLength(0) ||
+            pos.y < 0 || pos.y >= grid.GetLength(1))
+        {
+            Debug.LogWarning($"Position {pos} out of bounds.");
+            return null;
+        }
+
+        if (grid[pos.x, pos.y] == null) // no occupant
+            return null;
+
+        return objs[pos.x, pos.y].GetComponent<CardUI>();
+    }
+
+    // -----------------------------------------
+    // Helper: find the source card's position
+    // -----------------------------------------
     private Vector2Int GetCardPosition(CardUI card)
     {
         CardSO[,] grid = GridManager.instance.GetGrid();
-        GameObject[,] gridObjects = GridManager.instance.GetGridObjects();
+        GameObject[,] objs = GridManager.instance.GetGridObjects();
 
-        // Search through the grid to find the position of the card
         for (int x = 0; x < grid.GetLength(0); x++)
         {
             for (int y = 0; y < grid.GetLength(1); y++)
             {
-                if (gridObjects[x, y] == card.gameObject)
-                {
-                    return new Vector2Int(x, y); // Return grid position of the card
-                }
+                if (objs[x, y] == card.gameObject)
+                    return new Vector2Int(x, y);
             }
         }
-
         Debug.LogError($"Card {card.cardData.cardName} not found in grid!");
-        return Vector2Int.zero; // Default value in case the card is not found in the grid
+        return new Vector2Int(-1, -1);
     }
 
-    private void ApplyPowerChange(Vector2Int position)
-    {
-        CardSO[,] grid = GridManager.instance.GetGrid();
-        GameObject[,] gridObjects = GridManager.instance.GetGridObjects();
-
-        // Check if the position is within bounds and if a card exists in that position
-        if (position.x >= 0 && position.x < grid.GetLength(0) && position.y >= 0 && position.y < grid.GetLength(1))
-        {
-            if (grid[position.x, position.y] != null)
-            {
-                CardUI cardUI = gridObjects[position.x, position.y].GetComponent<CardUI>();
-                if (cardUI != null)
-                {
-                    // Log the current power before applying the change
-                    Debug.Log($"Current power of card at ({position.x},{position.y}): {cardUI.currentPower}");
-
-                    // Apply the power change based on the type (Increase or Decrease)
-                    int newPower;
-                    if (powerChangeType == PowerChangeType.Increase)
-                    {
-                        newPower = cardUI.currentPower + powerChangeAmount;
-                    }
-                    else
-                    {
-                        newPower = cardUI.currentPower - powerChangeAmount;
-                    }
-
-                    // Update the card's power
-                    cardUI.UpdatePower(newPower);
-
-                    // Log the updated power
-                    Debug.Log($"Updated power of card at ({position.x},{position.y}): {cardUI.currentPower}");
-                }
-            }
-        }
-        else
-        {
-            Debug.LogWarning($"Position {position} is out of bounds, cannot apply power change.");
-        }
-    }
-
-    // Debugging helper methods
+    // -----------------------------------------
+    // Debug logging
+    // -----------------------------------------
     private void LogAdjacentPositions(List<Vector2Int> positions)
     {
-        Debug.Log($"Adjacent positions to adjust: {string.Join(", ", positions.Select(p => $"({p.x},{p.y})"))}");
+        var joined = string.Join(", ", positions.Select(p => $"({p.x},{p.y})"));
+        Debug.Log($"[{nameof(AdjustPowerAdjacentEffect)}] Adjacent positions to adjust: {joined}");
     }
 
     private void LogCardDetails(CardUI card)
@@ -135,12 +203,7 @@ public class AdjustPowerAdjacentEffect : CardEffect
                   $"Name: {card.cardData.cardName}, " +
                   $"Current Power: {card.currentPower}, " +
                   $"Power Change Type: {powerChangeType}, " +
-                  $"Power Change Amount: {powerChangeAmount}");
-    }
-
-    public override void RemoveEffect(CardUI sourceCard)
-    {
-        // Optional: Implement if you want to reverse the effect when needed
-        // This could subtract the power change instead of adding/subtracting
+                  $"Power Change Amount: {powerChangeAmount}, " +
+                  $"OwnerToAffect: {ownerToAffect}");
     }
 }

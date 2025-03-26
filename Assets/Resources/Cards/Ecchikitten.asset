@@ -35,6 +35,7 @@ MonoBehaviour:
     powerChangeAmount: 300
     powerChangeType: 1
     targetPositions: 0000000001000000
+    adjacencyOwnerToAffect: 1
   effects: []
   requiresSacrifice: 0
   sacrificeRequirements: []

@@ -1,6 +1,7 @@
-using UnityEngine;
+// In CardEffectData.cs
 using System;
 using System.Collections.Generic;
+using UnityEngine;
 
 [Serializable]
 public class CardEffectData
@@ -13,7 +14,7 @@ public class CardEffectData
         MutualConditionalPowerBoostEffect,
         ConditionalPowerBoost,
         ReplaceAfterOpponentTurn,
-        AdjustPowerAdjacent // <-- Add this line for AdjustPowerAdjacentEffect
+        AdjustPowerAdjacent
     }
 
     public EffectType effectType = EffectType.None;
@@ -23,31 +24,19 @@ public class CardEffectData
     public string replacementCardName = "";
     public int turnDelay = 0;
     public bool blockAdditionalPlays = false;
-
-    // Add a prompt prefab field for UI prompt if needed
-    public GameObject promptPrefab;  // <-- This allows assigning UI prompts in the Inspector
-
+    public GameObject promptPrefab;
     public int powerChange = 0;
 
-    // --- New Properties for AdjustPowerAdjacentEffect ---
-    public int powerChangeAmount = 0;  // The amount by which power will change
-    public PowerChangeType powerChangeType;  // Type of change: Increase or Decrease
-    public List<AdjacentPosition> targetPositions = new List<AdjacentPosition>();  // Which adjacent positions to target
+    // Fields for AdjustPowerAdjacentEffect
+    public int powerChangeAmount = 0;
+    public PowerChangeType powerChangeType;
+    public List<AdjacentPosition> targetPositions = new List<AdjacentPosition>();
 
-    // Enum for the type of power change (Increase or Decrease)
-    public enum PowerChangeType
-    {
-        Increase,
-        Decrease
-    }
+    // ADD THIS: Which side(s) to affect
+    public AdjustPowerAdjacentEffect.OwnerToAffect adjacencyOwnerToAffect
+        = AdjustPowerAdjacentEffect.OwnerToAffect.Both;
 
-    // Enum to define valid adjacent positions (North, South, East, West, All)
-    public enum AdjacentPosition
-    {
-        North,
-        South,
-        East,
-        West,
-        All
-    }
+    // Enums
+    public enum PowerChangeType { Increase, Decrease }
+    public enum AdjacentPosition { North, South, East, West, All }
 }

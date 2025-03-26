@@ -410,34 +410,28 @@ public class GridManager : MonoBehaviour
                     else if (inlineEffect.effectType == CardEffectData.EffectType.AdjustPowerAdjacent)
                     {
                         Debug.Log("Creating a runtime instance of AdjustPowerAdjacentEffect for adjacency synergy...");
-
-                        // 1) Create a brand-new instance so we don't use the asset's inspector values
                         AdjustPowerAdjacentEffect adjacencyEffect = ScriptableObject.CreateInstance<AdjustPowerAdjacentEffect>();
 
-                        // 2) Override the effect’s fields with the inline data
-
-                        // - powerChangeAmount
                         adjacencyEffect.powerChangeAmount = inlineEffect.powerChangeAmount;
-
-                        // - powerChangeType (Increase vs Decrease)
-                        //   assuming inlineEffect.powerChangeType is an enum like "Increase" or "Decrease"
                         adjacencyEffect.powerChangeType =
                             (inlineEffect.powerChangeType == CardEffectData.PowerChangeType.Decrease)
                                 ? AdjustPowerAdjacentEffect.PowerChangeType.Decrease
                                 : AdjustPowerAdjacentEffect.PowerChangeType.Increase;
 
-                        // - targetPositions (list of AdjacentPosition)
+                        // MAP THE NEW FIELD:
+                        adjacencyEffect.ownerToAffect = inlineEffect.adjacencyOwnerToAffect;
+
                         adjacencyEffect.targetPositions = new List<AdjustPowerAdjacentEffect.AdjacentPosition>();
                         foreach (var pos in inlineEffect.targetPositions)
                         {
-                            // cast from your CardEffectData’s adjacency enum to the effect’s adjacency enum
                             adjacencyEffect.targetPositions.Add((AdjustPowerAdjacentEffect.AdjacentPosition)pos);
                         }
 
-                        // 3) Apply the effect & track it
                         adjacencyEffect.ApplyEffect(cardUIComp);
                         cardUIComp.activeInlineEffects.Add(adjacencyEffect);
                     }
+
+
                 }
             }
         }
