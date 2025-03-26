@@ -21,7 +21,16 @@ MonoBehaviour:
   creatureType: Wax
   baseOrEvo: 0
   extraDetails: 'DOB: 1995, GPS: WaxBrough, Weight: 79.0kg, Height: 1.75m.'
-  inlineEffects: []
+  inlineEffects:
+  - effectType: 1
+    cardsToDraw: 1
+    requiredCreatureNames: []
+    maxTargets: 0
+    replacementCardName: 
+    turnDelay: 0
+    blockAdditionalPlays: 0
+    promptPrefab: {fileID: 0}
+    powerChange: 0
   effects: []
   requiresSacrifice: 0
   sacrificeRequirements: []

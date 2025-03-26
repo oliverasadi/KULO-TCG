@@ -13,4 +13,4 @@ MonoBehaviour:
   m_Name: MutualConditionalPowerBoostEffect
   m_EditorClassIdentifier: 
   powerIncrease: 500
-  requiredCardName: 
+  requiredCardNames: []

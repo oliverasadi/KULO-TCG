@@ -12,13 +12,18 @@ public class FloatingText : MonoBehaviour
     // NEW: Reference to the card this floating text is associated with.
     public GameObject sourceCard;
 
+    private float updateInterval = 2f; // Update interval in seconds
+    private float lastUpdateTime;
+
     void Start()
     {
         if (textComponent == null)
             textComponent = GetComponent<TextMeshProUGUI>();
+
         originalColor = textComponent.color;
         // Ensure alpha is fully opaque at start.
         textComponent.color = new Color(originalColor.r, originalColor.g, originalColor.b, 1f);
+        lastUpdateTime = Time.time; // Set the start time for update interval
         Debug.Log("FloatingText instantiated at: " + transform.position);
     }
 
@@ -28,14 +33,11 @@ public class FloatingText : MonoBehaviour
         // Move upward gradually.
         transform.position += floatSpeed * Time.deltaTime;
 
-        // If sourceCard is assigned, update the text dynamically.
-        if (sourceCard != null)
+        // Update floating text only every 2 seconds
+        if (Time.time - lastUpdateTime >= updateInterval)
         {
-            CardUI cardUI = sourceCard.GetComponent<CardUI>();
-            if (cardUI != null)
-            {
-                textComponent.text = "Power: " + cardUI.CalculateEffectivePower();
-            }
+            UpdateFloatingText(); // Update the floating text
+            lastUpdateTime = Time.time; // Reset the time tracker
         }
 
         // Fade out gradually over the duration.
@@ -46,5 +48,21 @@ public class FloatingText : MonoBehaviour
         {
             Destroy(gameObject);
         }
+    }
+
+    void UpdateFloatingText()
+    {
+        // If sourceCard is assigned, update the text dynamically.
+        if (sourceCard != null)
+        {
+            CardUI cardUI = sourceCard.GetComponent<CardUI>();
+            if (cardUI != null)
+            {
+                textComponent.text = "Power: " + cardUI.CalculateEffectivePower();
+            }
+        }
+
+        // Debug log for testing purposes
+        Debug.Log("Floating Text Updated");
     }
 }

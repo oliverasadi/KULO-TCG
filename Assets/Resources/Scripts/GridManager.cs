@@ -62,16 +62,15 @@ public class GridManager : MonoBehaviour
             return false;
         }
     }
-
     public bool PlaceExistingCard(int x, int y, GameObject cardObj, CardSO cardData, Transform cellParent)
     {
         Debug.Log($"[GridManager] Attempting to place {cardData.cardName} at ({x},{y}). Category: {cardData.category}");
+
         int currentPlayer = TurnManager.instance.GetCurrentPlayer();
 
-        // We'll store the name of the first sacrificed card here
         string baseCardName = null;
 
-        // (1) Sacrifice Requirements – unchanged.
+        // Handle Sacrifice Requirements
         if (cardData.requiresSacrifice && cardData.sacrificeRequirements != null && cardData.sacrificeRequirements.Count > 0)
         {
             foreach (var req in cardData.sacrificeRequirements)
@@ -131,7 +130,7 @@ public class GridManager : MonoBehaviour
             }
         }
 
-        // (2) Occupant Replacement Logic – unchanged.
+        // Handle Occupant Replacement
         if (grid[x, y] != null)
         {
             float occupantEffectivePower = gridObjects[x, y].GetComponent<CardUI>().CalculateEffectivePower();
@@ -170,7 +169,7 @@ public class GridManager : MonoBehaviour
             }
         }
 
-        // (3) Re-parent & center the card.
+        // Re-parent and center the card
         cardObj.transform.SetParent(cellParent, false);
         RectTransform rt = cardObj.GetComponent<RectTransform>();
         if (rt != null)
@@ -185,7 +184,7 @@ public class GridManager : MonoBehaviour
             cardObj.transform.localPosition = Vector3.zero;
         }
 
-        // (4) Update grid references & ownership.
+        // Update grid references & ownership
         grid[x, y] = cardData;
         gridObjects[x, y] = cardObj;
 
@@ -193,7 +192,7 @@ public class GridManager : MonoBehaviour
         CardUI ui = cardObj.GetComponent<CardUI>();
         if (ui != null) ui.isOnField = true;
 
-        // Updated Ownership Assignment:
+        // Ownership Assignment
         CardHandler handler = cardObj.GetComponent<CardHandler>();
         if (handler != null)
         {
@@ -203,22 +202,19 @@ public class GridManager : MonoBehaviour
         }
 
         TurnManager.instance.RegisterCardPlay(cardData);
+
         if (audioSource != null && placeCardSound != null)
             audioSource.PlayOneShot(placeCardSound);
 
         Debug.Log($"[GridManager] Placed {cardData.cardName} at ({x},{y}).");
-        // -------------------------------------------------------------------------
-        // [NEW CODE] Show Evolution Splash right after a successful placement
-        // if card is EVO and we have a baseCardName from the sacrificed card.
-        // -------------------------------------------------------------------------
+
+        // Show Evolution Splash if applicable
         if (cardData.baseOrEvo == CardSO.BaseOrEvo.Evolution)
         {
             ShowEvolutionSplash((baseCardName ?? "Base"), cardData.cardName);
         }
-        // -------------------------------------------------------------------------
 
-        // (5) Visual / Text / Spell Removal
-        // (a) Floating Text Display.
+        // Handle Floating Text and Highlighting
         if (FloatingTextManager.instance != null)
         {
             GameObject floatingText = Instantiate(
@@ -241,7 +237,7 @@ public class GridManager : MonoBehaviour
             }
         }
 
-        // (b) Color Highlight for non-Spell cards.
+        // Color Highlight for non-Spell cards
         if (cardData.category != CardSO.CardCategory.Spell)
         {
             Color baseColor;
@@ -268,7 +264,7 @@ public class GridManager : MonoBehaviour
             }
         }
 
-        // (c) If it's a Spell, queue up removal.
+        // Handle Spell Removal
         if (cardData.category == CardSO.CardCategory.Spell)
         {
             bool isAI = (handler != null && handler.isAI);
@@ -280,143 +276,71 @@ public class GridManager : MonoBehaviour
             Debug.Log($"[GridManager] {cardData.cardName} remains on the grid.");
         }
 
-        // NEW: Win Condition Check for Non-Spell Cards
+        // Check for Win Condition if necessary
         if (cardData.category != CardSO.CardCategory.Spell && !HasSelfDestructEffect(cardData))
         {
             Debug.Log("[GridManager] Checking for win condition now...");
             GameManager.instance.CheckForWin();
         }
 
-        // (A) Process Effects Immediately.
+        // Process Effects Immediately
         CardUI cardUIComp = cardObj.GetComponent<CardUI>();
         if (cardUIComp != null)
         {
-            // (1) Asset-based Effects.
+            // Apply asset-based effects
             if (cardUIComp.cardData.effects != null)
             {
                 foreach (CardEffect effect in cardUIComp.cardData.effects)
                 {
-                    Debug.Log($"Applying asset-based effect on {cardUIComp.cardData.cardName}: {effect.GetType().Name}");
-                    effect.ApplyEffect(cardUIComp);
-                    if (grid[x, y] == null)
-                        return true;
+                    Debug.Log($"[GridManager] Applying asset-based effect on {cardUIComp.cardData.cardName}: {effect.GetType().Name}");
+                    effect.ApplyEffect(cardUIComp); // Apply the effect once during card placement
                 }
             }
 
-            // (2) Inline Effects.
-            var inlineEffects = (cardUIComp.runtimeInlineEffects != null && cardUIComp.runtimeInlineEffects.Count > 0)
-                ? cardUIComp.runtimeInlineEffects
-                : cardUIComp.cardData.inlineEffects;
-
-            foreach (var inlineEffect in inlineEffects)
+            // Handle Inline Effects (MutualConditionalPowerBoostEffect)
+            if (cardUIComp.cardData.inlineEffects != null)
             {
-                Debug.Log($"Processing inline effect for {cardUIComp.cardData.cardName} with type {inlineEffect.effectType}");
-
-                // If this card has a DrawOnSummon effect.
-                if (inlineEffect.effectType == CardEffectData.EffectType.DrawOnSummon)
+                foreach (var inlineEffect in cardUIComp.cardData.inlineEffects)
                 {
-                    if (TurnManager.currentPlayerManager != null)
+                    Debug.Log($"[GridManager] Processing inline effect for {cardUIComp.cardData.cardName} with type {inlineEffect.effectType}");
+
+                    if (inlineEffect.effectType == CardEffectData.EffectType.MutualConditionalPowerBoostEffect)
                     {
-                        for (int i = 0; i < inlineEffect.cardsToDraw; i++)
-                        {
-                            TurnManager.currentPlayerManager.DrawCard();
-                        }
+                        Debug.Log("Creating a runtime instance of MutualConditionalPowerBoostEffect for inline synergy...");
+                        MutualConditionalPowerBoostEffect synergyEffect = ScriptableObject.CreateInstance<MutualConditionalPowerBoostEffect>();
+
+                        synergyEffect.boostAmount = inlineEffect.powerChange;
+                        synergyEffect.requiredCardNames = inlineEffect.requiredCreatureNames.ToArray();
+
+                        synergyEffect.ApplyEffect(cardUIComp);
+                        cardUIComp.activeInlineEffects.Add(synergyEffect);
                     }
-                }
-                // If it has a ConditionalPowerBoost effect.
-                else if (inlineEffect.effectType == CardEffectData.EffectType.ConditionalPowerBoost)
-                {
-                    Debug.Log("Creating a runtime instance of ConditionalPowerBoostEffect for inline synergy...");
-                    ConditionalPowerBoostEffect synergyEffect = ScriptableObject.CreateInstance<ConditionalPowerBoostEffect>();
 
-                    synergyEffect.boostAmount = inlineEffect.powerChange;
-                    synergyEffect.requiredCardNames = inlineEffect.requiredCreatureNames.ToArray();
-
-                    synergyEffect.ApplyEffect(cardUIComp);
-                    cardUIComp.activeInlineEffects.Add(synergyEffect);
-                }
-                // NEW: Check for MultipleTargetPowerBoost inline effect.
-                else if (inlineEffect.effectType == CardEffectData.EffectType.MultipleTargetPowerBoost)
-                {
-                    Debug.Log("Creating a runtime instance of MultipleTargetPowerBoostEffect for target selection...");
-                    MultipleTargetPowerBoostEffect boostEffect = ScriptableObject.CreateInstance<MultipleTargetPowerBoostEffect>();
-
-                    boostEffect.powerIncrease = inlineEffect.powerChange;
-                    boostEffect.targetCards = new List<CardUI>();
-
-                    if (TargetSelectionManager.Instance != null)
+                    // Handle DrawOnSummon
+                    else if (inlineEffect.effectType == CardEffectData.EffectType.DrawOnSummon)
                     {
-                        CardHandler cardOwnerHandler = cardUIComp.GetComponent<CardHandler>();
-                        bool isAI = cardOwnerHandler != null && cardOwnerHandler.isAI;
-
-
-                        if (isAI)
+                        Debug.Log("Applying DrawOnSummon effect...");
+                        if (TurnManager.currentPlayerManager != null)
                         {
-                            // Automatically pick up to 3 of AI's own cards as targets
-                            List<CardUI> aiTargets = new List<CardUI>();
-                            GameObject[,] gridObjs = GridManager.instance.GetGridObjects();
-
-                            for (int gx = 0; gx < 3; gx++)
+                            for (int i = 0; i < inlineEffect.cardsToDraw; i++)
                             {
-                                for (int gy = 0; gy < 3; gy++)
-                                {
-                                    GameObject obj = gridObjs[gx, gy];
-                                    if (obj != null)
-                                    {
-                                        CardHandler ch = obj.GetComponent<CardHandler>();
-                                        CardUI cui = obj.GetComponent<CardUI>();
-                                        if (ch != null && cui != null && ch.isAI)
-                                        {
-                                            aiTargets.Add(cui);
-                                            if (aiTargets.Count >= 3) break;
-                                        }
-                                    }
-                                }
-                                if (aiTargets.Count >= 3) break;
+                                TurnManager.currentPlayerManager.DrawCard();
                             }
-
-                            boostEffect.targetCards = aiTargets;
-                            boostEffect.ApplyEffect(cardUIComp);
-                            Debug.Log($"[AI PowerBoost] Applied effect to {aiTargets.Count} targets.");
-                        }
-                        else
-                        {
-                            // Local player picks targets via UI
-                            TargetSelectionManager.Instance.StartTargetSelection(boostEffect);
-                            Debug.Log("Please click on up to 3 target cards on the board for the boost effect.");
                         }
                     }
-                    else
-                    {
-                        Debug.LogWarning("TargetSelectionManager instance not found!");
-                    }
-
-
-                    // (B) Win Condition Check within inline effect.
-                    if (cardData.category != CardSO.CardCategory.Spell && grid[x, y] == cardData && !HasSelfDestructEffect(cardData))
-                    {
-                        Debug.Log("[PlaceReplacementCard] Checking for win condition now...");
-
-                        // 🔍 Log the column you think should win (e.g., column 1)
-                        for (int i = 0; i < 3; i++)
-                        {
-                            GameObject obj = GridManager.instance.GetGridObjects()[i, 1];
-                            CardHandler ch = obj?.GetComponent<CardHandler>();
-                            var cardName = GridManager.instance.GetGrid()[i, 1]?.cardName;
-                            Debug.Log($"[DEBUG] Column 1 - cell ({i},1): {cardName}, Owner: {ch?.cardOwner?.playerNumber}, isAI: {ch?.isAI}");
-                        }
-
-                        GameManager.instance.CheckForWin();
-                    }
-
-                    return true;
                 }
             }
         }
 
-        // Ensure we return true if no other return was triggered.
         return true;
     }
+
+
+
+
+
+
+
 
 
     // -------------------------------------------------------------------------
@@ -494,6 +418,7 @@ public class GridManager : MonoBehaviour
             {
                 Destroy(ft.gameObject);
             }
+
             // NEW CODE: remove inline & asset-based effects
             CardUI occupantUI = cardObj.GetComponent<CardUI>();
             if (occupantUI != null)
@@ -503,7 +428,7 @@ public class GridManager : MonoBehaviour
                 {
                     foreach (CardEffect eff in occupantUI.activeInlineEffects)
                     {
-                        eff.RemoveEffect(occupantUI);
+                        eff.RemoveEffect(occupantUI);  // Ensure we clean up any active effects
                     }
                     occupantUI.activeInlineEffects.Clear();
                 }
@@ -513,7 +438,7 @@ public class GridManager : MonoBehaviour
                 {
                     foreach (CardEffect eff in occupantUI.cardData.effects)
                     {
-                        eff.RemoveEffect(occupantUI);
+                        eff.RemoveEffect(occupantUI);  // Ensure asset-based effects are cleaned up
                     }
                 }
             }
@@ -539,6 +464,8 @@ public class GridManager : MonoBehaviour
             Debug.Log($"[GridManager] Moved {removedCard.cardName} to {(isAI ? "AI" : "player")} grave.");
         }
     }
+
+
 
 
     public void RemoveCardWithoutWinCheck(GameObject cardObj)
@@ -1154,6 +1081,18 @@ public class GridManager : MonoBehaviour
                     {
                         Debug.Log("Creating a runtime instance of ConditionalPowerBoostEffect for inline synergy...");
                         ConditionalPowerBoostEffect synergyEffect = ScriptableObject.CreateInstance<ConditionalPowerBoostEffect>();
+
+                        synergyEffect.boostAmount = inlineEffect.powerChange;
+                        synergyEffect.requiredCardNames = inlineEffect.requiredCreatureNames.ToArray();
+
+                        synergyEffect.ApplyEffect(cardUIComp);
+                        cardUIComp.activeInlineEffects.Add(synergyEffect);
+                    }
+                    // Handle MutualConditionalPowerBoostEffect.
+                    else if (inlineEffect.effectType == CardEffectData.EffectType.MutualConditionalPowerBoostEffect)
+                    {
+                        Debug.Log("Creating a runtime instance of MutualConditionalPowerBoostEffect for inline synergy...");
+                        MutualConditionalPowerBoostEffect synergyEffect = ScriptableObject.CreateInstance<MutualConditionalPowerBoostEffect>();
 
                         synergyEffect.boostAmount = inlineEffect.powerChange;
                         synergyEffect.requiredCardNames = inlineEffect.requiredCreatureNames.ToArray();

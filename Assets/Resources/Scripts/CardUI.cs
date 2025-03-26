@@ -3,14 +3,13 @@ using UnityEngine.UI;
 using TMPro;
 using System.Collections;
 using UnityEngine.EventSystems;
-using System.Collections.Generic; // Make sure we have this to use List<T>
+using System.Collections.Generic;
 
 public class CardUI : MonoBehaviour, IPointerClickHandler
 {
     [Header("UI Elements")]
     public Image cardArtImage;
     public TextMeshProUGUI cardNameText;
-
     public Sprite cardBackSprite;
     public CardSO cardData;
     private bool isFaceDown = false;
@@ -30,13 +29,14 @@ public class CardUI : MonoBehaviour, IPointerClickHandler
 
     // Runtime replacement effect fields (for inline ReplaceAfterOpponentTurn)
     public List<CardEffectData> runtimeInlineEffects;
-
     public int replacementTurnDelay = -1; // -1 means no effect by default.
     public string inlineReplacementCardName = "";
     public bool inlineBlockAdditionalPlays = false;
 
     // NEW: store dynamically created inline effects (e.g. ConditionalPowerBoost) 
     public List<CardEffect> activeInlineEffects; // used so we can remove them on card removal
+
+    private bool hasEffectsApplied = false; // Track if effects have been applied
 
     void Start()
     {
@@ -63,6 +63,7 @@ public class CardUI : MonoBehaviour, IPointerClickHandler
         }
     }
 
+    // SetCardData should not apply any effects, we just set data here.
     public void SetCardData(CardSO card, bool setFaceDown = false)
     {
         if (card == null)
@@ -73,40 +74,16 @@ public class CardUI : MonoBehaviour, IPointerClickHandler
 
         cardData = card;
         isInDeck = false;
-        // Initialize runtime power from the base power.
         currentPower = card.power;
 
-        // Create runtime copies of inline effects so modifications won't persist on the asset.
-        if (cardData.inlineEffects != null)
+        // Do not apply inline effects here; this is handled elsewhere
+        if (!hasEffectsApplied)
         {
-            runtimeInlineEffects = new List<CardEffectData>();
-            foreach (var effect in cardData.inlineEffects)
-            {
-                // Create a new instance and copy each field.
-                CardEffectData runtimeEffect = new CardEffectData();
-                runtimeEffect.effectType = effect.effectType;
-                runtimeEffect.cardsToDraw = effect.cardsToDraw;
-                runtimeEffect.requiredCreatureNames = new List<string>(effect.requiredCreatureNames);
-                runtimeEffect.maxTargets = effect.maxTargets;
-                runtimeEffect.replacementCardName = effect.replacementCardName;
-                runtimeEffect.turnDelay = effect.turnDelay;
-                runtimeEffect.blockAdditionalPlays = effect.blockAdditionalPlays;
-                runtimeEffect.promptPrefab = effect.promptPrefab;
-                runtimeEffect.powerChange = effect.powerChange;
-                runtimeInlineEffects.Add(runtimeEffect);
-
-                // If this effect is a ReplaceAfterOpponentTurn effect, initialize the runtime parameters.
-                if (runtimeEffect.effectType == CardEffectData.EffectType.ReplaceAfterOpponentTurn)
-                {
-                    replacementTurnDelay = runtimeEffect.turnDelay;
-                    inlineReplacementCardName = runtimeEffect.replacementCardName;
-                    inlineBlockAdditionalPlays = runtimeEffect.blockAdditionalPlays;
-                    Debug.Log($"Initialized replacement effect on {card.cardName}: Delay={replacementTurnDelay}, Replacement={inlineReplacementCardName}");
-                }
-            }
+            // Flag to prevent reapplying effects
+            hasEffectsApplied = true; // This flag will ensure we do not apply effects multiple times during initialization
         }
 
-        Debug.Log($"✅ CardUI: Card data set for {gameObject.name} - {cardData.cardName}");
+        // Update the UI elements
         if (cardNameText != null)
             cardNameText.text = cardData.cardName;
         else
@@ -127,6 +104,73 @@ public class CardUI : MonoBehaviour, IPointerClickHandler
         }
     }
 
+    // ApplyInlineEffects should not apply any effects here directly.
+    // It only stores inline effects for future application elsewhere.
+    public void ApplyInlineEffects()
+    {
+        // No direct effect application here, simply set it up for the relevant effect handler (MutualConditionalPowerBoostEffect).
+        if (cardData.inlineEffects != null)
+        {
+            foreach (var effect in cardData.inlineEffects)
+            {
+                // No effect application here anymore
+                // We used to apply effects directly in this method but no longer do that.
+                // This part is now handled by the MutualConditionalPowerBoostEffect class.
+            }
+        }
+    }
+
+    // Method for calculating effective power (only used for calculations, no effect application)
+    public int CalculateEffectivePower()
+    {
+        int effectivePower = currentPower;
+
+        // Inline effects logic should be handled in the effect classes, not here.
+        foreach (var effect in cardData.inlineEffects)
+        {
+            // This part should be for power calculations, not effect applications
+            if (effect.effectType == CardEffectData.EffectType.ConditionalPowerBoost)
+            {
+                int synergyCount = 0;
+                if (effect.requiredCreatureNames != null && effect.requiredCreatureNames.Count > 0)
+                {
+                    CardSO[,] gridArray = GridManager.instance.GetGrid();
+                    GameObject[,] gridObjs = GridManager.instance.GetGridObjects();
+                    CardHandler myHandler = GetComponent<CardHandler>();
+
+                    for (int i = 0; i < gridArray.GetLength(0); i++)
+                    {
+                        for (int j = 0; j < gridArray.GetLength(1); j++)
+                        {
+                            if (gridArray[i, j] == null)
+                                continue;
+                            if (gridObjs[i, j] == this.gameObject)
+                                continue;
+
+                            foreach (string reqName in effect.requiredCreatureNames)
+                            {
+                                if (gridArray[i, j].cardName == reqName)
+                                {
+                                    CardHandler candidate = gridObjs[i, j].GetComponent<CardHandler>();
+                                    if (candidate != null && myHandler != null && candidate.cardOwner == myHandler.cardOwner)
+                                    {
+                                        synergyCount++;
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                if (synergyCount > 0)
+                {
+                    effectivePower += effect.powerChange * synergyCount;
+                }
+            }
+        }
+
+        return effectivePower;
+    }
 
     public void SetFaceDown()
     {
@@ -208,22 +252,9 @@ public class CardUI : MonoBehaviour, IPointerClickHandler
         // Left-click to open SummonMenu
         else if (eventData.button == PointerEventData.InputButton.Left)
         {
-            if (SummonMenu.currentMenu != null)
-            {
-                if (SummonMenu.currentMenu.cardUI == this)
-                {
-                    Destroy(SummonMenu.currentMenu.gameObject);
-                    return;
-                }
-                else
-                {
-                    Destroy(SummonMenu.currentMenu.gameObject);
-                }
-            }
             ShowSummonMenu();
         }
     }
-
 
     private void ShowSummonMenu()
     {
@@ -293,60 +324,6 @@ public class CardUI : MonoBehaviour, IPointerClickHandler
     }
 
     public bool isSelected = false;
-
-
-
-    // --- Updated Method for Calculating Effective Power ---
-    public int CalculateEffectivePower()
-    {
-        // Use the base power from the CardSO plus any temporary boost.
-        int effectivePower = cardData.power + temporaryBoost;
-
-        // Process inline ConditionalPowerBoost effects (synergy approach).
-        foreach (var effect in cardData.inlineEffects)
-        {
-            if (effect.effectType == CardEffectData.EffectType.ConditionalPowerBoost)
-            {
-                int synergyCount = 0;
-                if (effect.requiredCreatureNames != null && effect.requiredCreatureNames.Count > 0)
-                {
-                    CardSO[,] gridArray = GridManager.instance.GetGrid();
-                    GameObject[,] gridObjs = GridManager.instance.GetGridObjects();
-                    CardHandler myHandler = GetComponent<CardHandler>();
-
-                    for (int i = 0; i < gridArray.GetLength(0); i++)
-                    {
-                        for (int j = 0; j < gridArray.GetLength(1); j++)
-                        {
-                            if (gridArray[i, j] == null)
-                                continue;
-                            if (gridObjs[i, j] == this.gameObject)
-                                continue;
-
-                            foreach (string reqName in effect.requiredCreatureNames)
-                            {
-                                if (gridArray[i, j].cardName == reqName)
-                                {
-                                    CardHandler candidate = gridObjs[i, j].GetComponent<CardHandler>();
-                                    if (candidate != null && myHandler != null && candidate.cardOwner == myHandler.cardOwner)
-                                    {
-                                        synergyCount++;
-                                        break;
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-                if (synergyCount > 0)
-                {
-                    effectivePower += effect.powerChange * synergyCount;
-                }
-            }
-        }
-        return effectivePower;
-    }
-
 
     private int CountOtherCardsBySynergy(List<CardSO> requiredCards)
     {
