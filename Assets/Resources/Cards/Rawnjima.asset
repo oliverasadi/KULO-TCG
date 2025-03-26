@@ -25,11 +25,18 @@ MonoBehaviour:
   inlineEffects:
   - effectType: 3
     cardsToDraw: 0
-    powerChange: 200
     requiredCreatureNames:
     - Hitocon
-    - Rawnjima
+    - Conomi
     maxTargets: 0
+    replacementCardName: 
+    turnDelay: 0
+    blockAdditionalPlays: 0
+    promptPrefab: {fileID: 0}
+    powerChange: 200
+    powerChangeAmount: 0
+    powerChangeType: 0
+    targetPositions: 
   effects: []
   requiresSacrifice: 0
   sacrificeRequirements: []

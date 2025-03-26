@@ -22,3 +22,19 @@ MonoBehaviour:
   creatureType: Wax
   baseOrEvo: 0
   extraDetails: 'DOB: 1996 GPS: Deep Wax Hole, Weight: 3.6kg, Height: 1.64m.'
+  inlineEffects:
+  - effectType: 6
+    cardsToDraw: 0
+    requiredCreatureNames: []
+    maxTargets: 0
+    replacementCardName: 
+    turnDelay: 0
+    blockAdditionalPlays: 0
+    promptPrefab: {fileID: 0}
+    powerChange: 0
+    powerChangeAmount: 300
+    powerChangeType: 1
+    targetPositions: 0000000001000000
+  effects: []
+  requiresSacrifice: 0
+  sacrificeRequirements: []

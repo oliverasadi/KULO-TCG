@@ -34,6 +34,9 @@ MonoBehaviour:
     blockAdditionalPlays: 0
     promptPrefab: {fileID: 0}
     powerChange: 200
+    powerChangeAmount: 0
+    powerChangeType: 0
+    targetPositions: 
   effects: []
   requiresSacrifice: 0
   sacrificeRequirements: []

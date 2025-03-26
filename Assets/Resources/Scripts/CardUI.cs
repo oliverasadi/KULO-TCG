@@ -104,6 +104,26 @@ public class CardUI : MonoBehaviour, IPointerClickHandler
         }
     }
 
+    // Method to update the card's power dynamically (this is called when the power changes, e.g., from AdjustPowerAdjacentEffect)
+    public void UpdatePower(int newPower)
+    {
+        currentPower = newPower;
+        UpdatePowerDisplay(); // Update the display when the power is changed
+    }
+
+    // Update the card power display
+    public void UpdatePowerDisplay()
+    {
+        if (cardNameText != null)
+        {
+            cardNameText.text = $"{cardData.cardName} ({currentPower})"; // Update the UI to show power change
+        }
+        else
+        {
+            Debug.LogError("Card Name Text is not assigned!");
+        }
+    }
+
     // ApplyInlineEffects should not apply any effects here directly.
     // It only stores inline effects for future application elsewhere.
     public void ApplyInlineEffects()
@@ -115,7 +135,7 @@ public class CardUI : MonoBehaviour, IPointerClickHandler
             {
                 // No effect application here anymore
                 // We used to apply effects directly in this method but no longer do that.
-                // This part is now handled by the MutualConditionalPowerBoostEffect class.
+                // This part is now handled by the AdjustPowerAdjacentEffect class.
             }
         }
     }
@@ -324,58 +344,4 @@ public class CardUI : MonoBehaviour, IPointerClickHandler
     }
 
     public bool isSelected = false;
-
-    private int CountOtherCardsBySynergy(List<CardSO> requiredCards)
-    {
-        int count = 0;
-        CardSO[,] gridArray = GridManager.instance.GetGrid();
-        GameObject[,] gridObjs = GridManager.instance.GetGridObjects();
-
-        for (int x = 0; x < gridArray.GetLength(0); x++)
-        {
-            for (int y = 0; y < gridArray.GetLength(1); y++)
-            {
-                if (gridArray[x, y] == null)
-                    continue;
-                if (gridObjs[x, y] == this.gameObject)
-                    continue;
-                foreach (CardSO reqCard in requiredCards)
-                {
-                    if (reqCard != null && gridArray[x, y].cardName == reqCard.cardName)
-                    {
-                        CardHandler handler = gridObjs[x, y].GetComponent<CardHandler>();
-                        if (handler != null && handler.cardOwner == GetComponent<CardHandler>().cardOwner)
-                        {
-                            count++;
-                            break;
-                        }
-                    }
-                }
-            }
-        }
-        return count;
-    }
-
-    private int CountOpponentCards()
-    {
-        int count = 0;
-        CardSO[,] gridArray = GridManager.instance.GetGrid();
-        GameObject[,] gridObjs = GridManager.instance.GetGridObjects();
-        var myOwner = GetComponent<CardHandler>().cardOwner;
-
-        for (int x = 0; x < gridArray.GetLength(0); x++)
-        {
-            for (int y = 0; y < gridArray.GetLength(1); y++)
-            {
-                if (gridArray[x, y] == null)
-                    continue;
-                CardHandler handler = gridObjs[x, y].GetComponent<CardHandler>();
-                if (handler != null && handler.cardOwner != myOwner)
-                {
-                    count++;
-                }
-            }
-        }
-        return count;
-    }
 }

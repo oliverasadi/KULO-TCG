@@ -20,7 +20,7 @@ public class CardSOEditor : Editor
         EditorGUILayout.LabelField("Card Effects (Assets)", EditorStyles.boldLabel);
         EditorGUILayout.PropertyField(serializedObject.FindProperty("effects"), true);
 
-        // Draw inline effects.
+        // Handle different types of effects, including the new AdjustPowerAdjacentEffect.
         SerializedProperty inlineEffectsProp = serializedObject.FindProperty("inlineEffects");
         if (inlineEffectsProp != null)
         {
@@ -38,7 +38,17 @@ public class CardSOEditor : Editor
                     // Always show effect type.
                     EditorGUILayout.PropertyField(effectElement.FindPropertyRelative("effectType"));
 
-                    // Show common fields.
+                    // Handle new AdjustPowerAdjacentEffect type
+                    CardEffectData.EffectType effectType = (CardEffectData.EffectType)effectElement.FindPropertyRelative("effectType").enumValueIndex;
+                    if (effectType == CardEffectData.EffectType.AdjustPowerAdjacent)
+                    {
+                        // Show specific fields for AdjustPowerAdjacentEffect
+                        EditorGUILayout.PropertyField(effectElement.FindPropertyRelative("powerChangeAmount"));
+                        EditorGUILayout.PropertyField(effectElement.FindPropertyRelative("powerChangeType"));
+                        EditorGUILayout.PropertyField(effectElement.FindPropertyRelative("targetPositions"), true);
+                    }
+
+                    // Common fields for other effects
                     EditorGUILayout.PropertyField(effectElement.FindPropertyRelative("cardsToDraw"));
                     EditorGUILayout.PropertyField(effectElement.FindPropertyRelative("requiredCreatureNames"), true);
                     EditorGUILayout.PropertyField(effectElement.FindPropertyRelative("maxTargets"));

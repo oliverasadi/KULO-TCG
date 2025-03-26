@@ -22,3 +22,19 @@ MonoBehaviour:
   creatureType: Wax
   baseOrEvo: 0
   extraDetails: 'DOB: 1995, GPS: Wax Society, Weight: 76.0kg, Height: 1.77m.'
+  inlineEffects:
+  - effectType: 6
+    cardsToDraw: 0
+    requiredCreatureNames: []
+    maxTargets: 0
+    replacementCardName: 
+    turnDelay: 0
+    blockAdditionalPlays: 0
+    promptPrefab: {fileID: 0}
+    powerChange: 0
+    powerChangeAmount: 100
+    powerChangeType: 0
+    targetPositions: 04000000
+  effects: []
+  requiresSacrifice: 0
+  sacrificeRequirements: []
