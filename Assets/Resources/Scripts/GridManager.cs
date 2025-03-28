@@ -2,6 +2,7 @@
 using UnityEngine;
 using TMPro;
 using System.Collections.Generic;
+using UnityEngine.UI;
 
 public class GridManager : MonoBehaviour
 {
@@ -9,6 +10,8 @@ public class GridManager : MonoBehaviour
 
     private CardSO[,] grid = new CardSO[3, 3];
     private GameObject[,] gridObjects = new GameObject[3, 3];
+    public List<GameObject> cellSelectionCells = new List<GameObject>();
+
 
     [Header("Evolution Splash")]
     public GameObject evolutionSplashPrefab; // <-- Add THIS line here
@@ -72,63 +75,139 @@ public class GridManager : MonoBehaviour
         // ------------------
         // (1) SACRIFICE REQUIREMENTS
         // ------------------
-        if (cardData.requiresSacrifice && cardData.sacrificeRequirements != null && cardData.sacrificeRequirements.Count > 0)
+        if (cardData.requiresSacrifice &&
+            cardData.sacrificeRequirements != null &&
+            cardData.sacrificeRequirements.Count > 0)
         {
+            // We'll need a reference to the correct player's Manager to check their hand.
+            PlayerManager pm = (currentPlayer == 1)
+                ? TurnManager.instance.playerManager1
+                : TurnManager.instance.playerManager2;
+
+            // First, verify that *all* requirements can be met.
             foreach (var req in cardData.sacrificeRequirements)
             {
-                int foundCount = 0;
-                for (int i = 0; i < 3; i++)
+                // Count how many matching cards are on the field:
+                int foundOnField = 0;
+                if (req.allowFromField)
                 {
-                    for (int j = 0; j < 3; j++)
+                    for (int i = 0; i < 3; i++)
                     {
-                        if (grid[i, j] != null)
+                        for (int j = 0; j < 3; j++)
                         {
-                            bool match = req.matchByCreatureType
-                                ? (grid[i, j].creatureType == req.requiredCardName)
-                                : (grid[i, j].cardName == req.requiredCardName);
-                            CardHandler occupantCH = gridObjects[i, j].GetComponent<CardHandler>();
-                            if (match && occupantCH != null && occupantCH.cardOwner.playerNumber == currentPlayer)
+                            if (grid[i, j] != null)
                             {
-                                foundCount++;
+                                bool match = req.matchByCreatureType
+                                    ? (grid[i, j].creatureType == req.requiredCardName)
+                                    : (grid[i, j].cardName == req.requiredCardName);
+
+                                CardHandler occupantCH = gridObjects[i, j].GetComponent<CardHandler>();
+                                if (match && occupantCH != null && occupantCH.cardOwner.playerNumber == currentPlayer)
+                                {
+                                    foundOnField++;
+                                }
                             }
                         }
                     }
                 }
-                Debug.Log($"[Sacrifice Check] For {req.requiredCardName}: found {foundCount}, need {req.count}.");
-                if (foundCount < req.count)
+
+                // Count how many matching cards are in the player's hand:
+                int foundInHand = 0;
+                if (req.allowFromHand && pm != null)
                 {
-                    Debug.Log($"Cannot place {cardData.cardName}: requirement not met (need {req.count}, found {foundCount}).");
+                    foreach (CardHandler handCard in pm.cardHandlers)
+                    {
+                        if (handCard != null && handCard.cardData != null)
+                        {
+                            bool match = req.matchByCreatureType
+                                ? (handCard.cardData.creatureType == req.requiredCardName)
+                                : (handCard.cardData.cardName == req.requiredCardName);
+
+                            if (match) foundInHand++;
+                        }
+                    }
+                }
+
+                int totalFound = foundOnField + foundInHand;
+                Debug.Log($"[Sacrifice Check] For {req.requiredCardName}: " +
+                          $"onField={foundOnField}, inHand={foundInHand}, total={totalFound}, need={req.count}.");
+
+                if (totalFound < req.count)
+                {
+                    Debug.Log($"Cannot place {cardData.cardName}: requirement not met (need {req.count}, found {totalFound}).");
                     return false;
                 }
             }
 
+            // If we get here, it means all requirements *can* be met.
+            // Next, remove (sacrifice) the necessary cards from the field/hand.
             foreach (var req in cardData.sacrificeRequirements)
             {
-                int sacrificed = 0;
-                for (int i = 0; i < 3 && sacrificed < req.count; i++)
-                {
-                    for (int j = 0; j < 3 && sacrificed < req.count; j++)
-                    {
-                        if (grid[i, j] != null)
-                        {
-                            bool match = req.matchByCreatureType
-                                ? (grid[i, j].creatureType == req.requiredCardName)
-                                : (grid[i, j].cardName == req.requiredCardName);
-                            CardHandler occupantCH = gridObjects[i, j].GetComponent<CardHandler>();
-                            if (match && occupantCH != null && occupantCH.cardOwner.playerNumber == currentPlayer)
-                            {
-                                // Capture the first sacrificed card as the 'base'
-                                if (baseCardName == null)
-                                    baseCardName = grid[i, j].cardName;
+                int toSacrifice = req.count;
 
-                                Debug.Log($"Sacrificing {grid[i, j].cardName} at ({i},{j}) for {cardData.cardName}.");
-                                RemoveCard(i, j, false);
-                                sacrificed++;
+                // 1) Remove from the field first (if allowed).
+                if (req.allowFromField)
+                {
+                    for (int i = 0; i < 3 && toSacrifice > 0; i++)
+                    {
+                        for (int j = 0; j < 3 && toSacrifice > 0; j++)
+                        {
+                            if (grid[i, j] != null)
+                            {
+                                bool match = req.matchByCreatureType
+                                    ? (grid[i, j].creatureType == req.requiredCardName)
+                                    : (grid[i, j].cardName == req.requiredCardName);
+
+                                CardHandler occupantCH = gridObjects[i, j].GetComponent<CardHandler>();
+                                if (match && occupantCH != null && occupantCH.cardOwner.playerNumber == currentPlayer)
+                                {
+                                    // Capture the first sacrificed card's name as the 'base' if needed
+                                    if (baseCardName == null)
+                                        baseCardName = grid[i, j].cardName;
+
+                                    Debug.Log($"Sacrificing {grid[i, j].cardName} at ({i},{j}) for {cardData.cardName}.");
+                                    RemoveCard(i, j, false);
+                                    toSacrifice--;
+                                }
                             }
                         }
                     }
                 }
-            }
+
+                // 2) Remove from hand if we still need more sacrifices
+                if (req.allowFromHand && toSacrifice > 0 && pm != null)
+                {
+                    // We'll iterate from the end to avoid indexing issues.
+                    for (int h = pm.cardHandlers.Count - 1; h >= 0 && toSacrifice > 0; h--)
+                    {
+                        CardHandler handCard = pm.cardHandlers[h];
+                        if (handCard != null && handCard.cardData != null)
+                        {
+                            bool match = req.matchByCreatureType
+                                ? (handCard.cardData.creatureType == req.requiredCardName)
+                                : (handCard.cardData.cardName == req.requiredCardName);
+
+                            if (match)
+                            {
+                                // Also capture base name if not set
+                                if (baseCardName == null)
+                                    baseCardName = handCard.cardData.cardName;
+
+                                Debug.Log($"Sacrificing {handCard.cardData.cardName} from hand for {cardData.cardName}.");
+
+                                // Actually move it to the grave
+                                pm.zones.AddCardToGrave(handCard.gameObject);
+
+                                // Remove it from the player's hand list
+                                pm.cardHandlers.RemoveAt(h);
+
+                                toSacrifice--;
+                            }
+                        }
+                    }
+                }
+
+            } // end foreach sacrifice requirement
         }
 
         // ------------------
@@ -406,7 +485,7 @@ public class GridManager : MonoBehaviour
                             }
                         }
                     }
-                    // 5) AdjustPowerAdjacentEffect (NEW EXAMPLE)
+                    // 5) AdjustPowerAdjacentEffect
                     else if (inlineEffect.effectType == CardEffectData.EffectType.AdjustPowerAdjacent)
                     {
                         Debug.Log("Creating a runtime instance of AdjustPowerAdjacentEffect for adjacency synergy...");
@@ -430,14 +509,13 @@ public class GridManager : MonoBehaviour
                         adjacencyEffect.ApplyEffect(cardUIComp);
                         cardUIComp.activeInlineEffects.Add(adjacencyEffect);
                     }
-
-
                 }
             }
         }
 
         return true;
     }
+
 
 
 
@@ -511,6 +589,90 @@ public class GridManager : MonoBehaviour
             Debug.Log($"[GridManager] {card.cardName} is no longer at ({x},{y}) by removal time.");
         }
     }
+    public void EnableCellSelectionMode(System.Action<int, int> cellSelectedCallback)
+    {
+        int currentPlayer = TurnManager.instance.GetCurrentPlayer();
+        int evolvingCardPower = 0;
+        // Retrieve evolving card power from SacrificeManager using the public property.
+        if (SacrificeManager.instance != null && SacrificeManager.instance.CurrentEvolutionCard != null)
+        {
+            evolvingCardPower = SacrificeManager.instance.CurrentEvolutionCard.GetComponent<CardUI>().CalculateEffectivePower();
+        }
+
+        // Loop through all grid cells (assuming a 3x3 grid)
+        for (int x = 0; x < 3; x++)
+        {
+            for (int y = 0; y < 3; y++)
+            {
+                // Allow selection if the cell is empty OR occupied by an opponent’s card that can be replaced.
+                if (grid[x, y] == null ||
+                    (grid[x, y] != null && !IsOwnedByPlayer(x, y, currentPlayer) && evolvingCardPower > grid[x, y].power))
+                {
+                    GameObject cellObj = GameObject.Find($"GridCell_{x}_{y}");
+                    if (cellObj != null)
+                    {
+                        GridCellHighlighter highlighter = cellObj.GetComponent<GridCellHighlighter>();
+                        if (highlighter != null)
+                        {
+                            highlighter.SetPersistentHighlight(new Color(1f, 1f, 0f, 0.5f));
+                            highlighter.isSacrificeHighlight = true; // Mark it as a sacrifice highlight.
+                        }
+                        Button btn = cellObj.GetComponent<Button>();
+                        if (btn == null)
+                        {
+                            btn = cellObj.AddComponent<Button>();
+                        }
+                        btn.onClick.RemoveAllListeners();
+                        // Capture x and y in local variables.
+                        int capturedX = x, capturedY = y;
+                        btn.onClick.AddListener(() =>
+                        {
+                            // When a cell is clicked, disable selection immediately.
+                            DisableCellSelectionMode();
+                            if (cellSelectedCallback != null)
+                            {
+                                cellSelectedCallback(capturedX, capturedY);
+                            }
+                        });
+                        // Enable the button in case it was disabled.
+                        btn.enabled = true;
+
+                        // *** Add this cellObj to the selection list so we can clear it later.
+                        if (!cellSelectionCells.Contains(cellObj))
+                        {
+                            cellSelectionCells.Add(cellObj);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+
+
+
+
+
+
+    public bool IsOwnedByPlayer(int x, int y, int playerNumber)
+    {
+        // If there's no card in the cell, it's not owned by anyone.
+        if (gridObjects[x, y] == null)
+            return false;
+
+        // Try to get the CardHandler from the cell's GameObject.
+        CardHandler handler = gridObjects[x, y].GetComponent<CardHandler>();
+        // If no handler or card owner is found, assume not owned.
+        if (handler == null || handler.cardOwner == null)
+            return false;
+
+        // Check if the card owner's player number matches the provided number.
+        return handler.cardOwner.playerNumber == playerNumber;
+    }
+
+
+
+
 
     public void RemoveCard(int x, int y, bool isAI = false)
     {
@@ -521,32 +683,35 @@ public class GridManager : MonoBehaviour
 
             Debug.Log($"[GridManager] Removing {removedCard.cardName} at ({x},{y}).");
 
+            // Stop the sacrifice hover effect before removal.
+            CardUI occupantUI = cardObj.GetComponent<CardUI>();
+            if (occupantUI != null)
+            {
+                occupantUI.ResetSacrificeHoverEffect();
+            }
+
             FloatingText[] floatingTexts = cardObj.GetComponentsInChildren<FloatingText>(true);
             foreach (FloatingText ft in floatingTexts)
             {
                 Destroy(ft.gameObject);
             }
 
-            // NEW CODE: remove inline & asset-based effects
-            CardUI occupantUI = cardObj.GetComponent<CardUI>();
+            // Remove inline & asset-based effects.
             if (occupantUI != null)
             {
-                // 1. remove any active inline synergy effects
                 if (occupantUI.activeInlineEffects != null)
                 {
                     foreach (CardEffect eff in occupantUI.activeInlineEffects)
                     {
-                        eff.RemoveEffect(occupantUI);  // Ensure we clean up any active effects
+                        eff.RemoveEffect(occupantUI);
                     }
                     occupantUI.activeInlineEffects.Clear();
                 }
-
-                // 2. remove any asset-based effects
                 if (occupantUI.cardData.effects != null)
                 {
                     foreach (CardEffect eff in occupantUI.cardData.effects)
                     {
-                        eff.RemoveEffect(occupantUI);  // Ensure asset-based effects are cleaned up
+                        eff.RemoveEffect(occupantUI);
                     }
                 }
             }
@@ -572,6 +737,8 @@ public class GridManager : MonoBehaviour
             Debug.Log($"[GridManager] Moved {removedCard.cardName} to {(isAI ? "AI" : "player")} grave.");
         }
     }
+
+
 
 
 
@@ -708,10 +875,13 @@ public class GridManager : MonoBehaviour
             Debug.LogError("HighlightEligibleSacrifices: Invalid evoCard or missing sacrifice requirements.");
             return;
         }
+
         int currentPlayer = TurnManager.instance.GetCurrentPlayer();
         Debug.Log($"[GridManager] Highlighting valid sacrifices for evolving {evoCard.cardData.cardName}");
+
         foreach (var req in evoCard.cardData.sacrificeRequirements)
         {
+            // 1) Highlight from the field (grid)
             for (int x = 0; x < 3; x++)
             {
                 for (int y = 0; y < 3; y++)
@@ -724,11 +894,44 @@ public class GridManager : MonoBehaviour
                             bool match = req.matchByCreatureType
                                 ? (grid[x, y].creatureType == req.requiredCardName)
                                 : (grid[x, y].cardName == req.requiredCardName);
+
                             if (match)
                             {
                                 ch.ShowSacrificeHighlight();
-                                Debug.Log($"[Sacrifice Highlight] {grid[x, y].cardName} is a valid sacrifice.");
+                                Debug.Log($"[Sacrifice Highlight] {grid[x, y].cardName} is a valid sacrifice (on field).");
                             }
+                        }
+                    }
+                }
+            }
+
+            // 2) Highlight from the hand if allowed by the requirement
+            if (req.allowFromHand)
+            {
+                PlayerManager pm = (currentPlayer == 1)
+                    ? TurnManager.instance.playerManager1
+                    : TurnManager.instance.playerManager2;
+
+                if (pm == null)
+                {
+                    Debug.LogWarning("HighlightEligibleSacrifices: PlayerManager is null.");
+                    continue;
+                }
+
+                foreach (CardHandler handCard in pm.cardHandlers)
+                {
+                    if (handCard != null && handCard.cardData != null)
+                    {
+                        bool match = req.matchByCreatureType
+                            ? (handCard.cardData.creatureType == req.requiredCardName)
+                            : (handCard.cardData.cardName == req.requiredCardName);
+
+                        // Ensure the card is actually in hand (i.e. not on the field)
+                        CardUI handCardUI = handCard.GetComponent<CardUI>();
+                        if (match && handCardUI != null && !handCardUI.isOnField)
+                        {
+                            handCard.ShowSacrificeHighlight();
+                            Debug.Log($"[Sacrifice Highlight] {handCard.cardData.cardName} is a valid sacrifice (in hand).");
                         }
                     }
                 }
@@ -736,24 +939,75 @@ public class GridManager : MonoBehaviour
         }
     }
 
+
+
     public void ClearSacrificeHighlights()
     {
         Debug.Log("[GridManager] ClearSacrificeHighlights called.");
-        for (int x = 0; x < 3; x++)
+
+        // Only clear cells that were enabled for sacrifice selection.
+        foreach (GameObject cellObj in cellSelectionCells)
         {
-            for (int y = 0; y < 3; y++)
+            if (cellObj != null)
             {
-                if (gridObjects[x, y] != null)
+                GridCellHighlighter highlighter = cellObj.GetComponent<GridCellHighlighter>();
+                if (highlighter != null)
                 {
-                    CardHandler ch = gridObjects[x, y].GetComponent<CardHandler>();
-                    if (ch != null)
+                    highlighter.ResetHighlight();
+                    highlighter.isSacrificeHighlight = false;
+                }
+            }
+        }
+        // Clear our list since we've handled these cells.
+        cellSelectionCells.Clear();
+
+        // Also clear sacrifice highlights from cards in hand.
+        int currentPlayer = TurnManager.instance.GetCurrentPlayer();
+        PlayerManager pm = (currentPlayer == 1)
+            ? TurnManager.instance.playerManager1
+            : TurnManager.instance.playerManager2;
+        if (pm != null)
+        {
+            foreach (CardHandler handCard in pm.cardHandlers)
+            {
+                handCard.HideSacrificeHighlight();
+            }
+        }
+    }
+
+    public void DisableCellSelectionMode()
+    {
+        // Only disable buttons and clear highlights on cells that were marked.
+        foreach (GameObject cellObj in cellSelectionCells)
+        {
+            if (cellObj != null)
+            {
+                Button btn = cellObj.GetComponent<Button>();
+                if (btn != null)
+                if (btn != null)
+                {
+                    btn.onClick.RemoveAllListeners();
+                    btn.enabled = false;
+                }
+                GridCellHighlighter highlighter = cellObj.GetComponent<GridCellHighlighter>();
+                if (highlighter != null)
+                {
+                    // Only reset if this cell was specifically marked for sacrifice selection.
+                    if (highlighter.isSacrificeHighlight)
                     {
-                        ch.HideSacrificeHighlight();
+                        highlighter.ResetHighlight();
+                        highlighter.isSacrificeHighlight = false;
                     }
                 }
             }
         }
+        cellSelectionCells.Clear();
     }
+
+
+
+
+
 
     public void RemoveSacrificeCard(GameObject card)
     {

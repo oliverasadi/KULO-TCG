@@ -7,10 +7,19 @@ public class SacrificeManager : MonoBehaviour
 
     // The evolution card (CardUI) that requires sacrifices.
     private CardUI currentEvolutionCard;
+    // Expose the evolving card via a public property.
+    public CardUI CurrentEvolutionCard
+    {
+        get { return currentEvolutionCard; }
+    }
+
     // Number of sacrifices required.
     private int requiredSacrifices;
     // List of selected sacrifice cards.
     private List<GameObject> selectedSacrifices = new List<GameObject>();
+
+    // Flag indicating sacrifice selection mode is active.
+    public bool isSelectingSacrifices = false;
 
     void Awake()
     {
@@ -39,6 +48,9 @@ public class SacrificeManager : MonoBehaviour
         requiredSacrifices = evoCard.cardData.sacrificeRequirements[0].count;
         selectedSacrifices.Clear();
 
+        // Activate sacrifice selection mode.
+        isSelectingSacrifices = true;
+
         if (GridManager.instance != null)
             GridManager.instance.HighlightEligibleSacrifices(currentEvolutionCard);
         else
@@ -48,6 +60,9 @@ public class SacrificeManager : MonoBehaviour
     }
 
     // Called when a valid sacrifice card is clicked.
+    public AudioClip sacrificeSelectSound; // Assign via Inspector.
+    public GameObject sacrificeSelectFloatingTextPrefab; // A prefab for floating text, assign via Inspector.
+
     public void SelectSacrifice(GameObject sacrificeCard)
     {
         if (sacrificeCard == null)
@@ -62,13 +77,34 @@ public class SacrificeManager : MonoBehaviour
             Debug.Log("[SacrificeManager] Selected sacrifice: " + sacrificeCard.name);
             CardHandler handler = sacrificeCard.GetComponent<CardHandler>();
             if (handler != null)
+            {
+                // Mark this card as selected so it can show hover effects.
+                CardUI ui = handler.GetComponent<CardUI>();
+                if (ui != null)
+                {
+                    ui.isSacrificeSelected = true;
+                    ui.ApplySacrificeHoverEffect();
+                }
                 handler.ShowSacrificePopup();
+            }
+
+            // Play a selection sound at the card's position.
+            if (sacrificeSelectSound != null)
+                AudioSource.PlayClipAtPoint(sacrificeSelectSound, sacrificeCard.transform.position);
+
+            // Instantiate floating text as a child of the sacrifice card.
+            if (sacrificeSelectFloatingTextPrefab != null)
+            {
+                GameObject ftObj = Instantiate(sacrificeSelectFloatingTextPrefab, sacrificeCard.transform.position, Quaternion.identity, sacrificeCard.transform);
+                TMPro.TextMeshProUGUI tmp = ftObj.GetComponentInChildren<TMPro.TextMeshProUGUI>();
+                if (tmp != null)
+                    tmp.text = "Selected!";
+            }
         }
 
         // Check if we've reached the required number of sacrifices.
         if (selectedSacrifices.Count >= requiredSacrifices)
         {
-            // Instead of immediately completing the sacrifice, show a confirmation prompt.
             ShowSacrificeConfirmation();
         }
     }
@@ -84,7 +120,7 @@ public class SacrificeManager : MonoBehaviour
 
     private void CompleteSacrificeSelection()
     {
-        // 1. Find the grid coordinates of the FIRST sacrifice card
+        // 1. Find the grid coordinates of the FIRST sacrifice card (if any)
         int targetX = -1, targetY = -1;
         GameObject firstSacrifice = selectedSacrifices[0];
 
@@ -100,29 +136,77 @@ public class SacrificeManager : MonoBehaviour
                     break;
                 }
             }
-            if (targetX != -1) break;
+            if (targetX != -1)
+                break;
         }
         Debug.Log($"[SacrificeManager] Coordinates of first sacrifice: ({targetX}, {targetY})");
 
-        // 2. Remove each selected sacrifice from the board
+        // 2. Remove each selected sacrifice, handling both field and hand cases.
         foreach (GameObject sacrifice in selectedSacrifices)
         {
-            GridManager.instance.RemoveSacrificeCard(sacrifice);
+            bool isOnField = false;
+            GameObject[,] gridArray = GridManager.instance.GetGridObjects();
+            for (int gx = 0; gx < 3; gx++)
+            {
+                for (int gy = 0; gy < 3; gy++)
+                {
+                    if (gridArray[gx, gy] == sacrifice)
+                    {
+                        GridManager.instance.RemoveCard(gx, gy, false);
+                        isOnField = true;
+                        break;
+                    }
+                }
+                if (isOnField)
+                    break;
+            }
+
+            if (!isOnField)
+            {
+                // The card is not on the grid, so it must be in the player's hand.
+                CardHandler handler = sacrifice.GetComponent<CardHandler>();
+                if (handler != null && handler.cardOwner != null)
+                {
+                    // Reset the sacrifice hover effect and remove any selection visuals.
+                    CardUI ui = handler.GetComponent<CardUI>();
+                    if (ui != null)
+                        ui.ResetSacrificeHoverEffect();
+
+                    handler.HideSacrificeHighlight();
+                    handler.cardOwner.zones.AddCardToGrave(sacrifice);
+                    handler.cardOwner.cardHandlers.Remove(handler);
+                    Debug.Log($"[SacrificeManager] Removed {handler.cardData.cardName} from the hand.");
+                }
+            }
         }
 
-        // 3. Place the evolution card at the freed cell
-        if (targetX != -1 && targetY != -1)
+        // 3. If we haven't found a valid grid cell from a sacrificed card, let the player choose one.
+        if (targetX == -1 || targetY == -1)
         {
-            // Use a new method in GridManager that places the card at (targetX, targetY).
-            GridManager.instance.PerformEvolutionAtCoords(currentEvolutionCard, targetX, targetY);
-        }
-        else
-        {
-            Debug.LogError("[SacrificeManager] Could not find valid coordinates for the sacrifice. Evolution canceled.");
+            Debug.Log("[SacrificeManager] No sacrifice on the grid was found. Enabling cell selection mode for evolution placement.");
+            GridManager.instance.EnableCellSelectionMode(OnCellSelected);
+            return; // Wait for player input.
         }
 
+        // 4. Otherwise, place the evolution card at the freed cell.
+        GridManager.instance.PerformEvolutionAtCoords(currentEvolutionCard, targetX, targetY);
+
+        // Deactivate sacrifice selection mode.
+        isSelectingSacrifices = false;
     }
 
+    // Callback invoked when the player selects an empty grid cell.
+    private void OnCellSelected(int selectedX, int selectedY)
+    {
+        GridManager.instance.DisableCellSelectionMode();
+        GridManager.instance.ClearSacrificeHighlights();
+
+        Debug.Log($"[SacrificeManager] Player selected cell: ({selectedX}, {selectedY})");
+
+        GridManager.instance.PerformEvolutionAtCoords(currentEvolutionCard, selectedX, selectedY);
+
+        isSelectingSacrifices = false;
+    }
 
     // Optionally, a method to cancel sacrifice selection.
     public void CancelSacrificeSelection()
@@ -131,6 +215,7 @@ public class SacrificeManager : MonoBehaviour
             GridManager.instance.ClearSacrificeHighlights();
         selectedSacrifices.Clear();
         currentEvolutionCard = null;
+        isSelectingSacrifices = false;
         Debug.Log("[SacrificeManager] Sacrifice selection cancelled.");
     }
 
@@ -138,20 +223,16 @@ public class SacrificeManager : MonoBehaviour
     public bool IsValidSacrifice(CardUI card)
     {
         if (currentEvolutionCard == null || card == null || card.cardData == null)
-        {
             return false;
-        }
 
         foreach (var req in currentEvolutionCard.cardData.sacrificeRequirements)
         {
             bool match = req.matchByCreatureType
                 ? (card.cardData.creatureType == req.requiredCardName)
                 : (card.cardData.cardName == req.requiredCardName);
-
             if (match)
                 return true;
         }
-
         return false;
     }
 }

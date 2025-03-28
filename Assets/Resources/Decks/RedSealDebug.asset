@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7a3f2cec2517eb241b44c21068f8f6bc, type: 3}
+  m_Name: RedSealDebug
+  m_EditorClassIdentifier: 
+  deckName: Red Seal MAX
+  cardEntries:
+  - card: {fileID: 11400000, guid: e3ee1592fb7e4fa4c8f437a472a94e5a, type: 2}
+    quantity: 20
+  - card: {fileID: 11400000, guid: ade9e12952142a34698b3f1f999c62e6, type: 2}
+    quantity: 20

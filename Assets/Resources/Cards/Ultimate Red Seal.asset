@@ -20,10 +20,14 @@ MonoBehaviour:
   cardImage: {fileID: -8641784713208657438, guid: f7078e9a1a4dc7540a1f033909b68d7d, type: 3}
   cardNumber: OGN-38
   creatureType: Wax
-  baseOrEvo: 0
+  baseOrEvo: 1
   extraDetails: 'DOB: 1994, GPS: Lion Island, Weight: 100.0kg, Height: 100.35m.'
+  inlineEffects: []
+  effects: []
   requiresSacrifice: 1
   sacrificeRequirements:
   - requiredCardName: Red Seal
     matchByCreatureType: 0
     count: 3
+    allowFromField: 1
+    allowFromHand: 1

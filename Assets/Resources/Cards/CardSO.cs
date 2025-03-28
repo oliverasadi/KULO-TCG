@@ -64,5 +64,7 @@ public class SacrificeRequirement
     public string requiredCardName;
     public bool matchByCreatureType;
     public int count;
+    public bool allowFromField = true;
+    public bool allowFromHand = false;
 }
 

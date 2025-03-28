@@ -11,6 +11,9 @@ public class GridCellHighlighter : MonoBehaviour
     // Duration for the temporary highlight effect.
     public float highlightDuration = 0.5f;
 
+    // Add this field to mark the cell as a sacrifice highlight.
+    public bool isSacrificeHighlight = false;
+
     // Cached default values.
     private Color defaultOutlineColor;
     private Color defaultHighlightColor;
@@ -86,6 +89,8 @@ public class GridCellHighlighter : MonoBehaviour
                 img.color = defaultHighlightColor;
             }
         }
+        // Also clear the sacrifice flag.
+        isSacrificeHighlight = false;
     }
 
     /// <summary>
@@ -108,5 +113,7 @@ public class GridCellHighlighter : MonoBehaviour
             }
             highlightObject.SetActive(true);
         }
+        // Optionally, mark this cell as a sacrifice highlight.
+        isSacrificeHighlight = true;
     }
 }

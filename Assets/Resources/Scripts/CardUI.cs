@@ -5,7 +5,7 @@ using System.Collections;
 using UnityEngine.EventSystems;
 using System.Collections.Generic;
 
-public class CardUI : MonoBehaviour, IPointerClickHandler
+public class CardUI : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler, IPointerExitHandler
 {
     [Header("UI Elements")]
     public Image cardArtImage;
@@ -38,6 +38,16 @@ public class CardUI : MonoBehaviour, IPointerClickHandler
 
     private bool hasEffectsApplied = false; // Track if effects have been applied
 
+    // NEW: Flag to indicate this card is selected as a sacrifice.
+    public bool isSacrificeSelected = false;
+    private Vector3 originalScale;
+    private Coroutine hoverCoroutine; // For pulsating hover effect
+
+    void Awake()
+    {
+        originalScale = transform.localScale;
+    }
+
     void Start()
     {
         LoadCardBack();
@@ -63,7 +73,6 @@ public class CardUI : MonoBehaviour, IPointerClickHandler
         }
     }
 
-    // SetCardData should not apply any effects, we just set data here.
     public void SetCardData(CardSO card, bool setFaceDown = false)
     {
         if (card == null)
@@ -76,14 +85,11 @@ public class CardUI : MonoBehaviour, IPointerClickHandler
         isInDeck = false;
         currentPower = card.power;
 
-        // Do not apply inline effects here; this is handled elsewhere
         if (!hasEffectsApplied)
         {
-            // Flag to prevent reapplying effects
-            hasEffectsApplied = true; // This flag will ensure we do not apply effects multiple times during initialization
+            hasEffectsApplied = true;
         }
 
-        // Update the UI elements
         if (cardNameText != null)
             cardNameText.text = cardData.cardName;
         else
@@ -104,51 +110,36 @@ public class CardUI : MonoBehaviour, IPointerClickHandler
         }
     }
 
-    // Method to update the card's power dynamically (this is called when the power changes, e.g., from AdjustPowerAdjacentEffect)
     public void UpdatePower(int newPower)
     {
         currentPower = newPower;
-        UpdatePowerDisplay(); // Update the display when the power is changed
+        UpdatePowerDisplay();
     }
 
-    // Update the card power display
     public void UpdatePowerDisplay()
     {
         if (cardNameText != null)
-        {
-            cardNameText.text = $"{cardData.cardName} ({currentPower})"; // Update the UI to show power change
-        }
+            cardNameText.text = $"{cardData.cardName} ({currentPower})";
         else
-        {
             Debug.LogError("Card Name Text is not assigned!");
-        }
     }
 
-    // ApplyInlineEffects should not apply any effects here directly.
-    // It only stores inline effects for future application elsewhere.
     public void ApplyInlineEffects()
     {
-        // No direct effect application here, simply set it up for the relevant effect handler (MutualConditionalPowerBoostEffect).
         if (cardData.inlineEffects != null)
         {
             foreach (var effect in cardData.inlineEffects)
             {
-                // No effect application here anymore
-                // We used to apply effects directly in this method but no longer do that.
-                // This part is now handled by the AdjustPowerAdjacentEffect class.
+                // Effects are handled elsewhere.
             }
         }
     }
 
-    // Method for calculating effective power (only used for calculations, no effect application)
     public int CalculateEffectivePower()
     {
         int effectivePower = currentPower;
-
-        // Inline effects logic should be handled in the effect classes, not here.
         foreach (var effect in cardData.inlineEffects)
         {
-            // This part should be for power calculations, not effect applications
             if (effect.effectType == CardEffectData.EffectType.ConditionalPowerBoost)
             {
                 int synergyCount = 0;
@@ -183,12 +174,9 @@ public class CardUI : MonoBehaviour, IPointerClickHandler
                     }
                 }
                 if (synergyCount > 0)
-                {
                     effectivePower += effect.powerChange * synergyCount;
-                }
             }
         }
-
         return effectivePower;
     }
 
@@ -196,13 +184,9 @@ public class CardUI : MonoBehaviour, IPointerClickHandler
     {
         isFaceDown = true;
         if (cardArtImage != null && cardBackSprite != null)
-        {
             cardArtImage.sprite = cardBackSprite;
-        }
         else
-        {
             Debug.LogError($"CardUI: Unable to set face down for {gameObject.name}. Check cardArtImage and cardBackSprite assignments.");
-        }
     }
 
     public void RevealCard()
@@ -222,7 +206,6 @@ public class CardUI : MonoBehaviour, IPointerClickHandler
     {
         float duration = 0.5f;
         float time = 0f;
-
         while (time < duration / 2)
         {
             float angle = Mathf.Lerp(0, 90, time / (duration / 2));
@@ -230,12 +213,9 @@ public class CardUI : MonoBehaviour, IPointerClickHandler
             time += Time.deltaTime;
             yield return null;
         }
-
         if (cardArtImage != null && cardData != null && cardData.cardImage != null)
             cardArtImage.sprite = cardData.cardImage;
-
         yield return null;
-
         time = 0f;
         while (time < duration / 2)
         {
@@ -244,7 +224,6 @@ public class CardUI : MonoBehaviour, IPointerClickHandler
             time += Time.deltaTime;
             yield return null;
         }
-
         isFaceDown = false;
     }
 
@@ -255,24 +234,91 @@ public class CardUI : MonoBehaviour, IPointerClickHandler
             Debug.LogError($"CardUI: cardData is null on {gameObject.name}. Ensure SetCardData is called.");
             return;
         }
-
-        // If we're in target selection mode, add this card as a target.
+        // If in target selection mode, add this card as a target.
         if (TargetSelectionManager.Instance != null && TargetSelectionManager.Instance.IsSelectingTargets)
         {
             TargetSelectionManager.Instance.AddTarget(this);
             return;
         }
-
-        // Right-click to open CardInfoPanel
+        // If sacrifice selection mode is active, bypass normal behavior.
+        if (SacrificeManager.instance != null && SacrificeManager.instance.isSelectingSacrifices)
+        {
+            if (SacrificeManager.instance.IsValidSacrifice(this))
+            {
+                SacrificeManager.instance.SelectSacrifice(gameObject);
+                return;
+            }
+        }
+        // Right-click to open CardInfoPanel.
         if (eventData.button == PointerEventData.InputButton.Right)
         {
             if (cardInfoPanel != null)
                 cardInfoPanel.ShowCardInfo(cardData);
         }
-        // Left-click to open SummonMenu
+        // Left-click to open SummonMenu.
         else if (eventData.button == PointerEventData.InputButton.Left)
         {
             ShowSummonMenu();
+        }
+    }
+
+    // Implement pointer events – these now log debug info but do not control the persistent effect.
+    public void OnPointerEnter(PointerEventData eventData)
+    {
+        if (isSacrificeSelected)
+        {
+            Debug.Log($"[CardUI] OnPointerEnter: {cardData.cardName} is hovered (sacrifice selected).");
+            // If the persistent hover is not running, start it.
+            if (hoverCoroutine == null)
+            {
+                ApplySacrificeHoverEffect();
+            }
+        }
+    }
+
+    public void OnPointerExit(PointerEventData eventData)
+    {
+        if (isSacrificeSelected)
+        {
+            Debug.Log($"[CardUI] OnPointerExit: {cardData.cardName} hover ended.");
+            // We no longer stop the persistent hover here so it continues.
+            // If you want to stop the effect on exit, you can call ResetSacrificeHoverEffect().
+        }
+    }
+
+    // Public method to start the persistent pulsating hover effect.
+    public void ApplySacrificeHoverEffect()
+    {
+        if (!isSacrificeSelected) return;
+        if (hoverCoroutine == null)
+        {
+            Debug.Log($"[CardUI] Starting persistent pulsate effect for {cardData.cardName}");
+            hoverCoroutine = StartCoroutine(Pulsate());
+        }
+    }
+
+    // Public method to stop the pulsating hover effect and reset the scale.
+    public void ResetSacrificeHoverEffect()
+    {
+        if (hoverCoroutine != null)
+        {
+            StopCoroutine(hoverCoroutine);
+            hoverCoroutine = null;
+        }
+        transform.localScale = originalScale;
+        isSacrificeSelected = false;
+    }
+
+    private IEnumerator Pulsate()
+    {
+        float timer = 0f;
+        while (true)
+        {
+            timer += Time.deltaTime;
+            // Oscillate scale factor between 1.0 and 1.1 using PingPong.
+            float scaleFactor = 1f + 0.1f * Mathf.PingPong(timer * 2f, 1f);
+            transform.localScale = originalScale * scaleFactor;
+            yield return null;
         }
     }
 
@@ -283,15 +329,10 @@ public class CardUI : MonoBehaviour, IPointerClickHandler
             Debug.LogError("Summon Menu Prefab is not assigned in CardUI.");
             return;
         }
-
         if (transform.parent != null && transform.parent.name.Contains("GridCell"))
-        {
             isOnField = true;
-        }
         else
-        {
             isOnField = false;
-        }
 
         Canvas canvas = FindObjectOfType<Canvas>();
         if (canvas == null)
@@ -299,10 +340,8 @@ public class CardUI : MonoBehaviour, IPointerClickHandler
             Debug.LogError("No Canvas found in the scene!");
             return;
         }
-
         GameObject menuInstance = Instantiate(summonMenuPrefab, canvas.transform);
         menuInstance.transform.SetAsLastSibling();
-
         RectTransform cardRect = GetComponent<RectTransform>();
         RectTransform menuRect = menuInstance.GetComponent<RectTransform>();
         if (menuRect != null && cardRect != null)
@@ -313,8 +352,7 @@ public class CardUI : MonoBehaviour, IPointerClickHandler
                 canvas.transform as RectTransform,
                 cardScreenPos,
                 canvas.renderMode == RenderMode.ScreenSpaceOverlay ? null : canvas.worldCamera,
-                out localPoint
-            );
+                out localPoint);
             localPoint += summonMenuOffset;
             menuRect.anchoredPosition = localPoint;
         }
@@ -322,7 +360,6 @@ public class CardUI : MonoBehaviour, IPointerClickHandler
         {
             Debug.LogWarning("Missing RectTransform on card or menu.");
         }
-
         SummonMenu summonMenu = menuInstance.GetComponent<SummonMenu>();
         if (summonMenu != null)
         {
