@@ -331,12 +331,8 @@ public class GridManager : MonoBehaviour
         // Color highlight for non-Spell cards
         if (cardData.category != CardSO.CardCategory.Spell)
         {
-            Color baseColor;
-            if (cardData.baseOrEvo == CardSO.BaseOrEvo.Evolution)
-                baseColor = Color.green;
-            else
-                baseColor = isAICard ? Color.red : Color.green;
-
+            // Use the isAICard flag for both evolution and non-evolution cards.
+            Color baseColor = isAICard ? Color.red : Color.green;
             Color flashColor = new Color(baseColor.r, baseColor.g, baseColor.b, 0.5f);
             GameObject cellObj = GameObject.Find($"GridCell_{x}_{y}");
             if (cellObj != null)
@@ -344,6 +340,7 @@ public class GridManager : MonoBehaviour
                 GridCellHighlighter highlighter = cellObj.GetComponent<GridCellHighlighter>();
                 if (highlighter != null)
                 {
+                    // For evolution cards, apply a persistent highlight.
                     if (cardData.baseOrEvo == CardSO.BaseOrEvo.Evolution)
                     {
                         highlighter.SetPersistentHighlight(flashColor);
@@ -355,6 +352,7 @@ public class GridManager : MonoBehaviour
                 }
             }
         }
+
 
         // If it's a Spell, remove it shortly
         if (cardData.category == CardSO.CardCategory.Spell)
@@ -614,12 +612,13 @@ public class GridManager : MonoBehaviour
                         GridCellHighlighter highlighter = cellObj.GetComponent<GridCellHighlighter>();
                         if (highlighter != null)
                         {
-                            // Always apply the yellow temporary highlight,
-                            // even if the cell already has a persistent highlight.
+                            // Clear any previously stored persistent state so we re–store the current highlight.
+                            highlighter.ClearStoredPersistentHighlight();
+                            // Apply the temporary yellow highlight.
                             highlighter.SetPersistentHighlight(new Color(1f, 1f, 0f, 0.5f));
                             highlighter.isSacrificeHighlight = true; // Mark it as a sacrifice highlight.
 
-                            // Add this cellObj to the selection list so we can later restore its original state.
+                            // Add this cellObj to the selection list so we can restore it later.
                             if (!cellSelectionCells.Contains(cellObj))
                             {
                                 cellSelectionCells.Add(cellObj);
@@ -649,6 +648,8 @@ public class GridManager : MonoBehaviour
             }
         }
     }
+
+
 
 
 
@@ -1435,11 +1436,8 @@ public class GridManager : MonoBehaviour
         // Highlight the cell for non-Spell cards.
         if (cardData.category != CardSO.CardCategory.Spell)
         {
-            Color baseColor;
-            if (cardData.baseOrEvo == CardSO.BaseOrEvo.Evolution)
-                baseColor = Color.green;
-            else
-                baseColor = isAICard ? Color.red : Color.green;
+            // Use the isAICard flag for both evolution and non-evolution cards.
+            Color baseColor = isAICard ? Color.red : Color.green;
             Color flashColor = new Color(baseColor.r, baseColor.g, baseColor.b, 0.5f);
             GameObject cellObj = GameObject.Find($"GridCell_{x}_{y}");
             if (cellObj != null)
@@ -1454,6 +1452,7 @@ public class GridManager : MonoBehaviour
                 }
             }
         }
+
 
         // For Spell cards, queue removal.
         if (cardData.category == CardSO.CardCategory.Spell)

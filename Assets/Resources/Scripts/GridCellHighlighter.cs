@@ -40,6 +40,15 @@ public class GridCellHighlighter : MonoBehaviour
     }
 
     /// <summary>
+    /// Clears any stored persistent highlight so that next time SetPersistentHighlight is called,
+    /// the current colour is stored.
+    /// </summary>
+    public void ClearStoredPersistentHighlight()
+    {
+        hadPersistentHighlight = false;
+    }
+
+    /// <summary>
     /// Temporarily flashes the highlight with the given color.
     /// After the duration, it restores to the previously stored persistent state if available.
     /// </summary>
@@ -103,7 +112,8 @@ public class GridCellHighlighter : MonoBehaviour
     /// </summary>
     public void SetPersistentHighlight(Color persistentColor)
     {
-        // Before applying the new persistent highlight, store the current state if not already stored.
+        // Always store the current state when applying a new highlight.
+        // (ClearStoredPersistentHighlight should be called beforehand if needed.)
         if (!hadPersistentHighlight)
         {
             if (outlineComponent != null && outlineComponent.enabled)
