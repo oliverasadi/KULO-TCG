@@ -941,6 +941,7 @@ MonoBehaviour:
   outlineComponent: {fileID: 334945139}
   highlightObject: {fileID: 1814843591}
   highlightDuration: 99999
+  isSacrificeHighlight: 0
 --- !u!114 &334945139
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1006,7 +1007,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.15535784, g: 1, b: 0, a: 0.2901961}
+  m_Color: {r: 0.15535784, g: 1, b: 0, a: 0.50980395}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -1651,7 +1652,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.15535784, g: 1, b: 0, a: 0.2901961}
+  m_Color: {r: 0.15535784, g: 1, b: 0, a: 0.50980395}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -1787,6 +1788,7 @@ MonoBehaviour:
   outlineComponent: {fileID: 561953817}
   highlightObject: {fileID: 1641656803}
   highlightDuration: 99999
+  isSacrificeHighlight: 0
 --- !u!114 &561953817
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2051,6 +2053,7 @@ MonoBehaviour:
   outlineComponent: {fileID: 584769137}
   highlightObject: {fileID: 1295234840}
   highlightDuration: 99999
+  isSacrificeHighlight: 0
 --- !u!114 &584769137
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2445,6 +2448,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eaac927d7b8f2e9499ebe6bbbf148f94, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  cellSelectionCells: []
   evolutionSplashPrefab: {fileID: 7208728008252030730, guid: 7aac995b58aa6fb4fa38f3164fee08cc, type: 3}
   audioSource: {fileID: 669551654}
   placeCardSound: {fileID: 8300000, guid: 1b00d8dc7d3df8d439a6305d3a63f9b2, type: 3}
@@ -3074,7 +3078,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.15535784, g: 1, b: 0, a: 0.2901961}
+  m_Color: {r: 0.15535784, g: 1, b: 0, a: 0.50980395}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -4093,7 +4097,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.15535784, g: 1, b: 0, a: 0.2901961}
+  m_Color: {r: 0.15535784, g: 1, b: 0, a: 0.50980395}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -4623,7 +4627,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.15535784, g: 1, b: 0, a: 0.2901961}
+  m_Color: {r: 0.15535784, g: 1, b: 0, a: 0.50980395}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -4924,7 +4928,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.15535784, g: 1, b: 0, a: 0.2901961}
+  m_Color: {r: 0.15535784, g: 1, b: 0, a: 0.50980395}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -5060,6 +5064,7 @@ MonoBehaviour:
   outlineComponent: {fileID: 1553999566}
   highlightObject: {fileID: 544617927}
   highlightDuration: 99999
+  isSacrificeHighlight: 0
 --- !u!114 &1553999566
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5338,7 +5343,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.15535784, g: 1, b: 0, a: 0.2901961}
+  m_Color: {r: 0.15535784, g: 1, b: 0, a: 0.50980395}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -5474,6 +5479,7 @@ MonoBehaviour:
   outlineComponent: {fileID: 1695329452}
   highlightObject: {fileID: 1551530333}
   highlightDuration: 99999
+  isSacrificeHighlight: 0
 --- !u!114 &1695329452
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5846,6 +5852,7 @@ MonoBehaviour:
   outlineComponent: {fileID: 1759525000}
   highlightObject: {fileID: 1483864876}
   highlightDuration: 99999
+  isSacrificeHighlight: 0
 --- !u!114 &1759525000
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6088,7 +6095,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.15535784, g: 1, b: 0, a: 0.2901961}
+  m_Color: {r: 0.15535784, g: 1, b: 0, a: 0.50980395}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -6485,6 +6492,7 @@ MonoBehaviour:
   outlineComponent: {fileID: 1847598759}
   highlightObject: {fileID: 2080912079}
   highlightDuration: 99999
+  isSacrificeHighlight: 0
 --- !u!114 &1847598759
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6611,6 +6619,7 @@ MonoBehaviour:
   outlineComponent: {fileID: 1871659799}
   highlightObject: {fileID: 441224457}
   highlightDuration: 99999
+  isSacrificeHighlight: 0
 --- !u!114 &1871659799
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6950,7 +6959,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.15535784, g: 1, b: 0, a: 0.2901961}
+  m_Color: {r: 0.15535784, g: 1, b: 0, a: 0.50980395}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -7086,6 +7095,7 @@ MonoBehaviour:
   outlineComponent: {fileID: 2140226287}
   highlightObject: {fileID: 909533450}
   highlightDuration: 99999
+  isSacrificeHighlight: 0
 --- !u!114 &2140226287
 MonoBehaviour:
   m_ObjectHideFlags: 0

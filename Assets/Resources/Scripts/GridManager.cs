@@ -337,7 +337,7 @@ public class GridManager : MonoBehaviour
             else
                 baseColor = isAICard ? Color.red : Color.green;
 
-            Color flashColor = new Color(baseColor.r, baseColor.g, baseColor.b, 0.100f);
+            Color flashColor = new Color(baseColor.r, baseColor.g, baseColor.b, 0.5f);
             GameObject cellObj = GameObject.Find($"GridCell_{x}_{y}");
             if (cellObj != null)
             {
@@ -614,8 +614,16 @@ public class GridManager : MonoBehaviour
                         GridCellHighlighter highlighter = cellObj.GetComponent<GridCellHighlighter>();
                         if (highlighter != null)
                         {
+                            // Always apply the yellow temporary highlight,
+                            // even if the cell already has a persistent highlight.
                             highlighter.SetPersistentHighlight(new Color(1f, 1f, 0f, 0.5f));
                             highlighter.isSacrificeHighlight = true; // Mark it as a sacrifice highlight.
+
+                            // Add this cellObj to the selection list so we can later restore its original state.
+                            if (!cellSelectionCells.Contains(cellObj))
+                            {
+                                cellSelectionCells.Add(cellObj);
+                            }
                         }
                         Button btn = cellObj.GetComponent<Button>();
                         if (btn == null)
@@ -636,17 +644,12 @@ public class GridManager : MonoBehaviour
                         });
                         // Enable the button in case it was disabled.
                         btn.enabled = true;
-
-                        // *** Add this cellObj to the selection list so we can clear it later.
-                        if (!cellSelectionCells.Contains(cellObj))
-                        {
-                            cellSelectionCells.Add(cellObj);
-                        }
                     }
                 }
             }
         }
     }
+
 
 
 
@@ -953,7 +956,16 @@ public class GridManager : MonoBehaviour
                 GridCellHighlighter highlighter = cellObj.GetComponent<GridCellHighlighter>();
                 if (highlighter != null)
                 {
-                    highlighter.ResetHighlight();
+                    // If the cell had a persistent highlight before cell selection,
+                    // restore it; otherwise, reset to default.
+                    if (highlighter.HasStoredPersistentHighlight)
+                    {
+                        highlighter.RestoreHighlight();
+                    }
+                    else
+                    {
+                        highlighter.ResetHighlight();
+                    }
                     highlighter.isSacrificeHighlight = false;
                 }
             }
@@ -975,6 +987,7 @@ public class GridManager : MonoBehaviour
         }
     }
 
+
     public void DisableCellSelectionMode()
     {
         // Only disable buttons and clear highlights on cells that were marked.
@@ -984,7 +997,6 @@ public class GridManager : MonoBehaviour
             {
                 Button btn = cellObj.GetComponent<Button>();
                 if (btn != null)
-                if (btn != null)
                 {
                     btn.onClick.RemoveAllListeners();
                     btn.enabled = false;
@@ -992,10 +1004,17 @@ public class GridManager : MonoBehaviour
                 GridCellHighlighter highlighter = cellObj.GetComponent<GridCellHighlighter>();
                 if (highlighter != null)
                 {
-                    // Only reset if this cell was specifically marked for sacrifice selection.
+                    // Only clear the highlight if the cell was marked for sacrifice selection.
                     if (highlighter.isSacrificeHighlight)
                     {
-                        highlighter.ResetHighlight();
+                        if (highlighter.HasStoredPersistentHighlight)
+                        {
+                            highlighter.RestoreHighlight();
+                        }
+                        else
+                        {
+                            highlighter.ResetHighlight();
+                        }
                         highlighter.isSacrificeHighlight = false;
                     }
                 }
@@ -1003,6 +1022,7 @@ public class GridManager : MonoBehaviour
         }
         cellSelectionCells.Clear();
     }
+
 
 
 
@@ -1373,7 +1393,7 @@ public class GridManager : MonoBehaviour
                 baseColor = Color.green;
             else
                 baseColor = isAICard ? Color.red : Color.green;
-            Color flashColor = new Color(baseColor.r, baseColor.g, baseColor.b, 0.100f);
+            Color flashColor = new Color(baseColor.r, baseColor.g, baseColor.b, 0.5f);
             GameObject cellObj = GameObject.Find($"GridCell_{x}_{y}");
             if (cellObj != null)
             {
