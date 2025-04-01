@@ -51,9 +51,11 @@ public class CardUI : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler,
     void Start()
     {
         LoadCardBack();
+
         if (cardInfoPanel == null)
         {
             cardInfoPanel = FindObjectOfType<CardInfoPanel>();
+            Debug.Log($"CardInfoPanel found: {cardInfoPanel != null}");  // Check if it's correctly assigned
             if (cardInfoPanel == null)
             {
                 Debug.LogError("No CardInfoPanel found in the scene. Please add one and assign it.");
@@ -112,9 +114,15 @@ public class CardUI : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler,
 
     public void UpdatePower(int newPower)
     {
-        currentPower = newPower;
-        UpdatePowerDisplay();
+        if (currentPower != newPower)  // Only update if the power is actually different
+        {
+            currentPower = newPower;  // Update the internal power value
+            Debug.Log($"Power updated: {currentPower}");
+
+            UpdatePowerDisplay();  // Update the power display in the Card Info Panel
+        }
     }
+
 
     public void UpdatePowerDisplay()
     {

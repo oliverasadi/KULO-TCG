@@ -159,4 +159,21 @@ public class CardInfoPanel : MonoBehaviour, IPointerClickHandler
     // Read-only properties so other scripts can check the panel's state.
     public bool IsVisible => isVisible;
     public CardSO CurrentCard => currentCard;
+
+    // Method to update the power text in the Card Info Panel
+    public void UpdatePowerDisplay()
+    {
+        Debug.Log("CardInfoPanel: Updating power text.");
+
+        // Ensure the power value is updated
+        if (currentCard != null && cardPowerText != null)
+        {
+            cardPowerText.text = currentCard.power.ToString();
+        }
+        else
+        {
+            Debug.LogError("CardInfoPanel: currentCard or cardPowerText is null.");
+        }
+    }
 }
+

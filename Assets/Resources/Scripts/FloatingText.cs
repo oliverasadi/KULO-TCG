@@ -9,11 +9,12 @@ public class FloatingText : MonoBehaviour
     private float timer = 0f;
     private Color originalColor;
 
-    // NEW: Reference to the card this floating text is associated with.
+    // Reference to the card this floating text is associated with.
     public GameObject sourceCard;
 
-    private float updateInterval = 2f; // Update interval in seconds
-    private float lastUpdateTime;
+    private float lastUpdateTime = 0f;
+    public float updateInterval = 0.5f;  // Only update every 0.5 seconds (you can tweak this value)
+    private string lastDisplayedPower = ""; // Store the last displayed power text
 
     void Start()
     {
@@ -24,6 +25,7 @@ public class FloatingText : MonoBehaviour
         // Ensure alpha is fully opaque at start.
         textComponent.color = new Color(originalColor.r, originalColor.g, originalColor.b, 1f);
         lastUpdateTime = Time.time; // Set the start time for update interval
+        lastDisplayedPower = textComponent.text; // Store the initial value of the floating text
         Debug.Log("FloatingText instantiated at: " + transform.position);
     }
 
@@ -33,10 +35,10 @@ public class FloatingText : MonoBehaviour
         // Move upward gradually.
         transform.position += floatSpeed * Time.deltaTime;
 
-        // Update floating text only every 2 seconds
+        // Update floating text only every `updateInterval` seconds
         if (Time.time - lastUpdateTime >= updateInterval)
         {
-            UpdateFloatingText(); // Update the floating text
+            UpdateFloatingText();  // Update the floating text
             lastUpdateTime = Time.time; // Reset the time tracker
         }
 
@@ -52,17 +54,31 @@ public class FloatingText : MonoBehaviour
 
     void UpdateFloatingText()
     {
-        // If sourceCard is assigned, update the text dynamically.
         if (sourceCard != null)
         {
             CardUI cardUI = sourceCard.GetComponent<CardUI>();
             if (cardUI != null)
             {
-                textComponent.text = "Power: " + cardUI.CalculateEffectivePower();
+                int newPower = cardUI.CalculateEffectivePower();  // Calculate the updated power from CardUI
+                string newPowerText = "Power: " + newPower;  // Formatted power text for floating text
+
+                // Only update floating text if the power text has changed
+                if (textComponent.text != newPowerText)
+                {
+                    textComponent.text = newPowerText;  // Update the floating text to show the new power
+                }
+
+                // Only update the Card Info Panel if the power has changed (prevents back-and-forth updates)
+                if (cardUI.cardInfoPanel != null && cardUI.cardInfoPanel.cardPowerText.text != newPowerText)
+                {
+                    // Check if the card in FloatingText is the same as the one in CardInfoPanel
+                    if (cardUI.cardInfoPanel.CurrentCard == cardUI.cardData)
+                    {
+                        Debug.Log("Updating Card Info Panel power text to: " + newPower);
+                        cardUI.cardInfoPanel.cardPowerText.text = newPower.ToString();  // Directly set the Card Info Panel's power text
+                    }
+                }
             }
         }
-
-        // Debug log for testing purposes
-        Debug.Log("Floating Text Updated");
     }
 }
