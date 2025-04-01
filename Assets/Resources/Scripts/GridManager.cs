@@ -2,6 +2,7 @@
 using UnityEngine;
 using TMPro;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine.UI;
 
 public class GridManager : MonoBehaviour
@@ -1302,7 +1303,7 @@ public class GridManager : MonoBehaviour
     /// </summary>
     private void ExecuteReplacementInline(CardUI sourceCardUI, int gridX, int gridY)
     {
-        string replacementName = sourceCardUI.inlineReplacementCardName;
+        string replacementName = sourceCardUI.cardData.inlineEffects[0].replacementCardName;
         bool blockAdditional = sourceCardUI.inlineBlockAdditionalPlays;
         Debug.Log($"[ExecuteReplacementInline] Attempting to replace {sourceCardUI.cardData.cardName} with {replacementName} at cell ({gridX},{gridY})");
 
