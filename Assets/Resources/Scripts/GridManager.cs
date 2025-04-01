@@ -1149,8 +1149,16 @@ public class GridManager : MonoBehaviour
         GridCellHighlighter highlighter = cellObj.GetComponent<GridCellHighlighter>();
         if (highlighter != null)
         {
-            Color evoColor = new Color(0f, 1f, 0f, 0.2f);
+            Color evoColor = new Color(0f, 1f, 0f, 0.2f); // Green for evolution
             highlighter.SetPersistentHighlight(evoColor);
+        }
+
+        // Check for a win condition after placing the evolved card
+        int newLines = WinChecker.instance.CheckWinCondition(GridManager.instance.GetGrid());
+        if (newLines > 0)
+        {
+            Debug.Log($"[WinChecker] New winning lines formed: {newLines}");
+            // Trigger win handling logic here (e.g., display win message or end the round)
         }
     }
 
@@ -1552,4 +1560,24 @@ public class GridManager : MonoBehaviour
 
         return true;
     }
+    public void PrintGridState()
+    {
+        for (int x = 0; x < 3; x++)
+        {
+            string rowStatus = "";
+            for (int y = 0; y < 3; y++)
+            {
+                if (grid[x, y] != null)
+                {
+                    rowStatus += $"[{grid[x, y].cardName}] ";
+                }
+                else
+                {
+                    rowStatus += "[Empty] ";
+                }
+            }
+            Debug.Log($"Grid Row {x}: {rowStatus}");
+        }
+    }
 }
+

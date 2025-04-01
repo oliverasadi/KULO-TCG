@@ -71,6 +71,8 @@ public class SacrificeManager : MonoBehaviour
             return;
         }
 
+        Debug.Log("SelectSacrifice called for: " + sacrificeCard.name); // Debug log to check if method is triggered
+
         if (!selectedSacrifices.Contains(sacrificeCard))
         {
             selectedSacrifices.Add(sacrificeCard);
@@ -90,7 +92,11 @@ public class SacrificeManager : MonoBehaviour
 
             // Play a selection sound at the card's position.
             if (sacrificeSelectSound != null)
-                AudioSource.PlayClipAtPoint(sacrificeSelectSound, sacrificeCard.transform.position);
+            {
+                Debug.Log("Playing selection sound at: " + Camera.main.transform.position); // Debug log to confirm
+                AudioSource.PlayClipAtPoint(sacrificeSelectSound, Camera.main.transform.position);
+            }
+
 
             // Instantiate floating text as a child of the sacrifice card.
             if (sacrificeSelectFloatingTextPrefab != null)
@@ -133,12 +139,13 @@ public class SacrificeManager : MonoBehaviour
                 {
                     targetX = x;
                     targetY = y;
-                    break;
+                    break;  // Break the inner loop
                 }
             }
             if (targetX != -1)
-                break;
+                break;  // Break the outer loop if coordinates are found
         }
+
         Debug.Log($"[SacrificeManager] Coordinates of first sacrifice: ({targetX}, {targetY})");
 
         // 2. Remove each selected sacrifice, handling both field and hand cases.
@@ -191,9 +198,19 @@ public class SacrificeManager : MonoBehaviour
         // 4. Otherwise, place the evolution card at the freed cell.
         GridManager.instance.PerformEvolutionAtCoords(currentEvolutionCard, targetX, targetY);
 
+        // 5. Check for a win condition after placing the evolved card
+        // This checks if there's any new winning line after placing the card
+        int newLines = WinChecker.instance.CheckWinCondition(GridManager.instance.GetGrid());
+        if (newLines > 0)
+        {
+            Debug.Log($"[WinChecker] New winning lines formed: {newLines}");
+            // Trigger win handling logic here
+        }
+
         // Deactivate sacrifice selection mode.
         isSelectingSacrifices = false;
     }
+
 
     // Callback invoked when the player selects an empty grid cell.
     private void OnCellSelected(int selectedX, int selectedY)

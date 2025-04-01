@@ -71,6 +71,9 @@ public class TurnManager : MonoBehaviour
     {
         Debug.Log($"🕒 Player {currentPlayer}'s turn starts.");
 
+        // Print the current state of the grid at the start of the turn
+        GridManager.instance.PrintGridState();
+
         // Get the current player's manager.
         currentPlayerManager = SelectPlayerManager();
         if (currentPlayerManager != null)
@@ -119,6 +122,7 @@ public class TurnManager : MonoBehaviour
 
         currentPlayerManager.pc.StartTurn();
     }
+
 
 
     public bool CanPlayCard(CardSO card)
@@ -185,9 +189,13 @@ public class TurnManager : MonoBehaviour
             OnOpponentTurnEnd?.Invoke();
         }
 
+        // Print the current state of the grid at the end of the turn
+        GridManager.instance.PrintGridState();
+
         // Wait until discard mode is finished before switching turns.
         StartCoroutine(WaitForDiscardThenEndTurn());
     }
+
 
 
     private IEnumerator WaitForDiscardThenEndTurn()
