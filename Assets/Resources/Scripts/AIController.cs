@@ -1,30 +1,34 @@
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+
 public class AIController : PlayerController
 {
     TurnManager tm;
     public PlayerManager pm;
-    
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
+
+    // Public field for the AI thinking prefab (assign your catgirl prefab here)
+    public GameObject aiThinkingPrefab;
+
+    // Store the candidate card that the AI is considering playing.
+    private CardSO currentCandidate;
+
     void Start()
     {
         tm = TurnManager.instance;
     }
 
-    // Update is called once per frame
     void Update()
     {
-        
+        // No per-frame logic needed.
     }
 
-    // Helper method: Checks if the card's sacrifice requirements are met on the grid.
+    // Checks if the card's sacrifice requirements are met on the grid.
     private bool IsCardPlayable(CardSO card)
     {
         // If the card is an Evolution card, ensure the AI has the required base on its board.
         if (card.baseOrEvo == CardSO.BaseOrEvo.Evolution)
         {
-            // If there are no sacrifice requirements, this EVO card isn't playable.
             if (!card.requiresSacrifice || card.sacrificeRequirements == null || card.sacrificeRequirements.Count == 0)
             {
                 Debug.Log($"[AIController] Evolution card {card.cardName} is not playable: no sacrifice requirements set.");
@@ -34,7 +38,6 @@ public class AIController : PlayerController
             bool hasValidBase = false;
             CardSO[,] grid = GridManager.instance.GetGrid();
 
-            // Loop over every cell on the board.
             for (int i = 0; i < grid.GetLength(0); i++)
             {
                 for (int j = 0; j < grid.GetLength(1); j++)
@@ -42,12 +45,10 @@ public class AIController : PlayerController
                     if (grid[i, j] == null)
                         continue;
 
-                    // Only consider cells where the card belongs to the AI.
                     string owner = GetOwnerTagFromCell(i, j);
                     if (owner != "AI")
                         continue;
 
-                    // Check each sacrifice requirement.
                     foreach (var req in card.sacrificeRequirements)
                     {
                         bool match = req.matchByCreatureType
@@ -73,11 +74,9 @@ public class AIController : PlayerController
             }
         }
 
-        // If there are no sacrifice requirements at all, it's playable.
         if (!card.requiresSacrifice || card.sacrificeRequirements.Count == 0)
             return true;
 
-        // Check general sacrifice requirements for any card type (creature/spell).
         CardSO[,] fieldGrid = GridManager.instance.GetGrid();
         foreach (var req in card.sacrificeRequirements)
         {
@@ -88,7 +87,6 @@ public class AIController : PlayerController
                 {
                     if (fieldGrid[i, j] != null)
                     {
-                        // Again, only count AI-owned cards
                         if (GetOwnerTagFromCell(i, j) != "AI")
                             continue;
 
@@ -114,236 +112,395 @@ public class AIController : PlayerController
     private string GetOwnerTagFromCell(int x, int y)
     {
         GameObject obj = GridManager.instance.GetGridObjects()[x, y];
-        if (obj == null) return "Empty";
-
+        if (obj == null)
+            return "Empty";
         CardHandler ch = obj.GetComponent<CardHandler>();
-        if (ch == null) return "Empty";
-
+        if (ch == null)
+            return "Empty";
         return ch.isAI ? "AI" : "Player";
     }
 
+    // Chooses a move based on aggressive, blocking, or random strategies.
+    // Note: We pass in the candidate card so the aggressive branch only returns cells if the candidate's power is sufficient.
+    private Vector2Int ChooseMove(CardSO[,] grid, CardSO candidate)
+    {
+        Vector2Int move = FindBestAggressiveMove(grid, candidate);
+        if (move.x == -1)
+            move = FindBlockingMove(grid);
+        if (move.x == -1)
+            move = FindRandomMove(grid);
+        return move;
+    }
 
+    // Returns the first blocking move.
+    private Vector2Int FindBlockingMove(CardSO[,] grid)
+    {
+        List<Vector2Int> blockingZones = FindBlockingMoves(grid);
+        if (blockingZones.Count > 0)
+            return blockingZones[0];
+        return new Vector2Int(-1, -1);
+    }
 
     public override void StartTurn()
     {
         StartCoroutine(AIPlay());
     }
 
+    // Coroutine that makes the prefab wiggle.
+    private IEnumerator WigglePrefab(GameObject instance)
+    {
+        float wiggleSpeed = 4f;    // Speed of the wiggle.
+        float wiggleAmount = 10f;  // Maximum angle (degrees) to rotate.
+        while (instance != null)
+        {
+            float angle = Mathf.PingPong(Time.time * wiggleSpeed, wiggleAmount) - (wiggleAmount / 2f);
+            instance.transform.localRotation = Quaternion.Euler(0, 0, angle);
+            yield return null;
+        }
+    }
+
+    // AIPlay uses the candidate card to choose a move, shows the thinking image, and then attempts placement.
     private IEnumerator AIPlay()
     {
-        yield return new WaitForSeconds(1f); // Simulate AI thinking time
+        // Instantiate the AI thinking prefab and parent it to the Canvas.
+        GameObject aiThinkingInstance = null;
+        Coroutine wiggleCoroutine = null;
+        if (aiThinkingPrefab != null)
+        {
+            Canvas canvas = FindObjectOfType<Canvas>();
+            if (canvas != null)
+            {
+                aiThinkingInstance = Instantiate(aiThinkingPrefab, canvas.transform);
+                // Start the wiggle effect on the prefab.
+                wiggleCoroutine = StartCoroutine(WigglePrefab(aiThinkingInstance));
+            }
+        }
+
+        // Wait a short moment for the player to notice the image.
+        yield return new WaitForSeconds(0.5f);
+
         CardSO[,] grid = GridManager.instance.GetGrid();
 
-        // Check for aggressive moves (replacing player's weaker cards).
-        Vector2Int bestMove = FindBestAggressiveMove(grid);
-        if (bestMove.x == -1)
+        // Scan AI hand for a playable creature and a playable spell.
+        CardHandler playableCreature = null;
+        CardHandler playableSpell = null;
+        foreach (CardHandler ch in pm.cardHandlers)
         {
-            bestMove = FindBlockingMove(grid);
-        }
-        if (bestMove.x == -1)
-        {
-            bestMove = FindRandomMove(grid);
+            if (ch.cardData.category == CardSO.CardCategory.Creature &&
+                !TurnManager.instance.creaturePlayed && IsCardPlayable(ch.cardData))
+            {
+                playableCreature = ch;
+            }
+            if (ch.cardData.category == CardSO.CardCategory.Spell &&
+                !TurnManager.instance.spellPlayed && IsCardPlayable(ch.cardData))
+            {
+                playableSpell = ch;
+            }
         }
 
-        if (bestMove.x != -1)
+        // Decide randomly which to play first.
+        bool playSpellFirst = Random.value < 0.5f;
+        if (playSpellFirst)
         {
-            CardHandler selectedCardHandler = GetBestPlayableCardFromHand();
-            if (selectedCardHandler != null)
+            if (playableSpell != null)
             {
-                CardSO selectedCard = selectedCardHandler.cardData;
-                if (selectedCard != null && TurnManager.instance.CanPlayCard(selectedCard))
+                currentCandidate = playableSpell.cardData; // Set candidate for replacement check.
+                Vector2Int spellMove = ChooseMove(grid, currentCandidate);
+                bool placed = false;
+                if (spellMove.x != -1)
                 {
-                    Debug.Log($"AI plays {selectedCard.cardName} at {bestMove.x}, {bestMove.y}");
-                    PlaceAICardOnGrid(bestMove.x, bestMove.y, selectedCardHandler);
-                    pm.cardHandlers.Remove(selectedCardHandler); // Remove the played card from AI's hand.
+                    Debug.Log($"AI plays spell {playableSpell.cardData.cardName} at {spellMove.x}, {spellMove.y}");
+                    placed = PlaceAICardOnGrid(spellMove.x, spellMove.y, playableSpell);
                 }
+                if (!placed)
+                {
+                    Vector2Int fallbackMove = FindRandomMove(grid);
+                    if (fallbackMove.x != -1)
+                    {
+                        Debug.Log($"AI fallback: trying empty cell at {fallbackMove.x}, {fallbackMove.y} for spell {playableSpell.cardData.cardName}");
+                        placed = PlaceAICardOnGrid(fallbackMove.x, fallbackMove.y, playableSpell);
+                    }
+                }
+                if (placed)
+                    pm.cardHandlers.Remove(playableSpell);
+                yield return new WaitForSeconds(Random.Range(2f, 3f));
             }
-            else
+            if (playableCreature != null)
             {
-                Debug.Log("AIController: No playable card found in AI hand!");
+                currentCandidate = playableCreature.cardData;
+                Vector2Int creatureMove = ChooseMove(grid, currentCandidate);
+                bool placed = false;
+                if (creatureMove.x != -1)
+                {
+                    Debug.Log($"AI plays creature {playableCreature.cardData.cardName} at {creatureMove.x}, {creatureMove.y}");
+                    placed = PlaceAICardOnGrid(creatureMove.x, creatureMove.y, playableCreature);
+                }
+                if (!placed)
+                {
+                    Vector2Int fallbackMove = FindRandomMove(grid);
+                    if (fallbackMove.x != -1)
+                    {
+                        Debug.Log($"AI fallback: trying empty cell at {fallbackMove.x}, {fallbackMove.y} for creature {playableCreature.cardData.cardName}");
+                        placed = PlaceAICardOnGrid(fallbackMove.x, fallbackMove.y, playableCreature);
+                    }
+                }
+                if (placed)
+                    pm.cardHandlers.Remove(playableCreature);
+                yield return new WaitForSeconds(Random.Range(1f, 2f));
             }
         }
+        else // Play creature first.
+        {
+            if (playableCreature != null)
+            {
+                currentCandidate = playableCreature.cardData;
+                Vector2Int creatureMove = ChooseMove(grid, currentCandidate);
+                bool placed = false;
+                if (creatureMove.x != -1)
+                {
+                    Debug.Log($"AI plays creature {playableCreature.cardData.cardName} at {creatureMove.x}, {creatureMove.y}");
+                    placed = PlaceAICardOnGrid(creatureMove.x, creatureMove.y, playableCreature);
+                }
+                if (!placed)
+                {
+                    Vector2Int fallbackMove = FindRandomMove(grid);
+                    if (fallbackMove.x != -1)
+                    {
+                        Debug.Log($"AI fallback: trying empty cell at {fallbackMove.x}, {fallbackMove.y} for creature {playableCreature.cardData.cardName}");
+                        placed = PlaceAICardOnGrid(fallbackMove.x, fallbackMove.y, playableCreature);
+                    }
+                }
+                if (placed)
+                    pm.cardHandlers.Remove(playableCreature);
+                yield return new WaitForSeconds(Random.Range(1f, 2f));
+            }
+            if (playableSpell != null)
+            {
+                currentCandidate = playableSpell.cardData;
+                Vector2Int spellMove = ChooseMove(grid, currentCandidate);
+                bool placed = false;
+                if (spellMove.x != -1)
+                {
+                    Debug.Log($"AI plays spell {playableSpell.cardData.cardName} at {spellMove.x}, {spellMove.y}");
+                    placed = PlaceAICardOnGrid(spellMove.x, spellMove.y, playableSpell);
+                }
+                if (!placed)
+                {
+                    Vector2Int fallbackMove = FindRandomMove(grid);
+                    if (fallbackMove.x != -1)
+                    {
+                        Debug.Log($"AI fallback: trying empty cell at {fallbackMove.x}, {fallbackMove.y} for spell {playableSpell.cardData.cardName}");
+                        placed = PlaceAICardOnGrid(fallbackMove.x, fallbackMove.y, playableSpell);
+                    }
+                }
+                if (placed)
+                    pm.cardHandlers.Remove(playableSpell);
+                yield return new WaitForSeconds(Random.Range(1f, 2f));
+            }
+        }
+        yield return new WaitForSeconds(Random.Range(1f, 2f));
 
-        yield return new WaitForSeconds(1f);
-        EndTurn(); // End AI's turn
+        // Once decisions are complete, destroy the AI thinking image.
+        if (aiThinkingInstance != null)
+        {
+            Destroy(aiThinkingInstance);
+        }
+
+        EndTurn(); // End AI's turn.
     }
-    private Vector2Int FindBestAggressiveMove(CardSO[,] grid)
+
+    // Returns the best aggressive move for the AI given the current grid and the candidate card.
+    private Vector2Int FindBestAggressiveMove(CardSO[,] grid, CardSO candidate)
     {
-        // 1. Priority 1: Try to win by completing 3 in a row
+        // Priority 1: Try to win by completing 3 in a row.
         Vector2Int winningMove = FindWinningMove(grid);
         if (winningMove.x != -1)
-        {
-            return winningMove; // If a winning move is found, prioritize it
-        }
+            return winningMove;
 
         List<Vector2Int> replaceableZones = new List<Vector2Int>();
-        List<Vector2Int> blockingZones = new List<Vector2Int>();
         List<Vector2Int> openZones = new List<Vector2Int>();
 
-        // 2. Priority 2: Destroy opponent's cards (especially in the center grid)
+        // Priority 2: Target opponent's cards.
         for (int x = 0; x < grid.GetLength(0); x++)
         {
             for (int y = 0; y < grid.GetLength(1); y++)
             {
-                if (grid[x, y] != null && GetOwnerTagFromCell(x, y) == "Player") // Check if the cell belongs to the player
+                if (grid[x, y] != null && GetOwnerTagFromCell(x, y) == "Player")
                 {
                     CardSO playerCard = grid[x, y];
-                    if (playerCard != null && CheckForReplacement(x, y, playerCard)) // If the AI can replace it
+                    if (playerCard != null && CheckForReplacement(candidate, playerCard))
                     {
-                        // Prioritize the center grid (1,1)
                         if (x == 1 && y == 1)
-                        {
-                            return new Vector2Int(x, y); // Immediately return the center grid if available
-                        }
-
-                        replaceableZones.Add(new Vector2Int(x, y)); // Add to replaceable zones
+                            return new Vector2Int(x, y);
+                        replaceableZones.Add(new Vector2Int(x, y));
                     }
                 }
-                else if (grid[x, y] == null) // Open zone
+                else if (grid[x, y] == null)
                 {
                     openZones.Add(new Vector2Int(x, y));
                 }
             }
         }
 
-        // 3. Priority 3: Block potential player wins (3 in a row)
-        blockingZones = FindBlockingMoves(grid);
-
+        List<Vector2Int> blockingZones = FindBlockingMoves(grid);
         if (blockingZones.Count > 0)
-        {
-            return blockingZones[0]; // Block the first available move
-        }
-
-        // 4. Priority 4: If nothing to block, destroy opponent's card in replaceable zones
+            return blockingZones[0];
         if (replaceableZones.Count > 0)
-        {
-            return replaceableZones[0]; // Destroy the first replaceable card
-        }
-
-        // 5. Priority 5: If nothing to block or replace, play anywhere in open zones
+            return replaceableZones[0];
         if (openZones.Count > 0)
-        {
-            return openZones[0]; // Place in the first available open zone
-        }
+            return openZones[0];
 
-        return new Vector2Int(-1, -1); // If no valid move is found, return -1
+        return new Vector2Int(-1, -1);
     }
 
-
-
-    private bool CheckForReplacement(int x, int y, CardSO playerCard)
+    // New version of CheckForReplacement that uses the candidate card.
+    private bool CheckForReplacement(CardSO candidate, CardSO playerCard)
     {
-        // Check if any AI creature can replace the player's card (i.e., AI card has higher or equal power).
-        CardHandler aiCardHandler = GetBestPlayableCardFromHand();
-        if (aiCardHandler != null)
-        {
-            CardSO aiCard = aiCardHandler.cardData;
-            if (aiCard != null && aiCard.power >= playerCard.power) // Allow replacing if equal or stronger
-            {
-                return true; // AI can replace this card because it's stronger or equal in power
-            }
-        }
+        if (candidate != null && candidate.power >= playerCard.power)
+            return true;
         return false;
     }
 
+    // Searches for a winning move by checking rows, columns, and diagonals.
+    private Vector2Int FindWinningMove(CardSO[,] grid)
+    {
+        // Check rows.
+        for (int i = 0; i < 3; i++)
+        {
+            if (grid[i, 0] != null && grid[i, 1] != null && grid[i, 2] == null &&
+                GetOwnerTagFromCell(i, 0) == "AI" && GetOwnerTagFromCell(i, 1) == "AI")
+                return new Vector2Int(i, 2);
+            if (grid[i, 0] != null && grid[i, 2] != null && grid[i, 1] == null &&
+                GetOwnerTagFromCell(i, 0) == "AI" && GetOwnerTagFromCell(i, 2) == "AI")
+                return new Vector2Int(i, 1);
+            if (grid[i, 1] != null && grid[i, 2] != null && grid[i, 0] == null &&
+                GetOwnerTagFromCell(i, 1) == "AI" && GetOwnerTagFromCell(i, 2) == "AI")
+                return new Vector2Int(i, 0);
+        }
+        // Check columns.
+        for (int i = 0; i < 3; i++)
+        {
+            if (grid[0, i] != null && grid[1, i] != null && grid[2, i] == null &&
+                GetOwnerTagFromCell(0, i) == "AI" && GetOwnerTagFromCell(1, i) == "AI")
+                return new Vector2Int(2, i);
+            if (grid[0, i] != null && grid[2, i] != null && grid[1, i] == null &&
+                GetOwnerTagFromCell(0, i) == "AI" && GetOwnerTagFromCell(2, i) == "AI")
+                return new Vector2Int(1, i);
+            if (grid[1, i] != null && grid[2, i] != null && grid[0, i] == null &&
+                GetOwnerTagFromCell(1, i) == "AI" && GetOwnerTagFromCell(2, i) == "AI")
+                return new Vector2Int(0, i);
+        }
+        // Check diagonals.
+        if (grid[0, 0] != null && grid[1, 1] != null && grid[2, 2] == null &&
+            GetOwnerTagFromCell(0, 0) == "AI" && GetOwnerTagFromCell(1, 1) == "AI")
+            return new Vector2Int(2, 2);
+        if (grid[0, 0] != null && grid[2, 2] != null && grid[1, 1] == null &&
+            GetOwnerTagFromCell(0, 0) == "AI" && GetOwnerTagFromCell(2, 2) == "AI")
+            return new Vector2Int(1, 1);
+        if (grid[1, 1] != null && grid[2, 2] != null && grid[0, 0] == null &&
+            GetOwnerTagFromCell(1, 1) == "AI" && GetOwnerTagFromCell(2, 2) == "AI")
+            return new Vector2Int(0, 0);
+        if (grid[0, 2] != null && grid[1, 1] != null && grid[2, 0] == null &&
+            GetOwnerTagFromCell(0, 2) == "AI" && GetOwnerTagFromCell(1, 1) == "AI")
+            return new Vector2Int(2, 0);
+        if (grid[0, 2] != null && grid[2, 0] != null && grid[1, 1] == null &&
+            GetOwnerTagFromCell(0, 2) == "AI" && GetOwnerTagFromCell(2, 0) == "AI")
+            return new Vector2Int(1, 1);
+        if (grid[1, 1] != null && grid[2, 0] != null && grid[0, 2] == null &&
+            GetOwnerTagFromCell(1, 1) == "AI" && GetOwnerTagFromCell(2, 0) == "AI")
+            return new Vector2Int(0, 2);
+
+        return new Vector2Int(-1, -1); // No winning move found.
+    }
+
+    // Finds potential blocking moves by checking rows, columns, and diagonals for two Player cards.
     private List<Vector2Int> FindBlockingMoves(CardSO[,] grid)
     {
         List<Vector2Int> blockingZones = new List<Vector2Int>();
 
-        // Check rows, columns, and diagonals for potential 3 in a row
+        // Check rows.
         for (int i = 0; i < 3; i++)
         {
-            // Check rows
             if (grid[i, 0] != null && grid[i, 1] != null && grid[i, 2] == null &&
                 GetOwnerTagFromCell(i, 0) == "Player" && GetOwnerTagFromCell(i, 1) == "Player")
-            {
-                blockingZones.Add(new Vector2Int(i, 2)); // Block the third cell in the row
-            }
+                blockingZones.Add(new Vector2Int(i, 2));
             if (grid[i, 0] != null && grid[i, 2] != null && grid[i, 1] == null &&
                 GetOwnerTagFromCell(i, 0) == "Player" && GetOwnerTagFromCell(i, 2) == "Player")
-            {
-                blockingZones.Add(new Vector2Int(i, 1)); // Block the second cell in the row
-            }
+                blockingZones.Add(new Vector2Int(i, 1));
             if (grid[i, 1] != null && grid[i, 2] != null && grid[i, 0] == null &&
                 GetOwnerTagFromCell(i, 1) == "Player" && GetOwnerTagFromCell(i, 2) == "Player")
-            {
-                blockingZones.Add(new Vector2Int(i, 0)); // Block the first cell in the row
-            }
+                blockingZones.Add(new Vector2Int(i, 0));
+        }
 
-            // Check columns
+        // Check columns.
+        for (int i = 0; i < 3; i++)
+        {
             if (grid[0, i] != null && grid[1, i] != null && grid[2, i] == null &&
                 GetOwnerTagFromCell(0, i) == "Player" && GetOwnerTagFromCell(1, i) == "Player")
-            {
-                blockingZones.Add(new Vector2Int(2, i)); // Block the third cell in the column
-            }
+                blockingZones.Add(new Vector2Int(2, i));
             if (grid[0, i] != null && grid[2, i] != null && grid[1, i] == null &&
                 GetOwnerTagFromCell(0, i) == "Player" && GetOwnerTagFromCell(2, i) == "Player")
-            {
-                blockingZones.Add(new Vector2Int(1, i)); // Block the second cell in the column
-            }
+                blockingZones.Add(new Vector2Int(1, i));
             if (grid[1, i] != null && grid[2, i] != null && grid[0, i] == null &&
                 GetOwnerTagFromCell(1, i) == "Player" && GetOwnerTagFromCell(2, i) == "Player")
-            {
-                blockingZones.Add(new Vector2Int(0, i)); // Block the first cell in the column
-            }
+                blockingZones.Add(new Vector2Int(0, i));
         }
 
-        // Check diagonals for potential 3 in a row
+        // Check diagonals.
         if (grid[0, 0] != null && grid[1, 1] != null && grid[2, 2] == null &&
             GetOwnerTagFromCell(0, 0) == "Player" && GetOwnerTagFromCell(1, 1) == "Player")
-        {
-            blockingZones.Add(new Vector2Int(2, 2)); // Block the third cell in the diagonal
-        }
+            blockingZones.Add(new Vector2Int(2, 2));
         if (grid[0, 0] != null && grid[2, 2] != null && grid[1, 1] == null &&
             GetOwnerTagFromCell(0, 0) == "Player" && GetOwnerTagFromCell(2, 2) == "Player")
-        {
-            blockingZones.Add(new Vector2Int(1, 1)); // Block the second cell in the diagonal
-        }
+            blockingZones.Add(new Vector2Int(1, 1));
         if (grid[1, 1] != null && grid[2, 2] != null && grid[0, 0] == null &&
             GetOwnerTagFromCell(1, 1) == "Player" && GetOwnerTagFromCell(2, 2) == "Player")
-        {
-            blockingZones.Add(new Vector2Int(0, 0)); // Block the first cell in the diagonal
-        }
+            blockingZones.Add(new Vector2Int(0, 0));
 
         if (grid[0, 2] != null && grid[1, 1] != null && grid[2, 0] == null &&
             GetOwnerTagFromCell(0, 2) == "Player" && GetOwnerTagFromCell(1, 1) == "Player")
-        {
-            blockingZones.Add(new Vector2Int(2, 0)); // Block the third cell in the opposite diagonal
-        }
+            blockingZones.Add(new Vector2Int(2, 0));
         if (grid[0, 2] != null && grid[2, 0] != null && grid[1, 1] == null &&
             GetOwnerTagFromCell(0, 2) == "Player" && GetOwnerTagFromCell(2, 0) == "Player")
-        {
-            blockingZones.Add(new Vector2Int(1, 1)); // Block the second cell in the opposite diagonal
-        }
+            blockingZones.Add(new Vector2Int(1, 1));
         if (grid[1, 1] != null && grid[2, 0] != null && grid[0, 2] == null &&
             GetOwnerTagFromCell(1, 1) == "Player" && GetOwnerTagFromCell(2, 0) == "Player")
-        {
-            blockingZones.Add(new Vector2Int(0, 2)); // Block the first cell in the opposite diagonal
-        }
+            blockingZones.Add(new Vector2Int(0, 2));
 
-        return blockingZones; // Return the list of blocking zones
+        return blockingZones;
     }
 
+    // Returns a random available grid cell.
+    private Vector2Int FindRandomMove(CardSO[,] grid)
+    {
+        List<Vector2Int> availableMoves = new List<Vector2Int>();
+        for (int x = 0; x < 3; x++)
+        {
+            for (int y = 0; y < 3; y++)
+            {
+                if (grid[x, y] == null)
+                    availableMoves.Add(new Vector2Int(x, y));
+            }
+        }
+        if (availableMoves.Count > 0)
+            return availableMoves[Random.Range(0, availableMoves.Count)];
+        return new Vector2Int(-1, -1);
+    }
 
-    // Helper method: Finds the best playable card in the AI hand (that satisfies sacrifice requirements).
+    // Chooses the best playable card from the AI's hand.
     private CardHandler GetBestPlayableCardFromHand()
     {
         CardHandler bestCandidate = null;
         float highestPower = 0;
-
-        // Prioritize replacing cards with higher power creatures.
         foreach (CardHandler ch in pm.cardHandlers)
         {
             CardSO card = ch.cardData;
-
             if (card.category == CardSO.CardCategory.Creature && !tm.creaturePlayed && card.power > highestPower && IsCardPlayable(card))
             {
                 bestCandidate = ch;
                 highestPower = card.power;
             }
         }
-
-        // If no strong creatures are found, try spells.
         if (bestCandidate == null)
         {
             foreach (CardHandler ch in pm.cardHandlers)
@@ -356,144 +513,44 @@ public class AIController : PlayerController
                 }
             }
         }
-
         return bestCandidate;
     }
 
-
-    // Helper method: Finds the grid cell by name and places the card there.
-    private void PlaceAICardOnGrid(int x, int y, CardHandler cardHandler)
+    // Places the AI's card on the grid.
+    private bool PlaceAICardOnGrid(int x, int y, CardHandler cardHandler)
     {
         string cellName = $"GridCell_{x}_{y}";
         GameObject cellObj = GameObject.Find(cellName);
         if (cellObj != null)
         {
             Transform cellParent = cellObj.transform;
-            GridManager.instance.PlaceExistingCard(x, y, cardHandler.gameObject, cardHandler.cardData, cellParent);
-            // After placing, reveal the card.
-            CardUI cardUI = cardHandler.GetComponent<CardUI>();
-            if (cardUI != null)
+            bool placed = GridManager.instance.PlaceExistingCard(x, y, cardHandler.gameObject, cardHandler.cardData, cellParent);
+            if (placed)
             {
-                cardUI.RevealCard();
+                CardUI cardUI = cardHandler.GetComponent<CardUI>();
+                if (cardUI != null)
+                {
+                    cardUI.isOnField = true;
+                    cardUI.RevealCard();
+                }
+                CardPreviewManager.Instance.ShowCardPreview(cardHandler.cardData);
+
+                if (cardHandler.cardData.category == CardSO.CardCategory.Creature)
+                    tm.creaturePlayed = true;
+                else if (cardHandler.cardData.category == CardSO.CardCategory.Spell)
+                    tm.spellPlayed = true;
             }
-            // Also, show card preview.
-            CardPreviewManager.Instance.ShowCardPreview(cardHandler.cardData);
+            return placed;
         }
         else
         {
             Debug.LogError($"[AIController] Could not find a cell named '{cellName}' for the AI to place a card!");
+            return false;
         }
-        
-        if (cardHandler.cardData.category == CardSO.CardCategory.Creature)
-            tm.creaturePlayed = true;
-        else if (cardHandler.cardData.category == CardSO.CardCategory.Spell)
-            tm.spellPlayed = true;
     }
 
-    private Vector2Int FindWinningMove(CardSO[,] grid)
+    private void EndTurn()
     {
-        // Check all rows, columns, and diagonals for potential winning moves
-
-        // Check rows for 2 AI cards and 1 empty space
-        for (int i = 0; i < 3; i++)
-        {
-            if (grid[i, 0] != null && grid[i, 1] != null && grid[i, 2] == null &&
-                GetOwnerTagFromCell(i, 0) == "AI" && GetOwnerTagFromCell(i, 1) == "AI")
-            {
-                return new Vector2Int(i, 2); // Winning move: Complete the row
-            }
-            if (grid[i, 0] != null && grid[i, 2] != null && grid[i, 1] == null &&
-                GetOwnerTagFromCell(i, 0) == "AI" && GetOwnerTagFromCell(i, 2) == "AI")
-            {
-                return new Vector2Int(i, 1); // Winning move: Complete the row
-            }
-            if (grid[i, 1] != null && grid[i, 2] != null && grid[i, 0] == null &&
-                GetOwnerTagFromCell(i, 1) == "AI" && GetOwnerTagFromCell(i, 2) == "AI")
-            {
-                return new Vector2Int(i, 0); // Winning move: Complete the row
-            }
-        }
-
-        // Check columns for 2 AI cards and 1 empty space
-        for (int i = 0; i < 3; i++)
-        {
-            if (grid[0, i] != null && grid[1, i] != null && grid[2, i] == null &&
-                GetOwnerTagFromCell(0, i) == "AI" && GetOwnerTagFromCell(1, i) == "AI")
-            {
-                return new Vector2Int(2, i); // Winning move: Complete the column
-            }
-            if (grid[0, i] != null && grid[2, i] != null && grid[1, i] == null &&
-                GetOwnerTagFromCell(0, i) == "AI" && GetOwnerTagFromCell(2, i) == "AI")
-            {
-                return new Vector2Int(1, i); // Winning move: Complete the column
-            }
-            if (grid[1, i] != null && grid[2, i] != null && grid[0, i] == null &&
-                GetOwnerTagFromCell(1, i) == "AI" && GetOwnerTagFromCell(2, i) == "AI")
-            {
-                return new Vector2Int(0, i); // Winning move: Complete the column
-            }
-        }
-
-        // Check diagonals for 2 AI cards and 1 empty space
-        if (grid[0, 0] != null && grid[1, 1] != null && grid[2, 2] == null &&
-            GetOwnerTagFromCell(0, 0) == "AI" && GetOwnerTagFromCell(1, 1) == "AI")
-        {
-            return new Vector2Int(2, 2); // Winning move: Complete the diagonal
-        }
-        if (grid[0, 0] != null && grid[2, 2] != null && grid[1, 1] == null &&
-            GetOwnerTagFromCell(0, 0) == "AI" && GetOwnerTagFromCell(2, 2) == "AI")
-        {
-            return new Vector2Int(1, 1); // Winning move: Complete the diagonal
-        }
-        if (grid[1, 1] != null && grid[2, 2] != null && grid[0, 0] == null &&
-            GetOwnerTagFromCell(1, 1) == "AI" && GetOwnerTagFromCell(2, 2) == "AI")
-        {
-            return new Vector2Int(0, 0); // Winning move: Complete the diagonal
-        }
-
-        if (grid[0, 2] != null && grid[1, 1] != null && grid[2, 0] == null &&
-            GetOwnerTagFromCell(0, 2) == "AI" && GetOwnerTagFromCell(1, 1) == "AI")
-        {
-            return new Vector2Int(2, 0); // Winning move: Complete the opposite diagonal
-        }
-        if (grid[0, 2] != null && grid[2, 0] != null && grid[1, 1] == null &&
-            GetOwnerTagFromCell(0, 2) == "AI" && GetOwnerTagFromCell(2, 0) == "AI")
-        {
-            return new Vector2Int(1, 1); // Winning move: Complete the opposite diagonal
-        }
-        if (grid[1, 1] != null && grid[2, 0] != null && grid[0, 2] == null &&
-            GetOwnerTagFromCell(1, 1) == "AI" && GetOwnerTagFromCell(2, 0) == "AI")
-        {
-            return new Vector2Int(0, 2); // Winning move: Complete the opposite diagonal
-        }
-
-        return new Vector2Int(-1, -1); // No winning move found
-    }
-
-
-    private Vector2Int FindBlockingMove(CardSO[,] grid)
-    {
-        // Placeholder logic for a blocking move.
-        return new Vector2Int(-1, -1);
-    }
-
-    private Vector2Int FindRandomMove(CardSO[,] grid)
-    {
-        List<Vector2Int> availableMoves = new List<Vector2Int>();
-        for (int x = 0; x < 3; x++)
-        {
-            for (int y = 0; y < 3; y++)
-            {
-                if (grid[x, y] == null)
-                {
-                    availableMoves.Add(new Vector2Int(x, y));
-                }
-            }
-        }
-        if (availableMoves.Count > 0)
-        {
-            return availableMoves[Random.Range(0, availableMoves.Count)];
-        }
-        return new Vector2Int(-1, -1);
+        TurnManager.instance.EndTurn();
     }
 }
