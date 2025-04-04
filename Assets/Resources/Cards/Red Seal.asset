@@ -21,3 +21,21 @@ MonoBehaviour:
   creatureType: Wax
   baseOrEvo: 0
   extraDetails: 'DOB: 2017, GPS: Lion Island, Weight: 305.0kg, Height: 1.35m.'
+  inlineEffects:
+  - effectType: 6
+    cardsToDraw: 0
+    requiredCreatureNames: []
+    requiredCreatureTypes: []
+    maxTargets: 0
+    replacementCardName: 
+    turnDelay: 0
+    blockAdditionalPlays: 0
+    promptPrefab: {fileID: 0}
+    powerChange: 0
+    powerChangeAmount: 0
+    powerChangeType: 0
+    targetPositions: 
+    adjacencyOwnerToAffect: 0
+  effects: []
+  requiresSacrifice: 0
+  sacrificeRequirements: []

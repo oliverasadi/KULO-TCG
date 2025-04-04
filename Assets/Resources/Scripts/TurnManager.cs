@@ -27,13 +27,20 @@ public class TurnManager : MonoBehaviour
     // Event to be fired at the end of an opponent's turn.
     public event Action OnOpponentTurnEnd;
 
-    // NEW: Event fired when a card is played
-    public event Action<CardSO> OnCardPlayed;
+    // The synergy-subscription event fired when a card is played or removed
+    private event Action<CardSO> _onCardPlayed; // keep private to avoid direct invocation
+
+    // Provide a public accessor for subscription
+    public event Action<CardSO> OnCardPlayed
+    {
+        add { _onCardPlayed += value; }
+        remove { _onCardPlayed -= value; }
+    }
 
     // Additional internal flag to block any more plays for the current turn
     private bool noAdditionalPlays = false;
 
-    // NEW: If we want to block the entire *next* turn, call this
+    // If we want to block the entire *next* turn, call this
     private bool blockNextTurn = false;
 
     // Expose creaturePlayed via a public property.
@@ -42,11 +49,9 @@ public class TurnManager : MonoBehaviour
         get { return creaturePlayed; }
     }
 
-    // ---------------------------
-    // NEW: Turn Splash reference
+    // Turn Splash reference
     [Header("Turn Splash")]
     public GameObject turnSplashPrefab;
-    // ---------------------------
 
     void Awake()
     {
@@ -70,23 +75,19 @@ public class TurnManager : MonoBehaviour
     public void StartTurn(bool drawCard = true)
     {
         Debug.Log($"🕒 Player {currentPlayer}'s turn starts.");
+        GridManager.instance.PrintGridState(); // debug
 
-        // Print the current state of the grid at the start of the turn
-        GridManager.instance.PrintGridState();
-
-        // Get the current player's manager.
         currentPlayerManager = SelectPlayerManager();
         if (currentPlayerManager != null)
         {
-            // Log the current hand count.
             Debug.Log($"[TurnManager] Player {currentPlayer} has {currentPlayerManager.cardHandlers.Count} card(s) in hand.");
         }
         else
         {
-            Debug.LogError("❌ PlayerManager not found! Make sure it's in the scene.");
+            Debug.LogError("❌ PlayerManager not found!");
         }
 
-        // Show turn start splash.
+        // Show turn start splash
         string splashMessage = (currentPlayer == localPlayerNumber) ? "Your Turn Start" : "CPU Turn Start";
         ShowTurnSplash(splashMessage);
 
@@ -105,25 +106,20 @@ public class TurnManager : MonoBehaviour
             spellPlayed = false;
         }
 
-        if (currentPlayerManager != null)
+        if (currentPlayerManager != null && drawCard)
         {
-            if (drawCard)
+            if (!skipDrawOnTurnStart)
             {
-                if (!skipDrawOnTurnStart)
-                {
-                    currentPlayerManager.DrawCard();
-                }
-                else
-                {
-                    skipDrawOnTurnStart = false;
-                }
+                currentPlayerManager.DrawCard();
+            }
+            else
+            {
+                skipDrawOnTurnStart = false;
             }
         }
 
         currentPlayerManager.pc.StartTurn();
     }
-
-
 
     public bool CanPlayCard(CardSO card)
     {
@@ -132,22 +128,20 @@ public class TurnManager : MonoBehaviour
             Debug.Log("❌ Additional plays are blocked for this turn!");
             return false;
         }
-
         if (card.category == CardSO.CardCategory.Creature && creaturePlayed)
         {
             Debug.Log("❌ You already played a Creature this turn!");
             return false;
         }
-
         if (card.category == CardSO.CardCategory.Spell && spellPlayed)
         {
             Debug.Log("❌ You already played a Spell this turn!");
             return false;
         }
-
         return true;
     }
 
+    // Called whenever a card is successfully placed / replaced
     public void RegisterCardPlay(CardSO card)
     {
         if (card.category == CardSO.CardCategory.Creature)
@@ -155,8 +149,15 @@ public class TurnManager : MonoBehaviour
         if (card.category == CardSO.CardCategory.Spell)
             spellPlayed = true;
 
-        // Fire the OnCardPlayed event
-        OnCardPlayed?.Invoke(card);
+        // Fire event
+        FireOnCardPlayed(card);
+    }
+
+    // The new public method to safely invoke the event
+    public void FireOnCardPlayed(CardSO occupant)
+    {
+        // This is where the actual invocation happens
+        _onCardPlayed?.Invoke(occupant);
     }
 
     public void PlayerEndTurn()
@@ -166,12 +167,12 @@ public class TurnManager : MonoBehaviour
 
     public void EndTurn()
     {
-        // Show turn end splash.
+        // Show turn end splash
         string splashMessage = (currentPlayer == localPlayerNumber) ? "Your Turn End" : "CPU Turn End";
         ShowTurnSplash(splashMessage);
 
         int endingPlayer = currentPlayer;
-        PlayerManager endingPM = SelectPlayerManager(); // Get the PlayerManager for the ending player.
+        PlayerManager endingPM = SelectPlayerManager();
         if (endingPM != null)
         {
             if (endingPlayer == localPlayerNumber)
@@ -189,58 +190,41 @@ public class TurnManager : MonoBehaviour
             OnOpponentTurnEnd?.Invoke();
         }
 
-        // Print the current state of the grid at the end of the turn
-        GridManager.instance.PrintGridState();
+        GridManager.instance.PrintGridState(); // debug
 
-        // Wait until discard mode is finished before switching turns.
         StartCoroutine(WaitForDiscardThenEndTurn());
     }
 
-
-
     private IEnumerator WaitForDiscardThenEndTurn()
     {
-        // Wait until discard mode is complete.
         yield return new WaitUntil(() => HandDiscardManager.Instance == null || !HandDiscardManager.Instance.isDiscarding);
-        // Then continue with the end turn routine.
         StartCoroutine(EndTurnRoutine());
     }
 
-
-
     private IEnumerator EndTurnRoutine()
     {
-        // Wait a bit for the end-turn splash to play out.
         yield return new WaitForSeconds(1.5f);
-
-        // Switch players.
         currentPlayer = (currentPlayer == 1) ? 2 : 1;
         Debug.Log($"🔄 Turn ended. Now Player {currentPlayer}'s turn.");
 
         StartTurn();
 
-        // If the new current player is the local player, check inline replacements.
         if (currentPlayer == localPlayerNumber)
         {
             GridManager.instance.CheckReplacementEffects();
         }
     }
 
-
     public void ResetTurn()
     {
-        currentPlayer = 1; // Reset to Player 1 at new round start
+        currentPlayer = 1;
         Debug.Log("🔄 Turn Reset: Player 1 starts the new round!");
         skipDrawOnTurnStart = true;
         StartTurn();
     }
 
-    public int GetCurrentPlayer()
-    {
-        return currentPlayer;
-    }
+    public int GetCurrentPlayer() => currentPlayer;
 
-    // Blocks additional card plays for the remainder of this turn.
     public void BlockAdditionalCardPlays()
     {
         noAdditionalPlays = true;
@@ -249,18 +233,15 @@ public class TurnManager : MonoBehaviour
         Debug.Log("Additional card plays blocked for this turn.");
     }
 
-    // NEW: Block the entire next turn.
     public void BlockPlaysNextTurn()
     {
         Debug.Log("Scheduling a block for next turn!");
         blockNextTurn = true;
     }
 
-    // -------------------------------
-    // Helper method to spawn a turn splash.
     public void ShowTurnSplash(string message)
     {
-        Debug.Log($"[TurnManager] ShowTurnSplash called with message: '{message}'");
+        Debug.Log($"[TurnManager] ShowTurnSplash with message: '{message}'");
 
         if (turnSplashPrefab == null)
         {
@@ -268,15 +249,13 @@ public class TurnManager : MonoBehaviour
             return;
         }
 
-        // Find the OverlayCanvas. Ensure your canvas is named exactly "OverlayCanvas".
         GameObject overlayCanvas = GameObject.Find("OverlayCanvas");
         if (overlayCanvas == null)
         {
-            Debug.LogWarning("OverlayCanvas not found. Make sure you have one named OverlayCanvas in the scene.");
+            Debug.LogWarning("OverlayCanvas not found!");
             return;
         }
 
-        // Instantiate the splash prefab as a child of the overlay canvas.
         GameObject splashObj = Instantiate(turnSplashPrefab, overlayCanvas.transform);
         TurnSplashUI splashUI = splashObj.GetComponent<TurnSplashUI>();
         if (splashUI != null)
@@ -288,7 +267,4 @@ public class TurnManager : MonoBehaviour
             Debug.LogWarning("TurnSplashPrefab is missing a TurnSplashUI component!");
         }
     }
-    // -------------------------------
-
-    // ... rest of your TurnManager code ...
 }

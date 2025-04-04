@@ -26,6 +26,8 @@ MonoBehaviour:
   - effectType: 6
     cardsToDraw: 0
     requiredCreatureNames: []
+    requiredCreatureTypes:
+    - Cat
     maxTargets: 0
     replacementCardName: 
     turnDelay: 0

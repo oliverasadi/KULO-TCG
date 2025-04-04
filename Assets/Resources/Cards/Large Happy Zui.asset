@@ -25,13 +25,19 @@ MonoBehaviour:
   inlineEffects:
   - effectType: 3
     cardsToDraw: 0
-    powerChange: -100
-    requiredCreatureNames:
+    requiredCreatureNames: []
+    requiredCreatureTypes:
     - Cat
     maxTargets: 0
     replacementCardName: 
-    replacementDelay: 0
+    turnDelay: 0
     blockAdditionalPlays: 0
+    promptPrefab: {fileID: 0}
+    powerChange: -100
+    powerChangeAmount: 0
+    powerChangeType: 0
+    targetPositions: 
+    adjacencyOwnerToAffect: 2
   effects: []
   requiresSacrifice: 0
   sacrificeRequirements: []

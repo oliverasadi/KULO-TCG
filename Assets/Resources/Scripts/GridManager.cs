@@ -410,6 +410,8 @@ public class GridManager : MonoBehaviour
 
                         synergyEffect.boostAmount = inlineEffect.powerChange;
                         synergyEffect.requiredCardNames = inlineEffect.requiredCreatureNames.ToArray();
+                        synergyEffect.requiredCreatureTypes = inlineEffect.requiredCreatureTypes.ToArray();
+                        synergyEffect.searchOwner = (MutualConditionalPowerBoostEffect.SearchOwnerOption)(int)inlineEffect.searchOwner;
 
                         synergyEffect.ApplyEffect(cardUIComp);
                         cardUIComp.activeInlineEffects.Add(synergyEffect);
@@ -511,8 +513,37 @@ public class GridManager : MonoBehaviour
                 }
             }
         }
+        
+        UpdateMutualConditionalEffects();
+
 
         return true;
+    }
+    public void UpdateMutualConditionalEffects()
+    {
+        CardSO[,] field = GetGrid();
+        GameObject[,] gridObjs = GetGridObjects();
+
+        for (int x = 0; x < field.GetLength(0); x++)
+        {
+            for (int y = 0; y < field.GetLength(1); y++)
+            {
+                if (gridObjs[x, y] != null)
+                {
+                    CardUI ui = gridObjs[x, y].GetComponent<CardUI>();
+                    if (ui != null && ui.activeInlineEffects != null)
+                    {
+                        foreach (var eff in ui.activeInlineEffects)
+                        {
+                            if (eff is MutualConditionalPowerBoostEffect mEffect)
+                            {
+                                mEffect.OnFieldChanged(null); // Trigger re-evaluation
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 
 
@@ -740,8 +771,13 @@ public class GridManager : MonoBehaviour
                 audioSource.PlayOneShot(removeCardSound);
 
             Debug.Log($"[GridManager] Moved {removedCard.cardName} to {(isAI ? "AI" : "player")} grave.");
+
+            // NEW LINE: Notify synergy effects that the board changed
+            // If your synergy is subscribed to OnCardPlayed, it will re-check now.
+            TurnManager.instance.FireOnCardPlayed(removedCard);
         }
     }
+
 
 
 
@@ -1581,4 +1617,5 @@ public class GridManager : MonoBehaviour
         }
     }
 }
+
 

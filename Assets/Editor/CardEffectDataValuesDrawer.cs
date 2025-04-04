@@ -12,71 +12,110 @@ public class CardEffectDataValuesDrawer : PropertyDrawer
         float lineHeight = EditorGUIUtility.singleLineHeight;
         float spacing = EditorGUIUtility.standardVerticalSpacing;
 
-        // Draw the Effect Type field.
+        // (1) Draw effectType
         SerializedProperty effectTypeProp = property.FindPropertyRelative("effectType");
         EditorGUI.PropertyField(new Rect(position.x, yOffset, position.width, lineHeight), effectTypeProp);
         yOffset += lineHeight + spacing;
 
-        // Get available card names for replacement if needed
-        string[] availableNames = GetAvailableCardNames();
+        CardEffectData.EffectType effectType =
+            (CardEffectData.EffectType)effectTypeProp.enumValueIndex;
 
-        // Handle different effect types
-        CardEffectData.EffectType effectType = (CardEffectData.EffectType)effectTypeProp.enumValueIndex;
+        // (2) Replacement Card logic
+        string[] availableNames = GetAvailableCardNames();
         if (effectType == CardEffectData.EffectType.ReplaceAfterOpponentTurn)
         {
-            // Replacement effect type UI
             SerializedProperty replacementNameProp = property.FindPropertyRelative("replacementCardName");
             int currentIndex = System.Array.IndexOf(availableNames, replacementNameProp.stringValue);
             if (currentIndex < 0) currentIndex = 0;
-            int newIndex = EditorGUI.Popup(new Rect(position.x, yOffset, position.width, lineHeight), "Replacement Card", currentIndex, availableNames);
+            int newIndex = EditorGUI.Popup(new Rect(position.x, yOffset, position.width, lineHeight),
+                                             "Replacement Card", currentIndex, availableNames);
             replacementNameProp.stringValue = availableNames[newIndex];
             yOffset += lineHeight + spacing;
         }
         else
         {
-            // Default behavior for all other effect types
             SerializedProperty replacementNameProp = property.FindPropertyRelative("replacementCardName");
             EditorGUI.PropertyField(new Rect(position.x, yOffset, position.width, lineHeight), replacementNameProp);
             yOffset += lineHeight + spacing;
         }
 
-        // Show common fields
-        EditorGUI.PropertyField(new Rect(position.x, yOffset, position.width, lineHeight), property.FindPropertyRelative("cardsToDraw"));
+        // (3) Common fields
+        EditorGUI.PropertyField(new Rect(position.x, yOffset, position.width, lineHeight),
+                                property.FindPropertyRelative("cardsToDraw"),
+                                new GUIContent("Cards to Draw"));
         yOffset += lineHeight + spacing;
 
-        EditorGUI.PropertyField(new Rect(position.x, yOffset, position.width, lineHeight), property.FindPropertyRelative("powerChange"));
-        yOffset += lineHeight + spacing;
-
-        // Handle the new AdjustPowerAdjacent effect
+        // (4) If AdjustPowerAdjacent, draw its unique fields
         if (effectType == CardEffectData.EffectType.AdjustPowerAdjacent)
         {
-            // Show the specific fields for AdjustPowerAdjacentEffect
             SerializedProperty powerChangeAmountProp = property.FindPropertyRelative("powerChangeAmount");
-            EditorGUI.PropertyField(new Rect(position.x, yOffset, position.width, lineHeight), powerChangeAmountProp);
+            EditorGUI.PropertyField(new Rect(position.x, yOffset, position.width, lineHeight),
+                                    powerChangeAmountProp, new GUIContent("Power Change Amount"));
             yOffset += lineHeight + spacing;
 
             SerializedProperty powerChangeTypeProp = property.FindPropertyRelative("powerChangeType");
-            EditorGUI.PropertyField(new Rect(position.x, yOffset, position.width, lineHeight), powerChangeTypeProp);
+            EditorGUI.PropertyField(new Rect(position.x, yOffset, position.width, lineHeight),
+                                    powerChangeTypeProp, new GUIContent("Power Change Type"));
             yOffset += lineHeight + spacing;
 
             SerializedProperty targetPositionsProp = property.FindPropertyRelative("targetPositions");
-            EditorGUI.PropertyField(new Rect(position.x, yOffset, position.width, lineHeight), targetPositionsProp, true);
+            EditorGUI.PropertyField(new Rect(position.x, yOffset, position.width, lineHeight),
+                                    targetPositionsProp, true);
+            yOffset += lineHeight + spacing;
+
+            SerializedProperty adjacencyOwnerProp = property.FindPropertyRelative("adjacencyOwnerToAffect");
+            EditorGUI.PropertyField(new Rect(position.x, yOffset, position.width, lineHeight),
+                                    adjacencyOwnerProp, new GUIContent("Owner to Affect"));
+            yOffset += lineHeight + spacing;
+
+            // Also draw requiredCreatureTypes for AdjustPowerAdjacent
+            SerializedProperty typesProp = property.FindPropertyRelative("requiredCreatureTypes");
+            float typesHeight = EditorGUI.GetPropertyHeight(typesProp, true);
+            EditorGUI.PropertyField(new Rect(position.x, yOffset, position.width, typesHeight),
+                                    typesProp, new GUIContent("Required Creature Types"), true);
+            yOffset += typesHeight + spacing;
+        }
+
+        // (5) Additional fields: replacementDelay, blockAdditionalPlays
+        EditorGUI.PropertyField(new Rect(position.x, yOffset, position.width, lineHeight),
+                                property.FindPropertyRelative("replacementDelay"));
+        yOffset += lineHeight + spacing;
+
+        EditorGUI.PropertyField(new Rect(position.x, yOffset, position.width, lineHeight),
+                                property.FindPropertyRelative("blockAdditionalPlays"));
+        yOffset += lineHeight + spacing;
+
+        // (6) For synergy effects, show powerChange, requiredCreatureNames, requiredCreatureTypes, and Search Owner
+        if (effectType == CardEffectData.EffectType.ConditionalPowerBoost
+         || effectType == CardEffectData.EffectType.MutualConditionalPowerBoostEffect)
+        {
+            SerializedProperty powerChangeProp = property.FindPropertyRelative("powerChange");
+            EditorGUI.PropertyField(new Rect(position.x, yOffset, position.width, lineHeight),
+                                    powerChangeProp, new GUIContent("Power Change"));
+            yOffset += lineHeight + spacing;
+
+            SerializedProperty namesProp = property.FindPropertyRelative("requiredCreatureNames");
+            float namesHeight = EditorGUI.GetPropertyHeight(namesProp, true);
+            EditorGUI.PropertyField(new Rect(position.x, yOffset, position.width, namesHeight),
+                                    namesProp, new GUIContent("Required Card Names"), true);
+            yOffset += namesHeight + spacing;
+
+            SerializedProperty synergyTypesProp = property.FindPropertyRelative("requiredCreatureTypes");
+            float synergyTypesHeight = EditorGUI.GetPropertyHeight(synergyTypesProp, true);
+            EditorGUI.PropertyField(new Rect(position.x, yOffset, position.width, synergyTypesHeight),
+                                    synergyTypesProp, new GUIContent("Required Creature Types"), true);
+            yOffset += synergyTypesHeight + spacing;
+
+            // NEW: Draw the Search Owner option field
+            SerializedProperty searchOwnerProp = property.FindPropertyRelative("searchOwner");
+            EditorGUI.PropertyField(new Rect(position.x, yOffset, position.width, lineHeight),
+                                    searchOwnerProp, new GUIContent("Search Owner"));
             yOffset += lineHeight + spacing;
         }
 
-        // Show additional fields
-        EditorGUI.PropertyField(new Rect(position.x, yOffset, position.width, lineHeight), property.FindPropertyRelative("replacementDelay"));
-        yOffset += lineHeight + spacing;
-
-        EditorGUI.PropertyField(new Rect(position.x, yOffset, position.width, lineHeight), property.FindPropertyRelative("blockAdditionalPlays"));
-        yOffset += lineHeight + spacing;
-
-        SerializedProperty requiredCreatureNamesProp = property.FindPropertyRelative("requiredCreatureNames");
-        float reqHeight = EditorGUI.GetPropertyHeight(requiredCreatureNamesProp);
-        EditorGUI.PropertyField(new Rect(position.x, yOffset, position.width, reqHeight), requiredCreatureNamesProp, true);
-        yOffset += reqHeight + spacing;
-
-        EditorGUI.PropertyField(new Rect(position.x, yOffset, position.width, lineHeight), property.FindPropertyRelative("maxTargets"));
+        // (7) maxTargets always at the bottom
+        SerializedProperty maxTargetsProp = property.FindPropertyRelative("maxTargets");
+        EditorGUI.PropertyField(new Rect(position.x, yOffset, position.width, lineHeight), maxTargetsProp);
         yOffset += lineHeight + spacing;
 
         EditorGUI.EndProperty();
@@ -87,26 +126,55 @@ public class CardEffectDataValuesDrawer : PropertyDrawer
         float height = 0f;
         float lineHeight = EditorGUIUtility.singleLineHeight;
         float spacing = EditorGUIUtility.standardVerticalSpacing;
-        height += lineHeight + spacing; // effectType
-        height += lineHeight + spacing; // replacementCardName
-        height += lineHeight + spacing; // cardsToDraw
-        height += lineHeight + spacing; // powerChange
-        height += lineHeight + spacing; // replacementDelay
-        height += lineHeight + spacing; // blockAdditionalPlays
-        height += EditorGUI.GetPropertyHeight(property.FindPropertyRelative("requiredCreatureNames")) + spacing;
-        height += lineHeight + spacing; // maxTargets
 
-        // Add height for AdjustPowerAdjacentEffect fields if selected
-        CardEffectData.EffectType effectType = (CardEffectData.EffectType)property.FindPropertyRelative("effectType").enumValueIndex;
+        // effectType
+        height += lineHeight + spacing;
+        // replacementCardName
+        height += lineHeight + spacing;
+        // cardsToDraw
+        height += lineHeight + spacing;
+
+        CardEffectData.EffectType effectType =
+            (CardEffectData.EffectType)property.FindPropertyRelative("effectType").enumValueIndex;
+
         if (effectType == CardEffectData.EffectType.AdjustPowerAdjacent)
         {
-            height += (lineHeight * 3) + (spacing * 2); // for powerChangeAmount, powerChangeType, and targetPositions
+            // 4 fields for AdjustPowerAdjacent unique properties.
+            height += (lineHeight * 4) + (spacing * 3);
+            // requiredCreatureTypes array height for AdjustPowerAdjacent.
+            SerializedProperty typesProp = property.FindPropertyRelative("requiredCreatureTypes");
+            height += EditorGUI.GetPropertyHeight(typesProp, true) + spacing;
         }
+
+        // replacementDelay
+        height += lineHeight + spacing;
+        // blockAdditionalPlays
+        height += lineHeight + spacing;
+
+        if (effectType == CardEffectData.EffectType.ConditionalPowerBoost
+         || effectType == CardEffectData.EffectType.MutualConditionalPowerBoostEffect)
+        {
+            // 1 line for Power Change.
+            height += lineHeight + spacing;
+
+            // requiredCreatureNames array
+            SerializedProperty namesProp = property.FindPropertyRelative("requiredCreatureNames");
+            height += EditorGUI.GetPropertyHeight(namesProp, true) + spacing;
+
+            // requiredCreatureTypes array
+            SerializedProperty synergyTypesProp = property.FindPropertyRelative("requiredCreatureTypes");
+            height += EditorGUI.GetPropertyHeight(synergyTypesProp, true) + spacing;
+
+            // Search Owner field (1 line)
+            height += lineHeight + spacing;
+        }
+
+        // maxTargets
+        height += lineHeight + spacing;
 
         return height;
     }
 
-    // Helper method to get available card names
     private string[] GetAvailableCardNames()
     {
         if (DeckManager.instance != null)
@@ -115,7 +183,6 @@ public class CardEffectDataValuesDrawer : PropertyDrawer
         }
         else
         {
-            // Fallback: load all CardSO assets from Resources/Cards directly
             CardSO[] cards = Resources.LoadAll<CardSO>("Cards");
             if (cards.Length > 0)
             {

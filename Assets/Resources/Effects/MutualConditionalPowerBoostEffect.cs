@@ -3,102 +3,125 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "MutualConditionalPowerBoostEffect", menuName = "Card Effects/Mutual Conditional Power Boost")]
 public class MutualConditionalPowerBoostEffect : CardEffect
 {
-    public int boostAmount = 500; // Amount to boost power
-    public string[] requiredCardNames; // Names of required cards on the field
+    public int boostAmount = -100;
+    public string[] requiredCardNames;
+    public string[] requiredCreatureTypes;
 
-    private bool boostApplied = false; // Tracks if the boost has been applied
+    public enum SearchOwnerOption { Mine, AI, Both }
+    public SearchOwnerOption searchOwner = SearchOwnerOption.Both;
+
+    private int currentTotalPenalty = 0;
     private CardUI sourceCardRef;
 
     public override void ApplyEffect(CardUI sourceCard)
     {
-        if (boostApplied)
-        {
-            Debug.Log($"{sourceCard.cardData.cardName} effect: Boost already applied, skipping.");
-            return; // If already applied, do not apply again
-        }
-
         sourceCardRef = sourceCard;
+        Debug.Log($"[MutualConditionalPowerBoostEffect] ApplyEffect called on {sourceCard.cardData.cardName}");
 
-        // Check if the condition is met based on the current field state
-        bool conditionNow = IsConditionMet();
-
-        // If the condition is met and the boost hasn't been applied, apply the boost
-        if (conditionNow && !boostApplied)
+        int matchCount = CountMatches();
+        currentTotalPenalty = boostAmount * matchCount;
+        if (matchCount > 0)
         {
-            sourceCardRef.currentPower += boostAmount;
-            boostApplied = true;
-            Debug.Log($"{sourceCardRef.cardData.cardName} effect: Condition met => +{boostAmount} power. New power: {sourceCardRef.currentPower}");
+            sourceCardRef.currentPower += currentTotalPenalty;
+            Debug.Log($"{sourceCardRef.cardData.cardName} synergy: {currentTotalPenalty} applied for {matchCount} matching card(s). New power: {sourceCardRef.currentPower}");
         }
 
-        // Subscribe to the field change event to recheck conditions dynamically only if the effect hasn't been applied yet
-        if (!boostApplied)
-        {
-            TurnManager.instance.OnCardPlayed += OnFieldChanged; // Listen for any card played to trigger condition recheck
-        }
+        TurnManager.instance.OnCardPlayed += OnFieldChanged;
     }
 
-    private void OnFieldChanged(CardSO updatedCard)
+    public void OnFieldChanged(CardSO updatedCard)
     {
-        if (sourceCardRef == null) return;
+        if (sourceCardRef == null)
+            return;
 
-        bool conditionNow = IsConditionMet();
+        int newMatchCount = CountMatches();
+        int newTotalPenalty = boostAmount * newMatchCount;
 
-        // Apply boost if the condition becomes true
-        if (conditionNow && !boostApplied)
+        if (newTotalPenalty != currentTotalPenalty)
         {
-            sourceCardRef.currentPower += boostAmount;
-            boostApplied = true;
-            Debug.Log($"{sourceCardRef.cardData.cardName} effect: Condition now met => +{boostAmount} power. New power: {sourceCardRef.currentPower}");
-        }
-        // Remove the boost if the condition is no longer met
-        else if (!conditionNow && boostApplied)
-        {
-            sourceCardRef.currentPower -= boostAmount;
-            boostApplied = false;
-            Debug.Log($"{sourceCardRef.cardData.cardName} effect: Condition no longer met => -{boostAmount} power. New power: {sourceCardRef.currentPower}");
-        }
-
-        // After checking the field condition, we should stop listening to the event if the effect was applied successfully.
-        if (boostApplied)
-        {
-            TurnManager.instance.OnCardPlayed -= OnFieldChanged;  // Stop subscribing once effect is applied.
+            sourceCardRef.currentPower -= currentTotalPenalty;
+            sourceCardRef.currentPower += newTotalPenalty;
+            Debug.Log($"{sourceCardRef.cardData.cardName} synergy updated: from {currentTotalPenalty} to {newTotalPenalty} for {newMatchCount} matching card(s). New power: {sourceCardRef.currentPower}");
+            currentTotalPenalty = newTotalPenalty;
         }
     }
 
     public override void RemoveEffect(CardUI sourceCard)
     {
         TurnManager.instance.OnCardPlayed -= OnFieldChanged;
-
-        if (boostApplied)
+        if (currentTotalPenalty != 0)
         {
-            sourceCardRef.currentPower -= boostAmount;
-            boostApplied = false;
-            Debug.Log($"{sourceCardRef.cardData.cardName} effect: Removing conditional power boost of {boostAmount}. New power: {sourceCardRef.currentPower}");
+            sourceCardRef.currentPower -= currentTotalPenalty;
+            Debug.Log($"{sourceCardRef.cardData.cardName} synergy removed: reversing {currentTotalPenalty}. New power: {sourceCardRef.currentPower}");
+            currentTotalPenalty = 0;
         }
     }
 
-    private bool IsConditionMet()
+    private int CountMatches()
     {
+        int count = 0;
         CardSO[,] field = GridManager.instance.GetGrid();
+        GameObject[,] gridObjs = GridManager.instance.GetGridObjects();
+
+        CardHandler sourceHandler = sourceCardRef.GetComponent<CardHandler>();
+        PlayerManager sourceOwner = (sourceHandler != null) ? sourceHandler.cardOwner : null;
+
         for (int x = 0; x < field.GetLength(0); x++)
         {
             for (int y = 0; y < field.GetLength(1); y++)
             {
-                if (field[x, y] != null)
-                {
-                    foreach (string req in requiredCardNames)
-                    {
-                        Debug.Log($"Checking for required card: {req}");
+                CardSO occupant = field[x, y];
+                if (occupant == null)
+                    continue;
 
-                        if (field[x, y].cardName == req)
+                // Skip only the source card instance.
+                if (gridObjs[x, y] == sourceCardRef.gameObject)
+                    continue;
+
+                if (searchOwner == SearchOwnerOption.Mine)
+                {
+                    CardHandler occupantHandler = gridObjs[x, y].GetComponent<CardHandler>();
+                    if (occupantHandler == null || occupantHandler.cardOwner != sourceOwner)
+                        continue;
+                }
+                else if (searchOwner == SearchOwnerOption.AI)
+                {
+                    CardHandler occupantHandler = gridObjs[x, y].GetComponent<CardHandler>();
+                    if (occupantHandler == null || !occupantHandler.isAI)
+                        continue;
+                }
+
+                bool nameMatch = false;
+                bool typeMatch = false;
+
+                if (requiredCardNames != null)
+                {
+                    foreach (string reqName in requiredCardNames)
+                    {
+                        if (!string.IsNullOrEmpty(reqName) && occupant.cardName == reqName)
                         {
-                            Debug.Log($"Found {req} on the field at position ({x},{y})");
-                            return true; // Condition met if a required card is found
+                            nameMatch = true;
+                            break;
                         }
                     }
                 }
+
+                if (requiredCreatureTypes != null)
+                {
+                    foreach (string reqType in requiredCreatureTypes)
+                    {
+                        if (!string.IsNullOrEmpty(reqType) && occupant.creatureType == reqType)
+                        {
+                            typeMatch = true;
+                            break;
+                        }
+                    }
+                }
+
+                if (nameMatch || typeMatch)
+                    count++;
             }
         }
-        return false; // Condition not met
+        return count;
     }
 }
