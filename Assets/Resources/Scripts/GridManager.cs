@@ -1357,18 +1357,31 @@ public class GridManager : MonoBehaviour
         CardSO replacementCard = DeckManager.instance.FindCardByName(replacementName);
         if (replacementCard != null)
         {
-            // Remove the source occupant first.
-            RemoveCard(gridX, gridY, false);
-
-            // Pass the original card's owner to the replacement.
+            // Get the owner from the source card's CardHandler.
             PlayerManager owner = sourceCardUI.GetComponent<CardHandler>().cardOwner;
             if (owner == null)
             {
                 Debug.LogError($"[ExecuteReplacementInline] Source card '{sourceCardUI.cardData.cardName}' has no owner!");
+                return;
             }
+
+            // Remove the replacement card from the owner's deck.
+            if (owner.RemoveCardFromDeck(replacementCard))
+            {
+                Debug.Log($"[ExecuteReplacementInline] {replacementCard.cardName} removed from deck.");
+            }
+            else
+            {
+                Debug.LogWarning($"[ExecuteReplacementInline] {replacementCard.cardName} was not found in the deck.");
+            }
+
+            // Remove the source occupant from the grid.
+            RemoveCard(gridX, gridY, false);
+
+            // Instantiate the replacement card object.
             GameObject newCardObj = InstantiateReplacementCardInline(replacementCard, owner);
 
-            // Find the cell transform.
+            // Find the grid cell's transform.
             GameObject cellObj = GameObject.Find($"GridCell_{gridX}_{gridY}");
             if (cellObj == null)
             {
@@ -1380,14 +1393,12 @@ public class GridManager : MonoBehaviour
             // Place the replacement card.
             PlaceReplacementCard(gridX, gridY, newCardObj, replacementCard, cellTransform);
 
-            // If the replacement card is an Evo, show the splash.
+            // For evolution cards, show the evolution splash.
             if (replacementCard.baseOrEvo == CardSO.BaseOrEvo.Evolution)
             {
-                Debug.Log($"[ExecuteReplacementInline] Attempting ShowEvolutionSplash with oldCardName='{sourceCardUI.cardData.cardName}' and new evo='{replacementCard.cardName}'");
+                Debug.Log($"[ExecuteReplacementInline] Showing evolution splash with old '{sourceCardUI.cardData.cardName}' and new evo '{replacementCard.cardName}'");
                 GridManager.instance.ShowEvolutionSplash(sourceCardUI.cardData.cardName, replacementCard.cardName);
             }
-
-            Debug.Log($"DEBUG: blockAdditional = {blockAdditional} for {sourceCardUI.cardData.cardName} [inline]");
 
             if (blockAdditional)
             {
@@ -1401,6 +1412,7 @@ public class GridManager : MonoBehaviour
             Debug.LogError($"[ExecuteReplacementInline] Replacement card not found: {replacementName}");
         }
     }
+
 
 
 

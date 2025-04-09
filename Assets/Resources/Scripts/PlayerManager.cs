@@ -267,4 +267,18 @@ public class PlayerManager : MonoBehaviour
             Debug.Log("[PlayerManager] Hand count is within limit. No discard required.");
         }
     }
+    public bool RemoveCardFromDeck(CardSO cardData)
+    {
+        if (DeckManager.instance.currentDeck.Contains(cardData))
+        {
+            DeckManager.instance.currentDeck.Remove(cardData);
+            // Optionally update any deck UI, e.g., DeckZone
+            DeckZone.instance.UpdateDeckCount(DeckManager.instance.currentDeck.Count);
+            Debug.Log($"[PlayerManager] Removed {cardData.cardName} from the deck.");
+            return true;
+        }
+        Debug.LogWarning($"[PlayerManager] Card {cardData.cardName} was not found in the deck.");
+        return false;
+    }
+
 }
