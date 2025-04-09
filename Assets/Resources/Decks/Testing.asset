@@ -10,9 +10,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7a3f2cec2517eb241b44c21068f8f6bc, type: 3}
-  m_Name: Trash Test
+  m_Name: Testing
   m_EditorClassIdentifier: 
-  deckName: Trash Test
+  deckName: 
   cardEntries:
-  - card: {fileID: 11400000, guid: 637822ef217f1244caaabb03ecbff612, type: 2}
+  - card: {fileID: 11400000, guid: 713f2c811276e5646be14e4f7fca8f0b, type: 2}
     quantity: 40

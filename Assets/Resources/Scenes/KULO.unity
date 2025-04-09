@@ -4387,7 +4387,7 @@ MonoBehaviour:
   cardPrefab: {fileID: 1277828652}
   cardSpawnArea: {fileID: 632708204}
   aiSelectedDeck: {fileID: 0}
-  playerSelectedDeck: {fileID: 11400000, guid: 36293bfbb81bbe94c91fd63114e12158, type: 2}
+  playerSelectedDeck: {fileID: 11400000, guid: d21a1a9bcf0664a4189a8705beb008bd, type: 2}
   zones: {fileID: 892508755}
   pc: {fileID: 1408794936}
 --- !u!1 &1479547986

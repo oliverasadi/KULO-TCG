@@ -38,6 +38,7 @@ MonoBehaviour:
     powerChangeType: 0
     targetPositions: 
     adjacencyOwnerToAffect: 2
+    searchOwner: 0
   effects: []
   requiresSacrifice: 0
   sacrificeRequirements: []

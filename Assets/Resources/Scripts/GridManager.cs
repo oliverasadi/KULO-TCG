@@ -207,7 +207,6 @@ public class GridManager : MonoBehaviour
                         }
                     }
                 }
-
             } // end foreach sacrifice requirement
         }
 
@@ -216,6 +215,13 @@ public class GridManager : MonoBehaviour
         // ------------------
         if (grid[x, y] != null)
         {
+            // Explicitly prevent any Spell from replacing a Creature.
+            if (cardData.category == CardSO.CardCategory.Spell && grid[x, y].category == CardSO.CardCategory.Creature)
+            {
+                Debug.Log($"[GridManager] Spells have no power and cannot replace Creature cards. {cardData.cardName} cannot replace {grid[x, y].cardName}.");
+                return false;
+            }
+
             float occupantEffectivePower = gridObjects[x, y].GetComponent<CardUI>().CalculateEffectivePower();
             float newCardEffectivePower = cardObj.GetComponent<CardUI>().CalculateEffectivePower();
 
@@ -226,6 +232,13 @@ public class GridManager : MonoBehaviour
             }
             else if (Mathf.Approximately(occupantEffectivePower, newCardEffectivePower))
             {
+                // Also, if the new card is a Spell, do not permit a tie replacement with a Creature.
+                if (cardData.category == CardSO.CardCategory.Spell)
+                {
+                    Debug.Log($"[GridManager] Spell {cardData.cardName} cannot destroy Creature {grid[x, y].cardName} on equal power.");
+                    return false;
+                }
+
                 Debug.Log($"Equal effective power at ({x},{y}). Destroying both occupant and new card.");
                 CardHandler occupantHandler = gridObjects[x, y].GetComponent<CardHandler>();
                 bool occupantIsAI = (occupantHandler != null && occupantHandler.isAI);
@@ -353,7 +366,6 @@ public class GridManager : MonoBehaviour
                 }
             }
         }
-
 
         // If it's a Spell, remove it shortly
         if (cardData.category == CardSO.CardCategory.Spell)
@@ -513,9 +525,8 @@ public class GridManager : MonoBehaviour
                 }
             }
         }
-        
-        UpdateMutualConditionalEffects();
 
+        UpdateMutualConditionalEffects();
 
         return true;
     }

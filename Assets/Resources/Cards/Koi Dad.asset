@@ -22,3 +22,7 @@ MonoBehaviour:
   creatureType: Koi
   baseOrEvo: 0
   extraDetails: 'DOB: Unknown, GPS: Legendary Koi River, Weight: 4.2kg, Height: 0.30m.'
+  inlineEffects: []
+  effects: []
+  requiresSacrifice: 0
+  sacrificeRequirements: []
