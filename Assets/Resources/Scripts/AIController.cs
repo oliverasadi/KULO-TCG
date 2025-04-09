@@ -532,6 +532,52 @@ public class AIController : PlayerController
     // Places the AI's card on the grid.
     private bool PlaceAICardOnGrid(int x, int y, CardHandler cardHandler)
     {
+        // If the card is an Evolution card, adjust x and y
+        // to be the same as the sacrificed (base) card on the field.
+        if (cardHandler.cardData.baseOrEvo == CardSO.BaseOrEvo.Evolution)
+        {
+            int baseX = -1;
+            int baseY = -1;
+            CardSO[,] grid = GridManager.instance.GetGrid();
+
+            // Look for a matching base card on the field.
+            for (int i = 0; i < grid.GetLength(0); i++)
+            {
+                for (int j = 0; j < grid.GetLength(1); j++)
+                {
+                    if (grid[i, j] != null)
+                    {
+                        // Check against all sacrifice requirements.
+                        foreach (var req in cardHandler.cardData.sacrificeRequirements)
+                        {
+                            bool match = req.matchByCreatureType
+                                ? (grid[i, j].creatureType == req.requiredCardName)
+                                : (grid[i, j].cardName == req.requiredCardName);
+
+                            // Confirm ownership and match.
+                            if (match && GetOwnerTagFromCell(i, j) == "AI")
+                            {
+                                baseX = i;
+                                baseY = j;
+                                break;
+                            }
+                        }
+                    }
+                    if (baseX != -1)
+                        break;
+                }
+                if (baseX != -1)
+                    break;
+            }
+            // If we found a valid base card on the field, use its coordinates.
+            if (baseX != -1)
+            {
+                x = baseX;
+                y = baseY;
+            }
+            // Else: no matching sacrifice on the field – fallback to the provided (x,y).
+        }
+
         string cellName = $"GridCell_{x}_{y}";
         GameObject cellObj = GameObject.Find(cellName);
         if (cellObj != null)
@@ -548,6 +594,7 @@ public class AIController : PlayerController
                 }
                 CardPreviewManager.Instance.ShowCardPreview(cardHandler.cardData);
 
+                // Set flags depending on the card category.
                 if (cardHandler.cardData.category == CardSO.CardCategory.Creature)
                     tm.creaturePlayed = true;
                 else if (cardHandler.cardData.category == CardSO.CardCategory.Spell)
@@ -561,6 +608,7 @@ public class AIController : PlayerController
             return false;
         }
     }
+
 
     private void EndTurn()
     {
