@@ -13,10 +13,15 @@ public class CardInfoPanel : MonoBehaviour, IPointerClickHandler
     public TextMeshProUGUI cardPowerText;     // Displays the card's power.
     public TextMeshProUGUI extraDetailsText;  // Displays extra details for creature cards.
 
-    // Tracks if the panel is visible and which card is currently displayed.
-    private bool isVisible = false;
-    private CardSO currentCard = null;
+    // Store the CardUI that is currently displayed.
+    private CardUI currentCardUI = null;
     public float fadeDuration = 0.3f;         // Duration for fade in/out.
+
+    // Expose the current CardUI so that other scripts (like FloatingText) can verify which card is on display.
+    public CardUI CurrentCardUI
+    {
+        get { return currentCardUI; }
+    }
 
     // Reference to the card image pulsing animation coroutine.
     private Coroutine cardImageAnimationCoroutine;
@@ -39,39 +44,38 @@ public class CardInfoPanel : MonoBehaviour, IPointerClickHandler
     void Update()
     {
         // Hide the panel when Escape is pressed.
-        if (Input.GetKeyDown(KeyCode.Escape) && isVisible)
+        if (Input.GetKeyDown(KeyCode.Escape) && canvasGroup.alpha > 0)
         {
             HidePanel();
         }
     }
 
-    public void ShowCardInfo(CardSO card)
+    // ShowCardInfo now accepts a CardUI reference.
+    public void ShowCardInfo(CardUI cardUI)
     {
-        if (card == null)
+        if (cardUI == null)
         {
-            Debug.LogError("CardInfoPanel: No card data provided.");
+            Debug.LogError("CardInfoPanel: No CardUI provided.");
             return;
         }
 
-        // Remember which card is being displayed.
-        currentCard = card;
+        // Set the current card UI.
+        currentCardUI = cardUI;
 
-        // Update UI elements.
-        if (cardImage != null && card.cardImage != null)
-            cardImage.sprite = card.cardImage;
+        // Update UI elements using the dynamic (runtime) values.
+        if (cardImage != null && cardUI.cardData.cardImage != null)
+            cardImage.sprite = cardUI.cardData.cardImage;
         if (cardNameText != null)
-            cardNameText.text = card.cardName;
+            cardNameText.text = cardUI.cardData.cardName;
         if (cardDescriptionText != null)
-            cardDescriptionText.text = card.effectDescription;
+            cardDescriptionText.text = cardUI.cardData.effectDescription;
         if (cardPowerText != null)
-            cardPowerText.text = card.power.ToString();  // Display the power value.
+            cardPowerText.text = cardUI.currentPower.ToString();  // Show the effective power.
         if (extraDetailsText != null)
         {
-            // Show extra details only for creature cards.
-            if (card.category == CardSO.CardCategory.Creature)
-                extraDetailsText.text = card.extraDetails;
-            else
-                extraDetailsText.text = ""; // Optionally clear for non-creatures.
+            extraDetailsText.text = (cardUI.cardData.category == CardSO.CardCategory.Creature)
+                ? cardUI.cardData.extraDetails
+                : "";
         }
 
         // Animate the panel's fade-in.
@@ -82,8 +86,6 @@ public class CardInfoPanel : MonoBehaviour, IPointerClickHandler
             canvasGroup.interactable = true;
             canvasGroup.blocksRaycasts = true;
         }
-
-        isVisible = true;
 
         // Start the card image pulsing animation.
         if (cardImage != null)
@@ -101,9 +103,7 @@ public class CardInfoPanel : MonoBehaviour, IPointerClickHandler
             canvasGroup.interactable = false;
             canvasGroup.blocksRaycasts = false;
         }
-
-        isVisible = false;
-        currentCard = null;
+        currentCardUI = null;
 
         // Stop the card image animation and reset its scale.
         if (cardImageAnimationCoroutine != null)
@@ -112,7 +112,7 @@ public class CardInfoPanel : MonoBehaviour, IPointerClickHandler
             cardImageAnimationCoroutine = null;
             if (cardImage != null)
             {
-                cardImage.transform.localScale = Vector3.one; // Reset scale.
+                cardImage.transform.localScale = Vector3.one;
             }
         }
     }
@@ -136,14 +136,12 @@ public class CardInfoPanel : MonoBehaviour, IPointerClickHandler
         Vector3 originalScale = cardImage.transform.localScale;
         float amplitude = 0.05f; // Adjust for pulsing magnitude.
         float speed = 2f;        // Adjust for pulsing speed.
-
-        while (isVisible)
+        while (canvasGroup.alpha > 0)
         {
             float scaleFactor = 1f + amplitude * Mathf.Sin(Time.time * speed);
             cardImage.transform.localScale = originalScale * scaleFactor;
             yield return null;
         }
-        // Reset scale when done.
         cardImage.transform.localScale = originalScale;
     }
 
@@ -156,24 +154,17 @@ public class CardInfoPanel : MonoBehaviour, IPointerClickHandler
         }
     }
 
-    // Read-only properties so other scripts can check the panel's state.
-    public bool IsVisible => isVisible;
-    public CardSO CurrentCard => currentCard;
-
-    // Method to update the power text in the Card Info Panel
+    // Method to update the power text in the Card Info Panel.
     public void UpdatePowerDisplay()
     {
         Debug.Log("CardInfoPanel: Updating power text.");
-
-        // Ensure the power value is updated
-        if (currentCard != null && cardPowerText != null)
+        if (currentCardUI != null && cardPowerText != null)
         {
-            cardPowerText.text = currentCard.power.ToString();
+            cardPowerText.text = currentCardUI.currentPower.ToString();
         }
         else
         {
-            Debug.LogError("CardInfoPanel: currentCard or cardPowerText is null.");
+            Debug.LogError("CardInfoPanel: currentCardUI or cardPowerText is null.");
         }
     }
 }
-

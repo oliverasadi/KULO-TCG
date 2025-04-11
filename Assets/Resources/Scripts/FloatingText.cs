@@ -1,6 +1,7 @@
 using UnityEngine;
 using TMPro;
 
+
 public class FloatingText : MonoBehaviour
 {
     public TextMeshProUGUI textComponent;
@@ -72,7 +73,7 @@ public class FloatingText : MonoBehaviour
                 if (cardUI.cardInfoPanel != null && cardUI.cardInfoPanel.cardPowerText.text != newPowerText)
                 {
                     // Check if the card in FloatingText is the same as the one in CardInfoPanel
-                    if (cardUI.cardInfoPanel.CurrentCard == cardUI.cardData)
+                    if (cardUI.cardInfoPanel.CurrentCardUI != null && cardUI.cardInfoPanel.CurrentCardUI.cardData == cardUI.cardData)
                     {
                         Debug.Log("Updating Card Info Panel power text to: " + newPower);
                         cardUI.cardInfoPanel.cardPowerText.text = newPower.ToString();  // Directly set the Card Info Panel's power text

@@ -85,13 +85,19 @@ public class CardEffectDataValuesDrawer : PropertyDrawer
                                 property.FindPropertyRelative("blockAdditionalPlays"));
         yOffset += lineHeight + spacing;
 
-        // (6) For synergy effects, show powerChange, requiredCreatureNames, requiredCreatureTypes, and Search Owner
-        if (effectType == CardEffectData.EffectType.ConditionalPowerBoost
-         || effectType == CardEffectData.EffectType.MutualConditionalPowerBoostEffect)
+        // (6) For synergy effects, show powerChange, useCountMode, requiredCreatureNames, requiredCreatureTypes, and Search Owner
+        if (effectType == CardEffectData.EffectType.ConditionalPowerBoost ||
+            effectType == CardEffectData.EffectType.MutualConditionalPowerBoostEffect)
         {
             SerializedProperty powerChangeProp = property.FindPropertyRelative("powerChange");
             EditorGUI.PropertyField(new Rect(position.x, yOffset, position.width, lineHeight),
                                     powerChangeProp, new GUIContent("Power Change"));
+            yOffset += lineHeight + spacing;
+
+            // Draw the new useCountMode toggle.
+            SerializedProperty useCountModeProp = property.FindPropertyRelative("useCountMode");
+            EditorGUI.PropertyField(new Rect(position.x, yOffset, position.width, lineHeight),
+                                    useCountModeProp, new GUIContent("Use Count Mode"));
             yOffset += lineHeight + spacing;
 
             SerializedProperty namesProp = property.FindPropertyRelative("requiredCreatureNames");
@@ -106,7 +112,6 @@ public class CardEffectDataValuesDrawer : PropertyDrawer
                                     synergyTypesProp, new GUIContent("Required Creature Types"), true);
             yOffset += synergyTypesHeight + spacing;
 
-            // NEW: Draw the Search Owner option field
             SerializedProperty searchOwnerProp = property.FindPropertyRelative("searchOwner");
             EditorGUI.PropertyField(new Rect(position.x, yOffset, position.width, lineHeight),
                                     searchOwnerProp, new GUIContent("Search Owner"));
@@ -151,20 +156,19 @@ public class CardEffectDataValuesDrawer : PropertyDrawer
         // blockAdditionalPlays
         height += lineHeight + spacing;
 
-        if (effectType == CardEffectData.EffectType.ConditionalPowerBoost
-         || effectType == CardEffectData.EffectType.MutualConditionalPowerBoostEffect)
+        if (effectType == CardEffectData.EffectType.ConditionalPowerBoost ||
+            effectType == CardEffectData.EffectType.MutualConditionalPowerBoostEffect)
         {
             // 1 line for Power Change.
             height += lineHeight + spacing;
-
+            // 1 line for Use Count Mode toggle.
+            height += lineHeight + spacing;
             // requiredCreatureNames array
             SerializedProperty namesProp = property.FindPropertyRelative("requiredCreatureNames");
             height += EditorGUI.GetPropertyHeight(namesProp, true) + spacing;
-
             // requiredCreatureTypes array
             SerializedProperty synergyTypesProp = property.FindPropertyRelative("requiredCreatureTypes");
             height += EditorGUI.GetPropertyHeight(synergyTypesProp, true) + spacing;
-
             // Search Owner field (1 line)
             height += lineHeight + spacing;
         }

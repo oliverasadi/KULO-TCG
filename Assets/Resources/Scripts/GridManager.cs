@@ -39,33 +39,36 @@ public class GridManager : MonoBehaviour
         return true;
     }
 
-    public bool CanPlaceCard(int x, int y, CardSO card)
+    public bool CanPlaceCard(int x, int y, CardUI newCardUI)
     {
         int currentPlayer = TurnManager.instance.GetCurrentPlayer();
+        int newCardEffectivePower = newCardUI.CalculateEffectivePower();
 
         if (grid[x, y] == null)
         {
-            return TurnManager.instance.CanPlayCard(card);
+            return TurnManager.instance.CanPlayCard(newCardUI.cardData);
         }
         else
         {
-            CardHandler occupantHandler = gridObjects[x, y].GetComponent<CardHandler>();
-            if (occupantHandler != null)
+            CardUI occupantUI = gridObjects[x, y].GetComponent<CardUI>();
+            if (occupantUI != null)
             {
                 bool occupantIsOpponent =
-                    (currentPlayer == 1 && occupantHandler.isAI) ||
-                    (currentPlayer == 2 && !occupantHandler.isAI);
+                    (currentPlayer == 1 && occupantUI.GetComponent<CardHandler>().isAI) ||
+                    (currentPlayer == 2 && !occupantUI.GetComponent<CardHandler>().isAI);
 
                 if (occupantIsOpponent)
                 {
-                    bool allowed = (card.power >= grid[x, y].power);
-                    Debug.Log($"[GridManager] Replacement at ({x},{y}): occupant power = {grid[x, y].power}, new card power = {card.power}, allowed = {allowed}");
+                    int occupantEffectivePower = occupantUI.CalculateEffectivePower();
+                    bool allowed = (newCardEffectivePower >= occupantEffectivePower);
+                    Debug.Log($"[GridManager] Replacement at ({x},{y}): occupant power = {occupantEffectivePower}, new card power = {newCardEffectivePower}, allowed = {allowed}");
                     return allowed;
                 }
             }
             return false;
         }
     }
+
     public bool PlaceExistingCard(int x, int y, GameObject cardObj, CardSO cardData, Transform cellParent)
     {
         Debug.Log($"[GridManager] Attempting to place {cardData.cardName} at ({x},{y}). Category: {cardData.category}");

@@ -14,5 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   deckName: Trash Test
   cardEntries:
-  - card: {fileID: 11400000, guid: 637822ef217f1244caaabb03ecbff612, type: 2}
+  - card: {fileID: 11400000, guid: 42ece4833eb662045ae2c03cc5b40118, type: 2}
     quantity: 40

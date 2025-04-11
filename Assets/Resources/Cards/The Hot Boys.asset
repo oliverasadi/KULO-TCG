@@ -21,3 +21,23 @@ MonoBehaviour:
   creatureType: Wax
   baseOrEvo: 0
   extraDetails: 'DOB: 1993 GPS: Bonito Wax Ashes, Weight: 0.0kg, Height: 1.83m'
+  inlineEffects:
+  - effectType: 4
+    cardsToDraw: 0
+    requiredCreatureNames: []
+    requiredCreatureTypes: []
+    maxTargets: 0
+    replacementCardName: 
+    turnDelay: 0
+    blockAdditionalPlays: 0
+    promptPrefab: {fileID: 0}
+    powerChange: 300
+    useCountMode: 1
+    powerChangeAmount: 0
+    powerChangeType: 0
+    targetPositions: 
+    adjacencyOwnerToAffect: 0
+    searchOwner: 2
+  effects: []
+  requiresSacrifice: 0
+  sacrificeRequirements: []

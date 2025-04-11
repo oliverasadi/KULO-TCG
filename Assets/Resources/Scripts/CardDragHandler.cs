@@ -83,19 +83,19 @@ public class CardDragHandler : MonoBehaviour, IBeginDragHandler, IDragHandler, I
     public void CheckDroppedCard(Vector2Int position, Transform cellParent, out bool isOccupied)
     {
         isOccupied = false;
-        CardSO cardData = cardHandler.GetCardData();
+        CardUI cardUI = GetComponent<CardUI>();
 
         if (GridManager.instance.IsValidDropPosition(position, out int x, out int y) &&
-            GridManager.instance.CanPlaceCard(x, y, cardData))
+            GridManager.instance.CanPlaceCard(x, y, cardUI))
         {
-            Debug.Log($"[CardDragHandler] Attempting to place {cardData.cardName} at {x},{y}");
-            bool placed = GridManager.instance.PlaceExistingCard(x, y, gameObject, cardData, cellParent);
+            Debug.Log($"[CardDragHandler] Attempting to place {cardUI.cardData.cardName} at {x},{y}");
+            bool placed = GridManager.instance.PlaceExistingCard(x, y, gameObject, cardUI.cardData, cellParent);
 
             if (placed)
             {
                 isOccupied = true;
                 isDroppedOnValidZone = true;
-                CardPreviewManager.Instance.ShowCardPreview(cardData);
+                CardPreviewManager.Instance.ShowCardPreview(cardUI.cardData);
             }
             else
             {
@@ -107,6 +107,7 @@ public class CardDragHandler : MonoBehaviour, IBeginDragHandler, IDragHandler, I
             ResetCardPosition();
         }
     }
+
 
     public void ResetCardPosition()
     {

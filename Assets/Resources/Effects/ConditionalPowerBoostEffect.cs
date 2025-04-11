@@ -7,77 +7,72 @@ public class ConditionalPowerBoostEffect : CardEffect
     // Names of the cards required on the field to trigger the boost.
     public string[] requiredCardNames;
 
-    // Tracks whether the boost is currently applied to avoid stacking.
-    private bool boostApplied = false;
+    // When true, the effect will count matching cards and add boostAmount per match.
+    // (This value can be set via asset-based effects, but for inline effects you can copy it from CardEffectData.useCountMode.)
+    public bool useCountMode = false;
 
-    // Keep a reference to the source CardUI, so we can update its runtime power
-    // and unsubscribe from events when this effect is removed.
+    // For non-count mode, we track whether the boost is applied.
+    // For count mode, we track the total boost applied.
+    private bool boostApplied = false;
+    private int currentBoost = 0;
+
+    // Reference to the source CardUI so we can update its runtime power.
     private CardUI sourceCardRef;
 
     public override void ApplyEffect(CardUI sourceCard)
     {
-        // Store a reference to the source card
         sourceCardRef = sourceCard;
 
-        // Perform an initial check to apply the boost if conditions are already met
-        bool conditionNow = IsConditionMet();
-        if (conditionNow)
+        int matchCount = 0;
+        if (useCountMode)
+            matchCount = CountMatches();
+        else
+            matchCount = IsConditionMet() ? 1 : 0;
+
+        if (matchCount > 0)
         {
-            sourceCardRef.currentPower += boostAmount;
+            currentBoost = boostAmount * matchCount;
+            sourceCardRef.currentPower += currentBoost;
             boostApplied = true;
-            Debug.Log($"{sourceCardRef.cardData.cardName} effect: Condition initially met => +{boostAmount} power. New power: {sourceCardRef.currentPower}");
+            Debug.Log($"{sourceCardRef.cardData.cardName} effect: Condition met for {matchCount} match(es) => +{currentBoost} power. New power: {sourceCardRef.currentPower}");
         }
 
-        // Subscribe to events that happen when cards are played or moved.
-        // Replace these with whatever your project actually uses.
-        // For example, if you only have a TurnManager event for new cards:
+        // Subscribe to field updates.
         TurnManager.instance.OnCardPlayed += OnFieldChanged;
-
-        // If you have an event that fires when a card moves or leaves the field, subscribe similarly:
-        // GridManager.instance.OnCardMoved += OnFieldChanged;
-        // GridManager.instance.OnCardRemoved += OnFieldChanged;
     }
 
-    // Called whenever the field changes (e.g., a card is played, moved, or removed).
     private void OnFieldChanged(CardSO updatedCard)
     {
-        if (sourceCardRef == null) return; // Defensive check
+        if (sourceCardRef == null)
+            return;
 
-        bool conditionNow = IsConditionMet();
-        if (conditionNow && !boostApplied)
+        int newMatchCount = useCountMode ? CountMatches() : (IsConditionMet() ? 1 : 0);
+        int newBoost = boostAmount * newMatchCount;
+
+        if (newBoost != currentBoost)
         {
-            // Condition just became true; apply the boost
-            sourceCardRef.currentPower += boostAmount;
-            boostApplied = true;
-            Debug.Log($"{sourceCardRef.cardData.cardName} effect: Condition now met => +{boostAmount} power. New power: {sourceCardRef.currentPower}");
+            sourceCardRef.currentPower -= currentBoost;
+            sourceCardRef.currentPower += newBoost;
+            Debug.Log($"{sourceCardRef.cardData.cardName} effect: Updated boost from {currentBoost} to {newBoost} (based on {newMatchCount} match(es)). New power: {sourceCardRef.currentPower}");
+            currentBoost = newBoost;
+            boostApplied = (newMatchCount > 0);
         }
-        else if (!conditionNow && boostApplied)
-        {
-            // Condition no longer met; remove the boost
-            sourceCardRef.currentPower -= boostAmount;
-            boostApplied = false;
-            Debug.Log($"{sourceCardRef.cardData.cardName} effect: Condition no longer met => -{boostAmount} power. New power: {sourceCardRef.currentPower}");
-        }
-        // If conditionNow==true && boostApplied==true, or conditionNow==false && !boostApplied, do nothing.
     }
 
     public override void RemoveEffect(CardUI sourceCard)
     {
-        // Unsubscribe from any events we used
         TurnManager.instance.OnCardPlayed -= OnFieldChanged;
-        // GridManager.instance.OnCardMoved -= OnFieldChanged; // If used
-        // GridManager.instance.OnCardRemoved -= OnFieldChanged; // If used
-
-        // If the boost is still applied, remove it
         if (boostApplied)
         {
-            sourceCard.currentPower -= boostAmount;
+            sourceCard.currentPower -= currentBoost;
+            Debug.Log($"{sourceCard.cardData.cardName} effect: Removing boost of {currentBoost}. New power: {sourceCard.currentPower}");
+            currentBoost = 0;
             boostApplied = false;
-            Debug.Log($"{sourceCard.cardData.cardName} effect: Removing conditional power boost of {boostAmount}. New power: {sourceCard.currentPower}");
         }
     }
 
-    // Check if at least one of the requiredCardNames is present on the field
+    // Returns true if at least one matching card is on the field.
+    // If no required names are specified, any card with category Creature will count.
     private bool IsConditionMet()
     {
         CardSO[,] field = GridManager.instance.GetGrid();
@@ -87,16 +82,64 @@ public class ConditionalPowerBoostEffect : CardEffect
             {
                 if (field[x, y] != null)
                 {
-                    foreach (string req in requiredCardNames)
+                    if (requiredCardNames == null || requiredCardNames.Length == 0)
                     {
-                        if (field[x, y].cardName == req)
-                        {
+                        if (field[x, y].category == CardSO.CardCategory.Creature)
                             return true;
+                    }
+                    else
+                    {
+                        foreach (string req in requiredCardNames)
+                        {
+                            if (!string.IsNullOrEmpty(req) && field[x, y].cardName == req)
+                                return true;
                         }
                     }
                 }
             }
         }
         return false;
+    }
+
+    // Counts the number of matching cards on the field.
+    // If requiredCardNames is empty, counts every creature (excluding the source card).
+    private int CountMatches()
+    {
+        int count = 0;
+        CardSO[,] field = GridManager.instance.GetGrid();
+        GameObject[,] gridObjs = GridManager.instance.GetGridObjects();
+
+        for (int x = 0; x < field.GetLength(0); x++)
+        {
+            for (int y = 0; y < field.GetLength(1); y++)
+            {
+                if (field[x, y] != null)
+                {
+                    if (requiredCardNames == null || requiredCardNames.Length == 0)
+                    {
+                        if (field[x, y].category == CardSO.CardCategory.Creature)
+                        {
+                            if (gridObjs[x, y] == sourceCardRef.gameObject)
+                                continue;
+                            count++;
+                        }
+                    }
+                    else
+                    {
+                        foreach (string req in requiredCardNames)
+                        {
+                            if (!string.IsNullOrEmpty(req) && field[x, y].cardName == req)
+                            {
+                                if (gridObjs[x, y] == sourceCardRef.gameObject)
+                                    continue;
+                                count++;
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return count;
     }
 }

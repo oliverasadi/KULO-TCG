@@ -27,6 +27,10 @@ public class CardEffectData
     public GameObject promptPrefab;
     public int powerChange = 0;
 
+    // NEW: When true, effects like ConditionalPowerBoost will count the matching cards
+    // and multiply powerChange by the number of matches.
+    public bool useCountMode = false;
+
     // For AdjustPowerAdjacent
     public int powerChangeAmount = 0;
     public PowerChangeType powerChangeType;

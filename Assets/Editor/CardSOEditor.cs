@@ -91,14 +91,15 @@ public class CardSOEditor : Editor
                     }
                     EditorGUI.indentLevel--;
 
-                    // NEW: For synergy effects, draw the Search Owner option.
+                    // NEW: For synergy effects, draw the Use Count Mode toggle and then the Search Owner option.
                     if (effectType == CardEffectData.EffectType.ConditionalPowerBoost ||
                         effectType == CardEffectData.EffectType.MutualConditionalPowerBoostEffect)
                     {
+                        EditorGUILayout.PropertyField(effectElement.FindPropertyRelative("useCountMode"), new GUIContent("Use Count Mode"));
                         EditorGUILayout.PropertyField(effectElement.FindPropertyRelative("searchOwner"), new GUIContent("Search Owner"));
                     }
 
-                    // The rest of your fields.
+                    // 5) The rest of your fields.
                     EditorGUILayout.PropertyField(effectElement.FindPropertyRelative("maxTargets"));
                     EditorGUILayout.PropertyField(effectElement.FindPropertyRelative("replacementCardName"));
                     EditorGUILayout.PropertyField(effectElement.FindPropertyRelative("turnDelay"));
