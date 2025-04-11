@@ -145,22 +145,25 @@ public class CardUI : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler,
 
     public int CalculateEffectivePower()
     {
-        // Start with the card's base power instead of the already altered runtime power.
+        // Start with the card's base power from its CardSO.
         int effectivePower = cardData.power;
 
-        // Ensure that cardData and inlineEffects are valid.
+        // Only proceed if cardData and its inlineEffects are valid.
         if (cardData == null || cardData.inlineEffects == null)
             return effectivePower;
 
+        // Obtain the current state of the grid.
         CardSO[,] gridArray = GridManager.instance.GetGrid();
         GameObject[,] gridObjs = GridManager.instance.GetGridObjects();
 
+        // Process each inline effect for ConditionalPowerBoost.
         foreach (var effect in cardData.inlineEffects)
         {
             if (effect.effectType == CardEffectData.EffectType.ConditionalPowerBoost)
             {
                 int synergyCount = 0;
-                // Count matching cards on the board.
+
+                // Count matching cards on the board if specific names are required.
                 if (effect.requiredCreatureNames != null && effect.requiredCreatureNames.Count > 0)
                 {
                     CardHandler myHandler = GetComponent<CardHandler>();
@@ -203,14 +206,21 @@ public class CardUI : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler,
                         }
                     }
                 }
+                // If one or more matching cards were found, add the boost.
                 if (synergyCount > 0)
                 {
                     effectivePower += effect.powerChange * synergyCount;
                 }
             }
         }
+
+        // Finally, add any aggregated modifiers stored in temporaryBoost.
+        // (Other effects should update temporaryBoost when applied or removed.)
+        effectivePower += temporaryBoost;
+
         return effectivePower;
     }
+
 
 
 

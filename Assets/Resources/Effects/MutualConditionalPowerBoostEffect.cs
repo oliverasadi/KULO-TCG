@@ -22,7 +22,9 @@ public class MutualConditionalPowerBoostEffect : CardEffect
         currentTotalPenalty = boostAmount * matchCount;
         if (matchCount > 0)
         {
-            sourceCardRef.currentPower += currentTotalPenalty;
+            // Instead of directly modifying currentPower, update the aggregated modifier.
+            sourceCardRef.temporaryBoost += currentTotalPenalty;
+            sourceCardRef.UpdatePower(sourceCardRef.CalculateEffectivePower());
             Debug.Log($"{sourceCardRef.cardData.cardName} synergy: {currentTotalPenalty} applied for {matchCount} matching card(s). New power: {sourceCardRef.currentPower}");
         }
 
@@ -39,8 +41,10 @@ public class MutualConditionalPowerBoostEffect : CardEffect
 
         if (newTotalPenalty != currentTotalPenalty)
         {
-            sourceCardRef.currentPower -= currentTotalPenalty;
-            sourceCardRef.currentPower += newTotalPenalty;
+            // Remove the previous penalty and then apply the new one.
+            sourceCardRef.temporaryBoost -= currentTotalPenalty;
+            sourceCardRef.temporaryBoost += newTotalPenalty;
+            sourceCardRef.UpdatePower(sourceCardRef.CalculateEffectivePower());
             Debug.Log($"{sourceCardRef.cardData.cardName} synergy updated: from {currentTotalPenalty} to {newTotalPenalty} for {newMatchCount} matching card(s). New power: {sourceCardRef.currentPower}");
             currentTotalPenalty = newTotalPenalty;
         }
@@ -51,7 +55,8 @@ public class MutualConditionalPowerBoostEffect : CardEffect
         TurnManager.instance.OnCardPlayed -= OnFieldChanged;
         if (currentTotalPenalty != 0)
         {
-            sourceCardRef.currentPower -= currentTotalPenalty;
+            sourceCardRef.temporaryBoost -= currentTotalPenalty;
+            sourceCardRef.UpdatePower(sourceCardRef.CalculateEffectivePower());
             Debug.Log($"{sourceCardRef.cardData.cardName} synergy removed: reversing {currentTotalPenalty}. New power: {sourceCardRef.currentPower}");
             currentTotalPenalty = 0;
         }
