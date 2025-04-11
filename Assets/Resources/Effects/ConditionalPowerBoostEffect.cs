@@ -38,6 +38,7 @@ public class ConditionalPowerBoostEffect : CardEffect
         }
 
         // Subscribe to field updates.
+        TurnManager.instance.OnCardPlayed -= OnFieldChanged;
         TurnManager.instance.OnCardPlayed += OnFieldChanged;
     }
 

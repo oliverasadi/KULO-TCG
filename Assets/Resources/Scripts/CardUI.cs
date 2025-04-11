@@ -145,37 +145,22 @@ public class CardUI : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler,
 
     public int CalculateEffectivePower()
     {
-        // Start with the card's current runtime power.
-        int effectivePower = currentPower;
+        // Start with the card's base power instead of the already altered runtime power.
+        int effectivePower = cardData.power;
 
-        // Ensure cardData and inlineEffects are not null.
-        if (cardData == null)
-        {
-            Debug.LogError("CardUI.CalculateEffectivePower: cardData is null on " + gameObject.name);
+        // Ensure that cardData and inlineEffects are valid.
+        if (cardData == null || cardData.inlineEffects == null)
             return effectivePower;
-        }
-
-        if (cardData.inlineEffects == null)
-            return effectivePower;
-
-        // Ensure GridManager.instance is available.
-        if (GridManager.instance == null)
-        {
-            Debug.LogError("CardUI.CalculateEffectivePower: GridManager.instance is null.");
-            return effectivePower;
-        }
 
         CardSO[,] gridArray = GridManager.instance.GetGrid();
         GameObject[,] gridObjs = GridManager.instance.GetGridObjects();
 
-        // Loop through each inline effect.
         foreach (var effect in cardData.inlineEffects)
         {
-            // Process only ConditionalPowerBoost effects.
             if (effect.effectType == CardEffectData.EffectType.ConditionalPowerBoost)
             {
                 int synergyCount = 0;
-                // If there are required creature names (non-empty list), use that to decide.
+                // Count matching cards on the board.
                 if (effect.requiredCreatureNames != null && effect.requiredCreatureNames.Count > 0)
                 {
                     CardHandler myHandler = GetComponent<CardHandler>();
@@ -183,19 +168,16 @@ public class CardUI : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler,
                     {
                         for (int j = 0; j < gridArray.GetLength(1); j++)
                         {
-                            // Skip empty cells or if this is the source card (if on the grid)
                             if (gridArray[i, j] == null)
                                 continue;
                             if (gridObjs[i, j] == this.gameObject)
                                 continue;
-                            // Check each required name.
                             foreach (string reqName in effect.requiredCreatureNames)
                             {
                                 if (!string.IsNullOrEmpty(reqName) && gridArray[i, j].cardName == reqName)
                                 {
                                     CardHandler candidate = gridObjs[i, j].GetComponent<CardHandler>();
-                                    if (candidate != null && myHandler != null &&
-                                        candidate.cardOwner == myHandler.cardOwner)
+                                    if (candidate != null && myHandler != null && candidate.cardOwner == myHandler.cardOwner)
                                     {
                                         synergyCount++;
                                         break;
@@ -207,7 +189,7 @@ public class CardUI : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler,
                 }
                 else
                 {
-                    // If no specific required names are given, count every creature on the grid (excluding self).
+                    // Default: count every creature on the field except this one.
                     for (int i = 0; i < gridArray.GetLength(0); i++)
                     {
                         for (int j = 0; j < gridArray.GetLength(1); j++)
@@ -229,6 +211,7 @@ public class CardUI : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler,
         }
         return effectivePower;
     }
+
 
 
 
@@ -427,13 +410,8 @@ public class CardUI : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler,
 
     void Update()
     {
-        // If cardData is not assigned, skip processing.
-        if (cardData == null)
-        {
-            return;
-        }
+        if (cardData == null) return;
 
-        // If the card is not on the field (i.e. it's in hand), continuously recalculate its effective power.
         if (!isOnField)
         {
             int newEffectivePower = CalculateEffectivePower();
@@ -445,13 +423,13 @@ public class CardUI : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler,
             }
         }
 
-        // Existing functionality: if the card is selected and space is pressed, show the Card Info Panel.
         if (isSelected && Input.GetKeyDown(KeyCode.Space))
         {
             if (cardInfoPanel != null)
                 cardInfoPanel.ShowCardInfo(this);
         }
     }
+
 
     public bool isSelected = false;
 }

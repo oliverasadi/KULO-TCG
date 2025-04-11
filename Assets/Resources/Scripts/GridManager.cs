@@ -448,10 +448,9 @@ public class GridManager : MonoBehaviour
                     {
                         Debug.Log("Creating a runtime instance of ConditionalPowerBoostEffect for inline synergy...");
                         ConditionalPowerBoostEffect synergyEffect = ScriptableObject.CreateInstance<ConditionalPowerBoostEffect>();
-
                         synergyEffect.boostAmount = inlineEffect.powerChange;
                         synergyEffect.requiredCardNames = inlineEffect.requiredCreatureNames.ToArray();
-
+                        synergyEffect.useCountMode = inlineEffect.useCountMode; // Copy the flag so it behaves as intended.
                         synergyEffect.ApplyEffect(cardUIComp);
                         cardUIComp.activeInlineEffects.Add(synergyEffect);
                     }
