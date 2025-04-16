@@ -312,6 +312,9 @@ public class GridManager : MonoBehaviour
 
         Debug.Log($"[GridManager] Placed {cardData.cardName} at ({x},{y}).");
 
+        // After placing card and applying all initial effects:
+        TurnManager.instance.FireOnCardPlayed(cardData);
+
         // ------------------
         // (5) EVOLUTION SPLASH (if applicable)
         // ------------------
