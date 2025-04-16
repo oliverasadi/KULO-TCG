@@ -1257,17 +1257,21 @@ public class GridManager : MonoBehaviour
                     // 🔁 ReplaceAfterOpponentTurn logic
                     if (inlineEffect.effectType == CardEffectData.EffectType.ReplaceAfterOpponentTurn)
                     {
-                        Debug.Log($"[CheckReplacementEffects] {cardUI.cardData.cardName} current turnDelay: {inlineEffect.turnDelay}");
-
-                        if (inlineEffect.turnDelay > 0)
+                        // Only run for local player's turn (so AI turns don’t show the prompt)
+                        if (TurnManager.instance.GetCurrentPlayer() == TurnManager.instance.localPlayerNumber)
                         {
-                            inlineEffect.turnDelay--;
-                            Debug.Log($"[CheckReplacementEffects] {cardUI.cardData.cardName} decremented turnDelay to {inlineEffect.turnDelay}");
-                        }
+                            Debug.Log($"[CheckReplacementEffects] {cardUI.cardData.cardName} current turnDelay: {inlineEffect.turnDelay}");
 
-                        if (inlineEffect.turnDelay <= 0)
-                        {
-                            ShowInlineReplacementPrompt(cardUI, i, j, inlineEffect);
+                            if (inlineEffect.turnDelay > 0)
+                            {
+                                inlineEffect.turnDelay--;
+                                Debug.Log($"[CheckReplacementEffects] {cardUI.cardData.cardName} decremented turnDelay to {inlineEffect.turnDelay}");
+                            }
+
+                            if (inlineEffect.turnDelay <= 0)
+                            {
+                                ShowInlineReplacementPrompt(cardUI, i, j, inlineEffect);
+                            }
                         }
                     }
 

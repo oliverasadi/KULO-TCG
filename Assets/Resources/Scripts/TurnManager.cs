@@ -87,7 +87,7 @@ public class TurnManager : MonoBehaviour
             Debug.LogError("❌ PlayerManager not found!");
         }
 
-        // Show splash
+        // Show turn splash
         string splashMessage = (currentPlayer == localPlayerNumber) ? "Your Turn Start" : "CPU Turn Start";
         ShowTurnSplash(splashMessage);
 
@@ -106,7 +106,7 @@ public class TurnManager : MonoBehaviour
             spellPlayed = false;
         }
 
-        // ✅ ✅ Apply power loss (e.g., Mango Lango) NOW
+        // ✅ Run end-of-turn effects like Mango Lango & turn-start evo triggers
         GridManager.instance.CheckReplacementEffects();
 
         if (currentPlayerManager != null && drawCard)
@@ -123,6 +123,7 @@ public class TurnManager : MonoBehaviour
 
         currentPlayerManager.pc.StartTurn();
     }
+
 
 
     public bool CanPlayCard(CardSO card)

@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -311,25 +311,16 @@ public class AIController : PlayerController
 
     // Returns the best aggressive move for the AI given the current grid and the candidate card.
     private Vector2Int FindBestAggressiveMove(CardSO[,] grid, CardSO candidate)
-    { // Priority 1: Try to win by completing a row, column, or diagonal.
-      Vector2Int winningMove = FindWinningMove(grid); 
-        if (winningMove.x != -1) 
+    {
+        // Priority 1: Try to win by completing 3 in a row.
+        Vector2Int winningMove = FindWinningMove(grid);
+        if (winningMove.x != -1)
             return winningMove;
-
-
-        // Priority 2: Block opponent's winning move.
-        List<Vector2Int> blockingZones = FindBlockingMoves(grid);
-        if (blockingZones.Count > 0)
-            return blockingZones[0];
-
-        // Priority 3: If the center cell is open, take it.
-        if (grid[1, 1] == null)
-            return new Vector2Int(1, 1);
 
         List<Vector2Int> replaceableZones = new List<Vector2Int>();
         List<Vector2Int> openZones = new List<Vector2Int>();
 
-        // Priority 4: Evaluate cells with opponent cards that might be replaceable.
+        // Priority 2: Target opponent's cards.
         for (int x = 0; x < grid.GetLength(0); x++)
         {
             for (int y = 0; y < grid.GetLength(1); y++)
@@ -339,7 +330,6 @@ public class AIController : PlayerController
                     CardSO playerCard = grid[x, y];
                     if (playerCard != null && CheckForReplacement(candidate, playerCard))
                     {
-                        // If the opponent's card is in the center, take it immediately.
                         if (x == 1 && y == 1)
                             return new Vector2Int(x, y);
                         replaceableZones.Add(new Vector2Int(x, y));
@@ -347,24 +337,21 @@ public class AIController : PlayerController
                 }
                 else if (grid[x, y] == null)
                 {
-                    // Collect any open cells.
                     openZones.Add(new Vector2Int(x, y));
                 }
             }
         }
 
-        // Priority 5: If there are any open cells, pick the first one.
+        List<Vector2Int> blockingZones = FindBlockingMoves(grid);
+        if (blockingZones.Count > 0)
+            return blockingZones[0];
+        if (replaceableZones.Count > 0)
+            return replaceableZones[0];
         if (openZones.Count > 0)
             return openZones[0];
 
-        // Priority 6: Otherwise, consider replaceable zones.
-        if (replaceableZones.Count > 0)
-            return replaceableZones[0];
-
-        // If no move is found, return an invalid move indicator.
         return new Vector2Int(-1, -1);
     }
-
 
     // New version of CheckForReplacement that uses the candidate card.
     private bool CheckForReplacement(CardSO candidate, CardSO playerCard)
@@ -575,7 +562,7 @@ public class AIController : PlayerController
                 x = baseX;
                 y = baseY;
             }
-            // Else: no matching sacrifice on the field � fallback to the provided (x,y).
+            // Else: no matching sacrifice on the field  fallback to the provided (x,y).
         }
 
         string cellName = $"GridCell_{x}_{y}";
@@ -608,7 +595,6 @@ public class AIController : PlayerController
             return false;
         }
     }
-
 
     private void EndTurn()
     {
