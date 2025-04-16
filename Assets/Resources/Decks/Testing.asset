@@ -14,5 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   deckName: 
   cardEntries:
-  - card: {fileID: 11400000, guid: 713f2c811276e5646be14e4f7fca8f0b, type: 2}
+  - card: {fileID: 11400000, guid: bb178b191f2718747af9245e4dad335b, type: 2}
     quantity: 40

@@ -13,7 +13,8 @@ public class CardEffectData
         MutualConditionalPowerBoostEffect,
         ConditionalPowerBoost,
         ReplaceAfterOpponentTurn,
-        AdjustPowerAdjacent
+        AdjustPowerAdjacent,
+        LosePowerEachTurn
     }
 
     public EffectType effectType = EffectType.None;
@@ -26,6 +27,8 @@ public class CardEffectData
     public bool blockAdditionalPlays = false;
     public GameObject promptPrefab;
     public int powerChange = 0;
+    public int powerLossPerTurn = 0; // Used by LosePowerEachTurn
+
 
     // NEW: When true, effects like ConditionalPowerBoost will count the matching cards
     // and multiply powerChange by the number of matches.

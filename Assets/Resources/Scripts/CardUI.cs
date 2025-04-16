@@ -218,7 +218,7 @@ public class CardUI : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler,
         // (Other effects should update temporaryBoost when applied or removed.)
         effectivePower += temporaryBoost;
 
-        return effectivePower;
+        return Mathf.Max(0, effectivePower);
     }
 
 

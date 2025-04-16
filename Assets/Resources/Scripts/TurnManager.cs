@@ -87,7 +87,7 @@ public class TurnManager : MonoBehaviour
             Debug.LogError("❌ PlayerManager not found!");
         }
 
-        // Show turn start splash
+        // Show splash
         string splashMessage = (currentPlayer == localPlayerNumber) ? "Your Turn Start" : "CPU Turn Start";
         ShowTurnSplash(splashMessage);
 
@@ -106,6 +106,9 @@ public class TurnManager : MonoBehaviour
             spellPlayed = false;
         }
 
+        // ✅ ✅ Apply power loss (e.g., Mango Lango) NOW
+        GridManager.instance.CheckReplacementEffects();
+
         if (currentPlayerManager != null && drawCard)
         {
             if (!skipDrawOnTurnStart)
@@ -120,6 +123,7 @@ public class TurnManager : MonoBehaviour
 
         currentPlayerManager.pc.StartTurn();
     }
+
 
     public bool CanPlayCard(CardSO card)
     {
@@ -209,10 +213,6 @@ public class TurnManager : MonoBehaviour
 
         StartTurn();
 
-        if (currentPlayer == localPlayerNumber)
-        {
-            GridManager.instance.CheckReplacementEffects();
-        }
     }
 
     public void ResetTurn()

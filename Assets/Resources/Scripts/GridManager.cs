@@ -1237,48 +1237,62 @@ public class GridManager : MonoBehaviour
     // This method should be called at the end of every turn (e.g., from TurnManager.EndTurn()).
     public void CheckReplacementEffects()
     {
-        // Loop through every cell in the grid.
         for (int i = 0; i < grid.GetLength(0); i++)
         {
             for (int j = 0; j < grid.GetLength(1); j++)
             {
-                if (grid[i, j] != null)
+                if (grid[i, j] == null) continue;
+
+                GameObject cardObj = gridObjects[i, j];
+                CardUI cardUI = cardObj.GetComponent<CardUI>();
+                if (cardUI == null) continue;
+
+                // Use runtime effects if available; otherwise fall back to the original ones.
+                var inlineEffects = (cardUI.runtimeInlineEffects != null && cardUI.runtimeInlineEffects.Count > 0)
+                    ? cardUI.runtimeInlineEffects
+                    : cardUI.cardData.inlineEffects;
+
+                foreach (var inlineEffect in inlineEffects)
                 {
-                    GameObject cardObj = gridObjects[i, j];
-                    CardUI cardUI = cardObj.GetComponent<CardUI>();
-                    if (cardUI == null)
-                        continue;
-
-                    // Use runtime inline effects if available, otherwise fall back to the asset inline effects.
-                    var inlineEffects = (cardUI.runtimeInlineEffects != null && cardUI.runtimeInlineEffects.Count > 0)
-                        ? cardUI.runtimeInlineEffects
-                        : cardUI.cardData.inlineEffects;
-
-                    // Process each inline effect on this card.
-                    foreach (var inlineEffect in inlineEffects)
+                    // 🔁 ReplaceAfterOpponentTurn logic
+                    if (inlineEffect.effectType == CardEffectData.EffectType.ReplaceAfterOpponentTurn)
                     {
-                        if (inlineEffect.effectType == CardEffectData.EffectType.ReplaceAfterOpponentTurn)
+                        Debug.Log($"[CheckReplacementEffects] {cardUI.cardData.cardName} current turnDelay: {inlineEffect.turnDelay}");
+
+                        if (inlineEffect.turnDelay > 0)
                         {
-                            Debug.Log($"[CheckReplacementEffects] {cardUI.cardData.cardName} current turnDelay: {inlineEffect.turnDelay}");
+                            inlineEffect.turnDelay--;
+                            Debug.Log($"[CheckReplacementEffects] {cardUI.cardData.cardName} decremented turnDelay to {inlineEffect.turnDelay}");
+                        }
 
-                            // Decrement the turnDelay if greater than 0.
-                            if (inlineEffect.turnDelay > 0)
-                            {
-                                inlineEffect.turnDelay--;
-                                Debug.Log($"[CheckReplacementEffects] {cardUI.cardData.cardName} decremented turnDelay to {inlineEffect.turnDelay}");
-                            }
+                        if (inlineEffect.turnDelay <= 0)
+                        {
+                            ShowInlineReplacementPrompt(cardUI, i, j, inlineEffect);
+                        }
+                    }
 
-                            // When turnDelay is 0 or less, trigger the prompt.
-                            if (inlineEffect.turnDelay <= 0)
-                            {
-                                ShowInlineReplacementPrompt(cardUI, i, j, inlineEffect);
-                            }
+                    // 🔻 LosePowerEachTurn logic (via temporaryBoost)
+                    if (inlineEffect.effectType == CardEffectData.EffectType.LosePowerEachTurn)
+                    {
+                        cardUI.temporaryBoost -= inlineEffect.powerChange;
+                        Debug.Log($"[LosePowerEachTurn] {cardUI.cardData.cardName} gets -{inlineEffect.powerChange} temp boost. Now: {cardUI.temporaryBoost}");
+
+                        // Update the card UI
+                        cardUI.UpdatePowerDisplay();
+
+                        // Update the info panel if this card is currently viewed
+                        if (cardUI.cardInfoPanel != null && cardUI.cardInfoPanel.CurrentCardUI == cardUI)
+                        {
+                            cardUI.cardInfoPanel.UpdatePowerDisplay();
                         }
                     }
                 }
             }
         }
     }
+
+
+
 
     private void ShowInlineReplacementPrompt(CardUI sourceCardUI, int gridX, int gridY, CardEffectData inlineEffect)
     {

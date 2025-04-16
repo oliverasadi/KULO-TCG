@@ -21,3 +21,24 @@ MonoBehaviour:
   creatureType: Wax
   baseOrEvo: 0
   extraDetails: 'DOB: 2023, GPS: Tropical Island, Weight: 8.0kg, Height: 0.45m.'
+  inlineEffects:
+  - effectType: 7
+    cardsToDraw: 0
+    requiredCreatureNames: []
+    requiredCreatureTypes: []
+    maxTargets: 0
+    replacementCardName: 
+    turnDelay: 0
+    blockAdditionalPlays: 0
+    promptPrefab: {fileID: 0}
+    powerChange: 400
+    powerLossPerTurn: 0
+    useCountMode: 0
+    powerChangeAmount: 0
+    powerChangeType: 0
+    targetPositions: 
+    adjacencyOwnerToAffect: 0
+    searchOwner: 0
+  effects: []
+  requiresSacrifice: 0
+  sacrificeRequirements: []
