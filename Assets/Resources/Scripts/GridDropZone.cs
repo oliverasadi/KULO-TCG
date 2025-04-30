@@ -38,9 +38,46 @@ public class GridDropZone : MonoBehaviour, IDropHandler, IPointerEnterHandler, I
     {
         if (GridManager.instance.isHoldingCard)
         {
-            ShowHighlight();
+            CardDragHandler draggingCard = eventData.pointerDrag?.GetComponent<CardDragHandler>();
+            if (draggingCard != null && draggingCard.cardHandler.cardData.category == CardSO.CardCategory.Spell)
+            {
+                // If dragging a spell, allow highlight on valid targets (even if occupied)
+                CardSO spellData = draggingCard.cardHandler.cardData;
+                bool needsCreature = spellData.requiresTargetCreature;
+                int currentPlayer = TurnManager.instance.GetCurrentPlayer();
+
+                if (!isOccupied)
+                {
+                    // Highlight empty cell only if spell *does not* require a creature target
+                    if (!needsCreature)
+                        thisImage.sprite = highlightImage;
+                }
+                else
+                {
+                    // Cell is occupied; highlight if spell allows targeting a creature here
+                    if (!needsCreature)
+                    {
+                        // Spell can be cast on any cell (empty or occupied)
+                        thisImage.sprite = highlightImage;
+                    }
+                    else
+                    {
+                        // Spell requires a creature – highlight only if the occupant is the current player’s creature
+                        // (Pamyu Poo, for example, should target your own creature)
+                        if (GridManager.instance.IsOwnedByPlayer(gridPosition.x, gridPosition.y, currentPlayer))
+                            thisImage.sprite = highlightImage;
+                    }
+                }
+            }
+            else
+            {
+                // Non-spell cards: only highlight if cell is free (original behavior)
+                if (!isOccupied)
+                    thisImage.sprite = highlightImage;
+            }
         }
     }
+
 
     public void OnPointerExit(PointerEventData eventData)
     {

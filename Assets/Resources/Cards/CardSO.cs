@@ -8,6 +8,7 @@ public class CardSO : ScriptableObject
     public string cardName;
 
     public enum CardCategory { Creature, Spell }
+    public bool requiresTargetCreature;  // true if spell must target an existing creature
     public CardCategory category;
 
     public int power;

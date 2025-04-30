@@ -22,3 +22,8 @@ MonoBehaviour:
   creatureType: 
   baseOrEvo: 0
   extraDetails: 
+  inlineEffects: []
+  effects:
+  - {fileID: 11400000, guid: c342ce2e8f40d6e4a8f4463804f94ec9, type: 2}
+  requiresSacrifice: 0
+  sacrificeRequirements: []

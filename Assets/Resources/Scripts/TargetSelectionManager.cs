@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using System.Collections.Generic;
@@ -17,8 +17,6 @@ public class TargetSelectionManager : MonoBehaviour
     public int MaxTargets = 3;
 
     // Reference to the UI prefab for target selection.
-    // This prefab should have a TextMeshProUGUI for instructions/target list
-    // and a Button for "Complete".
     public GameObject targetSelectionUIPrefab;
 
     private GameObject targetSelectionUIInstance;
@@ -48,7 +46,7 @@ public class TargetSelectionManager : MonoBehaviour
         // Instantiate the target selection UI on the OverlayCanvas.
         if (targetSelectionUIPrefab != null)
         {
-            GameObject overlayCanvas = GameObject.Find("OverlayCanvas");
+            var overlayCanvas = GameObject.Find("OverlayCanvas");
             if (overlayCanvas != null)
             {
                 targetSelectionUIInstance = Instantiate(targetSelectionUIPrefab, overlayCanvas.transform);
@@ -58,15 +56,9 @@ public class TargetSelectionManager : MonoBehaviour
                     completeButton.onClick.AddListener(FinalizeTargetSelection);
                 UpdateTargetSelectionText();
             }
-            else
-            {
-                Debug.LogWarning("OverlayCanvas not found.");
-            }
+            else Debug.LogWarning("OverlayCanvas not found.");
         }
-        else
-        {
-            Debug.LogWarning("TargetSelectionUIPrefab not assigned in TargetSelectionManager!");
-        }
+        else Debug.LogWarning("TargetSelectionUIPrefab not assigned in TargetSelectionManager!");
     }
 
     // Called when a board card is clicked during target selection.
@@ -102,7 +94,6 @@ public class TargetSelectionManager : MonoBehaviour
         string text = "Select Targets:\n";
         foreach (var target in CurrentBoostEffect.targetCards)
         {
-            // Calculate the new temporary power.
             int newPower = target.CalculateEffectivePower() + CurrentBoostEffect.powerIncrease;
             text += $"{target.cardData.cardName}: +{CurrentBoostEffect.powerIncrease} => {newPower}\n";
         }
@@ -116,21 +107,38 @@ public class TargetSelectionManager : MonoBehaviour
         if (CurrentBoostEffect != null)
         {
             Debug.Log("Applying boost effect to selected targets.");
-            // Apply the boost effect (this temporarily increases power).
-            CurrentBoostEffect.ApplyEffect(null); // You can pass null if the source isn't needed.
+            CurrentBoostEffect.ApplyEffect(null);
         }
+
+        // ─── CLEAR ALL CARD HIGHLIGHTS ────────────────────────────────────
+        // This makes sure any pulsating "sacrifice" glow on cards is turned off.
+        foreach (var handler in Object.FindObjectsOfType<CardHandler>())
+        {
+            handler.HideSacrificeHighlight();
+        }
+        // ─────────────────────────────────────────────────────────────────
+
+        // Tear down the selection UI and reset state.
         IsSelectingTargets = false;
+        CurrentBoostEffect?.targetCards?.Clear();
         if (targetSelectionUIInstance != null)
             Destroy(targetSelectionUIInstance);
     }
 
+    // Cancel without applying.
     public void CancelTargetSelection()
     {
+        Debug.Log("Target selection canceled.");
         IsSelectingTargets = false;
-        if (CurrentBoostEffect != null && CurrentBoostEffect.targetCards != null)
-            CurrentBoostEffect.targetCards.Clear();
+        CurrentBoostEffect?.targetCards?.Clear();
+
+        // Also clear any lingering glows.
+        foreach (var handler in Object.FindObjectsOfType<CardHandler>())
+        {
+            handler.HideSacrificeHighlight();
+        }
+
         if (targetSelectionUIInstance != null)
             Destroy(targetSelectionUIInstance);
-        Debug.Log("Target selection canceled.");
     }
 }

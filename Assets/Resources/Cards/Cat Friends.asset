@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: Cat Friends
   m_EditorClassIdentifier: 
   cardName: Cat Friends
+  requiresTargetCreature: 0
   category: 1
   power: 0
   effectDescription: "\"If you control 2 or more \u2018Cat\u2019 type cards on the
@@ -22,3 +23,7 @@ MonoBehaviour:
   creatureType: 
   baseOrEvo: 0
   extraDetails: 
+  inlineEffects: []
+  effects: []
+  requiresSacrifice: 0
+  sacrificeRequirements: []

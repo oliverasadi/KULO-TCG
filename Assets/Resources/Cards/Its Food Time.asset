@@ -21,3 +21,9 @@ MonoBehaviour:
   cardNumber: OGN-05
   creatureType: 
   baseOrEvo: 0
+  extraDetails: 
+  inlineEffects: []
+  effects:
+  - {fileID: 11400000, guid: 5cbb66c6128968c4d8e61918ec4c289d, type: 2}
+  requiresSacrifice: 0
+  sacrificeRequirements: []
