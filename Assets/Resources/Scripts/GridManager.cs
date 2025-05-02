@@ -869,9 +869,19 @@ public class GridManager : MonoBehaviour
         GameObject cellObj = GameObject.Find($"GridCell_{x}_{y}");
         if (cellObj != null)
         {
+            // 1) Clear the drop-zone occupancy so OnPointerEnter will highlight again
+            var dz = cellObj.GetComponent<GridDropZone>();
+            if (dz != null)
+            {
+                dz.isOccupied = false;
+                dz.HideHighlights();  // ensure it’s showing the normalImage
+            }
+
+            // 2) Reset any outline/highlight background
             GridCellHighlighter highlighter = cellObj.GetComponent<GridCellHighlighter>();
             if (highlighter != null)
             {
+                // Don’t reset evolution cards’ persistent color
                 if (grid[x, y] != null && grid[x, y].baseOrEvo == CardSO.BaseOrEvo.Evolution)
                 {
                     Debug.Log($"[GridManager] Not resetting highlight for evolution card at ({x},{y}).");

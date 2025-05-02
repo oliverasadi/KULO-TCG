@@ -157,11 +157,23 @@ public class GameManager : MonoBehaviour
         // Check for overall game win
         if (roundsWonP1 >= totalRoundsToWin || roundsWonP2 >= totalRoundsToWin)
         {
+            // Play the game-win sound
             if (audioSource != null && gameWinClip != null)
                 audioSource.PlayOneShot(gameWinClip);
+
+            // Show "Player X Wins Game"
+            if (gameStatusText != null)
+            {
+                gameStatusText.gameObject.SetActive(true);
+                gameStatusText.text = $"Player {winner} Wins Game";
+            }
+
             Invoke("RestartGame", 3f);
         }
-        else Invoke("ClearWinAnnouncement", 2f);
+        else
+        {
+            Invoke("ClearWinAnnouncement", 2f);
+        }
     }
 
     private void AddPlayerWin(int index, Axis axis)

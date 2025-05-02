@@ -194,9 +194,26 @@ public class AIController : PlayerController
             if (ch.cardData.category == CardSO.CardCategory.Spell &&
                 !TurnManager.instance.spellPlayed && IsCardPlayable(ch.cardData))
             {
+                // Don’t play X1 Damiano when the grid is totally empty
+                bool isDamiano = ch.cardData.effects
+        .Exists(e => e.GetType().Name == "X1DamianoEffect");
+                if (isDamiano)
+                {
+                    // use the already-declared 'grid' at the top of AIPlay()
+                    bool anyOnField = false;
+                    for (int x = 0; x < grid.GetLength(0) && !anyOnField; x++)
+                        for (int y = 0; y < grid.GetLength(1) && !anyOnField; y++)
+                            if (grid[x, y] != null)
+                                anyOnField = true;
+
+                    if (!anyOnField)
+                        continue; // skip this useless self-destruct
+                }
+
                 playableSpell = ch;
             }
         }
+
 
         // Decide randomly which to play first.
         bool playSpellFirst = Random.value < 0.5f;
