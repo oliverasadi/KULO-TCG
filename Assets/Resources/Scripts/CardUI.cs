@@ -376,21 +376,29 @@ public class CardUI : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler,
             Debug.LogError("Summon Menu Prefab is not assigned in CardUI.");
             return;
         }
-        if (transform.parent != null && transform.parent.name.Contains("GridCell"))
-            isOnField = true;
-        else
-            isOnField = false;
 
-        Canvas canvas = FindObjectOfType<Canvas>();
-        if (canvas == null)
+        isOnField = (transform.parent != null && transform.parent.name.Contains("GridCell"));
+
+        GameObject summonCanvasObj = GameObject.Find("SummonCanvas");
+        if (summonCanvasObj == null)
         {
-            Debug.LogError("No Canvas found in the scene!");
+            Debug.LogError("❌ 'SummonCanvas' GameObject not found in the scene!");
             return;
         }
-        GameObject menuInstance = Instantiate(summonMenuPrefab, canvas.transform);
+
+        Canvas canvas = summonCanvasObj.GetComponent<Canvas>();
+        if (canvas == null)
+        {
+            Debug.LogError("❌ 'SummonCanvas' found but it has no Canvas component!");
+            return;
+        }
+
+        GameObject menuInstance = Instantiate(summonMenuPrefab, summonCanvasObj.transform);
         menuInstance.transform.SetAsLastSibling();
+
         RectTransform cardRect = GetComponent<RectTransform>();
         RectTransform menuRect = menuInstance.GetComponent<RectTransform>();
+
         if (menuRect != null && cardRect != null)
         {
             Vector2 cardScreenPos = RectTransformUtility.WorldToScreenPoint(null, cardRect.position);
@@ -407,6 +415,7 @@ public class CardUI : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler,
         {
             Debug.LogWarning("Missing RectTransform on card or menu.");
         }
+
         SummonMenu summonMenu = menuInstance.GetComponent<SummonMenu>();
         if (summonMenu != null)
         {
@@ -417,6 +426,8 @@ public class CardUI : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler,
             Debug.LogError("SummonMenu component is missing on the instantiated menu prefab.");
         }
     }
+
+
 
     void Update()
     {
