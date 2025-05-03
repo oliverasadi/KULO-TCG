@@ -27,6 +27,8 @@ public class CardUI : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler,
     public int currentPower;
     public int temporaryBoost = 0;
     public bool isInGraveyard = false;
+    public bool isCloneInGraveyardPanel = false; // NEW
+
 
 
     // Runtime replacement effect fields (for inline ReplaceAfterOpponentTurn)
@@ -274,7 +276,6 @@ public class CardUI : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler,
         }
         isFaceDown = false;
     }
-
     public void OnPointerClick(PointerEventData eventData)
     {
         if (cardData == null)
@@ -305,7 +306,14 @@ public class CardUI : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler,
         // ───────────────────────────────────────────────────────────────
         if (eventData.button == PointerEventData.InputButton.Right)
         {
-            // If the card is in the graveyard, open the graveyard display instead of info panel
+            // If this is a graveyard viewer clone, ignore right-click
+            if (isCloneInGraveyardPanel)
+            {
+                Debug.Log($"🪦 Right-click ignored inside Graveyard Panel: {cardData.cardName}");
+                return;
+            }
+
+            // If this is a real card in graveyard zone, open the full panel
             if (isInGraveyard)
             {
                 CardHandler cardHandler = GetComponent<CardHandler>();
@@ -317,7 +325,7 @@ public class CardUI : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler,
                 }
             }
 
-            // Otherwise, open the Card Info Panel
+            // Otherwise, show card info panel
             if (cardInfoPanel != null)
                 cardInfoPanel.ShowCardInfo(this);
         }
@@ -327,9 +335,17 @@ public class CardUI : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler,
         // ───────────────────────────────────────────────────────────────
         else if (eventData.button == PointerEventData.InputButton.Left)
         {
+            // Optional: ignore left-click inside Graveyard Panel clones
+            if (isCloneInGraveyardPanel)
+            {
+                Debug.Log($"🪦 Left-click ignored inside Graveyard Panel: {cardData.cardName}");
+                return;
+            }
+
             ShowSummonMenu();
         }
     }
+
 
 
 
