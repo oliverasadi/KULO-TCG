@@ -26,6 +26,8 @@ public class CardUI : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler,
     // Runtime fields
     public int currentPower;
     public int temporaryBoost = 0;
+    public bool isInGraveyard = false;
+
 
     // Runtime replacement effect fields (for inline ReplaceAfterOpponentTurn)
     public List<CardEffectData> runtimeInlineEffects;
@@ -280,13 +282,15 @@ public class CardUI : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler,
             Debug.LogError($"CardUI: cardData is null on {gameObject.name}. Ensure SetCardData is called.");
             return;
         }
-        // If in target selection mode, add this card as a target.
+
+        // Target selection mode
         if (TargetSelectionManager.Instance != null && TargetSelectionManager.Instance.IsSelectingTargets)
         {
             TargetSelectionManager.Instance.AddTarget(this);
             return;
         }
-        // If sacrifice selection mode is active, bypass normal behavior.
+
+        // Sacrifice selection mode
         if (SacrificeManager.instance != null && SacrificeManager.instance.isSelectingSacrifices)
         {
             if (SacrificeManager.instance.IsValidSacrifice(this))
@@ -295,18 +299,38 @@ public class CardUI : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler,
                 return;
             }
         }
-        // Right-click to open CardInfoPanel using this CardUI instance.
+
+        // ───────────────────────────────────────────────────────────────
+        // RIGHT-CLICK BEHAVIOR
+        // ───────────────────────────────────────────────────────────────
         if (eventData.button == PointerEventData.InputButton.Right)
         {
+            // If the card is in the graveyard, open the graveyard display instead of info panel
+            if (isInGraveyard)
+            {
+                CardHandler cardHandler = GetComponent<CardHandler>();
+                if (cardHandler != null && cardHandler.cardOwner?.zones != null)
+                {
+                    Debug.Log($"🪦 Right-clicked graveyard card: {cardData.cardName}");
+                    UIManager.Instance?.ShowGraveyardPanel(cardHandler.cardOwner.zones.GetGraveyardCards());
+                    return;
+                }
+            }
+
+            // Otherwise, open the Card Info Panel
             if (cardInfoPanel != null)
                 cardInfoPanel.ShowCardInfo(this);
         }
-        // Left-click to open SummonMenu.
+
+        // ───────────────────────────────────────────────────────────────
+        // LEFT-CLICK BEHAVIOR
+        // ───────────────────────────────────────────────────────────────
         else if (eventData.button == PointerEventData.InputButton.Left)
         {
             ShowSummonMenu();
         }
     }
+
 
 
     // Implement pointer events – these now log debug info but do not control the persistent effect.

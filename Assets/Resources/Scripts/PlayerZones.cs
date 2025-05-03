@@ -1,5 +1,6 @@
-using UnityEngine;
+﻿using UnityEngine;
 using TMPro;
+using System.Collections.Generic;
 
 public class PlayerZones : MonoBehaviour
 {
@@ -7,6 +8,9 @@ public class PlayerZones : MonoBehaviour
     public Transform graveContainer;      // UI container for player's grave cards
 
     private int deckCount;
+
+    // ✅ Internal graveyard tracking
+    private List<GameObject> graveyard = new List<GameObject>();
 
     // Updates the deck count UI.
     public void UpdateDeckCount(int count)
@@ -40,13 +44,38 @@ public class PlayerZones : MonoBehaviour
         if (dragHandler != null)
             Destroy(dragHandler);
 
-        // Reset the card's position relative to the grave container.
+        // Reset the card's position.
         RectTransform rt = cardObj.GetComponent<RectTransform>();
         if (rt != null)
             rt.anchoredPosition = Vector2.zero;
         else
             cardObj.transform.localPosition = Vector3.zero;
 
+        // ✅ Mark the card as in the graveyard
+        CardUI ui = cardObj.GetComponent<CardUI>();
+        if (ui != null)
+        {
+            ui.isInGraveyard = true;
+        }
+
+        // ✅ Track it internally
+        if (!graveyard.Contains(cardObj))
+        {
+            graveyard.Add(cardObj);
+        }
+
         Debug.Log($"Card moved to grave: {cardObj.name}");
+    }
+
+    // ✅ Check if a card is in the graveyard
+    public bool IsInGraveyard(GameObject cardObj)
+    {
+        return graveyard.Contains(cardObj);
+    }
+
+    // ✅ Get all graveyard cards
+    public List<GameObject> GetGraveyardCards()
+    {
+        return graveyard;
     }
 }
