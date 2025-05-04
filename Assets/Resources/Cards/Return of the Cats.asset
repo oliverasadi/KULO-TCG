@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: Return of the Cats
   m_EditorClassIdentifier: 
   cardName: Return of the Cats
+  requiresTargetCreature: 0
   category: 1
   power: 0
   effectDescription: Add 2 Cat creature cards from your graveyard to your hand. 
@@ -22,3 +23,8 @@ MonoBehaviour:
   creatureType: 
   baseOrEvo: 0
   extraDetails: 
+  inlineEffects: []
+  effects:
+  - {fileID: 11400000, guid: 8db705d64f4a716448faaf580053708a, type: 2}
+  requiresSacrifice: 0
+  sacrificeRequirements: []

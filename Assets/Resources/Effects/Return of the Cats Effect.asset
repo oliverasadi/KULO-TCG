@@ -9,14 +9,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 09db9892ef6428f4d96b8db314aaf138, type: 3}
-  m_Name: It's Food Time Effect
+  m_Script: {fileID: 11500000, guid: 3514c9fde14932747a81c47d6b110e2e, type: 3}
+  m_Name: Return of the Cats Effect
   m_EditorClassIdentifier: 
-  requireFewerCardsInHand: 0
-  includeHand: 1
-  amount: 200
-  targetOwner: 0
-  mode: 0
-  filterMode: 1
+  filterMode: 0
   filterValue: Cat
-  duration: 0
+  blockPlaysNextTurn: 1
+  cardsToSelect: 2

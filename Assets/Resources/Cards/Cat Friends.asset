@@ -24,6 +24,7 @@ MonoBehaviour:
   baseOrEvo: 0
   extraDetails: 
   inlineEffects: []
-  effects: []
+  effects:
+  - {fileID: 0}
   requiresSacrifice: 0
   sacrificeRequirements: []

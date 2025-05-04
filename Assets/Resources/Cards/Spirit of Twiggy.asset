@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: Spirit of Twiggy
   m_EditorClassIdentifier: 
   cardName: Spirit of Twiggy
+  requiresTargetCreature: 0
   category: 1
   power: 0
   effectDescription: Add a spell card from your graveyard to your hand.
@@ -21,3 +22,8 @@ MonoBehaviour:
   creatureType: 
   baseOrEvo: 0
   extraDetails: 
+  inlineEffects: []
+  effects:
+  - {fileID: 11400000, guid: 3c2c6d4ea8f791c40968d5affca24dbb, type: 2}
+  requiresSacrifice: 0
+  sacrificeRequirements: []

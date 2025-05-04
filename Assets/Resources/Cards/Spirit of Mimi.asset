@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: Spirit of Mimi
   m_EditorClassIdentifier: 
   cardName: Spirit of Mimi
+  requiresTargetCreature: 0
   category: 1
   power: 0
   effectDescription: Add 1 'Cat'-type creature card from your graveyard to your hand.
@@ -21,3 +22,8 @@ MonoBehaviour:
   creatureType: 
   baseOrEvo: 0
   extraDetails: 
+  inlineEffects: []
+  effects:
+  - {fileID: 11400000, guid: 7e4000f738638c245b14512c0cb85a2e, type: 2}
+  requiresSacrifice: 0
+  sacrificeRequirements: []

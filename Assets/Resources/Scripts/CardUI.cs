@@ -309,9 +309,23 @@ public class CardUI : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler,
             // If this is a graveyard viewer clone, ignore right-click
             if (isCloneInGraveyardPanel)
             {
-                Debug.Log($"🪦 Right-click ignored inside Graveyard Panel: {cardData.cardName}");
+                if (GraveyardSelectionManager.Instance != null)
+                {
+                    Debug.Log($"👁️ GraveyardSelectionManager.IsSelecting: {GraveyardSelectionManager.Instance.IsSelecting}");
+
+                    if (GraveyardSelectionManager.Instance.IsSelecting)
+                    {
+                        Debug.Log($"✅ Forwarding click to selection manager: {cardData.cardName}");
+                        GraveyardSelectionManager.Instance.SelectCard(gameObject);
+                        return;
+                    }
+                }
+
+                Debug.Log($"🪦 Left-click ignored inside Graveyard Panel: {cardData.cardName}");
                 return;
             }
+
+
 
             // If this is a real card in graveyard zone, open the full panel
             if (isInGraveyard)
@@ -335,9 +349,15 @@ public class CardUI : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler,
         // ───────────────────────────────────────────────────────────────
         else if (eventData.button == PointerEventData.InputButton.Left)
         {
-            // Optional: ignore left-click inside Graveyard Panel clones
             if (isCloneInGraveyardPanel)
             {
+                if (GraveyardSelectionManager.Instance != null && GraveyardSelectionManager.Instance.IsSelecting)
+                {
+                    Debug.Log($"✅ Graveyard selection active. Passing {cardData.cardName} to selector.");
+                    GraveyardSelectionManager.Instance.SelectCard(gameObject);
+                    return;
+                }
+
                 Debug.Log($"🪦 Left-click ignored inside Graveyard Panel: {cardData.cardName}");
                 return;
             }
@@ -345,6 +365,7 @@ public class CardUI : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler,
             ShowSummonMenu();
         }
     }
+
 
 
 
@@ -413,29 +434,32 @@ public class CardUI : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler,
     {
         if (summonMenuPrefab == null)
         {
-            Debug.LogError("Summon Menu Prefab is not assigned in CardUI.");
+            Debug.LogError("❌ Summon Menu Prefab is not assigned in CardUI.");
             return;
         }
 
         isOnField = (transform.parent != null && transform.parent.name.Contains("GridCell"));
 
-        GameObject summonCanvasObj = GameObject.Find("SummonCanvas");
-        if (summonCanvasObj == null)
+        // ✅ Find the overlay canvas to parent the menu to
+        GameObject overlayCanvasObj = GameObject.Find("OverlayCanvas");
+        if (overlayCanvasObj == null)
         {
-            Debug.LogError("❌ 'SummonCanvas' GameObject not found in the scene!");
+            Debug.LogError("❌ 'OverlayCanvas' not found in the scene!");
             return;
         }
 
-        Canvas canvas = summonCanvasObj.GetComponent<Canvas>();
+        Canvas canvas = overlayCanvasObj.GetComponent<Canvas>();
         if (canvas == null)
         {
-            Debug.LogError("❌ 'SummonCanvas' found but it has no Canvas component!");
+            Debug.LogError("❌ 'OverlayCanvas' found but it has no Canvas component!");
             return;
         }
 
-        GameObject menuInstance = Instantiate(summonMenuPrefab, summonCanvasObj.transform);
-        menuInstance.transform.SetAsLastSibling();
+        // ✅ Instantiate the summon menu prefab as a child of the overlay canvas
+        GameObject menuInstance = Instantiate(summonMenuPrefab, overlayCanvasObj.transform);
+        menuInstance.transform.SetAsLastSibling(); // ensure it's on top
 
+        // ✅ Position it near the card
         RectTransform cardRect = GetComponent<RectTransform>();
         RectTransform menuRect = menuInstance.GetComponent<RectTransform>();
 
@@ -448,14 +472,16 @@ public class CardUI : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler,
                 cardScreenPos,
                 canvas.renderMode == RenderMode.ScreenSpaceOverlay ? null : canvas.worldCamera,
                 out localPoint);
+
             localPoint += summonMenuOffset;
             menuRect.anchoredPosition = localPoint;
         }
         else
         {
-            Debug.LogWarning("Missing RectTransform on card or menu.");
+            Debug.LogWarning("⚠️ Missing RectTransform on card or menu.");
         }
 
+        // ✅ Initialize the menu logic
         SummonMenu summonMenu = menuInstance.GetComponent<SummonMenu>();
         if (summonMenu != null)
         {
@@ -463,9 +489,10 @@ public class CardUI : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler,
         }
         else
         {
-            Debug.LogError("SummonMenu component is missing on the instantiated menu prefab.");
+            Debug.LogError("❌ SummonMenu component is missing on the instantiated menu prefab.");
         }
     }
+
 
 
 

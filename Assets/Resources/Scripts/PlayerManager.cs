@@ -9,21 +9,23 @@ public class PlayerManager : MonoBehaviour
     public int playerNumber;
 
     [Header("Game Deck & UI")]
-    public List<CardSO> currentDeck = new List<CardSO>(); // The deck currently in use for the game
-    public List<CardHandler> cardHandlers = new List<CardHandler>(); // Cards currently in hand
-    public GameObject cardPrefab; // Prefab for the card UI representation
-    public Transform cardSpawnArea; // The UI area where drawn cards are displayed
+    public List<CardSO> currentDeck = new List<CardSO>();
+    public List<CardHandler> cardHandlers = new List<CardHandler>();
+    public GameObject cardPrefab;
+    public Transform cardSpawnArea;
 
     [Header("AI Deck Selection")]
-    public DeckDataSO aiSelectedDeck;  // Assign the AI's deck directly from Inspector
-    public DeckDataSO playerSelectedDeck;  // Player deck (Inspector selection)
-
+    public DeckDataSO aiSelectedDeck;
+    public DeckDataSO playerSelectedDeck;
 
     [FormerlySerializedAs("Zones")]
     [Header("Deck Objects")]
     public PlayerZones zones;
 
     public PlayerController pc;
+
+    [Header("Gameplay Restrictions")]
+    public bool blockPlaysNextTurn = false;
 
     private const int HAND_SIZE = 5;
     private DeckManager dm;
@@ -66,7 +68,6 @@ public class PlayerManager : MonoBehaviour
         }
         else
         {
-            // Fallback for other player types
             currentDeck = dm.GenerateRandomDeck();
         }
 
@@ -80,11 +81,6 @@ public class PlayerManager : MonoBehaviour
         DrawStartingHand();
     }
 
-
-
-    /// <summary>
-    /// Shuffles the current deck.
-    /// </summary>
     public void ShuffleDeck()
     {
         for (int i = 0; i < currentDeck.Count; i++)
@@ -97,9 +93,6 @@ public class PlayerManager : MonoBehaviour
         Debug.Log("✅ Deck shuffled! Deck count: " + currentDeck.Count);
     }
 
-    /// <summary>
-    /// Draws the starting hand by drawing HAND_SIZE cards.
-    /// </summary>
     public void DrawStartingHand()
     {
         for (int i = 0; i < HAND_SIZE; i++)
@@ -108,9 +101,6 @@ public class PlayerManager : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// Draws a card from the current deck.
-    /// </summary>
     public void DrawCard()
     {
         if (currentDeck.Count > 0)
@@ -128,11 +118,10 @@ public class PlayerManager : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// Spawns a card in the player's hand and assigns its data.
-    /// </summary>
     public void SpawnCard(CardSO cardData)
     {
+        Debug.Log($"📬 [PlayerManager] Spawning card to hand: {cardData.cardName}");
+
         if (cardSpawnArea == null)
         {
             Debug.LogError("❌ Card Spawn Area is not assigned!");
@@ -154,13 +143,6 @@ public class PlayerManager : MonoBehaviour
         }
     }
 
-    // --- New Methods for Handling Hand Discard Cost ---
-
-    /// <summary>
-    /// Initiates the hand discard selection mode for paying a cost (e.g., for 1000 Year Old Crab).
-    /// </summary>
-    /// <param name="effectCard">The CardUI of the card triggering the discard cost.</param>
-    /// <param name="discardCount">The number of cards that must be discarded.</param>
     public void StartHandDiscardSelection(CardUI effectCard, int discardCount)
     {
         if (HandDiscardManager.Instance != null)
@@ -173,17 +155,12 @@ public class PlayerManager : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// Discards a card from the player's hand.
-    /// </summary>
-    /// <param name="card">The CardUI of the card to be discarded.</param>
     public void DiscardCard(CardUI card)
     {
         CardHandler handler = card.GetComponent<CardHandler>();
         if (handler != null && cardHandlers.Contains(handler))
         {
             cardHandlers.Remove(handler);
-            // Send the card to the grave zone using your existing PlayerZones logic.
             zones.AddCardToGrave(card.gameObject);
             Debug.Log("Discarded card: " + card.cardData.cardName);
         }
@@ -193,10 +170,6 @@ public class PlayerManager : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// Automatically enforces a maximum hand limit of 10 cards.
-    /// If more than 10 cards are in hand at the end of turn, discards the excess cards.
-    /// </summary>
     public void EnforceHandLimit()
     {
         int maxHandSize = 10;
@@ -205,7 +178,6 @@ public class PlayerManager : MonoBehaviour
             int excess = cardHandlers.Count - maxHandSize;
             Debug.Log($"[PlayerManager] Enforcing hand limit. Discarding {excess} card(s).");
 
-            // Discard from the END of the hand list (the last drawn cards).
             for (int i = 0; i < excess; i++)
             {
                 int lastIndex = cardHandlers.Count - 1;
@@ -226,17 +198,11 @@ public class PlayerManager : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// Prompts the player to choose which cards to discard if their hand exceeds 10 cards.
-    /// This method displays a UI panel (handled by HandDiscardManager) that lets the player
-    /// select exactly the number of excess cards to discard.
-    /// </summary>
     public void EnforceHandLimitWithPrompt()
     {
         int maxHandSize = 10;
         int inHandCount = 0;
 
-        // Count only cards that are still in hand (not on the board)
         foreach (CardHandler ch in cardHandlers)
         {
             CardUI cardUI = ch.GetComponent<CardUI>();
@@ -246,7 +212,7 @@ public class PlayerManager : MonoBehaviour
             }
         }
 
-        Debug.Log($"[PlayerManager] End-of-turn hand count (cards still in hand): {inHandCount}");
+        Debug.Log($"[PlayerManager] End-of-turn hand count: {inHandCount}");
 
         if (inHandCount > maxHandSize)
         {
@@ -264,21 +230,33 @@ public class PlayerManager : MonoBehaviour
         }
         else
         {
-            Debug.Log("[PlayerManager] Hand count is within limit. No discard required.");
+            Debug.Log("[PlayerManager] Hand count is within limit.");
         }
     }
+
     public bool RemoveCardFromDeck(CardSO cardData)
     {
         if (DeckManager.instance.currentDeck.Contains(cardData))
         {
             DeckManager.instance.currentDeck.Remove(cardData);
-            // Optionally update any deck UI, e.g., DeckZone
             DeckZone.instance.UpdateDeckCount(DeckManager.instance.currentDeck.Count);
             Debug.Log($"[PlayerManager] Removed {cardData.cardName} from the deck.");
             return true;
         }
+
         Debug.LogWarning($"[PlayerManager] Card {cardData.cardName} was not found in the deck.");
         return false;
     }
 
+    /// <summary>
+    /// Clears the "block plays next turn" flag. Call this at the start of the player's turn.
+    /// </summary>
+    public void ResetBlockPlaysFlag()
+    {
+        if (blockPlaysNextTurn)
+        {
+            blockPlaysNextTurn = false;
+            Debug.Log($"[PlayerManager] Cleared blockPlaysNextTurn for player {playerNumber}.");
+        }
+    }
 }

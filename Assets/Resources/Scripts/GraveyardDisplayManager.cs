@@ -3,6 +3,7 @@ using UnityEngine.UI;
 using TMPro;
 using UnityEngine.EventSystems;
 using System.Collections.Generic;
+using System.Linq;
 
 public class GraveyardDisplayManager : MonoBehaviour
 {
@@ -41,10 +42,10 @@ public class GraveyardDisplayManager : MonoBehaviour
                 ui.isInDeck = false;
                 ui.isOnField = false;
                 ui.isInGraveyard = true;
-                ui.isCloneInGraveyardPanel = true; // ← mark as a UI clone, not an actual card in zone
+                ui.isCloneInGraveyardPanel = true;
             }
 
-            // Add hover trigger to show info
+            // Add hover to show card info
             EventTrigger trigger = cardInstance.AddComponent<EventTrigger>();
             var entry = new EventTrigger.Entry { eventID = EventTriggerType.PointerEnter };
             entry.callback.AddListener((eventData) => ShowCardInfo(handler.cardData));
@@ -65,12 +66,52 @@ public class GraveyardDisplayManager : MonoBehaviour
             nameText.text = card.cardName;
 
         if (typeText != null)
-            typeText.text = $"Type: {card.category}"; // ← using .category, not .cardType
+            typeText.text = $"Type: {card.category}";
 
         if (powerText != null)
             powerText.text = $"Power: {card.power}";
 
         if (effectText != null)
             effectText.text = card.effectDescription;
+    }
+
+    /// <summary>
+    /// Highlights cards that can be clicked for effects like Spirit of Mimi.
+    /// </summary>
+    public void HighlightSelectableCards(List<GameObject> validCards)
+    {
+        foreach (Transform child in contentParent)
+        {
+            var ui = child.GetComponent<CardUI>();
+            if (ui == null) continue;
+
+            // Match by card name (or better: use unique ID if available)
+            var realCard = validCards.FirstOrDefault(g =>
+            {
+                var data = g.GetComponent<CardHandler>()?.cardData;
+                return data != null && data.cardName == ui.cardData.cardName;
+            });
+
+            if (realCard != null)
+            {
+                var selector = child.gameObject.AddComponent<SelectableGraveCard>();
+                selector.Setup(realCard); // ✅ now storing real card
+            }
+        }
+    }
+
+
+
+    /// <summary>
+    /// Clears all selection handlers from cards.
+    /// </summary>
+    public void ClearHighlights()
+    {
+        foreach (Transform child in contentParent)
+        {
+            var select = child.GetComponent<SelectableGraveCard>();
+            if (select != null)
+                Destroy(select);
+        }
     }
 }

@@ -81,6 +81,9 @@ public class TurnManager : MonoBehaviour
         if (currentPlayerManager != null)
         {
             Debug.Log($"[TurnManager] Player {currentPlayer} has {currentPlayerManager.cardHandlers.Count} card(s) in hand.");
+
+            // ✅ Reset play-block flags if set last turn
+            currentPlayerManager.ResetBlockPlaysFlag();
         }
         else
         {
@@ -123,6 +126,7 @@ public class TurnManager : MonoBehaviour
 
         currentPlayerManager.pc.StartTurn();
     }
+
 
 
 
