@@ -2,11 +2,16 @@
 using UnityEngine.Serialization;
 using System.Collections.Generic;
 
+
+
 public class PlayerManager : MonoBehaviour
 {
     public enum PlayerTypes { Local, AI, Online };
     public PlayerTypes playerType;
     public int playerNumber;
+
+    public static DeckDataSO selectedCharacterDeck;
+
 
     [Header("Game Deck & UI")]
     public List<CardSO> currentDeck = new List<CardSO>();
@@ -30,56 +35,72 @@ public class PlayerManager : MonoBehaviour
     private const int HAND_SIZE = 5;
     private DeckManager dm;
 
-    private void Start()
-    {
-        dm = DeckManager.instance;
-        Debug.Log("PlayerManager initialized for playerType: " + playerType);
+private void Start()
+{
+    dm = DeckManager.instance;
+    Debug.Log("PlayerManager initialized for playerType: " + playerType);
 
-        if (playerType == PlayerTypes.AI)
+    // —— 1) Override for a picked character deck ——
+    if (playerType == PlayerTypes.Local && selectedCharacterDeck != null)
+    {
+        playerSelectedDeck = selectedCharacterDeck;
+        Debug.Log($"[PlayerManager] Overriding local deck to '{playerSelectedDeck.deckName}' from Character Select.");
+        // Clear it so next time we don't accidentally reuse it
+        selectedCharacterDeck = null;
+    }
+
+    // —— 2) AI loads its deck as before ——
+    if (playerType == PlayerTypes.AI)
+    {
+        if (aiSelectedDeck != null)
         {
-            if (aiSelectedDeck != null)
-            {
-                currentDeck = dm.LoadDeck(aiSelectedDeck);
-                Debug.Log($"✅ AI loaded '{aiSelectedDeck.deckName}' deck from Inspector.");
-            }
-            else
-            {
-                Debug.LogWarning("⚠️ No AI deck selected in Inspector. Generating random deck.");
-                currentDeck = dm.GenerateRandomDeck();
-            }
-        }
-        else if (playerType == PlayerTypes.Local)
-        {
-            if (playerSelectedDeck != null)
-            {
-                currentDeck = dm.LoadDeck(playerSelectedDeck);
-                Debug.Log($"✅ Player loaded '{playerSelectedDeck.deckName}' deck from Inspector.");
-            }
-            else if (dm.availableDecks != null && dm.availableDecks.Count > 0)
-            {
-                currentDeck = dm.LoadDeck(dm.availableDecks[0]);
-                Debug.Log($"⚠️ No player deck selected. Loaded default '{dm.availableDecks[0].deckName}' deck.");
-            }
-            else
-            {
-                Debug.LogWarning("⚠️ No player deck selected or available. Generating random deck.");
-                currentDeck = dm.GenerateRandomDeck();
-            }
+            currentDeck = dm.LoadDeck(aiSelectedDeck);
+            Debug.Log($"✅ AI loaded '{aiSelectedDeck.deckName}' deck from Inspector.");
         }
         else
         {
+            Debug.LogWarning("⚠️ No AI deck selected in Inspector. Generating random deck.");
             currentDeck = dm.GenerateRandomDeck();
         }
-
-        if (currentDeck == null || currentDeck.Count == 0)
-        {
-            Debug.LogWarning("Loaded deck is empty. Generating random deck as fallback.");
-            currentDeck = dm.GenerateRandomDeck();
-        }
-
-        ShuffleDeck();
-        DrawStartingHand();
     }
+    // —— 3) Local loads the (possibly overridden) playerSelectedDeck ——
+    else if (playerType == PlayerTypes.Local)
+    {
+        if (playerSelectedDeck != null)
+        {
+            currentDeck = dm.LoadDeck(playerSelectedDeck);
+            Debug.Log($"✅ Player loaded '{playerSelectedDeck.deckName}' deck from Inspector.");
+        }
+        else if (dm.availableDecks != null && dm.availableDecks.Count > 0)
+        {
+            currentDeck = dm.LoadDeck(dm.availableDecks[0]);
+            Debug.Log($"⚠️ No player deck selected. Loaded default '{dm.availableDecks[0].deckName}' deck.");
+        }
+        else
+        {
+            Debug.LogWarning("⚠️ No player deck selected or available. Generating random deck.");
+            currentDeck = dm.GenerateRandomDeck();
+        }
+    }
+    // —— 4) Fallback for any other playerType ——
+    else
+    {
+        currentDeck = dm.GenerateRandomDeck();
+    }
+
+    // —— 5) Safety: if deck ended up empty, regenerate ——
+    if (currentDeck == null || currentDeck.Count == 0)
+    {
+        Debug.LogWarning("Loaded deck is empty. Generating random deck as fallback.");
+        currentDeck = dm.GenerateRandomDeck();
+    }
+
+    // —— 6) Continue with shuffle & draw ——
+    ShuffleDeck();
+    DrawStartingHand();
+}
+
+
 
     public void ShuffleDeck()
     {
