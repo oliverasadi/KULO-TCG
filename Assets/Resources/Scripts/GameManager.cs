@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.SceneManagement;
 using TMPro;              // For TextMeshProUGUI
 using UnityEngine.UI;     // For Button, Image
@@ -168,8 +168,28 @@ public class GameManager : MonoBehaviour
                 gameStatusText.text = $"Player {winner} Wins Game";
             }
 
+            // 🔗 Profile system integration
+#if UNITY_EDITOR
+            Debug.Log("🔗 Logging result to player profile...");
+#endif
+
+            bool playerWon = (winner == 1);
+            string deckName = PlayerManager.selectedCharacterDeck != null
+                ? PlayerManager.selectedCharacterDeck.deckName
+                : "Unknown";
+
+            if (ProfileManager.instance != null)
+            {
+                ProfileManager.instance.RecordGameResult(deckName, playerWon);
+            }
+            else
+            {
+                Debug.LogWarning("⚠️ ProfileManager not found. Player stats not updated.");
+            }
+
             Invoke("RestartGame", 3f);
         }
+
         else
         {
             Invoke("ClearWinAnnouncement", 2f);
@@ -208,7 +228,7 @@ public class GameManager : MonoBehaviour
     {
         ResetRoundButtonsUI();
         int wins = playerRoundWins.Count;
-        Debug.Log($"[GameManager] RefreshRoundButtons � wins = {wins}");
+        Debug.Log($"[GameManager] RefreshRoundButtons — wins = {wins}");
         if (wins >= 1)
         {
             Debug.Log("Enabling Round 1");
