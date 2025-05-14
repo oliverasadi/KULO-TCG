@@ -9,12 +9,16 @@ public class ProfileManager : MonoBehaviour
 
     private string profilePath => Application.persistentDataPath + "/playerProfile.json";
 
+
     private void Awake()
     {
         if (instance == null)
         {
             instance = this;
-            DontDestroyOnLoad(gameObject); // So it persists across scenes
+            DontDestroyOnLoad(gameObject);
+
+            Debug.Log("🔍 Profile Save Path: " + Application.persistentDataPath); // 👈 Added this line
+
             LoadProfile();
         }
         else
@@ -41,18 +45,24 @@ public class ProfileManager : MonoBehaviour
         else
         {
             currentProfile = new PlayerProfile();
+            GrantDefaultUnlocks(); // ensure defaults like "Novice" and "default" exist
             SaveProfile();
         }
     }
 
     public void RecordGameResult(string deckName, bool won)
     {
+        if (currentProfile == null) return;
+
         currentProfile.totalGames++;
         if (won) currentProfile.totalWins++;
 
         if (!currentProfile.deckUsage.ContainsKey(deckName))
             currentProfile.deckUsage[deckName] = 0;
         currentProfile.deckUsage[deckName]++;
+
+        currentProfile.totalCardsPlayed += 5; // adjust based on actual logic
+        currentProfile.lastDeckPlayed = deckName;
 
         CheckForUnlocks();
         SaveProfile();
@@ -63,13 +73,36 @@ public class ProfileManager : MonoBehaviour
         if (currentProfile.totalWins >= 10 && !currentProfile.unlockedTitles.Contains("Champion"))
         {
             currentProfile.unlockedTitles.Add("Champion");
-            Debug.Log("🏆 Title unlocked: Champion");
+            ShowUnlockToast("🏆 Title Unlocked: Champion");
         }
 
         if (currentProfile.totalGames >= 20 && !currentProfile.unlockedAvatars.Contains("GoldFrame"))
         {
             currentProfile.unlockedAvatars.Add("GoldFrame");
-            Debug.Log("🌟 Avatar unlocked: Gold Frame");
+            ShowUnlockToast("🌟 Avatar Unlocked: Gold Frame");
         }
+    }
+
+    private void GrantDefaultUnlocks()
+    {
+        if (!currentProfile.unlockedAvatars.Contains("avatar_default"))
+            currentProfile.unlockedAvatars.Add("avatar_default");
+
+        if (!currentProfile.unlockedTitles.Contains("Novice"))
+            currentProfile.unlockedTitles.Add("Novice");
+
+        if (string.IsNullOrEmpty(currentProfile.selectedAvatar))
+            currentProfile.selectedAvatar = "avatar_default";
+
+        if (string.IsNullOrEmpty(currentProfile.selectedTitle))
+            currentProfile.selectedTitle = "Novice";
+    }
+
+    private void ShowUnlockToast(string message)
+    {
+        if (ToastManager.instance != null)
+            ToastManager.instance.ShowToast(message);
+        else
+            Debug.Log($"[Unlock] {message}");
     }
 }
