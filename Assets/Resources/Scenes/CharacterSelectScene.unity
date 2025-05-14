@@ -260,6 +260,7 @@ GameObject:
   - component: {fileID: 108633316}
   - component: {fileID: 108633315}
   - component: {fileID: 108633314}
+  - component: {fileID: 108633317}
   m_Layer: 5
   m_Name: Button
   m_TagString: Untagged
@@ -363,8 +364,8 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 10905, guid: 0000000000000000f000000000000000, type: 0}
-  m_Type: 1
+  m_Sprite: {fileID: 7919350297008927820, guid: b109cf2df89e6e1409ef439d3ab28baa, type: 3}
+  m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -381,6 +382,21 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 108633312}
   m_CullTransparentMesh: 1
+--- !u!114 &108633317
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 108633312}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e374b665e9a9a964f81759248d5dcd88, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  glowColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
+  glowDistance: 5
+  clickSound: {fileID: 8300000, guid: c1f73ac2b472caf40a7b7a0de9d0cfb6, type: 3}
 --- !u!1 &142497675
 GameObject:
   m_ObjectHideFlags: 0
@@ -921,6 +937,9 @@ MonoBehaviour:
   waxDeck: {fileID: 11400000, guid: 004379a8f4811e041bf53318ba0a02d3, type: 2}
   nekomataDeck: {fileID: 11400000, guid: 36293bfbb81bbe94c91fd63114e12158, type: 2}
   xuTaishiDeck: {fileID: 11400000, guid: 21d22651417c149e4a1aebab115f7c42, type: 2}
+  waxVoiceLine: {fileID: 8300000, guid: 0161309959ffefb45811a919767a8556, type: 3}
+  nekomataVoiceLine: {fileID: 8300000, guid: 84c1ae87a617c6e4ca25df6353659383, type: 3}
+  xuVoiceLine: {fileID: 8300000, guid: 47f7687fad238b94a99c1b9c70a15bc8, type: 3}
 --- !u!4 &1096261789
 Transform:
   m_ObjectHideFlags: 0
@@ -948,6 +967,7 @@ GameObject:
   - component: {fileID: 1118457254}
   - component: {fileID: 1118457253}
   - component: {fileID: 1118457252}
+  - component: {fileID: 1118457255}
   m_Layer: 5
   m_Name: Button
   m_TagString: Untagged
@@ -1051,8 +1071,8 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 10905, guid: 0000000000000000f000000000000000, type: 0}
-  m_Type: 1
+  m_Sprite: {fileID: -8140531637397279716, guid: 223080636258843478a602986c23ce91, type: 3}
+  m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -1069,6 +1089,21 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1118457250}
   m_CullTransparentMesh: 1
+--- !u!114 &1118457255
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1118457250}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e374b665e9a9a964f81759248d5dcd88, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  glowColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
+  glowDistance: 5
+  clickSound: {fileID: 8300000, guid: c1f73ac2b472caf40a7b7a0de9d0cfb6, type: 3}
 --- !u!1 &1157222908
 GameObject:
   m_ObjectHideFlags: 0
@@ -1496,6 +1531,7 @@ GameObject:
   - component: {fileID: 1530187224}
   - component: {fileID: 1530187223}
   - component: {fileID: 1530187222}
+  - component: {fileID: 1530187225}
   m_Layer: 5
   m_Name: Button
   m_TagString: Untagged
@@ -1599,8 +1635,8 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 10905, guid: 0000000000000000f000000000000000, type: 0}
-  m_Type: 1
+  m_Sprite: {fileID: -8934087834390159344, guid: 8214e59d174e6f54faf82b0e51e9249a, type: 3}
+  m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -1617,6 +1653,21 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1530187220}
   m_CullTransparentMesh: 1
+--- !u!114 &1530187225
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1530187220}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e374b665e9a9a964f81759248d5dcd88, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  glowColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
+  glowDistance: 5
+  clickSound: {fileID: 8300000, guid: c1f73ac2b472caf40a7b7a0de9d0cfb6, type: 3}
 --- !u!1 &1685490839
 GameObject:
   m_ObjectHideFlags: 0
