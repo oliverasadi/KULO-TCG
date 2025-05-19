@@ -134,7 +134,8 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      KULO Card 1 3D Model Texture_0: -7409834865384275304
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

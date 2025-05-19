@@ -169,7 +169,7 @@ MonoBehaviour:
   cardHandlers: []
   cardPrefab: {fileID: 1277828652}
   cardSpawnArea: {fileID: 1493312731}
-  aiSelectedDeck: {fileID: 11400000, guid: 004379a8f4811e041bf53318ba0a02d3, type: 2}
+  aiSelectedDeck: {fileID: 11400000, guid: 36293bfbb81bbe94c91fd63114e12158, type: 2}
   playerSelectedDeck: {fileID: 0}
   zones: {fileID: 542413023}
   pc: {fileID: 18294246}

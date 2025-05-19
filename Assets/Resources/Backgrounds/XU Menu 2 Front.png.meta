@@ -1,10 +1,16 @@
 fileFormatVersion: 2
-guid: 8214e59d174e6f54faf82b0e51e9249a
+guid: 536a1cd116c72cd4fa08a12d4168f5c9
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -8934087834390159344
-    second: Mr Wax Character Select Icon_0
+      213: 883824040187323670
+    second: XU Menu 2 Front_0
+  - first:
+      213: -4758043605448825557
+    second: XU Menu 2 Front_1
+  - first:
+      213: -1432035530543925437
+    second: XU Menu 2 Front_2
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -100,13 +106,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Mr Wax Character Select Icon_0
+      name: XU Menu 2 Front_0
       rect:
         serializedVersion: 2
-        x: 0
+        x: 316
         y: 0
-        width: 618
-        height: 873
+        width: 719
+        height: 814
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -115,8 +121,52 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 010290f037eb30480800000000000000
-      internalID: -8934087834390159344
+      spriteID: 615e0572849f34c00800000000000000
+      internalID: 883824040187323670
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: XU Menu 2 Front_1
+      rect:
+        serializedVersion: 2
+        x: 1024
+        y: 768
+        width: 15
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b25676fcc8808fdb0800000000000000
+      internalID: -4758043605448825557
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: XU Menu 2 Front_2
+      rect:
+        serializedVersion: 2
+        x: 982
+        y: 531
+        width: 86
+        height: 233
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 347f030b543602ce0800000000000000
+      internalID: -1432035530543925437
       vertices: []
       indices: 
       edges: []
@@ -134,8 +184,7 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable:
-      Mr Wax Character Select Icon_0: -8934087834390159344
+    nameFileIdTable: {}
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

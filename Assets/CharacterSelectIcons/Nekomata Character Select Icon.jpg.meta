@@ -134,7 +134,8 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      Nekomata Character Select Icon_0: -8140531637397279716
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 8214e59d174e6f54faf82b0e51e9249a
+guid: 6314bf2a74c611d46aeec92d42f5b64d
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -8934087834390159344
-    second: Mr Wax Character Select Icon_0
+      213: 5866029266226838144
+    second: Xu Menu 2 BG_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -100,13 +100,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Mr Wax Character Select Icon_0
+      name: Xu Menu 2 BG_0
       rect:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 618
-        height: 873
+        width: 1824
+        height: 1024
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -115,8 +115,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 010290f037eb30480800000000000000
-      internalID: -8934087834390159344
+      spriteID: 08afe7fb982586150800000000000000
+      internalID: 5866029266226838144
       vertices: []
       indices: 
       edges: []
@@ -134,8 +134,7 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable:
-      Mr Wax Character Select Icon_0: -8934087834390159344
+    nameFileIdTable: {}
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
