@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 51b677c52793dbc4798a690f90d8e94e
+guid: 272e7182f061a1944b646b0618ceb824
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -8958785113893373012
-    second: Xu Menu 1 BG_0
+      213: -3198904113032965316
+    second: TamTam & Bear Menu BG 1_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -100,7 +100,7 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Xu Menu 1 BG_0
+      name: TamTam & Bear Menu BG 1_0
       rect:
         serializedVersion: 2
         x: 0
@@ -115,8 +115,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: cabf35397600ca380800000000000000
-      internalID: -8958785113893373012
+      spriteID: c33522068a53b93d0800000000000000
+      internalID: -3198904113032965316
       vertices: []
       indices: 
       edges: []
@@ -134,8 +134,7 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable:
-      Xu Menu 1 BG_0: -8958785113893373012
+    nameFileIdTable: {}
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
