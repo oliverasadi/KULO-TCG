@@ -1,6 +1,8 @@
-using UnityEngine;
+﻿using UnityEngine;
 using Mirror;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
+
 
 public class MainMenu : MonoBehaviour
 {
@@ -13,6 +15,9 @@ public class MainMenu : MonoBehaviour
         hostButton.onClick.AddListener(HostGame);
         joinButton.onClick.AddListener(JoinGame);
         singlePlayerButton.onClick.AddListener(StartSinglePlayer);
+
+        // 👇 Set initial selection so keyboard works immediately
+        EventSystem.current.SetSelectedGameObject(singlePlayerButton.gameObject);
     }
 
     public void HostGame()

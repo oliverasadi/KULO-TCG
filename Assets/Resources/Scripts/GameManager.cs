@@ -55,6 +55,9 @@ public class GameManager : MonoBehaviour
 
     void Start()
     {
+        if (AudioManager.instance != null)
+            StartCoroutine(AudioManager.instance.FadeOutMusic(0.5f));
+
         // Reset state
         ResetUniqueWins();
         playerRoundWins.Clear();
@@ -80,6 +83,7 @@ public class GameManager : MonoBehaviour
 
         StartGame();
     }
+
 
     void Update()
     {
