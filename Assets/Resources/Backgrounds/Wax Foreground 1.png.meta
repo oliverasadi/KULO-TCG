@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 51b677c52793dbc4798a690f90d8e94e
+guid: aca188472d4233c42b1d032d0424cfe9
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -8958785113893373012
-    second: Xu Menu 1 BG_0
+      213: -8184591234431973388
+    second: Wax Foreground 1_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -100,13 +100,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Xu Menu 1 BG_0
+      name: Wax Foreground 1_0
       rect:
         serializedVersion: 2
-        x: 0
+        x: 605
         y: 0
-        width: 1824
-        height: 1024
+        width: 432
+        height: 851
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -115,8 +115,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: cabf35397600ca380800000000000000
-      internalID: -8958785113893373012
+      spriteID: 4f708e7d2ad7a6e80800000000000000
+      internalID: -8184591234431973388
       vertices: []
       indices: 
       edges: []
@@ -135,7 +135,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      Xu Menu 1 BG_0: -8958785113893373012
+      Wax Foreground 1_0: -8184591234431973388
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

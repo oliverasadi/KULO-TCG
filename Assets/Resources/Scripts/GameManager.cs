@@ -55,6 +55,9 @@ public class GameManager : MonoBehaviour
 
     void Start()
     {
+        if (AudioManager.instance != null)
+            StartCoroutine(AudioManager.instance.FadeOutMusic(0.5f));
+
         // Reset state
         ResetUniqueWins();
         playerRoundWins.Clear();
@@ -80,6 +83,7 @@ public class GameManager : MonoBehaviour
 
         StartGame();
     }
+
 
     void Update()
     {
@@ -110,91 +114,82 @@ public class GameManager : MonoBehaviour
         TurnManager.instance.EndTurn();
     }
 
-    public void CheckForWin()
+  public GameObject postGamePopupPrefab; // Assign in Inspector (the popup UI with Restart, Home, etc.)
+
+public void CheckForWin()
+{
+    var oldRows = (bool[])rowUsed.Clone();
+    var oldCols = (bool[])colUsed.Clone();
+    var oldDiags = (bool[])diagUsed.Clone();
+
+    int newLines = WinChecker.instance.CheckWinCondition(GridManager.instance.GetGrid());
+    if (newLines <= 0) return;
+
+    // Play round win audio
+    if (audioSource != null && roundWinClip != null)
+        audioSource.PlayOneShot(roundWinClip);
+
+    int winner = TurnManager.instance.GetCurrentPlayer();
+
+    if (winner == 1)
     {
-        var oldRows = (bool[])rowUsed.Clone();
-        var oldCols = (bool[])colUsed.Clone();
-        var oldDiags = (bool[])diagUsed.Clone();
-
-        int newLines = WinChecker.instance.CheckWinCondition(GridManager.instance.GetGrid());
-        if (newLines <= 0) return;
-
-        // Play round win audio
-        if (audioSource != null && roundWinClip != null)
-            audioSource.PlayOneShot(roundWinClip);
-
-        int winner = TurnManager.instance.GetCurrentPlayer();
-
-        if (winner == 1)
+        for (int i = 0; i < 3; i++)
         {
-            // Record player wins
-            for (int i = 0; i < 3; i++)
-            {
-                if (!oldRows[i] && rowUsed[i]) AddPlayerWin(i, Axis.Row);
-                if (!oldCols[i] && colUsed[i]) AddPlayerWin(i, Axis.Col);
-            }
-            if (!oldDiags[0] && diagUsed[0]) AddPlayerWin(0, Axis.MainDiag);
-            if (!oldDiags[1] && diagUsed[1]) AddPlayerWin(1, Axis.AntiDiag);
-
-            roundsWonP1 += newLines;
-            UpdateRoundsUI();
-            RefreshRoundButtons();
+            if (!oldRows[i] && rowUsed[i]) AddPlayerWin(i, Axis.Row);
+            if (!oldCols[i] && colUsed[i]) AddPlayerWin(i, Axis.Col);
         }
-        else if (winner == 2)
-        {
-            // AI only updates text
-            roundsWonP2 += newLines;
-            UpdateRoundsUI();
-        }
+        if (!oldDiags[0] && diagUsed[0]) AddPlayerWin(0, Axis.MainDiag);
+        if (!oldDiags[1] && diagUsed[1]) AddPlayerWin(1, Axis.AntiDiag);
 
-        // Display status
+        roundsWonP1 += newLines;
+        UpdateRoundsUI();
+        RefreshRoundButtons();
+    }
+    else if (winner == 2)
+    {
+        roundsWonP2 += newLines;
+        UpdateRoundsUI();
+    }
+
+    if (gameStatusText != null)
+    {
+        gameStatusText.gameObject.SetActive(true);
+        gameStatusText.text = $"Player {winner} wins {newLines} line(s)!";
+    }
+
+    // Overall game win check
+    if (roundsWonP1 >= totalRoundsToWin || roundsWonP2 >= totalRoundsToWin)
+    {
+        if (audioSource != null && gameWinClip != null)
+            audioSource.PlayOneShot(gameWinClip);
+
         if (gameStatusText != null)
         {
             gameStatusText.gameObject.SetActive(true);
-            gameStatusText.text = $"Player {winner} wins {newLines} line(s)!";
+            gameStatusText.text = $"Player {winner} Wins Game";
         }
 
-        // Check for overall game win
-        if (roundsWonP1 >= totalRoundsToWin || roundsWonP2 >= totalRoundsToWin)
-        {
-            // Play the game-win sound
-            if (audioSource != null && gameWinClip != null)
-                audioSource.PlayOneShot(gameWinClip);
-
-            // Show "Player X Wins Game"
-            if (gameStatusText != null)
-            {
-                gameStatusText.gameObject.SetActive(true);
-                gameStatusText.text = $"Player {winner} Wins Game";
-            }
-
-            // 🔗 Profile system integration
-#if UNITY_EDITOR
-            Debug.Log("🔗 Logging result to player profile...");
-#endif
-
-            bool playerWon = (winner == 1);
-            string deckName = PlayerManager.selectedCharacterDeck != null
-                ? PlayerManager.selectedCharacterDeck.deckName
-                : "Unknown";
-
-            if (ProfileManager.instance != null)
-            {
-                ProfileManager.instance.RecordGameResult(deckName, playerWon);
-            }
-            else
-            {
-                Debug.LogWarning("⚠️ ProfileManager not found. Player stats not updated.");
-            }
-
-            Invoke("RestartGame", 3f);
-        }
-
-        else
-        {
-            Invoke("ClearWinAnnouncement", 2f);
-        }
+        ShowPostGamePopup(); // 💡 Show your restart/home/quit/character popup here
     }
+    else
+    {
+        Invoke("ClearWinAnnouncement", 2f);
+    }
+}
+
+private void ShowPostGamePopup()
+{
+    GameObject canvas = GameObject.Find("OverlayCanvas");
+    if (canvas != null && postGamePopupPrefab != null)
+    {
+        Instantiate(postGamePopupPrefab, canvas.transform);
+    }
+    else
+    {
+        Debug.LogError("❌ Missing OverlayCanvas or PostGamePopupPrefab.");
+    }
+}
+
 
     private void AddPlayerWin(int index, Axis axis)
     {
@@ -293,9 +288,21 @@ public class GameManager : MonoBehaviour
             gameStatusText.gameObject.SetActive(false);
     }
 
-    void RestartGame()
+    public void RestartGame()
     {
+        StartCoroutine(RestartRoutine());
+    }
+
+    private IEnumerator RestartRoutine()
+    {
+        // Load the scene
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+
+        // Wait one frame so the scene can finish loading
+        yield return null;
+
+        // Reset the turn to ensure Player 1 (and AI) behave correctly
+        TurnManager.instance.ResetTurn();
     }
 
     void UpdateRoundsUI()

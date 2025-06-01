@@ -184,7 +184,10 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      Nekomata Menu 2 Front_0: -1816279678349927473
+      Nekomata Menu 2 Front_1: -1698940770169758345
+      Nekomata Menu 2 Front_2: 3527429579389884017
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

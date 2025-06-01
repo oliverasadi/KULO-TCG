@@ -134,7 +134,8 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      Nekomata Menu 2 BG_0: 8648396083816543292
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

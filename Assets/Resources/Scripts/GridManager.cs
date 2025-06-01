@@ -4,7 +4,6 @@ using TMPro;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine.UI;
-using System;
 
 public class GridManager : MonoBehaviour
 {
@@ -13,10 +12,6 @@ public class GridManager : MonoBehaviour
     private CardSO[,] grid = new CardSO[3, 3];
     private GameObject[,] gridObjects = new GameObject[3, 3];
     public List<GameObject> cellSelectionCells = new List<GameObject>();
-    public bool isCellSelectionMode = false;
-    public CardUI selectedCardUI = null;
-    private Action<int, int> onCellSelected;
-
 
 
     [Header("Evolution Splash")]
@@ -604,16 +599,11 @@ public class GridManager : MonoBehaviour
             Debug.Log($"[GridManager] {card.cardName} is no longer at ({x},{y}) by removal time.");
         }
     }
-    public void EnableCellSelectionMode(System.Action<int, int> cellSelectedCallback, CardUI card)
+    public void EnableCellSelectionMode(System.Action<int, int> cellSelectedCallback)
     {
-        isCellSelectionMode = true;
-        selectedCardUI = card; // ✅ Assign selected card for preview line use
-        onCellSelected = cellSelectedCallback;
-
         int currentPlayer = TurnManager.instance.GetCurrentPlayer();
         int evolvingCardPower = 0;
-
-        // Retrieve evolving card power from SacrificeManager
+        // Retrieve evolving card power from SacrificeManager using the public property.
         if (SacrificeManager.instance != null && SacrificeManager.instance.CurrentEvolutionCard != null)
         {
             evolvingCardPower = SacrificeManager.instance.CurrentEvolutionCard.GetComponent<CardUI>().CalculateEffectivePower();
@@ -624,38 +614,46 @@ public class GridManager : MonoBehaviour
         {
             for (int y = 0; y < 3; y++)
             {
+                // Allow selection if the cell is empty OR occupied by an opponent’s card that can be replaced.
                 if (grid[x, y] == null ||
                     (grid[x, y] != null && !IsOwnedByPlayer(x, y, currentPlayer) && evolvingCardPower > grid[x, y].power))
                 {
                     GameObject cellObj = GameObject.Find($"GridCell_{x}_{y}");
                     if (cellObj != null)
                     {
-                        // Highlighting
-                        var highlighter = cellObj.GetComponent<GridCellHighlighter>();
+                        GridCellHighlighter highlighter = cellObj.GetComponent<GridCellHighlighter>();
                         if (highlighter != null)
                         {
+                            // Clear any previously stored persistent state so we re–store the current highlight.
                             highlighter.ClearStoredPersistentHighlight();
+                            // Apply the temporary yellow highlight.
                             highlighter.SetPersistentHighlight(new Color(1f, 1f, 0f, 0.5f));
-                            highlighter.isSacrificeHighlight = true;
+                            highlighter.isSacrificeHighlight = true; // Mark it as a sacrifice highlight.
 
+                            // Add this cellObj to the selection list so we can restore it later.
                             if (!cellSelectionCells.Contains(cellObj))
+                            {
                                 cellSelectionCells.Add(cellObj);
+                            }
                         }
-
-                        // Button setup
-                        var btn = cellObj.GetComponent<Button>();
+                        Button btn = cellObj.GetComponent<Button>();
                         if (btn == null)
+                        {
                             btn = cellObj.AddComponent<Button>();
-
+                        }
                         btn.onClick.RemoveAllListeners();
-
+                        // Capture x and y in local variables.
                         int capturedX = x, capturedY = y;
                         btn.onClick.AddListener(() =>
                         {
+                            // When a cell is clicked, disable selection immediately.
                             DisableCellSelectionMode();
-                            cellSelectedCallback?.Invoke(capturedX, capturedY);
+                            if (cellSelectedCallback != null)
+                            {
+                                cellSelectedCallback(capturedX, capturedY);
+                            }
                         });
-
+                        // Enable the button in case it was disabled.
                         btn.enabled = true;
                     }
                 }
@@ -663,22 +661,6 @@ public class GridManager : MonoBehaviour
         }
     }
 
-    // ✅ Optional overload if some callers don’t pass a card (e.g. for non-summon selection modes)
-    public void EnableCellSelectionMode(System.Action<int, int> cellSelectedCallback)
-    {
-        EnableCellSelectionMode(cellSelectedCallback, null);
-    }
-
-
-    public void HandleCellSelection(int x, int y)
-    {
-        if (!isCellSelectionMode || onCellSelected == null) return;
-
-        onCellSelected.Invoke(x, y);
-        isCellSelectionMode = false;
-        selectedCardUI = null;
-        onCellSelected = null;
-    }
 
 
 

@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
@@ -12,16 +12,21 @@ public class GridDropZone : MonoBehaviour, IDropHandler, IPointerEnterHandler, I
 
     public void OnDrop(PointerEventData eventData)
     {
-        // No drag-based drop supported in this version
-        HideHighlights();
+        CardDragHandler draggedCard = eventData.pointerDrag.GetComponent<CardDragHandler>();
+        if (draggedCard == null) return;
 
-        if (PreviewLineController.Instance != null)
-            PreviewLineController.Instance.HideLine();
+        // Let the CardDragHandler handle placing the card onto this cell
+        draggedCard.CheckDroppedCard(gridPosition, transform, out bool _isOccupied);
+        isOccupied = _isOccupied;
+        HideHighlights();
     }
 
     public void ShowHighlight()
     {
-        thisImage.sprite = highlightImage;
+        if (!isOccupied)
+        {
+            thisImage.sprite = highlightImage;
+        }
     }
 
     public void HideHighlights()
@@ -31,39 +36,51 @@ public class GridDropZone : MonoBehaviour, IDropHandler, IPointerEnterHandler, I
 
     public void OnPointerEnter(PointerEventData eventData)
     {
-        // ✅ Only respond when actively selecting a cell (Summon mode)
-        if (!GridManager.instance.isCellSelectionMode)
-            return;
-
-        // ✅ Get the selected card from GridManager
-        CardUI cardUI = GridManager.instance.selectedCardUI;
-        if (cardUI == null || cardUI.cardData == null)
-            return;
-
-        // ❌ Do not allow selection if occupied
-        if (isOccupied)
-            return;
-
-        // 🔷 Highlight cell
-        thisImage.sprite = highlightImage;
-
-        // 🔵 Show preview line
-        if (PreviewLineController.Instance != null)
+        if (GridManager.instance.isHoldingCard)
         {
-            RectTransform cardRect = cardUI.GetComponent<RectTransform>();
-            RectTransform cellRect = GetComponent<RectTransform>();
-            PreviewLineController.Instance.ShowLine(cardRect, cellRect);
+            CardDragHandler draggingCard = eventData.pointerDrag?.GetComponent<CardDragHandler>();
+            if (draggingCard != null && draggingCard.cardHandler.cardData.category == CardSO.CardCategory.Spell)
+            {
+                // If dragging a spell, allow highlight on valid targets (even if occupied)
+                CardSO spellData = draggingCard.cardHandler.cardData;
+                bool needsCreature = spellData.requiresTargetCreature;
+                int currentPlayer = TurnManager.instance.GetCurrentPlayer();
+
+                if (!isOccupied)
+                {
+                    // Highlight empty cell only if spell *does not* require a creature target
+                    if (!needsCreature)
+                        thisImage.sprite = highlightImage;
+                }
+                else
+                {
+                    // Cell is occupied; highlight if spell allows targeting a creature here
+                    if (!needsCreature)
+                    {
+                        // Spell can be cast on any cell (empty or occupied)
+                        thisImage.sprite = highlightImage;
+                    }
+                    else
+                    {
+                        // Spell requires a creature � highlight only if the occupant is the current player�s creature
+                        // (Pamyu Poo, for example, should target your own creature)
+                        if (GridManager.instance.IsOwnedByPlayer(gridPosition.x, gridPosition.y, currentPlayer))
+                            thisImage.sprite = highlightImage;
+                    }
+                }
+            }
+            else
+            {
+                // Non-spell cards: only highlight if cell is free (original behavior)
+                if (!isOccupied)
+                    thisImage.sprite = highlightImage;
+            }
         }
     }
 
+
     public void OnPointerExit(PointerEventData eventData)
     {
-        if (!GridManager.instance.isCellSelectionMode)
-            return;
-
-        thisImage.sprite = normalImage;
-
-        if (PreviewLineController.Instance != null)
-            PreviewLineController.Instance.HideLine();
+        HideHighlights();
     }
 }

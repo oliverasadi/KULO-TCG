@@ -1,5 +1,4 @@
-﻿// (Same using directives)
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using UnityEngine.EventSystems;
@@ -17,7 +16,8 @@ public class SummonMenu : MonoBehaviour
     public TextMeshProUGUI sacrificeInfoText;
 
     public CardUI cardUI;
-    [SerializeField] private RectTransform menuPanelRect;
+    [SerializeField] private RectTransform menuPanelRect; // 🔥 Drag "Panel" here in Inspector
+    private bool interactedWithMenu = false;
 
     void Awake()
     {
@@ -40,10 +40,6 @@ public class SummonMenu : MonoBehaviour
     {
         if (currentMenu == this)
             currentMenu = null;
-
-        // Hide the line when the menu is destroyed
-        if (PreviewLineController.Instance != null)
-            PreviewLineController.Instance.HideLine();
     }
 
     public void Initialize(CardUI card)
@@ -125,39 +121,25 @@ public class SummonMenu : MonoBehaviour
 
         Debug.Log($"[SummonMenu] Summon button clicked for {cardUI.cardData.cardName}");
 
-        // ✅ Pass the card into the selection mode setup
         GridManager.instance.EnableCellSelectionMode((x, y) =>
         {
             Transform cellTransform = GameObject.Find($"GridCell_{x}_{y}")?.transform;
             if (cellTransform != null)
             {
-                // Show preview line before placing the card
-                if (PreviewLineController.Instance != null)
-                {
-                    RectTransform cardRect = cardUI.GetComponent<RectTransform>();
-                    RectTransform cellRect = cellTransform.GetComponent<RectTransform>();
-                    PreviewLineController.Instance.ShowLine(cardRect, cellRect);
-                }
-
                 bool success = GridManager.instance.PlaceExistingCard(x, y, cardUI.gameObject, cardUI.cardData, cellTransform);
                 if (success)
                 {
                     TurnManager.instance.RegisterCardPlay(cardUI.cardData);
                 }
-
-                // Hide line after placement
-                if (PreviewLineController.Instance != null)
-                    PreviewLineController.Instance.HideLine();
             }
             else
             {
                 Debug.LogWarning($"GridCell_{x}_{y} not found.");
             }
-        }, cardUI); // ✅ <-- pass selected card here
+        });
 
         StartCoroutine(CloseAfterDelay());
     }
-
 
     private void OnSelectSacrifices()
     {
@@ -190,10 +172,6 @@ public class SummonMenu : MonoBehaviour
     private void OnCancel()
     {
         Debug.Log("Summon menu canceled.");
-
-        if (PreviewLineController.Instance != null)
-            PreviewLineController.Instance.HideLine();
-
         Destroy(gameObject);
     }
 
@@ -223,10 +201,6 @@ public class SummonMenu : MonoBehaviour
             if (!clickedOnPanel)
             {
                 Debug.Log("[SummonMenu] Immediate outside click detected — closing.");
-
-                if (PreviewLineController.Instance != null)
-                    PreviewLineController.Instance.HideLine();
-
                 Destroy(gameObject);
             }
         }
@@ -234,10 +208,7 @@ public class SummonMenu : MonoBehaviour
 
     private IEnumerator CloseAfterDelay()
     {
-        yield return null;
-        if (PreviewLineController.Instance != null)
-            PreviewLineController.Instance.HideLine();
-
+        yield return null; // Wait 1 frame
         Destroy(gameObject);
     }
 }

@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 51b677c52793dbc4798a690f90d8e94e
+guid: e0a4af62610fd55459fea5f32c1fad03
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -8958785113893373012
-    second: Xu Menu 1 BG_0
+      213: 5764420229245396716
+    second: Nekomata Foreground 3_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -100,12 +100,12 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Xu Menu 1 BG_0
+      name: Nekomata Foreground 3_0
       rect:
         serializedVersion: 2
-        x: 0
+        x: 75
         y: 0
-        width: 1824
+        width: 1051
         height: 1024
       alignment: 0
       pivot: {x: 0, y: 0}
@@ -115,8 +115,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: cabf35397600ca380800000000000000
-      internalID: -8958785113893373012
+      spriteID: ce66f3448a55fff40800000000000000
+      internalID: 5764420229245396716
       vertices: []
       indices: 
       edges: []
@@ -135,7 +135,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      Xu Menu 1 BG_0: -8958785113893373012
+      Nekomata Foreground 3_0: 5764420229245396716
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
