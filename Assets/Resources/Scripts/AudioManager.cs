@@ -1,6 +1,5 @@
 ﻿using UnityEngine;
 using UnityEngine.SceneManagement;
-using System.Collections;
 
 public class AudioManager : MonoBehaviour
 {
@@ -9,87 +8,56 @@ public class AudioManager : MonoBehaviour
     private AudioSource musicSource;
     private AudioSource sfxSource;
 
-    public AudioClip mainMenuMusic;         // 🎵 Assign in Inspector
-    public AudioClip buttonClickSound;      // 🔊 Assign in Inspector
-    public AudioClip characterSelectMusic;  // 🎵 Assign in Inspector
+    public AudioClip mainMenuMusic; // 🎵 Assign this in Inspector
+    public AudioClip buttonClickSound; // 🔊 Assign UI click sound
 
     void Awake()
     {
-        if (instance != null && instance != this)
+        if (instance == null)
         {
-            Destroy(gameObject);
+            instance = this;
+            DontDestroyOnLoad(gameObject); // Keeps AudioManager across scenes
+        }
+        else
+        {
+            Destroy(gameObject); // Prevent duplicate AudioManagers
             return;
         }
 
-        instance = this;
-        DontDestroyOnLoad(gameObject);
+        // Create & configure AudioSources
+        musicSource = gameObject.AddComponent<AudioSource>();
+        sfxSource = gameObject.AddComponent<AudioSource>();
 
-        SetupAudioSources();
+        musicSource.loop = true;
+        musicSource.playOnAwake = false;
+        musicSource.volume = 0.5f; // Adjust volume as needed
 
-        SceneManager.sceneLoaded -= OnSceneLoaded; // Just in case
-        SceneManager.sceneLoaded += OnSceneLoaded;
+        sfxSource.playOnAwake = false;
+        sfxSource.volume = 1f; // SFX volume
+
+        SceneManager.sceneLoaded += OnSceneLoaded; // Detects scene change
     }
 
-    public static void EnsureExists()
+    void Start()
     {
-        if (instance == null)
-        {
-            GameObject prefab = Resources.Load<GameObject>("Prefabs/AudioManager");
-            if (prefab != null)
-            {
-                Instantiate(prefab);
-                Debug.Log("[AudioManager] Instantiated from Resources.");
-            }
-            else
-            {
-                Debug.LogError("AudioManager prefab not found in Resources/Prefabs!");
-            }
-        }
-    }
-
-    private void SetupAudioSources()
-    {
-        if (musicSource == null)
-        {
-            musicSource = gameObject.AddComponent<AudioSource>();
-            sfxSource = gameObject.AddComponent<AudioSource>();
-
-            musicSource.loop = true;
-            musicSource.playOnAwake = false;
-            musicSource.volume = 0.5f;
-
-            sfxSource.playOnAwake = false;
-            sfxSource.volume = 1f;
-        }
+        PlayMusic(mainMenuMusic); // Start Main Menu Music
     }
 
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
-        Debug.Log("[AudioManager] Scene loaded: " + scene.name);
-
-        switch (scene.name)
+        if (scene.name == "MainMenu")
         {
-            case "MainMenu":
-                PlayMusic(mainMenuMusic);
-                break;
-            case "CharacterSelectScene":
-                PlayMusic(characterSelectMusic);
-                break;
-            case "KULO":
-                StartCoroutine(FadeOutMusic(0.5f)); // 👈 Smooth fade-out
-                break;
-            default:
-                StartCoroutine(FadeOutMusic(0.5f));
-                break;
+            PlayMusic(mainMenuMusic); // ✅ restart main menu music
+        }
+        else
+        {
+            StopMusic(); // ✅ stop menu music in gameplay
         }
     }
 
     public void PlayMusic(AudioClip clip)
     {
-        if (clip == null || musicSource == null)
-            return;
-
-        if (musicSource.clip != clip)
+        if (clip != null && musicSource.clip != clip)
         {
             musicSource.clip = clip;
             musicSource.Play();
@@ -98,10 +66,10 @@ public class AudioManager : MonoBehaviour
 
     public void StopMusic()
     {
-        if (musicSource != null && musicSource.isPlaying)
+        if (musicSource.isPlaying)
         {
             musicSource.Stop();
-            musicSource.clip = null;
+            musicSource.clip = null; // ✅ Ensure no music restarts
         }
     }
 
@@ -116,24 +84,5 @@ public class AudioManager : MonoBehaviour
     public void PlayButtonClickSound()
     {
         PlaySFX(buttonClickSound);
-    }
-
-    // ✅ Smoothly fade out music
-    public IEnumerator FadeOutMusic(float duration)
-    {
-        if (musicSource == null || !musicSource.isPlaying)
-            yield break;
-
-        float startVolume = musicSource.volume;
-
-        while (musicSource.volume > 0f)
-        {
-            musicSource.volume -= startVolume * Time.deltaTime / duration;
-            yield return null;
-        }
-
-        musicSource.Stop();
-        musicSource.clip = null;
-        musicSource.volume = startVolume;
     }
 }

@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 
 public class MainMenu1 : MonoBehaviour // ✅ Must inherit from MonoBehaviour

@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using UnityEngine;
 
 public class CharacterSelectManager : MonoBehaviour
@@ -17,15 +17,13 @@ public class CharacterSelectManager : MonoBehaviour
 
     void Awake()
     {
-        AudioManager.EnsureExists(); // ✅ Ensures AudioManager exists before anything
-
+        // Ensure we have an AudioSource for playing voice lines
         _audio = GetComponent<AudioSource>();
         if (_audio == null)
             _audio = gameObject.AddComponent<AudioSource>();
 
         _audio.playOnAwake = false;
     }
-
 
     public void SelectMrWax()
     {
