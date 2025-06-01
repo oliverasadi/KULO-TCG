@@ -45,13 +45,9 @@ public class AudioManager : MonoBehaviour
 
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
-        if (scene.name == "MainMenu")
+        if (scene.name != "MainMenu") // ✅ Stop music when leaving Main Menu
         {
-            PlayMusic(mainMenuMusic); // ✅ restart main menu music
-        }
-        else
-        {
-            StopMusic(); // ✅ stop menu music in gameplay
+            StopMusic();
         }
     }
 

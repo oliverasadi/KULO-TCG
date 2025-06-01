@@ -1073,7 +1073,6 @@ MonoBehaviour:
   audioSource: {fileID: 471026465}
   roundWinClip: {fileID: 8300000, guid: f381450b87607aa4b8caccfc95dd6606, type: 3}
   gameWinClip: {fileID: 8300000, guid: 82ef8f059aa56b548baa430c6b82bd78, type: 3}
-  postGamePopupPrefab: {fileID: 6214510237302296097, guid: be02df016d5d78841b14f2555fc00be4, type: 3}
 --- !u!114 &325760557
 MonoBehaviour:
   m_ObjectHideFlags: 0
