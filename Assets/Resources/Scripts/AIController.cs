@@ -195,8 +195,9 @@ public class AIController : PlayerController
                 !TurnManager.instance.spellPlayed && IsCardPlayable(ch.cardData))
             {
                 // Don’t play X1 Damiano when the grid is totally empty
-                bool isDamiano = ch.cardData.effects
-        .Exists(e => e.GetType().Name == "X1DamianoEffect");
+                bool isDamiano = ch.cardData.effects != null &&
+                    ch.cardData.effects.Exists(e => e != null && e.GetType().Name == "X1DamianoEffect");
+
                 if (isDamiano)
                 {
                     // use the already-declared 'grid' at the top of AIPlay()

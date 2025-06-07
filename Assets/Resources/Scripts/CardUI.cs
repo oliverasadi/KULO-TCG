@@ -99,7 +99,6 @@ public class CardUI : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler,
         if (cardNameText != null)
             cardNameText.text = cardData.cardName;
         else
-            Debug.LogError($"CardUI: cardNameText is not assigned on {gameObject.name}");
 
         if (cardArtImage != null)
         {
@@ -132,8 +131,6 @@ public class CardUI : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler,
     {
         if (cardNameText != null)
             cardNameText.text = $"{cardData.cardName} ({currentPower})";
-        else
-            Debug.LogError("Card Name Text is not assigned!");
     }
 
     public void ApplyInlineEffects()

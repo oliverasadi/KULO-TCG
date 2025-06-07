@@ -2659,12 +2659,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0cd44c1031e13a943bb63640046fad76, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_UiScaleMode: 0
+  m_UiScaleMode: 1
   m_ReferencePixelsPerUnit: 100
   m_ScaleFactor: 1
-  m_ReferenceResolution: {x: 800, y: 600}
+  m_ReferenceResolution: {x: 2560, y: 1440}
   m_ScreenMatchMode: 0
-  m_MatchWidthOrHeight: 0
+  m_MatchWidthOrHeight: 0.484
   m_PhysicalUnit: 3
   m_FallbackScreenDPI: 96
   m_DefaultSpriteDPI: 96
@@ -2894,6 +2894,7 @@ MonoBehaviour:
   placeCardSound: {fileID: 8300000, guid: 1b00d8dc7d3df8d439a6305d3a63f9b2, type: 3}
   removeCardSound: {fileID: 8300000, guid: 583d5dec202e38846b578c3fb40521da, type: 3}
   isHoldingCard: 0
+  cellSelectionCancelButtonPrefab: {fileID: 8853522671109537191, guid: b5b4663ea763d3d41a2055a7ece3dc61, type: 3}
 --- !u!4 &669551653
 Transform:
   m_ObjectHideFlags: 0

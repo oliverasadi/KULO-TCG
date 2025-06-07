@@ -121,25 +121,43 @@ public class SummonMenu : MonoBehaviour
 
         Debug.Log($"[SummonMenu] Summon button clicked for {cardUI.cardData.cardName}");
 
-        GridManager.instance.EnableCellSelectionMode((x, y) =>
-        {
-            Transform cellTransform = GameObject.Find($"GridCell_{x}_{y}")?.transform;
-            if (cellTransform != null)
+        // 1) Open cell-selection mode, passing in cardUI and a callback
+        GridManager.instance.EnableCellSelectionMode(
+            cardUI,
+            (x, y) =>
             {
-                bool success = GridManager.instance.PlaceExistingCard(x, y, cardUI.gameObject, cardUI.cardData, cellTransform);
-                if (success)
+                // 2) Immediately clear all highlights/buttons (in case they remain)
+                GridManager.instance.DisableCellSelectionMode();
+
+                // 3) Try to place the card into the chosen cell
+                Transform cellTransform = GameObject.Find($"GridCell_{x}_{y}")?.transform;
+                if (cellTransform != null)
                 {
-                    TurnManager.instance.RegisterCardPlay(cardUI.cardData);
+                    bool success = GridManager.instance.PlaceExistingCard(
+                        x,
+                        y,
+                        cardUI.gameObject,
+                        cardUI.cardData,
+                        cellTransform
+                    );
+
+                    if (!success)
+                    {
+                        Debug.LogWarning($"[SummonMenu] Placement failed at ({x},{y}).");
+                    }
+                    // Note: PlaceExistingCard already registers the play if it succeeds.
+                }
+                else
+                {
+                    Debug.LogWarning($"GridCell_{x}_{y} not found.");
                 }
             }
-            else
-            {
-                Debug.LogWarning($"GridCell_{x}_{y} not found.");
-            }
-        });
+        );
 
+        // 4) Close this menu on the next frame so highlights are visible immediately
         StartCoroutine(CloseAfterDelay());
     }
+
 
     private void OnSelectSacrifices()
     {

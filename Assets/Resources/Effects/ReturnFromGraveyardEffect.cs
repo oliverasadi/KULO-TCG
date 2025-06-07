@@ -26,75 +26,82 @@ public class ReturnFromGraveyardEffect : CardEffect
 
     public override void ApplyEffect(CardUI sourceCard)
     {
-        Debug.Log($"🧙 {sourceCard.cardData.cardName} triggered ReturnFromGraveyardEffect.");
-
+        // Get the CardHandler; bail if missing or no owner
         var handler = sourceCard.GetComponent<CardHandler>();
-        if (handler == null || handler.cardOwner == null) return;
-
-        var zones = handler.cardOwner.zones;
-        var graveyard = zones.GetGraveyardCards();
-        var playerManager = handler.cardOwner;
-
-        // Filter valid cards
-        List<GameObject> valid = graveyard.Where(obj =>
-        {
-            var data = obj.GetComponent<CardHandler>()?.cardData;
-            if (data == null) return false;
-
-            return filterMode switch
-            {
-                FilterMode.Type => data.creatureType == filterValue,
-                FilterMode.Category => data.category.ToString() == filterValue,
-                _ => false
-            };
-        }).ToList();
-
-        if (valid.Count == 0)
-        {
-            Debug.Log("⚠️ No valid cards in graveyard for this effect.");
+        if (handler == null || handler.cardOwner == null)
             return;
-        }
 
-        GraveyardSelectionManager.Instance.StartGraveyardSelection(valid, cardsToSelect, selected =>
+        // 1) AI auto-select: no UI, just return the first N valid cards
+        if (handler.isAI)
         {
-            Debug.Log($"📦 [ReturnFromGraveyardEffect] Callback received {selected.Count} card(s).");
-
-            foreach (var realCard in selected)
+            var graveyard = handler.cardOwner.zones.GetGraveyardCards();
+            var valid = graveyard.Where(obj =>
             {
-                var handler = realCard.GetComponent<CardHandler>();
-                if (handler == null || handler.cardData == null)
-                {
-                    Debug.LogWarning("⚠️ Selected card missing CardHandler or CardData.");
-                    continue;
-                }
+                var data = obj.GetComponent<CardHandler>()?.cardData;
+                if (data == null) return false;
+                return filterMode == FilterMode.Type
+                    ? data.creatureType == filterValue
+                    : data.category.ToString() == filterValue;
+            })
+            .Take(cardsToSelect)
+            .ToList();
 
-                var cardData = handler.cardData;
-
-                // ✅ Remove the selected card from graveyard
-                if (graveyard.Contains(realCard))
+            foreach (var realCard in valid)
+            {
+                var ch = realCard.GetComponent<CardHandler>();
+                if (ch != null && ch.cardData != null)
                 {
-                    graveyard.Remove(realCard);
+                    handler.cardOwner.SpawnCard(ch.cardData);
                 }
-                else
-                {
-                    Debug.LogWarning($"⚠️ Card {cardData.cardName} not found in tracked graveyard list.");
-                }
-
-                // ✅ Spawn the card to hand
-                playerManager.SpawnCard(cardData);
-                Debug.Log($"✅ {cardData.cardName} returned to hand via ReturnFromGraveyardEffect.");
             }
 
             if (blockPlaysNextTurn)
-            {
-                playerManager.blockPlaysNextTurn = true;
-                Debug.Log("🔒 Player is blocked from playing cards next turn.");
-            }
-        });
+                handler.cardOwner.blockPlaysNextTurn = true;
 
+            return;
+        }
+
+        // 2) Player: show graveyard selection UI
+        var zones = handler.cardOwner.zones;
+        var graveList = zones.GetGraveyardCards();
+        List<GameObject> validList = graveList.Where(obj =>
+        {
+            var data = obj.GetComponent<CardHandler>()?.cardData;
+            if (data == null) return false;
+            return filterMode == FilterMode.Type
+                ? data.creatureType == filterValue
+                : data.category.ToString() == filterValue;
+        }).ToList();
+
+        if (validList.Count == 0)
+            return;
+
+        GraveyardSelectionManager.Instance.StartGraveyardSelection(
+            validList,
+            cardsToSelect,
+            selected =>
+            {
+                foreach (var realCard in selected)
+                {
+                    var ch = realCard.GetComponent<CardHandler>();
+                    if (ch != null && ch.cardData != null)
+                    {
+                        if (graveList.Contains(realCard))
+                            graveList.Remove(realCard);
+
+                        handler.cardOwner.SpawnCard(ch.cardData);
+                    }
+                }
+                if (blockPlaysNextTurn)
+                    handler.cardOwner.blockPlaysNextTurn = true;
+            }
+        );
     }
 
-    public override void RemoveEffect(CardUI sourceCard) { }
+    public override void RemoveEffect(CardUI sourceCard)
+    {
+        // No removal logic needed
+    }
 }
 
 #if UNITY_EDITOR
@@ -110,7 +117,9 @@ public class ReturnFromGraveyardEffectEditor : Editor
 
         var valueProp = serializedObject.FindProperty("filterValue");
         var selectedMode = (ReturnFromGraveyardEffect.FilterMode)modeProp.enumValueIndex;
-        var label = selectedMode == ReturnFromGraveyardEffect.FilterMode.Type ? "Creature Type" : "Card Category";
+        var label = selectedMode == ReturnFromGraveyardEffect.FilterMode.Type
+            ? "Creature Type"
+            : "Card Category";
         EditorGUILayout.PropertyField(valueProp, new GUIContent(label));
 
         EditorGUILayout.PropertyField(serializedObject.FindProperty("cardsToSelect"));

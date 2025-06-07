@@ -21,14 +21,30 @@ public class GraveyardDisplayManager : MonoBehaviour
 
     private void Awake()
     {
-        closeButton.onClick.AddListener(() => gameObject.SetActive(false));
+        // Ensure closeButton always hides the panel and resets state
+        closeButton.onClick.RemoveAllListeners();
+        closeButton.onClick.AddListener(() => {
+            gameObject.SetActive(false);
+        });
+    }
+
+    private void OnEnable()
+    {
+        // Re-enable interaction and ensure close button is visible
+        if (closeButton != null)
+        {
+            closeButton.gameObject.SetActive(true);
+            closeButton.interactable = true;
+        }
     }
 
     public void ShowGraveyard(List<GameObject> graveyardCards)
     {
+        // Clear previous content
         foreach (Transform child in contentParent)
             Destroy(child.gameObject);
 
+        // Instantiate card clones
         foreach (GameObject cardObj in graveyardCards)
         {
             var handler = cardObj.GetComponent<CardHandler>();
@@ -52,7 +68,14 @@ public class GraveyardDisplayManager : MonoBehaviour
             trigger.triggers.Add(entry);
         }
 
+        // Make sure the panel is visible and interactive
         gameObject.SetActive(true);
+        // Reset close button in case it was hidden
+        if (closeButton != null)
+        {
+            closeButton.gameObject.SetActive(true);
+            closeButton.interactable = true;
+        }
     }
 
     public void ShowCardInfo(CardSO card)
@@ -85,7 +108,6 @@ public class GraveyardDisplayManager : MonoBehaviour
             var ui = child.GetComponent<CardUI>();
             if (ui == null) continue;
 
-            // Match by card name (or better: use unique ID if available)
             var realCard = validCards.FirstOrDefault(g =>
             {
                 var data = g.GetComponent<CardHandler>()?.cardData;
@@ -95,12 +117,10 @@ public class GraveyardDisplayManager : MonoBehaviour
             if (realCard != null)
             {
                 var selector = child.gameObject.AddComponent<SelectableGraveCard>();
-                selector.Setup(realCard); // ✅ now storing real card
+                selector.Setup(realCard);
             }
         }
     }
-
-
 
     /// <summary>
     /// Clears all selection handlers from cards.

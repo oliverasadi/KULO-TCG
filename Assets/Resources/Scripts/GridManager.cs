@@ -48,7 +48,7 @@ public class GridManager : MonoBehaviour
         // ─── SPELL PLACEMENT RULES ─────────────────────────────────────────────
         if (cardData.category == CardSO.CardCategory.Spell)
         {
-            bool needsCreature = cardData.requiresTargetCreature;      // new flag on your CardSO
+            bool needsCreature = cardData.requiresTargetCreature;
             bool cellHasCard = (grid[x, y] != null);
 
             // 1) If this spell must target a creature but the cell is empty, disallow
@@ -83,22 +83,23 @@ public class GridManager : MonoBehaviour
                 return TurnManager.instance.CanPlayCard(cardData);
             }
 
-            // 3) Cell is empty and this spell does *not* require a creature → normal play check
+            // 3) Cell is empty and this spell does NOT require a creature → normal play check
             return TurnManager.instance.CanPlayCard(cardData);
         }
 
         // ─── CREATURE (AND NON‐SPELL) LOGIC ────────────────────────────────────
         if (grid[x, y] == null)
         {
-            // Empty cell → normal summon/play check
+            // If the cell is empty → just check if the player can actually pay to play this creature
             return TurnManager.instance.CanPlayCard(cardData);
         }
         else
         {
-            // Occupied by some card → only allow if it’s an opponent’s creature with ≤ power
+            // Occupied by some card → only allow replacement if it’s an opponent’s creature with ≤ power
             CardUI occupantUI = gridObjects[x, y].GetComponent<CardUI>();
             if (occupantUI != null)
             {
+                // Figure out if the occupant belongs to the opponent
                 bool occupantIsOpponent =
                     (currentPlayer == 1 && occupantUI.GetComponent<CardHandler>().isAI) ||
                     (currentPlayer == 2 && !occupantUI.GetComponent<CardHandler>().isAI);
@@ -106,14 +107,25 @@ public class GridManager : MonoBehaviour
                 if (occupantIsOpponent)
                 {
                     int occupantEffectivePower = occupantUI.CalculateEffectivePower();
-                    bool allowed = (newCardEffectivePower >= occupantEffectivePower);
-                    Debug.Log($"[GridManager] Replacement at ({x},{y}): occupant power = {occupantEffectivePower}, new card power = {newCardEffectivePower}, allowed = {allowed}");
+                    bool powerOK = (newCardEffectivePower >= occupantEffectivePower);
+
+                    // Only allow replacement if:
+                    // 1) new card’s power ≥ occupant’s power, AND
+                    // 2) player has enough resources to play it (via CanPlayCard)
+                    bool canAfford = TurnManager.instance.CanPlayCard(cardData);
+                    bool allowed = (powerOK && canAfford);
+
+                    Debug.Log($"[GridManager] Replacement at ({x},{y}): occupant power = {occupantEffectivePower}, " +
+                              $"new card power = {newCardEffectivePower}, powerOK = {powerOK}, canAfford = {canAfford}, allowed = {allowed}");
+
                     return allowed;
                 }
             }
+            // Either there was no CardUI, or it was your own card, or it was a non-creature: cannot place here
             return false;
         }
     }
+
 
 
     public bool PlaceExistingCard(int x, int y, GameObject cardObj, CardSO cardData, Transform cellParent)
@@ -291,14 +303,17 @@ public class GridManager : MonoBehaviour
                 return false;
             }
 
+            // Check the occupant’s power versus the new card’s power
             float occupantPower = gridObjects[x, y].GetComponent<CardUI>().CalculateEffectivePower();
             float newPower = cardObj.GetComponent<CardUI>().CalculateEffectivePower();
 
+            // If occupant is stronger, you can’t replace
             if (occupantPower > newPower)
             {
                 Debug.Log($"Cannot replace {grid[x, y].cardName} at ({x},{y}) - occupant power ({occupantPower}) > new card power ({newPower}).");
                 return false;
             }
+            // If equal power, both die
             else if (Mathf.Approximately(occupantPower, newPower))
             {
                 if (cardData.category == CardSO.CardCategory.Spell)
@@ -306,18 +321,31 @@ public class GridManager : MonoBehaviour
                     Debug.Log($"[GridManager] Spell {cardData.cardName} cannot destroy Creature {grid[x, y].cardName} on equal power.");
                     return false;
                 }
+
                 Debug.Log($"Equal power at ({x},{y}). Destroying both occupant and new card.");
                 var occHandler = gridObjects[x, y].GetComponent<CardHandler>();
                 RemoveCard(x, y, occHandler != null && occHandler.isAI);
+
+                // Send the new card to graveyard instead of placing
                 var newHandler = cardObj.GetComponent<CardHandler>();
                 newHandler?.cardOwner?.zones.AddCardToGrave(cardObj);
+
                 TurnManager.instance.RegisterCardPlay(cardData);
                 if (cardData.baseOrEvo != CardSO.BaseOrEvo.Evolution)
                     ResetCellVisual(x, y);
+
                 return true;
             }
+            // Occupant is weaker: replace, but only if player can afford to play
             else
             {
+                bool canAfford = TurnManager.instance.CanPlayCard(cardData);
+                if (!canAfford)
+                {
+                    Debug.Log($"Cannot replace {grid[x, y].cardName} at ({x},{y}) because player cannot pay for {cardData.cardName}.");
+                    return false;
+                }
+
                 Debug.Log($"Replacing occupant {grid[x, y].cardName} at ({x},{y}) with {cardData.cardName}.");
                 var occHandler = gridObjects[x, y].GetComponent<CardHandler>();
                 RemoveCard(x, y, occHandler != null && occHandler.isAI);
@@ -396,7 +424,7 @@ public class GridManager : MonoBehaviour
             GameManager.instance.CheckForWin();
 
         // ------------------
-        // (9) PROCESS EFFECTS IMMEDIATELY
+        // (10) PROCESS EFFECTS IMMEDIATELY
         // ------------------
         var cardUIComp = cardObj.GetComponent<CardUI>();
         if (cardUIComp != null)
@@ -499,6 +527,7 @@ public class GridManager : MonoBehaviour
     }
 
 
+
     public void UpdateMutualConditionalEffects()
     {
         CardSO[,] field = GetGrid();
@@ -599,67 +628,177 @@ public class GridManager : MonoBehaviour
             Debug.Log($"[GridManager] {card.cardName} is no longer at ({x},{y}) by removal time.");
         }
     }
-    public void EnableCellSelectionMode(System.Action<int, int> cellSelectedCallback)
+    // ────────────────────────────────────────────────────────────────────────────
+    // New two-parameter overload: explicitly pass in the CardUI being summoned.
+    // ────────────────────────────────────────────────────────────────────────────
+    // Add these fields at the top of GridManager (just below existing fields)
+    [SerializeField] private GameObject cellSelectionCancelButtonPrefab;
+    private GameObject cellSelectionCancelButtonInstance;
+
+
+    // ────────────────────────────────────────────────────────────────────────────
+    // Two-parameter overload: shows valid cells and spawns a Cancel button.
+    // ────────────────────────────────────────────────────────────────────────────
+    public void EnableCellSelectionMode(CardUI newCardUI, System.Action<int, int> cellSelectedCallback)
     {
         int currentPlayer = TurnManager.instance.GetCurrentPlayer();
-        int evolvingCardPower = 0;
-        // Retrieve evolving card power from SacrificeManager using the public property.
-        if (SacrificeManager.instance != null && SacrificeManager.instance.CurrentEvolutionCard != null)
-        {
-            evolvingCardPower = SacrificeManager.instance.CurrentEvolutionCard.GetComponent<CardUI>().CalculateEffectivePower();
-        }
 
-        // Loop through all grid cells (assuming a 3x3 grid)
+        // Loop through all grid cells (3×3)
         for (int x = 0; x < 3; x++)
         {
             for (int y = 0; y < 3; y++)
             {
-                // Allow selection if the cell is empty OR occupied by an opponent’s card that can be replaced.
-                if (grid[x, y] == null ||
-                    (grid[x, y] != null && !IsOwnedByPlayer(x, y, currentPlayer) && evolvingCardPower > grid[x, y].power))
+                // Only highlight if CanPlaceCard allows it for this newCardUI
+                if (CanPlaceCard(x, y, newCardUI))
                 {
                     GameObject cellObj = GameObject.Find($"GridCell_{x}_{y}");
-                    if (cellObj != null)
-                    {
-                        GridCellHighlighter highlighter = cellObj.GetComponent<GridCellHighlighter>();
-                        if (highlighter != null)
-                        {
-                            // Clear any previously stored persistent state so we re–store the current highlight.
-                            highlighter.ClearStoredPersistentHighlight();
-                            // Apply the temporary yellow highlight.
-                            highlighter.SetPersistentHighlight(new Color(1f, 1f, 0f, 0.5f));
-                            highlighter.isSacrificeHighlight = true; // Mark it as a sacrifice highlight.
+                    if (cellObj == null) continue;
 
-                            // Add this cellObj to the selection list so we can restore it later.
-                            if (!cellSelectionCells.Contains(cellObj))
-                            {
-                                cellSelectionCells.Add(cellObj);
-                            }
-                        }
-                        Button btn = cellObj.GetComponent<Button>();
-                        if (btn == null)
-                        {
-                            btn = cellObj.AddComponent<Button>();
-                        }
-                        btn.onClick.RemoveAllListeners();
-                        // Capture x and y in local variables.
-                        int capturedX = x, capturedY = y;
-                        btn.onClick.AddListener(() =>
-                        {
-                            // When a cell is clicked, disable selection immediately.
-                            DisableCellSelectionMode();
-                            if (cellSelectedCallback != null)
-                            {
-                                cellSelectedCallback(capturedX, capturedY);
-                            }
-                        });
-                        // Enable the button in case it was disabled.
-                        btn.enabled = true;
+                    // Highlight the cell
+                    var highlighter = cellObj.GetComponent<GridCellHighlighter>();
+                    if (highlighter != null)
+                    {
+                        highlighter.ClearStoredPersistentHighlight();
+                        highlighter.SetPersistentHighlight(new Color(1f, 1f, 0f, 0.5f));
+                        highlighter.isSacrificeHighlight = true;
+                        if (!cellSelectionCells.Contains(cellObj))
+                            cellSelectionCells.Add(cellObj);
                     }
+
+                    // Ensure it has a Button so clicks register
+                    var btn = cellObj.GetComponent<Button>() ?? cellObj.AddComponent<Button>();
+                    btn.onClick.RemoveAllListeners();
+
+                    int cx = x, cy = y;
+                    btn.onClick.AddListener(() =>
+                    {
+                        DisableCellSelectionMode();
+                        cellSelectedCallback?.Invoke(cx, cy);
+                    });
+                    btn.enabled = true;
                 }
             }
         }
+
+        // ──────────────── Spawn a “Cancel” button ────────────────
+        if (cellSelectionCancelButtonPrefab != null)
+        {
+            GameObject overlay = GameObject.Find("OverlayCanvas");
+            if (overlay != null)
+            {
+                // Instantiate under OverlayCanvas
+                cellSelectionCancelButtonInstance = Instantiate(
+                    cellSelectionCancelButtonPrefab,
+                    overlay.transform
+                );
+
+                // Position it (e.g., top‐center, 20px below top)
+                var rt = cellSelectionCancelButtonInstance.GetComponent<RectTransform>();
+                if (rt != null)
+                {
+                    rt.anchorMin = new Vector2(1f, 1f);
+                    rt.anchorMax = new Vector2(1f, 1f);
+                    rt.pivot = new Vector2(1f, 1f);
+                    rt.anchoredPosition = new Vector2(-300f, -300f);
+                }
+
+                // Hook its onClick to cancel selection mode
+                var cancelBtn = cellSelectionCancelButtonInstance.GetComponent<Button>();
+                if (cancelBtn != null)
+                {
+                    cancelBtn.onClick.RemoveAllListeners();
+                    cancelBtn.onClick.AddListener(() =>
+                    {
+                        DisableCellSelectionMode();
+                    });
+                }
+                else
+                {
+                    Debug.LogWarning("cellSelectionCancelButtonPrefab is missing a Button component.");
+                }
+            }
+            else
+            {
+                Debug.LogWarning("EnableCellSelectionMode: 'OverlayCanvas' not found.");
+            }
+        }
+        else
+        {
+            Debug.LogWarning("EnableCellSelectionMode: cellSelectionCancelButtonPrefab is not assigned.");
+        }
     }
+
+
+    // ────────────────────────────────────────────────────────────────────────────
+    // Legacy one-parameter overload: fetch CardUI from SacrificeManager if available.
+    // This preserves existing calls that only passed a callback.
+    // ────────────────────────────────────────────────────────────────────────────
+    public void EnableCellSelectionMode(System.Action<int, int> cellSelectedCallback)
+    {
+        CardUI evolvingCardUI = null;
+
+        if (SacrificeManager.instance != null && SacrificeManager.instance.CurrentEvolutionCard != null)
+        {
+            evolvingCardUI = SacrificeManager.instance.CurrentEvolutionCard.GetComponent<CardUI>();
+        }
+
+        if (evolvingCardUI != null)
+        {
+            // Delegate to the two-parameter version
+            EnableCellSelectionMode(evolvingCardUI, cellSelectedCallback);
+        }
+        else
+        {
+            Debug.LogError("EnableCellSelectionMode was called without a CardUI and no CurrentEvolutionCard was found.");
+        }
+    }
+
+
+    // ────────────────────────────────────────────────────────────────────────────
+    // Update DisableCellSelectionMode to also remove the Cancel button
+    // ────────────────────────────────────────────────────────────────────────────
+    public void DisableCellSelectionMode()
+    {
+        // Disable all cell buttons and clear their highlights
+        foreach (GameObject cellObj in cellSelectionCells)
+        {
+            if (cellObj != null)
+            {
+                // Remove any click listeners and disable the button
+                Button btn = cellObj.GetComponent<Button>();
+                if (btn != null)
+                {
+                    btn.onClick.RemoveAllListeners();
+                    btn.enabled = false;
+                }
+
+                // Restore or reset the highlight on each cell
+                GridCellHighlighter highlighter = cellObj.GetComponent<GridCellHighlighter>();
+                if (highlighter != null)
+                {
+                    if (highlighter.HasStoredPersistentHighlight)
+                        highlighter.RestoreHighlight();
+                    else
+                        highlighter.ResetHighlight();
+
+                    highlighter.isSacrificeHighlight = false;
+                }
+            }
+        }
+        cellSelectionCells.Clear();
+
+        // Destroy the Cancel button if it exists
+        if (cellSelectionCancelButtonInstance != null)
+        {
+            Destroy(cellSelectionCancelButtonInstance);
+            cellSelectionCancelButtonInstance = null;
+        }
+    }
+
+
+
+
+
 
 
 
@@ -1016,40 +1155,7 @@ public class GridManager : MonoBehaviour
     }
 
 
-    public void DisableCellSelectionMode()
-    {
-        // Only disable buttons and clear highlights on cells that were marked.
-        foreach (GameObject cellObj in cellSelectionCells)
-        {
-            if (cellObj != null)
-            {
-                Button btn = cellObj.GetComponent<Button>();
-                if (btn != null)
-                {
-                    btn.onClick.RemoveAllListeners();
-                    btn.enabled = false;
-                }
-                GridCellHighlighter highlighter = cellObj.GetComponent<GridCellHighlighter>();
-                if (highlighter != null)
-                {
-                    // Only clear the highlight if the cell was marked for sacrifice selection.
-                    if (highlighter.isSacrificeHighlight)
-                    {
-                        if (highlighter.HasStoredPersistentHighlight)
-                        {
-                            highlighter.RestoreHighlight();
-                        }
-                        else
-                        {
-                            highlighter.ResetHighlight();
-                        }
-                        highlighter.isSacrificeHighlight = false;
-                    }
-                }
-            }
-        }
-        cellSelectionCells.Clear();
-    }
+
 
 
 
