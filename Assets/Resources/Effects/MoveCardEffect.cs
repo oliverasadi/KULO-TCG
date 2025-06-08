@@ -26,9 +26,6 @@ public class MoveCardEffect : CardEffect
 
     private readonly Color highlightColor = new Color(1f, 1f, 0f, .45f);   // yellow
 
-    /* ──────────────────────────────── helpers ───────────────────────────── */
-
-    /// <summary>Resets the highlight on every cell in <paramref name="cells"/>.</summary>
     private static void ClearHighlights(IEnumerable<Vector2Int> cells)
     {
         foreach (var c in cells)
@@ -37,7 +34,6 @@ public class MoveCardEffect : CardEffect
                       ?.ResetHighlight();
     }
 
-    /// <summary>Immediately clears the highlight on a single grid cell.</summary>
     private static void ResetCellHighlight(int x, int y)
     {
         GameObject.Find($"GridCell_{x}_{y}")
@@ -45,11 +41,8 @@ public class MoveCardEffect : CardEffect
                   ?.ResetHighlight();
     }
 
-    /* ───────────────────────────────── main ─────────────────────────────── */
-
     public override void ApplyEffect(CardUI sourceCard)
     {
-        // figure out where the spell was dropped
         var p = sourceCard.transform.parent.name.Split('_');
         if (p.Length < 3) return;
         int fx = int.Parse(p[1]), fy = int.Parse(p[2]);
@@ -63,7 +56,6 @@ public class MoveCardEffect : CardEffect
 
         int local = TurnManager.instance.localPlayerNumber;
 
-        /* ─────────────── INTERACTIVE ANY-DESTINATION ────────────────────── */
         if (interactiveAnyDestination)
         {
             if (ui.cardData.cardName != allowedName1 && ui.cardData.cardName != allowedName2)
@@ -88,19 +80,13 @@ public class MoveCardEffect : CardEffect
                 var dest = new Vector2Int(sx, sy);
                 if (!empties.Contains(dest)) return;
 
-                GridManager.instance.RemoveCard(fx, fy, handle.isAI);
-                ResetCellHighlight(fx, fy);                      // ‹‹ clear old green
-
-                var cellObj = GameObject.Find($"GridCell_{sx}_{sy}");
-                if (cellObj != null)
-                    GridManager.instance.PlaceExistingCard(sx, sy, go, ui.cardData, cellObj.transform);
-
-                ClearHighlights(empties);                        // ‹‹ remove yellows
+                ResetCellHighlight(fx, fy); // remove old highlight
+                GridManager.instance.MoveCardOnBoard(fx, fy, sx, sy, go);
+                ClearHighlights(empties);   // remove all yellow highlights
             });
             return;
         }
 
-        /* ─────────────── INTERACTIVE RELATIVE-TO-OPPONENT ───────────────── */
         if (interactiveRelativeToOpponent)
         {
             if (mustBeYours && handle.cardOwner.playerNumber != local)
@@ -129,19 +115,13 @@ public class MoveCardEffect : CardEffect
                 var chosen = new Vector2Int(sx, sy);
                 if (!valids.Contains(chosen)) return;
 
-                GridManager.instance.RemoveCard(fx, fy, handle.isAI);
-                ResetCellHighlight(fx, fy);                      // ‹‹ clear old green
-
-                var cellObj = GameObject.Find($"GridCell_{sx}_{sy}");
-                if (cellObj != null)
-                    GridManager.instance.PlaceExistingCard(sx, sy, go, ui.cardData, cellObj.transform);
-
-                ClearHighlights(valids);                         // ‹‹ remove yellows
+                ResetCellHighlight(fx, fy);
+                GridManager.instance.MoveCardOnBoard(fx, fy, sx, sy, go);
+                ClearHighlights(valids);
             });
             return;
         }
 
-        /* ─────────────── NON-INTERACTIVE OFFSET MOVE ────────────────────── */
         bool ownerOK = filterMode switch
         {
             FilterMode.YoursOnly => handle.cardOwner.playerNumber == local,
@@ -159,15 +139,11 @@ public class MoveCardEffect : CardEffect
             if (tx < 0 || tx >= 3 || ty < 0 || ty >= 3) continue;
             if (onlyIfFree && grid[tx, ty] != null) continue;
 
-            GridManager.instance.RemoveCard(fx, fy, handle.isAI);
-            ResetCellHighlight(fx, fy);                // ‹‹ clear old green
-
-            var cellObj = GameObject.Find($"GridCell_{tx}_{ty}");
-            if (cellObj != null)
-                GridManager.instance.PlaceExistingCard(tx, ty, go, ui.cardData, cellObj.transform);
+            ResetCellHighlight(fx, fy);
+            GridManager.instance.MoveCardOnBoard(fx, fy, tx, ty, go);
             return;
         }
     }
 
-    public override void RemoveEffect(CardUI sourceCard) { /* nothing to clean up */ }
+    public override void RemoveEffect(CardUI sourceCard) { }
 }

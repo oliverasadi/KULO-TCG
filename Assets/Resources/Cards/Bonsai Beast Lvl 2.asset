@@ -10,9 +10,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9747e2743189362479fe32d85a8865e0, type: 3}
-  m_Name: Bonzai Beast Lvl 2
+  m_Name: Bonsai Beast Lvl 2
   m_EditorClassIdentifier: 
   cardName: Bonsai Beast Lvl 2
+  requiresTargetCreature: 0
   category: 0
   power: 2100
   effectDescription: "\"EVOLUTION: To summon this card, sacrifice \u2018Bonsai Beast
@@ -22,8 +23,13 @@ MonoBehaviour:
   creatureType: Su Beast
   baseOrEvo: 0
   extraDetails: 'DOB: 2025, GPS: Su River, Weight: 6.5kg, Height: 0.70m.'
+  inlineEffects: []
+  effects:
+  - {fileID: 11400000, guid: 7f08b1861f4fa4a579bff42ea9459faf, type: 2}
   requiresSacrifice: 1
   sacrificeRequirements:
-  - requiredCardName: Bonsai Beast Lvl 2
+  - requiredCardName: Bonsai Beast Lvl 1
     matchByCreatureType: 0
     count: 1
+    allowFromField: 1
+    allowFromHand: 0

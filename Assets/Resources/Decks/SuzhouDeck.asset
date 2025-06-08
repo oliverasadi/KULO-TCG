@@ -12,5 +12,43 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7a3f2cec2517eb241b44c21068f8f6bc, type: 3}
   m_Name: SuzhouDeck
   m_EditorClassIdentifier: 
-  deckName: 
-  cardEntries: []
+  deckName: Xu Deck
+  cardEntries:
+  - card: {fileID: 11400000, guid: 4175ca594d9fd3f4f8e9bd9eebc6d105, type: 2}
+    quantity: 2
+  - card: {fileID: 11400000, guid: e60c6699f8661554091c38a390e639a6, type: 2}
+    quantity: 2
+  - card: {fileID: 11400000, guid: f873ebdcbfc2c404ba29bdf8e72788e7, type: 2}
+    quantity: 3
+  - card: {fileID: 11400000, guid: bbc70312819359a47ac0a03e04b45166, type: 2}
+    quantity: 3
+  - card: {fileID: 11400000, guid: 475d701e4fff71341a7b9ef1ce460121, type: 2}
+    quantity: 2
+  - card: {fileID: 11400000, guid: be88cf316cf17e3499d42e5f26a00396, type: 2}
+    quantity: 1
+  - card: {fileID: 11400000, guid: 30e037bf539fb31458940924d64e994d, type: 2}
+    quantity: 2
+  - card: {fileID: 11400000, guid: 98ab7772ac1ed1041811bce18c5a413d, type: 2}
+    quantity: 3
+  - card: {fileID: 11400000, guid: 16abb367ba5de1b4e90769949e216eeb, type: 2}
+    quantity: 3
+  - card: {fileID: 11400000, guid: 69027d35af9459d4ca57874838183ca6, type: 2}
+    quantity: 3
+  - card: {fileID: 11400000, guid: 4f0d82896bd7c734b8fc3392b7d0db9b, type: 2}
+    quantity: 3
+  - card: {fileID: 11400000, guid: 8d55274c1c015a140a501d854584702f, type: 2}
+    quantity: 1
+  - card: {fileID: 11400000, guid: 1f26cf0d6ca2ee84cb68f83fa8ff8187, type: 2}
+    quantity: 1
+  - card: {fileID: 11400000, guid: c09d80c78485d954d91d99e43a5120a6, type: 2}
+    quantity: 3
+  - card: {fileID: 11400000, guid: 71e1f94dafd7f40438cd51f3afb3680c, type: 2}
+    quantity: 2
+  - card: {fileID: 11400000, guid: 3c7a836d0b13bfd42adfe87c963086ca, type: 2}
+    quantity: 3
+  - card: {fileID: 11400000, guid: 83d780d97a8f9ba4fa33ecff1dbf9a82, type: 2}
+    quantity: 1
+  - card: {fileID: 11400000, guid: d1cbfdd552a747e4cb165128cc258bcd, type: 2}
+    quantity: 1
+  - card: {fileID: 11400000, guid: 2a59fdda6b86ea0429d46f76b59cb739, type: 2}
+    quantity: 2

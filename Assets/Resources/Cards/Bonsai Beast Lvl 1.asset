@@ -10,9 +10,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9747e2743189362479fe32d85a8865e0, type: 3}
-  m_Name: Bonzai Beast Lvl 1
+  m_Name: Bonsai Beast Lvl 1
   m_EditorClassIdentifier: 
   cardName: Bonsai Beast Lvl 1
+  requiresTargetCreature: 0
   category: 0
   power: 1500
   effectDescription: Decrease the power card by 100 for each turn this is on the
@@ -22,3 +23,25 @@ MonoBehaviour:
   creatureType: Su Beast
   baseOrEvo: 0
   extraDetails: 'DOB: 2024, GPS: Su River, Weight: 5.0kg, Height: 0.26m.'
+  inlineEffects:
+  - effectType: 0
+    cardsToDraw: 0
+    requiredCreatureNames: []
+    requiredCreatureTypes: []
+    maxTargets: 0
+    replacementCardName: 
+    turnDelay: 0
+    blockAdditionalPlays: 0
+    promptPrefab: {fileID: 0}
+    powerChange: 0
+    powerLossPerTurn: 0
+    useCountMode: 0
+    powerChangeAmount: 0
+    powerChangeType: 0
+    targetPositions: 
+    adjacencyOwnerToAffect: 0
+    searchOwner: 0
+  effects:
+  - {fileID: 11400000, guid: 7f08b1861f4fa4a579bff42ea9459faf, type: 2}
+  requiresSacrifice: 0
+  sacrificeRequirements: []

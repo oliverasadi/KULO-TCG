@@ -126,6 +126,76 @@ public class GridManager : MonoBehaviour
         }
     }
 
+public bool MoveCardOnBoard(int oldX, int oldY, int newX, int newY, GameObject cardObj)
+{
+    if (grid[newX, newY] != null)
+    {
+        Debug.LogWarning("❌ Cannot move to occupied cell!");
+        return false;
+    }
+
+    var cardData = grid[oldX, oldY];
+    if (cardData == null)
+    {
+        Debug.LogError("❌ No card to move from the source cell!");
+        return false;
+    }
+
+    // (1) Clear old slot
+    grid[oldX, oldY] = null;
+    gridObjects[oldX, oldY] = null;
+    ResetCellVisual(oldX, oldY);
+
+    // (1.5) Also clear highlight on old cell
+    GameObject oldCell = GameObject.Find($"GridCell_{oldX}_{oldY}");
+    if (oldCell != null)
+    {
+        var oldHighlighter = oldCell.GetComponent<GridCellHighlighter>();
+        if (oldHighlighter != null)
+        {
+            oldHighlighter.ResetHighlight();
+            oldHighlighter.ClearStoredPersistentHighlight();
+        }
+    }
+
+    // (2) Assign to new slot
+    grid[newX, newY] = cardData;
+    gridObjects[newX, newY] = cardObj;
+
+    // (3) Move UI
+    GameObject newCell = GameObject.Find($"GridCell_{newX}_{newY}");
+    if (newCell != null)
+    {
+        cardObj.transform.SetParent(newCell.transform, false);
+        RectTransform rt = cardObj.GetComponent<RectTransform>();
+        if (rt != null)
+        {
+            rt.anchorMin = rt.anchorMax = rt.pivot = new Vector2(0.5f, 0.5f);
+            rt.anchoredPosition = Vector2.zero;
+        }
+
+        // (4) Flash highlight on new cell
+        var highlighter = newCell.GetComponent<GridCellHighlighter>();
+        if (highlighter != null)
+        {
+            var handler = cardObj.GetComponent<CardHandler>();
+            bool isAI = handler != null && handler.isAI;
+            Color baseColor = isAI ? Color.red : Color.green;
+            Color flashColor = new Color(baseColor.r, baseColor.g, baseColor.b, 0.5f);
+            highlighter.FlashHighlight(flashColor);
+        }
+    }
+
+    // (5) Ensure card still shows it's on the field
+    var ui = cardObj.GetComponent<CardUI>();
+    if (ui != null)
+        ui.isOnField = true;
+
+    Debug.Log($"[GridManager] Moved {cardData.cardName} from ({oldX},{oldY}) to ({newX},{newY})");
+    return true;
+}
+
+
 
 
     public bool PlaceExistingCard(int x, int y, GameObject cardObj, CardSO cardData, Transform cellParent)
@@ -1184,116 +1254,134 @@ public class GridManager : MonoBehaviour
         // Example placeholder for multi-sac evolution.
     }
 
-    public void PerformEvolutionAtCoords(CardUI evoCard, int x, int y)
+ public void PerformEvolutionAtCoords(CardUI evoCard, int x, int y)
+{
+    GameObject cellObj = GameObject.Find($"GridCell_{x}_{y}");
+    if (cellObj == null)
     {
-        GameObject cellObj = GameObject.Find($"GridCell_{x}_{y}");
-        if (cellObj == null)
+        Debug.LogError($"PerformEvolutionAtCoords: Could not find GridCell_{x}_{y}");
+        return;
+    }
+
+    // Check if the cell is occupied.
+    if (grid[x, y] != null)
+    {
+        CardUI occupantUI = gridObjects[x, y].GetComponent<CardUI>();
+        CardHandler occupantHandler = gridObjects[x, y].GetComponent<CardHandler>();
+        if (occupantUI == null || occupantHandler == null)
         {
-            Debug.LogError($"PerformEvolutionAtCoords: Could not find GridCell_{x}_{y}");
+            Debug.LogError("PerformEvolutionAtCoords: Missing CardUI or CardHandler on the occupant.");
             return;
         }
 
-        // Check if the cell is occupied.
-        if (grid[x, y] != null)
+        if (occupantHandler.isAI)
         {
-            // Retrieve the CardUI and CardHandler for the occupant.
-            CardUI occupantUI = gridObjects[x, y].GetComponent<CardUI>();
-            CardHandler occupantHandler = gridObjects[x, y].GetComponent<CardHandler>();
-            if (occupantUI == null || occupantHandler == null)
+            float occupantEffectivePower = occupantUI.CalculateEffectivePower();
+            float evoEffectivePower = evoCard.GetComponent<CardUI>().CalculateEffectivePower();
+
+            Debug.Log($"[PerformEvolutionAtCoords] Occupant effective power: {occupantEffectivePower}, Evolution effective power: {evoEffectivePower}");
+
+            if (evoEffectivePower > occupantEffectivePower)
             {
-                Debug.LogError("PerformEvolutionAtCoords: Missing CardUI or CardHandler on the occupant.");
-                return;
-            }
-
-            // Only proceed with replacement if the occupant is an AI card.
-            if (occupantHandler.isAI)
-            {
-                float occupantEffectivePower = occupantUI.CalculateEffectivePower();
-                float evoEffectivePower = evoCard.GetComponent<CardUI>().CalculateEffectivePower();
-
-                Debug.Log($"[PerformEvolutionAtCoords] Occupant effective power: {occupantEffectivePower}, Evolution effective power: {evoEffectivePower}");
-
-                // Remove the occupant only if the evolution's effective power is greater.
-                if (evoEffectivePower > occupantEffectivePower)
-                {
-                    Debug.Log($"[PerformEvolutionAtCoords] Removing opponent's card {grid[x, y].cardName} from cell ({x},{y}) because evolution power is higher.");
-                    RemoveCard(x, y, true);
-                }
-                else
-                {
-                    Debug.Log($"[PerformEvolutionAtCoords] Cannot place {evoCard.cardData.cardName} at ({x},{y}) because the AI occupant's power is equal or higher.");
-                    return; // Cancel the placement.
-                }
+                Debug.Log($"[PerformEvolutionAtCoords] Removing opponent's card {grid[x, y].cardName} from cell ({x},{y}) because evolution power is higher.");
+                RemoveCard(x, y, true);
             }
             else
             {
-                // If the occupant is not an AI card, do not allow replacement.
-                Debug.Log($"[PerformEvolutionAtCoords] Cell ({x},{y}) is occupied by a non-AI card. Evolution replacement is not allowed.");
+                Debug.Log($"[PerformEvolutionAtCoords] Cannot place {evoCard.cardData.cardName} at ({x},{y}) because the AI occupant's power is equal or higher.");
                 return;
             }
         }
-
-        // Place the evolution card in the now free cell.
-        Debug.Log($"PerformEvolutionAtCoords: Placing {evoCard.cardData.cardName} at GridCell_{x}_{y}");
-        evoCard.transform.SetParent(cellObj.transform, false);
-        RectTransform rt = evoCard.GetComponent<RectTransform>();
-        if (rt != null)
-        {
-            rt.anchorMin = new Vector2(0.5f, 0.5f);
-            rt.anchorMax = new Vector2(0.5f, 0.5f);
-            rt.pivot = new Vector2(0.5f, 0.5f);
-            rt.anchoredPosition = Vector2.zero;
-        }
         else
         {
-            evoCard.transform.localPosition = Vector3.zero;
-        }
-        grid[x, y] = evoCard.cardData;
-        gridObjects[x, y] = evoCard.gameObject;
-        GridDropZone dz = cellObj.GetComponent<GridDropZone>();
-        if (dz != null)
-        {
-            dz.isOccupied = true;
-        }
-        else
-        {
-            Debug.LogWarning("PerformEvolutionAtCoords: No GridDropZone on target cell.");
-        }
-        TurnManager.instance.RegisterCardPlay(evoCard.cardData);
-
-        // Optionally, display floating text showing the card's effective power.
-        if (FloatingTextManager.instance != null)
-        {
-            GameObject floatingText = Instantiate(
-                FloatingTextManager.instance.floatingTextPrefab,
-                evoCard.gameObject.transform.position,
-                Quaternion.identity,
-                evoCard.gameObject.transform);
-            floatingText.transform.localPosition = new Vector3(0, 50f, 0);
-            TextMeshProUGUI tmp = floatingText.GetComponent<TextMeshProUGUI>();
-            if (tmp != null)
-            {
-                tmp.text = "Power: " + evoCard.GetComponent<CardUI>().CalculateEffectivePower();
-            }
-        }
-        Debug.Log($"[GridManager] Evolution complete: {evoCard.cardData.cardName} placed at ({x},{y}).");
-
-        // Set the cell highlight to a persistent evolution color.
-        GridCellHighlighter highlighter = cellObj.GetComponent<GridCellHighlighter>();
-        if (highlighter != null)
-        {
-            Color evoColor = new Color(0f, 1f, 0f, 0.2f); // Green for evolution
-            highlighter.SetPersistentHighlight(evoColor);
-        }
-
-        // Check for a win condition after placing the evolved card
-        int newLines = WinChecker.instance.CheckWinCondition(GridManager.instance.GetGrid());
-        if (newLines > 0)
-        {
-            Debug.Log($"[WinChecker] New winning lines formed: {newLines}");
-            // Trigger win handling logic here (e.g., display win message or end the round)
+            Debug.Log($"[PerformEvolutionAtCoords] Cell ({x},{y}) is occupied by a non-AI card. Evolution replacement is not allowed.");
+            return;
         }
     }
+
+    // Place the evolution card in the now free cell.
+    Debug.Log($"PerformEvolutionAtCoords: Placing {evoCard.cardData.cardName} at GridCell_{x}_{y}");
+    evoCard.transform.SetParent(cellObj.transform, false);
+    RectTransform rt = evoCard.GetComponent<RectTransform>();
+    if (rt != null)
+    {
+        rt.anchorMin = new Vector2(0.5f, 0.5f);
+        rt.anchorMax = new Vector2(0.5f, 0.5f);
+        rt.pivot = new Vector2(0.5f, 0.5f);
+        rt.anchoredPosition = Vector2.zero;
+    }
+    else
+    {
+        evoCard.transform.localPosition = Vector3.zero;
+    }
+    grid[x, y] = evoCard.cardData;
+    gridObjects[x, y] = evoCard.gameObject;
+
+    GridDropZone dz = cellObj.GetComponent<GridDropZone>();
+    if (dz != null)
+        dz.isOccupied = true;
+    else
+        Debug.LogWarning("PerformEvolutionAtCoords: No GridDropZone on target cell.");
+
+    TurnManager.instance.RegisterCardPlay(evoCard.cardData);
+
+    // ✅ NEW: Apply effects + set isOnField for effect tracking
+    CardUI cardUI = evoCard.GetComponent<CardUI>();
+    if (cardUI != null)
+    {
+        cardUI.isOnField = true; // ✅ Crucial for LosePowerEachTurnEffect to function
+
+        if (cardUI.cardData.effects != null)
+        {
+            foreach (CardEffect effect in cardUI.cardData.effects)
+            {
+                Debug.Log($"[Evolution Effect] Applying {effect.GetType().Name} to {cardUI.cardData.cardName}");
+                effect.ApplyEffect(cardUI);
+            }
+        }
+    }
+
+   // Floating text (power display)
+if (FloatingTextManager.instance != null)
+{
+    GameObject floatingText = Instantiate(
+        FloatingTextManager.instance.floatingTextPrefab,
+        evoCard.transform.position,
+        Quaternion.identity,
+        evoCard.transform);
+    floatingText.transform.localPosition = new Vector3(0, 50f, 0);
+
+    // Set initial power display
+    TextMeshProUGUI tmp = floatingText.GetComponent<TextMeshProUGUI>();
+    if (tmp != null)
+        tmp.text = "Power: " + cardUI.CalculateEffectivePower();
+
+    // ✅ Assign sourceCard so FloatingText can track and update
+    FloatingText ftScript = floatingText.GetComponent<FloatingText>();
+    if (ftScript != null)
+        ftScript.sourceCard = evoCard.gameObject;
+}
+
+
+    Debug.Log($"[GridManager] Evolution complete: {evoCard.cardData.cardName} placed at ({x},{y}).");
+
+    // Highlight the cell
+    GridCellHighlighter highlighter = cellObj.GetComponent<GridCellHighlighter>();
+    if (highlighter != null)
+    {
+        Color evoColor = new Color(0f, 1f, 0f, 0.2f);
+        highlighter.SetPersistentHighlight(evoColor);
+    }
+
+    // Check win condition
+    int newLines = WinChecker.instance.CheckWinCondition(GridManager.instance.GetGrid());
+    if (newLines > 0)
+    {
+        Debug.Log($"[WinChecker] New winning lines formed: {newLines}");
+    }
+}
+
+
 
 
     public void PlaceEvolutionCard(CardUI evoCard, Vector2 targetPos)
