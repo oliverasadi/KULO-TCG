@@ -7,21 +7,17 @@ public class TargetSelectionManager : MonoBehaviour
 {
     public static TargetSelectionManager Instance;
 
-    // Whether we're currently selecting targets.
     public bool IsSelectingTargets = false;
-
-    // The active boost effect (runtime instance).
     public MultipleTargetPowerBoostEffect CurrentBoostEffect;
 
-    // Maximum number of targets allowed.
-    public int MaxTargets = 3;
-
-    // Reference to the UI prefab for target selection.
     public GameObject targetSelectionUIPrefab;
 
     private GameObject targetSelectionUIInstance;
     private TextMeshProUGUI targetSelectionText;
     private Button completeButton;
+
+    private int maxSelectableTargets = 0;
+    private bool autoCompleteOnMax = false;
 
     void Awake()
     {
@@ -31,19 +27,23 @@ public class TargetSelectionManager : MonoBehaviour
             Destroy(gameObject);
     }
 
-    // Call this to start target selection mode.
     public void StartTargetSelection(MultipleTargetPowerBoostEffect boostEffect)
     {
         CurrentBoostEffect = boostEffect;
+
         if (CurrentBoostEffect.targetCards == null)
             CurrentBoostEffect.targetCards = new List<CardUI>();
         else
             CurrentBoostEffect.targetCards.Clear();
 
         IsSelectingTargets = true;
-        Debug.Log("Target selection started for Multiple Target Power Boost effect.");
 
-        // Instantiate the target selection UI on the OverlayCanvas.
+        maxSelectableTargets = (boostEffect.maxTargets > 0) ? boostEffect.maxTargets : int.MaxValue;
+        autoCompleteOnMax = (boostEffect.maxTargets > 0);
+
+        Debug.Log($"[TargetSelectionManager] Target selection started (max: {maxSelectableTargets})");
+
+        // Create UI
         if (targetSelectionUIPrefab != null)
         {
             var overlayCanvas = GameObject.Find("OverlayCanvas");
@@ -61,7 +61,6 @@ public class TargetSelectionManager : MonoBehaviour
         else Debug.LogWarning("TargetSelectionUIPrefab not assigned in TargetSelectionManager!");
     }
 
-    // Called when a board card is clicked during target selection.
     public void AddTarget(CardUI targetCard)
     {
         if (!IsSelectingTargets || CurrentBoostEffect == null)
@@ -73,19 +72,23 @@ public class TargetSelectionManager : MonoBehaviour
             return;
         }
 
-        if (CurrentBoostEffect.targetCards.Count < MaxTargets)
+        if (CurrentBoostEffect.targetCards.Count >= maxSelectableTargets)
         {
-            CurrentBoostEffect.targetCards.Add(targetCard);
-            Debug.Log("Added target: " + targetCard.cardData.cardName + ". Total targets: " + CurrentBoostEffect.targetCards.Count);
-            UpdateTargetSelectionText();
+            Debug.Log("🚫 Maximum targets reached.");
+            return;
         }
-        else
+
+        CurrentBoostEffect.targetCards.Add(targetCard);
+        Debug.Log("✅ Added target: " + targetCard.cardData.cardName);
+        UpdateTargetSelectionText();
+
+        if (autoCompleteOnMax && CurrentBoostEffect.targetCards.Count >= maxSelectableTargets)
         {
-            Debug.Log("Maximum targets reached.");
+            Debug.Log("🎯 Max targets selected — auto-finalizing.");
+            FinalizeTargetSelection();
         }
     }
 
-    // Update the on-screen text showing selected targets and their new power.
     private void UpdateTargetSelectionText()
     {
         if (targetSelectionText == null || CurrentBoostEffect == null)
@@ -97,46 +100,39 @@ public class TargetSelectionManager : MonoBehaviour
             int newPower = target.CalculateEffectivePower() + CurrentBoostEffect.powerIncrease;
             text += $"{target.cardData.cardName}: +{CurrentBoostEffect.powerIncrease} => {newPower}\n";
         }
-        text += "Click 'Complete' when finished.";
+
+        if (!autoCompleteOnMax)
+            text += "Click 'Complete' when finished.";
+
         targetSelectionText.text = text;
     }
 
-    // Called when the Complete button is clicked.
     public void FinalizeTargetSelection()
     {
         if (CurrentBoostEffect != null)
         {
-            Debug.Log("Applying boost effect to selected targets.");
+            Debug.Log("✅ Applying boost effect to selected targets.");
             CurrentBoostEffect.ApplyEffect(null);
         }
 
-        // ─── CLEAR ALL CARD HIGHLIGHTS ────────────────────────────────────
-        // This makes sure any pulsating "sacrifice" glow on cards is turned off.
         foreach (var handler in Object.FindObjectsOfType<CardHandler>())
-        {
             handler.HideSacrificeHighlight();
-        }
-        // ─────────────────────────────────────────────────────────────────
 
-        // Tear down the selection UI and reset state.
         IsSelectingTargets = false;
         CurrentBoostEffect?.targetCards?.Clear();
+
         if (targetSelectionUIInstance != null)
             Destroy(targetSelectionUIInstance);
     }
 
-    // Cancel without applying.
     public void CancelTargetSelection()
     {
-        Debug.Log("Target selection canceled.");
+        Debug.Log("⚠️ Target selection canceled.");
         IsSelectingTargets = false;
         CurrentBoostEffect?.targetCards?.Clear();
 
-        // Also clear any lingering glows.
         foreach (var handler in Object.FindObjectsOfType<CardHandler>())
-        {
             handler.HideSacrificeHighlight();
-        }
 
         if (targetSelectionUIInstance != null)
             Destroy(targetSelectionUIInstance);

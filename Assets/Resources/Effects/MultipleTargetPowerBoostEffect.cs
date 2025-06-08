@@ -5,7 +5,8 @@ using UnityEngine;
 public class MultipleTargetPowerBoostEffect : CardEffect
 {
     public int powerIncrease = 100;
-    // This list can be set at runtime based on player selection.
+    public int maxTargets = 0; // NEW: limit for how many can be selected (0 = no limit)
+
     public List<CardUI> targetCards = new List<CardUI>();
 
     public override void ApplyEffect(CardUI sourceCard)
@@ -14,7 +15,7 @@ public class MultipleTargetPowerBoostEffect : CardEffect
         foreach (CardUI target in targetCards)
         {
             target.temporaryBoost += powerIncrease;
-            Debug.Log($"Target {target.cardData.cardName} new power: {target.cardData.power}");
+            Debug.Log($"Target {target.cardData.cardName} new power: {target.CalculateEffectivePower()}");
         }
     }
 
@@ -24,8 +25,7 @@ public class MultipleTargetPowerBoostEffect : CardEffect
         foreach (CardUI target in targetCards)
         {
             target.temporaryBoost -= powerIncrease;
-            Debug.Log($"Target {target.cardData.cardName} reverted effective power: {target.CalculateEffectivePower()}");
+            Debug.Log($"Target {target.cardData.cardName} reverted power: {target.CalculateEffectivePower()}");
         }
     }
 }
-

@@ -15,6 +15,9 @@ public class PowerChangeEffect : CardEffect
     [Tooltip("Positive to buff, negative to debuff")]
     public int amount = 0;
 
+    [Tooltip("Maximum number of cards to target (0 = no limit)")]
+    public int maxTargets = 0; // 0 means no limit
+
     public enum TargetOwner { Yours, Opponent }
     [Tooltip("Which player's cards to affect")]
     public TargetOwner targetOwner = TargetOwner.Yours;
@@ -54,7 +57,6 @@ public class PowerChangeEffect : CardEffect
 
     public override void ApplyEffect(CardUI sourceCard)
     {
-        // (0) Hand-size gate ----------------------------------------------------
         if (requireFewerCardsInHand)
         {
             var localPM = TurnManager.currentPlayerManager;
@@ -66,7 +68,6 @@ public class PowerChangeEffect : CardEffect
         int local = TurnManager.instance.localPlayerNumber;
         var gridObjs = GridManager.instance.GetGridObjects();
 
-        // ── helper that boosts + logs ─────────────────────────────────────────
         void ApplyTo(CardUI ui)
         {
             int before = ui.CalculateEffectivePower();
@@ -74,34 +75,28 @@ public class PowerChangeEffect : CardEffect
             ui.UpdatePowerDisplay();
             int after = ui.CalculateEffectivePower();
 
-            Debug.Log($"[PowerBuff] {(amount >= 0 ? "+" : "")}{amount} → " +
-                      $"{ui.cardData.cardName} ({before}→{after})");
+            Debug.Log($"[PowerBuff] {(amount >= 0 ? "+" : "")}{amount} → {ui.cardData.cardName} ({before}→{after})");
 
             if (!_affected.Contains(ui))
                 _affected.Add(ui);
         }
 
-        // (1) NextTwoTurns scheduling -----------------------------------------
         if (mode == Mode.StaticFilter && duration == Duration.NextTwoTurns)
         {
             sourceCard.StartCoroutine(BuffNextTwoTurns(sourceCard));
             return;
         }
 
-        // ─── STATIC FILTER MODE ───────────────────────────────────────────────
         if (mode == Mode.StaticFilter)
         {
-            // (1a) OpponentNextTurn scheduling
             if (duration == Duration.OpponentNextTurn)
             {
                 sourceCard.StartCoroutine(ApplyOnOpponentThenExpire(sourceCard));
                 return;
             }
 
-            // (1b) gather ALL matching cards (field + hand)
             var allTargets = new List<CardUI>();
 
-            // on-field
             foreach (var ui in Object.FindObjectsOfType<CardUI>())
             {
                 if (!ui.isOnField) continue;
@@ -118,7 +113,6 @@ public class PowerChangeEffect : CardEffect
                 allTargets.Add(ui);
             }
 
-            // hand
             if (includeHand)
             {
                 var pm = TurnManager.currentPlayerManager;
@@ -139,16 +133,16 @@ public class PowerChangeEffect : CardEffect
                 }
             }
 
-            // (1c) apply to each distinct target
-            foreach (var ui in allTargets.Distinct())
+            // ✅ Apply up to maxTargets (if maxTargets > 0)
+            foreach (var ui in allTargets.Distinct().Take(maxTargets > 0 ? maxTargets : int.MaxValue))
                 ApplyTo(ui);
 
-            // (1d) schedule expiry
-            if (duration == Duration.ThisTurn) sourceCard.StartCoroutine(ExpireAfterTurn(sourceCard));
-            else if (duration == Duration.BothTurns) sourceCard.StartCoroutine(ExpireAfterBothTurns(sourceCard));
+            if (duration == Duration.ThisTurn)
+                sourceCard.StartCoroutine(ExpireAfterTurn(sourceCard));
+            else if (duration == Duration.BothTurns)
+                sourceCard.StartCoroutine(ExpireAfterBothTurns(sourceCard));
         }
-        // ──────────────────────────────────────────────────────────────────────
-        // ─── INTERACTIVE DROP TARGET MODE ─────────────────────────────────────
+
         else if (mode == Mode.InteractiveDropTarget)
         {
             var candidates = new List<CardUI>();
@@ -172,11 +166,11 @@ public class PowerChangeEffect : CardEffect
 
             var boostEffect = ScriptableObject.CreateInstance<MultipleTargetPowerBoostEffect>();
             boostEffect.powerIncrease = amount;
+            boostEffect.maxTargets = this.maxTargets; // ✅ pass the limit
             boostEffect.targetCards = new List<CardUI>();
             TargetSelectionManager.Instance.StartTargetSelection(boostEffect);
-            return;
         }
-        // ─── RELATIVE N/S MODE ────────────────────────────────────────────────
+
         else if (mode == Mode.RelativeNS)
         {
             var parts = sourceCard.transform.parent.name.Split('_');
@@ -193,16 +187,20 @@ public class PowerChangeEffect : CardEffect
                 if (ui != null && h != null && h.cardOwner.playerNumber != local)
                     valid.Add(ui);
             }
+
             if (valid.Count == 0) return;
+
             foreach (var ui in valid)
                 ui.GetComponent<CardHandler>()?.ShowSacrificeHighlight();
 
             var boostEffect = ScriptableObject.CreateInstance<MultipleTargetPowerBoostEffect>();
             boostEffect.powerIncrease = amount;
+            boostEffect.maxTargets = this.maxTargets; // ✅ pass the limit
             boostEffect.targetCards = new List<CardUI>();
             TargetSelectionManager.Instance.StartTargetSelection(boostEffect);
         }
     }
+
 
     // ────────────────────────────────── expiry helpers ───────────────────────
 

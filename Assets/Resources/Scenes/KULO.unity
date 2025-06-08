@@ -169,7 +169,7 @@ MonoBehaviour:
   cardHandlers: []
   cardPrefab: {fileID: 1277828652}
   cardSpawnArea: {fileID: 1493312731}
-  aiSelectedDeck: {fileID: 11400000, guid: 36293bfbb81bbe94c91fd63114e12158, type: 2}
+  aiSelectedDeck: {fileID: 11400000, guid: 63654f2b2ca905946b2fcb0b876afcc2, type: 2}
   playerSelectedDeck: {fileID: 0}
   zones: {fileID: 542413023}
   pc: {fileID: 18294246}
@@ -1072,7 +1072,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   IsSelectingTargets: 0
   CurrentBoostEffect: {fileID: 0}
-  MaxTargets: 3
   targetSelectionUIPrefab: {fileID: 5932106655600038640, guid: 04db69ed002c8604cbf6f1ec9d4588d9, type: 3}
 --- !u!114 &325760562
 MonoBehaviour:

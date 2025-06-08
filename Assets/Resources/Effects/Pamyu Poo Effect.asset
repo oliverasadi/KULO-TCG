@@ -12,7 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 09db9892ef6428f4d96b8db314aaf138, type: 3}
   m_Name: Pamyu Poo Effect
   m_EditorClassIdentifier: 
+  requireFewerCardsInHand: 0
+  includeHand: 0
   amount: -500
+  maxTargets: 1
   targetOwner: 1
   mode: 2
   filterMode: 0

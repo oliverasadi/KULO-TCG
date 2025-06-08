@@ -14,4 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   filterMode: 0
   filterValue: Cat
+  blockPlaysNextTurn: 0
   cardsToSelect: 1
