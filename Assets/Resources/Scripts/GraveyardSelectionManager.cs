@@ -72,7 +72,7 @@ public class GraveyardSelectionManager : MonoBehaviour
         var owner = targets[0].GetComponent<CardHandler>()?.cardOwner;
         if (owner != null)
         {
-            displayPanelInstance.ShowGraveyard(owner.zones.GetGraveyardCards());
+            displayPanelInstance.ShowGraveyard(currentTargets);
             displayPanelInstance.HighlightSelectableCards(currentTargets);
         }
         else

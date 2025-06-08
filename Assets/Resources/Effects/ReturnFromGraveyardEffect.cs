@@ -26,22 +26,39 @@ public class ReturnFromGraveyardEffect : CardEffect
 
     public override void ApplyEffect(CardUI sourceCard)
     {
-        // Get the CardHandler; bail if missing or no owner
         var handler = sourceCard.GetComponent<CardHandler>();
         if (handler == null || handler.cardOwner == null)
             return;
 
-        // 1) AI auto-select: no UI, just return the first N valid cards
+        // --- Helper to safely get CardSO from GameObject ---
+        CardSO GetCardData(GameObject obj)
+        {
+            if (obj.TryGetComponent<CardHandler>(out var ch) && ch.cardData != null)
+                return ch.cardData;
+
+            if (obj.TryGetComponent<CardUI>(out var cu) && cu.cardData != null)
+                return cu.cardData;
+
+            return null;
+        }
+
+        // -------------------- AI ------------------------
         if (handler.isAI)
         {
             var graveyard = handler.cardOwner.zones.GetGraveyardCards();
             var valid = graveyard.Where(obj =>
             {
-                var data = obj.GetComponent<CardHandler>()?.cardData;
+                var data = GetCardData(obj);
                 if (data == null) return false;
-                return filterMode == FilterMode.Type
-                    ? data.creatureType == filterValue
-                    : data.category.ToString() == filterValue;
+
+                if (filterMode == FilterMode.Type)
+                    return data.category == CardSO.CardCategory.Creature && data.creatureType == filterValue;
+
+                if (filterMode == FilterMode.Category &&
+                    Enum.TryParse<CardSO.CardCategory>(filterValue, true, out var parsedCategory))
+                    return data.category == parsedCategory;
+
+                return false;
             })
             .Take(cardsToSelect)
             .ToList();
@@ -50,9 +67,7 @@ public class ReturnFromGraveyardEffect : CardEffect
             {
                 var ch = realCard.GetComponent<CardHandler>();
                 if (ch != null && ch.cardData != null)
-                {
                     handler.cardOwner.SpawnCard(ch.cardData);
-                }
             }
 
             if (blockPlaysNextTurn)
@@ -61,17 +76,27 @@ public class ReturnFromGraveyardEffect : CardEffect
             return;
         }
 
-        // 2) Player: show graveyard selection UI
+        // -------------------- Player ------------------------
         var zones = handler.cardOwner.zones;
         var graveList = zones.GetGraveyardCards();
+
         List<GameObject> validList = graveList.Where(obj =>
         {
-            var data = obj.GetComponent<CardHandler>()?.cardData;
+            var data = GetCardData(obj);
             if (data == null) return false;
-            return filterMode == FilterMode.Type
-                ? data.creatureType == filterValue
-                : data.category.ToString() == filterValue;
+
+            if (filterMode == FilterMode.Type)
+                return data.category == CardSO.CardCategory.Creature && data.creatureType == filterValue;
+
+            if (filterMode == FilterMode.Category &&
+                Enum.TryParse<CardSO.CardCategory>(filterValue, true, out var parsedCategory))
+                return data.category == parsedCategory;
+
+            return false;
         }).ToList();
+
+        // Optional Debug
+        Debug.Log($"[GraveyardFilter] FilterMode={filterMode}, FilterValue={filterValue}, ValidCards={validList.Count}");
 
         if (validList.Count == 0)
             return;
@@ -92,6 +117,7 @@ public class ReturnFromGraveyardEffect : CardEffect
                         handler.cardOwner.SpawnCard(ch.cardData);
                     }
                 }
+
                 if (blockPlaysNextTurn)
                     handler.cardOwner.blockPlaysNextTurn = true;
             }
