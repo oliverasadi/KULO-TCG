@@ -524,6 +524,63 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 211940681}
   m_CullTransparentMesh: 1
+--- !u!1 &445139223
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 445139225}
+  - component: {fileID: 445139224}
+  m_Layer: 0
+  m_Name: ProfileManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &445139224
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 445139223}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7e2f45661760dd04da21041a5eee4b77, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  currentProfile:
+    playerName: New Player
+    totalWins: 0
+    totalGames: 0
+    currentLevel: 1
+    totalXP: 0
+    selectedAvatar: avatar_default
+    unlockedAvatars: []
+    selectedTitle: Novice
+    unlockedTitles: []
+    totalCardsPlayed: 0
+    lastDeckPlayed: 
+    avatarImageName: avatar_default
+--- !u!4 &445139225
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 445139223}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 1678.2784, y: -5513.4897, z: -127.731186}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &595495897
 GameObject:
   m_ObjectHideFlags: 0
@@ -1671,3 +1728,4 @@ SceneRoots:
   - {fileID: 1289722592}
   - {fileID: 194303683}
   - {fileID: 1096261789}
+  - {fileID: 445139225}

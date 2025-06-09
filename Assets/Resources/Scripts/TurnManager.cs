@@ -151,16 +151,26 @@ public class TurnManager : MonoBehaviour
     }
 
     // Called whenever a card is successfully placed / replaced
+    // TurnManager.cs
     public void RegisterCardPlay(CardSO card)
     {
+        Debug.Log($"[TurnManager] RegisterCardPlay: player={GetCurrentPlayer()}, local={localPlayerNumber}, card={card.cardName}");
         if (card.category == CardSO.CardCategory.Creature)
             creaturePlayed = true;
         if (card.category == CardSO.CardCategory.Spell)
             spellPlayed = true;
 
-        // Fire event
+        // NEW: Count the card if the human player played it
+        if (TurnManager.instance.GetCurrentPlayer() == TurnManager.instance.localPlayerNumber
+            && GameManager.instance != null)
+        {
+            GameManager.instance.playerCardsPlayedThisGame++;
+        }
+
+        // Fire event (existing logic)
         FireOnCardPlayed(card);
     }
+
 
     // The new public method to safely invoke the event
     public void FireOnCardPlayed(CardSO occupant)

@@ -50,23 +50,45 @@ public class ProfileManager : MonoBehaviour
         }
     }
 
-    public void RecordGameResult(string deckName, bool won)
+    // In ProfileManager.cs
+    public void RecordGameResult(string deckName, bool won, int cardsPlayed)
     {
         if (currentProfile == null) return;
-
+        // Update basic stats
         currentProfile.totalGames++;
         if (won) currentProfile.totalWins++;
-
         if (!currentProfile.deckUsage.ContainsKey(deckName))
             currentProfile.deckUsage[deckName] = 0;
         currentProfile.deckUsage[deckName]++;
 
-        currentProfile.totalCardsPlayed += 5; // adjust based on actual logic
+        // Update total cards played with actual number this game (was placeholder +5)
+        currentProfile.totalCardsPlayed += cardsPlayed;  // ✅ use actual cards played
         currentProfile.lastDeckPlayed = deckName;
+
+        // **Calculate XP gain:** +1 per card, +200 if won
+        int xpGain = cardsPlayed;
+        if (won)
+            xpGain += 200;
+        currentProfile.totalXP += xpGain;
+
+        // **Level up check:** Each level requires [Level * 100] XP (linear progression)
+        while (currentProfile.currentLevel < 100
+               && currentProfile.totalXP >= currentProfile.currentLevel * 100)
+        {
+            // Subtract required XP for this level and increase level
+            currentProfile.totalXP -= currentProfile.currentLevel * 100;
+            currentProfile.currentLevel++;
+        }
+        if (currentProfile.currentLevel == 100)
+        {
+            // (Optional: cap XP at max level)
+            currentProfile.totalXP = 0;
+        }
 
         CheckForUnlocks();
         SaveProfile();
     }
+
 
     private void CheckForUnlocks()
     {

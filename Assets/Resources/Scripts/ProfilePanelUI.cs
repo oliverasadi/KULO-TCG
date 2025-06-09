@@ -11,6 +11,8 @@ public class ProfilePanelUI : MonoBehaviour
     public TextMeshProUGUI deckStatsText;
     public TextMeshProUGUI cardsPlayedText;
     public TextMeshProUGUI lastDeckText;
+    public TextMeshProUGUI levelText;   // New: to display Level
+    public TextMeshProUGUI xpText;      // New: to display XP
 
     [Header("Edit Features")]
     public TMP_InputField nameInputField;
@@ -99,7 +101,14 @@ public class ProfilePanelUI : MonoBehaviour
         }
 
         UpdateAvatarImage(p.selectedAvatar);
+
+        // ─── NEW LEVEL & XP DISPLAY ────────────────────────────────────────────
+        if (levelText != null)
+            levelText.text = $"Level: {p.currentLevel}";
+        if (xpText != null)
+            xpText.text = $"XP: {p.totalXP} / {p.currentLevel * 100}";
     }
+
 
     private void SaveName()
     {

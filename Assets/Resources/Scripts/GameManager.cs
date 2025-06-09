@@ -14,6 +14,8 @@ public class GameManager : MonoBehaviour
     private int roundsWonP1 = 0;
     private int roundsWonP2 = 0;
     public int totalRoundsToWin = 3;
+    public int playerCardsPlayedThisGame = 0;  // tracks how many cards the player has played this game
+
 
     // Track unique wins
     public bool[] rowUsed = new bool[3];
@@ -106,7 +108,10 @@ public class GameManager : MonoBehaviour
     {
         Debug.Log("Game Started!");
         TurnManager.instance.StartTurn();
+        playerCardsPlayedThisGame = 0;
+
     }
+
 
     public void EndTurn()
     {
@@ -116,68 +121,90 @@ public class GameManager : MonoBehaviour
 
   public GameObject postGamePopupPrefab; // Assign in Inspector (the popup UI with Restart, Home, etc.)
 
-public void CheckForWin()
-{
-    var oldRows = (bool[])rowUsed.Clone();
-    var oldCols = (bool[])colUsed.Clone();
-    var oldDiags = (bool[])diagUsed.Clone();
-
-    int newLines = WinChecker.instance.CheckWinCondition(GridManager.instance.GetGrid());
-    if (newLines <= 0) return;
-
-    // Play round win audio
-    if (audioSource != null && roundWinClip != null)
-        audioSource.PlayOneShot(roundWinClip);
-
-    int winner = TurnManager.instance.GetCurrentPlayer();
-
-    if (winner == 1)
+    public void CheckForWin()
     {
-        for (int i = 0; i < 3; i++)
+        // 1) Clone old win-tracking arrays
+        var oldRows = (bool[])rowUsed.Clone();
+        var oldCols = (bool[])colUsed.Clone();
+        var oldDiags = (bool[])diagUsed.Clone();
+
+        // 2) Check for any new completed lines
+        int newLines = WinChecker.instance.CheckWinCondition(GridManager.instance.GetGrid());
+        if (newLines <= 0)
+            return;
+
+        // 3) Play round-win audio
+        if (audioSource != null && roundWinClip != null)
+            audioSource.PlayOneShot(roundWinClip);
+
+        // 4) Award line wins
+        int winner = TurnManager.instance.GetCurrentPlayer();
+        if (winner == 1)
         {
-            if (!oldRows[i] && rowUsed[i]) AddPlayerWin(i, Axis.Row);
-            if (!oldCols[i] && colUsed[i]) AddPlayerWin(i, Axis.Col);
+            for (int i = 0; i < 3; i++)
+            {
+                if (!oldRows[i] && rowUsed[i]) AddPlayerWin(i, Axis.Row);
+                if (!oldCols[i] && colUsed[i]) AddPlayerWin(i, Axis.Col);
+            }
+            if (!oldDiags[0] && diagUsed[0]) AddPlayerWin(0, Axis.MainDiag);
+            if (!oldDiags[1] && diagUsed[1]) AddPlayerWin(1, Axis.AntiDiag);
+
+            roundsWonP1 += newLines;
+            UpdateRoundsUI();
+            RefreshRoundButtons();
         }
-        if (!oldDiags[0] && diagUsed[0]) AddPlayerWin(0, Axis.MainDiag);
-        if (!oldDiags[1] && diagUsed[1]) AddPlayerWin(1, Axis.AntiDiag);
+        else if (winner == 2)
+        {
+            roundsWonP2 += newLines;
+            UpdateRoundsUI();
+        }
 
-        roundsWonP1 += newLines;
-        UpdateRoundsUI();
-        RefreshRoundButtons();
-    }
-    else if (winner == 2)
-    {
-        roundsWonP2 += newLines;
-        UpdateRoundsUI();
-    }
-
-    if (gameStatusText != null)
-    {
-        gameStatusText.gameObject.SetActive(true);
-        gameStatusText.text = $"Player {winner} wins {newLines} line(s)!";
-    }
-
-    // Overall game win check
-    if (roundsWonP1 >= totalRoundsToWin || roundsWonP2 >= totalRoundsToWin)
-    {
-        if (audioSource != null && gameWinClip != null)
-            audioSource.PlayOneShot(gameWinClip);
-
+        // 5) Show round-win text
         if (gameStatusText != null)
         {
             gameStatusText.gameObject.SetActive(true);
-            gameStatusText.text = $"Player {winner} Wins Game";
+            gameStatusText.text = $"Player {winner} wins {newLines} line(s)!";
         }
 
-        ShowPostGamePopup(); // 💡 Show your restart/home/quit/character popup here
-    }
-    else
-    {
-        Invoke("ClearWinAnnouncement", 2f);
-    }
-}
+        // 6) Overall game win check
+        if (roundsWonP1 >= totalRoundsToWin || roundsWonP2 >= totalRoundsToWin)
+        {
+            // a) Play game-win audio
+            if (audioSource != null && gameWinClip != null)
+                audioSource.PlayOneShot(gameWinClip);
 
-private void ShowPostGamePopup()
+            // b) Show “Player X Wins Game”
+            if (gameStatusText != null)
+            {
+                gameStatusText.gameObject.SetActive(true);
+                gameStatusText.text = $"Player {winner} Wins Game";
+            }
+
+            // c) Record XP and handle level-up
+            if (ProfileManager.instance != null && ProfileManager.instance.currentProfile != null)
+            {
+                bool playerWon = (winner == 1);  // assume Player 1 is the human
+                string deckName = ProfileManager.instance.currentProfile.lastDeckPlayed;
+                int cardsPlayed = playerCardsPlayedThisGame;
+
+                ProfileManager.instance.RecordGameResult(deckName, playerWon, cardsPlayed);
+
+                // reset per-game counter
+                playerCardsPlayedThisGame = 0;
+            }
+
+            // d) Show the post-game popup
+            ShowPostGamePopup();
+        }
+        else
+        {
+            // clear announcement after a short delay
+            Invoke("ClearWinAnnouncement", 2f);
+        }
+    }
+
+
+    private void ShowPostGamePopup()
 {
     GameObject canvas = GameObject.Find("OverlayCanvas");
     if (canvas != null && postGamePopupPrefab != null)

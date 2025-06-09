@@ -986,6 +986,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   totalRoundsToWin: 3
+  playerCardsPlayedThisGame: 0
   rowUsed: 000000
   colUsed: 000000
   diagUsed: 0000
@@ -2218,6 +2219,63 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 550593574}
   m_CullTransparentMesh: 1
+--- !u!1 &557011454
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 557011456}
+  - component: {fileID: 557011455}
+  m_Layer: 0
+  m_Name: ProfileManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &557011455
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 557011454}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7e2f45661760dd04da21041a5eee4b77, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  currentProfile:
+    playerName: New Player
+    totalWins: 0
+    totalGames: 0
+    currentLevel: 1
+    totalXP: 0
+    selectedAvatar: avatar_default
+    unlockedAvatars: []
+    selectedTitle: Novice
+    unlockedTitles: []
+    totalCardsPlayed: 0
+    lastDeckPlayed: 
+    avatarImageName: avatar_default
+--- !u!4 &557011456
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 557011454}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 1678.2784, y: -5513.4897, z: -127.731186}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &561953811
 GameObject:
   m_ObjectHideFlags: 0
@@ -8122,3 +8180,4 @@ SceneRoots:
   - {fileID: 1408794935}
   - {fileID: 18294248}
   - {fileID: 641627820}
+  - {fileID: 557011456}

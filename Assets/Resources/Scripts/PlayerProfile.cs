@@ -7,6 +7,9 @@ public class PlayerProfile
     public int totalWins = 0;                      // Total games won
     public int totalGames = 0;                     // Total games played
 
+    public int currentLevel = 1;   // Player's current level (new field)
+    public int totalXP = 0;        // Total experience points (new field)
+
     public Dictionary<string, int> deckUsage = new(); // e.g., "Waxy Baby" -> 5 games
 
     public string selectedAvatar = "avatar_default"; // ✅ CORRECT
