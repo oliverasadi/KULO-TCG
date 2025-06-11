@@ -2,6 +2,8 @@
 using TMPro;
 using UnityEngine.UI;
 using System.Collections;
+using DG.Tweening;
+
 
 public class ProfilePanelUI : MonoBehaviour
 {
@@ -11,8 +13,11 @@ public class ProfilePanelUI : MonoBehaviour
     public TextMeshProUGUI deckStatsText;
     public TextMeshProUGUI cardsPlayedText;
     public TextMeshProUGUI lastDeckText;
-    public TextMeshProUGUI levelText;   // New: to display Level
-    public TextMeshProUGUI xpText;      // New: to display XP
+    public TextMeshProUGUI levelText;
+    public TextMeshProUGUI xpText;
+
+    [Header("XP Bar")]
+    public Image xpBarFill;
 
     [Header("Edit Features")]
     public TMP_InputField nameInputField;
@@ -25,7 +30,7 @@ public class ProfilePanelUI : MonoBehaviour
 
     [Header("Avatar Display")]
     public Image avatarImageDisplay;
-    public GameObject avatarPopupPanel; // 👈 drag your AvatarPopupPanel here
+    public GameObject avatarPopupPanel;
 
     private void Start()
     {
@@ -41,7 +46,7 @@ public class ProfilePanelUI : MonoBehaviour
         if (titleDropdown != null)
             titleDropdown.onValueChanged.AddListener(SetTitle);
 
-        // 🔍 Optional debug test for dev
+        // Optional test
         Sprite test = Resources.Load<Sprite>("Avatars/avatar_default");
         Debug.Log("Avatar Sprite Test: " + (test != null ? "✅ Found!" : "❌ Not Found!"));
 
@@ -102,13 +107,19 @@ public class ProfilePanelUI : MonoBehaviour
 
         UpdateAvatarImage(p.selectedAvatar);
 
-        // ─── NEW LEVEL & XP DISPLAY ────────────────────────────────────────────
+        // ─── Level, XP & Progress Bar ─────────────────────────────
         if (levelText != null)
             levelText.text = $"Level: {p.currentLevel}";
         if (xpText != null)
             xpText.text = $"XP: {p.totalXP} / {p.currentLevel * 100}";
-    }
 
+        if (xpBarFill != null)
+        {
+            float ratio = (float)p.totalXP / (p.currentLevel * 100f);
+            xpBarFill.fillAmount = 0f; // reset before tween
+            xpBarFill.DOFillAmount(Mathf.Clamp01(ratio), 2.6f).SetEase(Ease.OutCubic);
+        }
+    }
 
     private void SaveName()
     {
@@ -170,8 +181,7 @@ public class ProfilePanelUI : MonoBehaviour
         }
     }
 
-    // 🔓 Avatar popup handling
-
+    // Avatar popup handling
     public void OpenAvatarPopup()
     {
         if (avatarPopupPanel != null)

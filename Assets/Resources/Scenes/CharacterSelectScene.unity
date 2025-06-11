@@ -267,7 +267,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   glowColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
   glowDistance: 5
-  clickSound: {fileID: 8300000, guid: c1f73ac2b472caf40a7b7a0de9d0cfb6, type: 3}
+  clickSound: {fileID: 8300000, guid: 27f09dcc0f235ca4da615592d081e8f1, type: 3}
 --- !u!1 &142497675
 GameObject:
   m_ObjectHideFlags: 0
@@ -897,7 +897,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   glowColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
   glowDistance: 5
-  clickSound: {fileID: 8300000, guid: c1f73ac2b472caf40a7b7a0de9d0cfb6, type: 3}
+  clickSound: {fileID: 8300000, guid: 27f09dcc0f235ca4da615592d081e8f1, type: 3}
 --- !u!1 &1168503439
 GameObject:
   m_ObjectHideFlags: 0
@@ -1414,7 +1414,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   glowColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
   glowDistance: 5
-  clickSound: {fileID: 8300000, guid: c1f73ac2b472caf40a7b7a0de9d0cfb6, type: 3}
+  clickSound: {fileID: 8300000, guid: 27f09dcc0f235ca4da615592d081e8f1, type: 3}
 --- !u!1 &1685490839
 GameObject:
   m_ObjectHideFlags: 0

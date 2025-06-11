@@ -11,6 +11,7 @@ public class AudioManager : MonoBehaviour
 
     public AudioClip mainMenuMusic;         // 🎵 Assign in Inspector
     public AudioClip buttonClickSound;      // 🔊 Assign in Inspector
+    public AudioClip buttonHoverSound;      // 🔊 Assign in Inspector
     public AudioClip characterSelectMusic;  // 🎵 Assign in Inspector
 
     void Awake()
@@ -26,7 +27,7 @@ public class AudioManager : MonoBehaviour
 
         SetupAudioSources();
 
-        SceneManager.sceneLoaded -= OnSceneLoaded; // Just in case
+        SceneManager.sceneLoaded -= OnSceneLoaded;
         SceneManager.sceneLoaded += OnSceneLoaded;
     }
 
@@ -76,7 +77,7 @@ public class AudioManager : MonoBehaviour
                 PlayMusic(characterSelectMusic);
                 break;
             case "KULO":
-                StartCoroutine(FadeOutMusic(0.5f)); // 👈 Smooth fade-out
+                StartCoroutine(FadeOutMusic(0.5f));
                 break;
             default:
                 StartCoroutine(FadeOutMusic(0.5f));
@@ -105,20 +106,40 @@ public class AudioManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Play an SFX at full volume.
+    /// </summary>
     public void PlaySFX(AudioClip clip)
     {
-        if (clip != null)
-        {
+        if (clip != null && sfxSource != null)
             sfxSource.PlayOneShot(clip);
-        }
     }
 
-    public void PlayButtonClickSound()
+    /// <summary>
+    /// Play an SFX at a specific volume scale (0–1).
+    /// </summary>
+    public void PlaySFX(AudioClip clip, float volumeScale)
     {
-        PlaySFX(buttonClickSound);
+        if (clip != null && sfxSource != null)
+            sfxSource.PlayOneShot(clip, Mathf.Clamp01(volumeScale));
     }
 
-    // ✅ Smoothly fade out music
+    /// <summary>
+    /// Click sound. Default volume 0.8f.
+    /// </summary>
+    public void PlayButtonClickSound(float vol = 0.8f)
+    {
+        PlaySFX(buttonClickSound, vol);
+    }
+
+    /// <summary>
+    /// Hover-over ping. Default volume 0.5f.
+    /// </summary>
+    public void PlayButtonHoverSound(float vol = 0.5f)
+    {
+        PlaySFX(buttonHoverSound, vol);
+    }
+
     public IEnumerator FadeOutMusic(float duration)
     {
         if (musicSource == null || !musicSource.isPlaying)
