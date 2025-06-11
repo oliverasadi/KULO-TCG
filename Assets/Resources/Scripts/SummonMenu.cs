@@ -103,60 +103,60 @@ public class SummonMenu : MonoBehaviour
         sacrificeButton.onClick.AddListener(OnSacrifice);
     }
 
-    private void OnSummon()
+private void OnSummon()
+{
+    if (cardUI == null || cardUI.cardData == null)
     {
-        if (cardUI == null || cardUI.cardData == null)
-        {
-            Debug.LogError("OnSummon: CardUI or cardData is null.");
-            StartCoroutine(CloseAfterDelay());
-            return;
-        }
-
-        if (!TurnManager.instance.CanPlayCard(cardUI.cardData))
-        {
-            Debug.LogWarning($"❌ Cannot summon {cardUI.cardData.cardName}: turn limit reached.");
-            StartCoroutine(CloseAfterDelay());
-            return;
-        }
-
-        Debug.Log($"[SummonMenu] Summon button clicked for {cardUI.cardData.cardName}");
-
-        // 1) Open cell-selection mode, passing in cardUI and a callback
-        GridManager.instance.EnableCellSelectionMode(
-            cardUI,
-            (x, y) =>
-            {
-                // 2) Immediately clear all highlights/buttons (in case they remain)
-                GridManager.instance.DisableCellSelectionMode();
-
-                // 3) Try to place the card into the chosen cell
-                Transform cellTransform = GameObject.Find($"GridCell_{x}_{y}")?.transform;
-                if (cellTransform != null)
-                {
-                    bool success = GridManager.instance.PlaceExistingCard(
-                        x,
-                        y,
-                        cardUI.gameObject,
-                        cardUI.cardData,
-                        cellTransform
-                    );
-
-                    if (!success)
-                    {
-                        Debug.LogWarning($"[SummonMenu] Placement failed at ({x},{y}).");
-                    }
-                    // Note: PlaceExistingCard already registers the play if it succeeds.
-                }
-                else
-                {
-                    Debug.LogWarning($"GridCell_{x}_{y} not found.");
-                }
-            }
-        );
-
-        // 4) Close this menu on the next frame so highlights are visible immediately
+        Debug.LogError("OnSummon: CardUI or cardData is null.");
         StartCoroutine(CloseAfterDelay());
+        return;
     }
+
+    if (!TurnManager.instance.CanPlayCard(cardUI.cardData))
+    {
+        Debug.LogWarning($"❌ Cannot summon {cardUI.cardData.cardName}: turn limit reached.");
+        StartCoroutine(CloseAfterDelay());
+        return;
+    }
+
+    Debug.Log($"[SummonMenu] Summon button clicked for {cardUI.cardData.cardName}");
+
+    GridManager.instance.EnableCellSelectionMode(
+        cardUI,
+        (x, y) =>
+        {
+            GridManager.instance.DisableCellSelectionMode();
+
+            Transform cellTransform = GameObject.Find($"GridCell_{x}_{y}")?.transform;
+            if (cellTransform == null)
+            {
+                Debug.LogWarning($"GridCell_{x}_{y} not found.");
+                return;
+            }
+
+            // 👇 Animate first, then do real placement
+            CardSummonAnimator.AnimateCardToCell(cardUI, cellTransform, () =>
+            {
+                bool success = GridManager.instance.PlaceExistingCard(
+                    x,
+                    y,
+                    cardUI.gameObject,
+                    cardUI.cardData,
+                    cellTransform
+                );
+
+                if (!success)
+                {
+                    Debug.LogWarning($"[SummonMenu] Placement failed at ({x},{y}).");
+                }
+            });
+        }
+    );
+
+    // Wait one frame before closing so highlights show
+    StartCoroutine(CloseAfterDelay());
+}
+
 
 
     private void OnSelectSacrifices()
