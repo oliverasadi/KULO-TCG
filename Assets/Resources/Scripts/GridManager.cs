@@ -407,10 +407,20 @@ if (grid[x, y] != null)
         var newHandler = cardObj.GetComponent<CardHandler>();
         newHandler?.cardOwner?.zones.AddCardToGrave(cardObj);
 
-                Debug.Log($"Replacing occupant {grid[x, y].cardName} at ({x},{y}) with {cardData.cardName}.");
-                var occHandler = gridObjects[x, y].GetComponent<CardHandler>();
-                RemoveCard(x, y, occHandler != null && occHandler.isAI);
-            }
+        TurnManager.instance.RegisterCardPlay(cardData);
+        if (cardData.baseOrEvo != CardSO.BaseOrEvo.Evolution)
+            ResetCellVisual(x, y);
+
+        return true;
+    }
+    // Occupant is weaker: replace, but only if player can afford to play
+    else
+    {
+        bool canAfford = TurnManager.instance.CanPlayCard(cardData);
+        if (!canAfford)
+        {
+            Debug.Log($"Cannot replace {grid[x, y].cardName} at ({x},{y}) because player cannot pay for {cardData.cardName}.");
+            return false;
         }
 
         Debug.Log($"Replacing occupant {grid[x, y].cardName} at ({x},{y}) with {cardData.cardName}.");
