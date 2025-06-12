@@ -21,6 +21,8 @@ public class GridManager : MonoBehaviour
     public AudioSource audioSource;
     public AudioClip placeCardSound;
     public AudioClip removeCardSound;
+    public AudioClip destroyCardSound;
+
 
     public bool isHoldingCard;
 
@@ -363,64 +365,65 @@ public bool MoveCardOnBoard(int oldX, int oldY, int newX, int newY, GameObject c
             }
         }
 
-        // (2) OCCUPANT REPLACEMENT LOGIC
-        if (grid[x, y] != null)
+       // (2) OCCUPANT REPLACEMENT LOGIC
+if (grid[x, y] != null)
+{
+    // Prevent spells replacing creatures
+    if (cardData.category == CardSO.CardCategory.Spell && grid[x, y].category == CardSO.CardCategory.Creature)
+    {
+        Debug.Log($"[GridManager] Spells have no power and cannot replace Creature cards. {cardData.cardName} cannot replace {grid[x, y].cardName}.");
+        return false;
+    }
+
+    // Check the occupant’s power versus the new card’s power
+    float occupantPower = gridObjects[x, y].GetComponent<CardUI>().CalculateEffectivePower();
+    float newPower = cardObj.GetComponent<CardUI>().CalculateEffectivePower();
+
+    // If occupant is stronger, you can’t replace
+    if (occupantPower > newPower)
+    {
+        Debug.Log($"Cannot replace {grid[x, y].cardName} at ({x},{y}) - occupant power ({occupantPower}) > new card power ({newPower}).");
+        return false;
+    }
+    // If equal power, both die
+    else if (Mathf.Approximately(occupantPower, newPower))
+    {
+        if (cardData.category == CardSO.CardCategory.Spell)
         {
-            // Prevent spells replacing creatures
-            if (cardData.category == CardSO.CardCategory.Spell && grid[x, y].category == CardSO.CardCategory.Creature)
-            {
-                Debug.Log($"[GridManager] Spells have no power and cannot replace Creature cards. {cardData.cardName} cannot replace {grid[x, y].cardName}.");
-                return false;
-            }
+            Debug.Log($"[GridManager] Spell {cardData.cardName} cannot destroy Creature {grid[x, y].cardName} on equal power.");
+            return false;
+        }
 
-            // Check the occupant’s power versus the new card’s power
-            float occupantPower = gridObjects[x, y].GetComponent<CardUI>().CalculateEffectivePower();
-            float newPower = cardObj.GetComponent<CardUI>().CalculateEffectivePower();
+        Debug.Log($"Equal power at ({x},{y}). Destroying both occupant and new card.");
 
-            // If occupant is stronger, you can’t replace
-            if (occupantPower > newPower)
-            {
-                Debug.Log($"Cannot replace {grid[x, y].cardName} at ({x},{y}) - occupant power ({occupantPower}) > new card power ({newPower}).");
-                return false;
-            }
-            // If equal power, both die
-            else if (Mathf.Approximately(occupantPower, newPower))
-            {
-                if (cardData.category == CardSO.CardCategory.Spell)
-                {
-                    Debug.Log($"[GridManager] Spell {cardData.cardName} cannot destroy Creature {grid[x, y].cardName} on equal power.");
-                    return false;
-                }
+        // 🔊 Play destroy SFX
+        if (audioSource != null && destroyCardSound != null)
+            audioSource.PlayOneShot(destroyCardSound);
 
-                Debug.Log($"Equal power at ({x},{y}). Destroying both occupant and new card.");
-                var occHandler = gridObjects[x, y].GetComponent<CardHandler>();
-                RemoveCard(x, y, occHandler != null && occHandler.isAI);
+        var occHandler = gridObjects[x, y].GetComponent<CardHandler>();
+        RemoveCard(x, y, occHandler != null && occHandler.isAI);
 
-                // Send the new card to graveyard instead of placing
-                var newHandler = cardObj.GetComponent<CardHandler>();
-                newHandler?.cardOwner?.zones.AddCardToGrave(cardObj);
-
-                TurnManager.instance.RegisterCardPlay(cardData);
-                if (cardData.baseOrEvo != CardSO.BaseOrEvo.Evolution)
-                    ResetCellVisual(x, y);
-
-                return true;
-            }
-            // Occupant is weaker: replace, but only if player can afford to play
-            else
-            {
-                bool canAfford = TurnManager.instance.CanPlayCard(cardData);
-                if (!canAfford)
-                {
-                    Debug.Log($"Cannot replace {grid[x, y].cardName} at ({x},{y}) because player cannot pay for {cardData.cardName}.");
-                    return false;
-                }
+        // Send the new card to graveyard instead of placing
+        var newHandler = cardObj.GetComponent<CardHandler>();
+        newHandler?.cardOwner?.zones.AddCardToGrave(cardObj);
 
                 Debug.Log($"Replacing occupant {grid[x, y].cardName} at ({x},{y}) with {cardData.cardName}.");
                 var occHandler = gridObjects[x, y].GetComponent<CardHandler>();
                 RemoveCard(x, y, occHandler != null && occHandler.isAI);
             }
         }
+
+        Debug.Log($"Replacing occupant {grid[x, y].cardName} at ({x},{y}) with {cardData.cardName}.");
+
+        // 🔊 Play destroy SFX
+        if (audioSource != null && destroyCardSound != null)
+            audioSource.PlayOneShot(destroyCardSound);
+
+        var occHandler = gridObjects[x, y].GetComponent<CardHandler>();
+        RemoveCard(x, y, occHandler != null && occHandler.isAI);
+    }
+}
+
 
         // (3) RE-PARENT & CENTER THE CARD
         cardObj.transform.SetParent(cellParent, false);

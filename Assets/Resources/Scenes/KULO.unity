@@ -2950,6 +2950,7 @@ MonoBehaviour:
   audioSource: {fileID: 669551654}
   placeCardSound: {fileID: 8300000, guid: 1b00d8dc7d3df8d439a6305d3a63f9b2, type: 3}
   removeCardSound: {fileID: 8300000, guid: 583d5dec202e38846b578c3fb40521da, type: 3}
+  destroyCardSound: {fileID: 8300000, guid: 49921d88fb8ef4066aa53d94e7bda0b9, type: 3}
   isHoldingCard: 0
   cellSelectionCancelButtonPrefab: {fileID: 8853522671109537191, guid: b5b4663ea763d3d41a2055a7ece3dc61, type: 3}
 --- !u!4 &669551653
