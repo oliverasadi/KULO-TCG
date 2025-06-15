@@ -13,6 +13,10 @@ public class AudioManager : MonoBehaviour
     public AudioClip buttonClickSound;      // 🔊 Assign in Inspector
     public AudioClip buttonHoverSound;      // 🔊 Assign in Inspector
     public AudioClip characterSelectMusic;  // 🎵 Assign in Inspector
+    public AudioClip xpResultsMusic;  // 🎵 Assign in Inspector
+
+    public AudioSource SFXSource => sfxSource;
+
 
     void Awake()
     {
@@ -73,17 +77,25 @@ public class AudioManager : MonoBehaviour
             case "MainMenu":
                 PlayMusic(mainMenuMusic);
                 break;
+
             case "CharacterSelectScene":
                 PlayMusic(characterSelectMusic);
                 break;
+
             case "KULO":
-                StartCoroutine(FadeOutMusic(0.5f));
+                StartCoroutine(FadeOutMusic(0.5f)); // No music in gameplay
                 break;
+
+            case "XPResultsScene": // 🎉 NEW
+                PlayMusic(xpResultsMusic);         // 🔊 Assign in inspector
+                break;
+
             default:
                 StartCoroutine(FadeOutMusic(0.5f));
                 break;
         }
     }
+
 
     public void PlayMusic(AudioClip clip)
     {

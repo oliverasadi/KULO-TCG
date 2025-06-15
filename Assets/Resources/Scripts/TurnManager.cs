@@ -75,6 +75,13 @@ public class TurnManager : MonoBehaviour
     public void StartTurn(bool drawCard = true)
     {
         Debug.Log($"🕒 Player {currentPlayer}'s turn starts.");
+
+        // ✅ Track turns for XP only if it's the human player
+        if (currentPlayer == localPlayerNumber && XPTracker.instance != null)
+        {
+            XPTracker.instance.totalTurns++;
+        }
+
         GridManager.instance.PrintGridState(); // debug
 
         currentPlayerManager = SelectPlayerManager();
@@ -130,6 +137,7 @@ public class TurnManager : MonoBehaviour
 
 
 
+
     public bool CanPlayCard(CardSO card)
     {
         if (noAdditionalPlays)
@@ -155,16 +163,27 @@ public class TurnManager : MonoBehaviour
     public void RegisterCardPlay(CardSO card)
     {
         Debug.Log($"[TurnManager] RegisterCardPlay: player={GetCurrentPlayer()}, local={localPlayerNumber}, card={card.cardName}");
+
         if (card.category == CardSO.CardCategory.Creature)
             creaturePlayed = true;
         if (card.category == CardSO.CardCategory.Spell)
             spellPlayed = true;
 
         // NEW: Count the card if the human player played it
-        if (TurnManager.instance.GetCurrentPlayer() == TurnManager.instance.localPlayerNumber
-            && GameManager.instance != null)
+        if (GetCurrentPlayer() == localPlayerNumber && GameManager.instance != null)
         {
             GameManager.instance.playerCardsPlayedThisGame++;
+
+            // ✅ XPTracker integration
+            if (XPTracker.instance != null)
+            {
+                XPTracker.instance.cardsPlayed++;
+                XPTracker.instance.OnCardPlayed(card);  // Pass the CardSO for evolution/signature tracking
+            }
+            else
+            {
+                Debug.LogWarning("⚠️ XPTracker.instance is null — cannot record card play XP.");
+            }
         }
 
         // Fire event (existing logic)

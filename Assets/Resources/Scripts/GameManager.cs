@@ -10,6 +10,8 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager instance;
 
+
+
     private bool gameActive = true;
     private int roundsWonP1 = 0;
     private int roundsWonP2 = 0;
@@ -21,6 +23,10 @@ public class GameManager : MonoBehaviour
     public bool[] rowUsed = new bool[3];
     public bool[] colUsed = new bool[3];
     public bool[] diagUsed = new bool[2];
+
+    public PostGameXPPanel xpPanel; // Assign in Inspector
+    public PlayerProfile profile;   // Optional direct access if not via ProfileManager
+
 
     [Header("UI Elements")]
     public TextMeshProUGUI roundsWonTextP1;
@@ -110,7 +116,49 @@ public class GameManager : MonoBehaviour
         TurnManager.instance.StartTurn();
         playerCardsPlayedThisGame = 0;
 
+        // Reset XPTracker state
+        if (XPTracker.instance != null)
+        {
+            XPTracker.instance.playerWon = false;
+            XPTracker.instance.totalTurns = 0;
+            XPTracker.instance.cardsPlayed = 0;
+            XPTracker.instance.playerRoundsWon = 0;
+            XPTracker.instance.opponentRoundsWon = 0;
+            XPTracker.instance.wasDown0to2 = false;
+            XPTracker.instance.lineBlockOccurred = false;
+            XPTracker.instance.signatureCardPlayed = false;
+            XPTracker.instance.evolutionCardPlayed = false;
+        }
+        else
+        {
+            Debug.LogWarning("⚠️ XPTracker.instance is null — make sure it's in the scene.");
+        }
+
+        // ✅ Set signature card based on selected deck/character
+        if (ProfileManager.instance != null && ProfileManager.instance.currentProfile != null)
+        {
+            string deck = ProfileManager.instance.currentProfile.lastDeckPlayed;
+
+            Dictionary<string, string> signatureCards = new Dictionary<string, string>
+        {
+            { "Mr. Wax", "Ultimate Red Seal" },
+            { "Nekomata", "Cat Trifecta" },
+            { "Xu Taishi", "Bonsai Beast Lvl 3" }
+        };
+
+            if (signatureCards.ContainsKey(deck))
+            {
+                ProfileManager.instance.currentProfile.signatureCardName = signatureCards[deck];
+                Debug.Log($"[GameManager] Signature card set to: {signatureCards[deck]}");
+            }
+            else
+            {
+                Debug.LogWarning($"[GameManager] No signature card defined for deck: {deck}");
+            }
+        }
     }
+
+
 
 
     public void EndTurn()
@@ -152,6 +200,9 @@ public class GameManager : MonoBehaviour
             roundsWonP1 += newLines;
             UpdateRoundsUI();
             RefreshRoundButtons();
+
+            if (roundsWonP1 == 3 && roundsWonP2 == 2 && XPTracker.instance != null)
+                XPTracker.instance.wasDown0to2 = true;
         }
         else if (winner == 2)
         {
@@ -166,56 +217,94 @@ public class GameManager : MonoBehaviour
             gameStatusText.text = $"Player {winner} wins {newLines} line(s)!";
         }
 
-        // 6) Overall game win check
+        // 6) Game over?
         if (roundsWonP1 >= totalRoundsToWin || roundsWonP2 >= totalRoundsToWin)
         {
-            // a) Play game-win audio
             if (audioSource != null && gameWinClip != null)
                 audioSource.PlayOneShot(gameWinClip);
 
-            // b) Show “Player X Wins Game”
             if (gameStatusText != null)
             {
                 gameStatusText.gameObject.SetActive(true);
                 gameStatusText.text = $"Player {winner} Wins Game";
             }
 
-            // c) Record XP and handle level-up
-            if (ProfileManager.instance != null && ProfileManager.instance.currentProfile != null)
+            // ✅ Guard XP logic to avoid crash
+            if (XPTracker.instance != null)
             {
-                bool playerWon = (winner == 1);  // assume Player 1 is the human
-                string deckName = ProfileManager.instance.currentProfile.lastDeckPlayed;
-                int cardsPlayed = playerCardsPlayedThisGame;
+                bool playerWon = (winner == 1);
+                XPTracker.instance.playerWon = playerWon;
+                XPTracker.instance.playerRoundsWon = roundsWonP1;
+                XPTracker.instance.opponentRoundsWon = roundsWonP2;
 
-                ProfileManager.instance.RecordGameResult(deckName, playerWon, cardsPlayed);
+                List<XPReward> rewards = XPTracker.instance.EvaluateXP();
+                int totalXP = 0;
+                foreach (var r in rewards) totalXP += r.XP;
 
-                // reset per-game counter
-                playerCardsPlayedThisGame = 0;
+                if (ProfileManager.instance?.currentProfile != null)
+                {
+                    ProfileManager.instance.RecordGameResult(
+                        ProfileManager.instance.currentProfile.lastDeckPlayed,
+                        playerWon,
+                        playerCardsPlayedThisGame
+                    );
+                    ProfileManager.instance.currentProfile.AddXP(totalXP);
+                }
+
+                // Set splash background
+                var deck = ProfileManager.instance?.currentProfile?.lastDeckPlayed ?? "";
+                XPResultDataHolder.SplashBackgroundType splash = XPResultDataHolder.SplashBackgroundType.MrWax;
+
+                if (deck == "Mr. Wax")
+                {
+                    splash = XPResultDataHolder.SplashBackgroundType.MrWax;
+                    if (XPTracker.instance.signatureCardPlayed)
+                        splash = XPResultDataHolder.SplashBackgroundType.MrWaxWithRedSeal;
+                }
+                else if (deck == "Kyoko")
+                {
+                    splash = XPResultDataHolder.SplashBackgroundType.Kyoko;
+                    if (XPTracker.instance.signatureCardPlayed)
+                        splash = XPResultDataHolder.SplashBackgroundType.KyokoWithWhiskerKing;
+                }
+
+                if (XPResultDataHolder.instance != null)
+                    XPResultDataHolder.instance.Set(rewards, splash);
+            }
+            else
+            {
+                Debug.LogWarning("⚠️ XPTracker is missing — skipping XP logic.");
             }
 
-            // d) Show the post-game popup
+            // ✅ Always show the popup
+            playerCardsPlayedThisGame = 0;
             ShowPostGamePopup();
         }
         else
         {
-            // clear announcement after a short delay
             Invoke("ClearWinAnnouncement", 2f);
         }
     }
 
 
+
+
+
+
     private void ShowPostGamePopup()
-{
-    GameObject canvas = GameObject.Find("OverlayCanvas");
-    if (canvas != null && postGamePopupPrefab != null)
     {
-        Instantiate(postGamePopupPrefab, canvas.transform);
+        GameObject canvas = GameObject.Find("OverlayCanvas");
+        if (canvas != null && postGamePopupPrefab != null)
+        {
+            Instantiate(postGamePopupPrefab, canvas.transform);
+        }
+        else
+        {
+            Debug.LogError("❌ Missing OverlayCanvas or PostGamePopupPrefab.");
+        }
     }
-    else
-    {
-        Debug.LogError("❌ Missing OverlayCanvas or PostGamePopupPrefab.");
-    }
-}
+
+
 
 
     private void AddPlayerWin(int index, Axis axis)
@@ -227,7 +316,7 @@ public class GameManager : MonoBehaviour
             Axis.MainDiag => new[] { new Vector2Int(0, 0), new Vector2Int(1, 1), new Vector2Int(2, 2) },
             _ => new[] { new Vector2Int(0, 2), new Vector2Int(1, 1), new Vector2Int(2, 0) },
         };
-
+         
         playerRoundWins.Add(new RoundWinInfo { cells = cells });
 
         // Apply persistent green highlight
