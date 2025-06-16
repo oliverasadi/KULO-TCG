@@ -16,8 +16,8 @@ public class XPResultsUIManager : MonoBehaviour
     public Image backgroundImage;
     public Sprite mrWaxSprite;
     public Sprite mrWaxRedSealSprite;
-    public Sprite kyokoSprite;
-    public Sprite kyokoWhiskerKingSprite;
+    public Sprite nekomataSprite;
+    public Sprite nekomataCatTriFectaSprite;
 
     [Header("Stars")]
     public StarRatingDisplay starRatingDisplay;
@@ -32,6 +32,9 @@ public class XPResultsUIManager : MonoBehaviour
 
     void Start()
     {
+        string selectedCharacter = PlayerProfile.selectedCharacterName;
+        List<string> playerCardsPlayed = XPResultDataHolder.instance.cardsPlayed;
+
         var data = XPResultDataHolder.instance;
         if (data == null || data.rewards == null || data.rewards.Count == 0)
         {
@@ -39,7 +42,23 @@ public class XPResultsUIManager : MonoBehaviour
             return;
         }
 
-        SetBackground(data.backgroundType);
+        // 🟢 Dynamic Splash Logic
+        XPResultDataHolder.SplashBackgroundType finalBG = XPResultDataHolder.SplashBackgroundType.MrWax;
+
+        if (selectedCharacter == "Mr.Wax")
+        {
+            finalBG = playerCardsPlayed.Contains("Ultimate Red Seal")
+                ? XPResultDataHolder.SplashBackgroundType.MrWaxWithRedSeal
+                : XPResultDataHolder.SplashBackgroundType.MrWax;
+        }
+        else if (selectedCharacter == "Nekomata")
+        {
+            finalBG = playerCardsPlayed.Contains("Cat TriFecta")
+                ? XPResultDataHolder.SplashBackgroundType.NekomataWithCatTriFecta
+                : XPResultDataHolder.SplashBackgroundType.Nekomata;
+        }
+
+        SetBackground(finalBG);
 
         if (resultsPanelRoot != null)
         {
@@ -66,8 +85,8 @@ public class XPResultsUIManager : MonoBehaviour
         {
             case XPResultDataHolder.SplashBackgroundType.MrWax: backgroundImage.sprite = mrWaxSprite; break;
             case XPResultDataHolder.SplashBackgroundType.MrWaxWithRedSeal: backgroundImage.sprite = mrWaxRedSealSprite; break;
-            case XPResultDataHolder.SplashBackgroundType.Kyoko: backgroundImage.sprite = kyokoSprite; break;
-            case XPResultDataHolder.SplashBackgroundType.KyokoWithWhiskerKing: backgroundImage.sprite = kyokoWhiskerKingSprite; break;
+            case XPResultDataHolder.SplashBackgroundType.Nekomata: backgroundImage.sprite = nekomataSprite; break;
+            case XPResultDataHolder.SplashBackgroundType.NekomataWithCatTriFecta: backgroundImage.sprite = nekomataCatTriFectaSprite; break;
             default: Debug.LogWarning("⚠️ No matching splash background found."); break;
         }
     }

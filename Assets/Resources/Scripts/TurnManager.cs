@@ -15,6 +15,8 @@ public class TurnManager : MonoBehaviour
     public bool creaturePlayed = false;
     public bool spellPlayed = false;
 
+
+
     public PlayerManager playerManager1; // Reference to PlayerManager for Player 1
     public PlayerManager playerManager2; // Reference to PlayerManager for Player 2
 
@@ -48,6 +50,29 @@ public class TurnManager : MonoBehaviour
     {
         get { return creaturePlayed; }
     }
+
+    private void OnEnable()
+    {
+        OnCardPlayed += HandleCardPlayed;
+    }
+
+    private void OnDisable()
+    {
+        OnCardPlayed -= HandleCardPlayed;
+    }
+
+    private void HandleCardPlayed(CardSO card)
+    {
+        if (GetCurrentPlayer() == localPlayerNumber && XPResultDataHolder.instance != null)
+        {
+            if (!XPResultDataHolder.instance.cardsPlayed.Contains(card.cardName))
+            {
+                XPResultDataHolder.instance.cardsPlayed.Add(card.cardName);
+                Debug.Log($"📝 Logged card '{card.cardName}' for XP result splash tracking.");
+            }
+        }
+    }
+
 
     // Turn Splash reference
     [Header("Turn Splash")]

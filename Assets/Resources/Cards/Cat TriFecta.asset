@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: Cat TriFecta
   m_EditorClassIdentifier: 
   cardName: Cat TriFecta
+  requiresTargetCreature: 0
   category: 0
   power: 3000
   effectDescription: 'EVOLUTION: To play this card, remove any 3 Cat cards from either
@@ -22,8 +23,12 @@ MonoBehaviour:
   creatureType: Cat
   baseOrEvo: 1
   extraDetails: 'DOB: Ancient Era, GPS: Gulu Island, Weight: 10.0kg, Height: 0.50m.'
+  inlineEffects: []
+  effects: []
   requiresSacrifice: 1
   sacrificeRequirements:
   - requiredCardName: Cat
     matchByCreatureType: 1
     count: 3
+    allowFromField: 1
+    allowFromHand: 1

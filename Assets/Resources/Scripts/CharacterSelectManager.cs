@@ -133,10 +133,16 @@ public class CharacterSelectManager : MonoBehaviour
     private IEnumerator PlayThenLoad(AudioClip clip, DeckDataSO deck)
     {
         PlayerManager.selectedCharacterDeck = deck;
+
+        // ✅ Set selected character name for XPResultsScene
+        if (selectedCharacter != null)
+            PlayerProfile.selectedCharacterName = selectedCharacter.characterName;
+
         if (clip != null) _audio.PlayOneShot(clip);
         yield return new WaitForSeconds(clip != null ? clip.length : 0f);
         AutoFade.LoadScene("KULO", 0.3f, 0.3f, Color.black);
     }
+
 
     public void ReplaceCharacter(CharacterData data)
     {

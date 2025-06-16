@@ -261,11 +261,11 @@ public class GameManager : MonoBehaviour
                     if (XPTracker.instance.signatureCardPlayed)
                         splash = XPResultDataHolder.SplashBackgroundType.MrWaxWithRedSeal;
                 }
-                else if (deck == "Kyoko")
+                else if (deck == "Nekomata")
                 {
-                    splash = XPResultDataHolder.SplashBackgroundType.Kyoko;
+                    splash = XPResultDataHolder.SplashBackgroundType.Nekomata;
                     if (XPTracker.instance.signatureCardPlayed)
-                        splash = XPResultDataHolder.SplashBackgroundType.KyokoWithWhiskerKing;
+                        splash = XPResultDataHolder.SplashBackgroundType.NekomataWithCatTriFecta;
                 }
 
                 if (XPResultDataHolder.instance != null)

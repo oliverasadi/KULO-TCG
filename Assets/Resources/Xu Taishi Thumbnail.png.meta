@@ -159,7 +159,9 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      Xu Taishi Thumbnail_0: -2127831643655457729
+      Xu Taishi Thumbnail_1: 6575583706468814306
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

@@ -23,6 +23,7 @@ public class PlayerProfile
     public string lastDeckPlayed = "";
     public string signatureCardName = "Ultimate Red Seal"; // 👈 New!
 
+    public static string selectedCharacterName;
 
     public string avatarImageName = "avatar_default";
 

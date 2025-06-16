@@ -8,6 +8,8 @@ public class XPResultDataHolder : MonoBehaviour
     public List<XPReward> rewards;
     public int totalXP;
     public bool leveledUp;
+    public List<string> cardsPlayed = new List<string>();
+
 
     public SplashBackgroundType backgroundType = SplashBackgroundType.MrWax; // Default
 
@@ -15,8 +17,8 @@ public class XPResultDataHolder : MonoBehaviour
     {
         MrWax,
         MrWaxWithRedSeal,
-        Kyoko,
-        KyokoWithWhiskerKing,
+        Nekomata,
+        NekomataWithCatTriFecta,
         // Add more as needed
     }
 
