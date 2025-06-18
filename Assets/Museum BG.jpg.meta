@@ -1,15 +1,15 @@
 fileFormatVersion: 2
-guid: 7791aa630195da04ab4eced8812e8141
+guid: df27924cc34826f4887f0977e8a280d1
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 3567514145743759795
-    second: Nekomata 3 Image_0
+      213: 612671356157085623
+    second: Museum BG_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
     mipMapMode: 0
-    enableMipMap: 1
+    enableMipMap: 0
     sRGBTexture: 1
     linearTexture: 0
     fadeOut: 0
@@ -100,13 +100,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Nekomata 3 Image_0
+      name: Museum BG_0
       rect:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 2560
-        height: 1440
+        width: 1920
+        height: 1080
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -115,8 +115,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 3b9ec3cc63b528130800000000000000
-      internalID: 3567514145743759795
+      spriteID: 7b7ccc33a55a08800800000000000000
+      internalID: 612671356157085623
       vertices: []
       indices: 
       edges: []
@@ -134,8 +134,7 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable:
-      Nekomata 3 Image_0: 3567514145743759795
+    nameFileIdTable: {}
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

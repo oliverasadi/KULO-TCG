@@ -1,0 +1,18 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 637d25df26f9d0741a341f9bfc11f7e7, type: 3}
+  m_Name: 1
+  m_EditorClassIdentifier: 
+  memoryNumber: 1
+  memoryTitle: The Battle of KULO
+  thumbnail: {fileID: -5057607741423981893, guid: b11a774692e88514092b9a2e83f335a6, type: 3}
+  isLocked: 1
