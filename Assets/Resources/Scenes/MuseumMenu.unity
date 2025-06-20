@@ -273,6 +273,59 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &95119602
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 95119604}
+  - component: {fileID: 95119603}
+  m_Layer: 0
+  m_Name: MemoriesPanelManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &95119603
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 95119602}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 517e804fd52b86d418a0dc9464716bcf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  panelRoot: {fileID: 1904450922}
+  artTabButton: {fileID: 1093432705}
+  loreTabButton: {fileID: 598656071}
+  cutsceneTabButton: {fileID: 198916801}
+  tabBar: {fileID: 609937737}
+  contentRoot: {fileID: 2077636800}
+  tabSlideX: -1000
+  contentSlideY: -500
+  animDuration: 0.4
+--- !u!4 &95119604
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 95119602}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -1772.3365, y: 106.14329, z: -79.846054}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &181566813
 GameObject:
   m_ObjectHideFlags: 0
@@ -1016,6 +1069,18 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
+      - m_Target: {fileID: 95119603}
+        m_TargetAssemblyTypeName: MemoriesPanelManager, Assembly-CSharp
+        m_MethodName: OpenPanel
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
       - m_Target: {fileID: 489697448}
         m_TargetAssemblyTypeName: MuseumButtonResponder, Assembly-CSharp
         m_MethodName: OnButtonClick
@@ -1110,7 +1175,7 @@ MonoBehaviour:
   memoriesClip: {fileID: 8300000, guid: 0ac5f215654ae974996cdc3b9571a54a, type: 3}
   wardrobeClip: {fileID: 8300000, guid: 2aee7ad504ee1544caf85b90f1a7e384, type: 3}
   soundRoomClip: {fileID: 8300000, guid: cbfc2ccc0a9690d48b5766e7108ed432, type: 3}
-  memoriesPanelManager: {fileID: 0}
+  memoriesPanelManager: {fileID: 95119603}
   iconManager: {fileID: 252965074}
 --- !u!1 &598656069
 GameObject:
@@ -1461,7 +1526,7 @@ GameObject:
   - component: {fileID: 703749104}
   - component: {fileID: 703749105}
   m_Layer: 5
-  m_Name: ContentRoot
+  m_Name: Content
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1483,7 +1548,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: -0.000076293945}
+  m_AnchoredPosition: {x: 0, y: -0.000015258789}
   m_SizeDelta: {x: 663.24, y: 288.1}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &703749103
@@ -3562,7 +3627,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1904450922}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
@@ -3643,7 +3708,7 @@ GameObject:
   - component: {fileID: 2077636802}
   - component: {fileID: 2077636801}
   m_Layer: 5
-  m_Name: GridScrollViewV2
+  m_Name: ScrollView
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3714,7 +3779,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.3283019, g: 0.3283019, b: 0.3283019, a: 0.9490196}
+  m_Color: {r: 0.3283019, g: 0.3283019, b: 0.3283019, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -3747,3 +3812,4 @@ SceneRoots:
   - {fileID: 59829625}
   - {fileID: 208444576}
   - {fileID: 1360621658}
+  - {fileID: 95119604}
