@@ -10,11 +10,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 637d25df26f9d0741a341f9bfc11f7e7, type: 3}
-  m_Name: 2
+  m_Name: MrWax
   m_EditorClassIdentifier: 
-  memoryTitle: The War of KULO
-  memoryNumber: 2
+  memoryTitle: Mr.Wax #1
+  memoryNumber: 1
   isLocked: 1
-  thumbnail: {fileID: 3567514145743759795, guid: 7791aa630195da04ab4eced8812e8141, type: 3}
-  fullscreenImage: {fileID: 0}
-  cardID: 
+  thumbnail: {fileID: -3819206987420287903, guid: e2e26e9d080cb4048850282c37187183, type: 3}
+  fullscreenImage: {fileID: -3819206987420287903, guid: e2e26e9d080cb4048850282c37187183, type: 3}
+  cardID: MrWax

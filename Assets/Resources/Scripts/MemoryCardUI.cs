@@ -15,14 +15,22 @@ public class MemoryCardUI : MonoBehaviour
         memoryData = data;
         Debug.Log($"[MemoryCardUI] Setup called for: {data.memoryTitle}");
 
+        // Check unlock status from profile instead of relying on SO value
+        bool isUnlocked = false;
+        var profile = ProfileManager.instance?.currentProfile;
+        if (profile != null && profile.unlockedMemories.Contains(data.cardID))
+        {
+            isUnlocked = true;
+        }
+
+        // Update visuals
         thumbnail.sprite = data.thumbnail;
         label.text = $"No.{data.memoryNumber}\n{data.memoryTitle}";
-        lockedOverlay.SetActive(data.isLocked);
+        lockedOverlay.SetActive(!isUnlocked);
 
         Button btn = GetComponent<Button>();
         if (btn != null)
         {
-            Debug.Log("[MemoryCardUI] Button component found, setting OnClick listener.");
             btn.onClick.RemoveAllListeners();
             btn.onClick.AddListener(OnClick);
         }
@@ -42,7 +50,8 @@ public class MemoryCardUI : MonoBehaviour
             return;
         }
 
-        if (memoryData.isLocked)
+        var profile = ProfileManager.instance?.currentProfile;
+        if (profile == null || !profile.unlockedMemories.Contains(memoryData.cardID))
         {
             Debug.Log("[MemoryCardUI] Memory is locked. Click ignored.");
             return;
@@ -50,7 +59,6 @@ public class MemoryCardUI : MonoBehaviour
 
         Debug.Log($"[MemoryCardUI] Showing fullscreen memory: {memoryData.memoryTitle}");
 
-        // Ensure the viewer is instantiated
         FullscreenMemoryViewer.EnsureInstance();
 
         if (FullscreenMemoryViewer.instance != null)

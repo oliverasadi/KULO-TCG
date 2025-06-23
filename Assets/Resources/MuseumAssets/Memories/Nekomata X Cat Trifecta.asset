@@ -10,11 +10,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 637d25df26f9d0741a341f9bfc11f7e7, type: 3}
-  m_Name: 2
+  m_Name: Nekomata X Cat Trifecta
   m_EditorClassIdentifier: 
-  memoryTitle: The War of KULO
-  memoryNumber: 2
+  memoryTitle: Nekomata & Cat Trifecta
+  memoryNumber: 4
   isLocked: 1
-  thumbnail: {fileID: 3567514145743759795, guid: 7791aa630195da04ab4eced8812e8141, type: 3}
-  fullscreenImage: {fileID: 0}
-  cardID: 
+  thumbnail: {fileID: 3348651653221084785, guid: 7ea2dd158eed2c244b5a9ddc03d3c3ae, type: 3}
+  fullscreenImage: {fileID: 3348651653221084785, guid: 7ea2dd158eed2c244b5a9ddc03d3c3ae, type: 3}
+  cardID: Nekomata_CatTriFecta

@@ -10,11 +10,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 637d25df26f9d0741a341f9bfc11f7e7, type: 3}
-  m_Name: 2
+  m_Name: MrWax_RedSeal
   m_EditorClassIdentifier: 
-  memoryTitle: The War of KULO
+  memoryTitle: Mr.Wax x Ultimate Red Seal
   memoryNumber: 2
   isLocked: 1
-  thumbnail: {fileID: 3567514145743759795, guid: 7791aa630195da04ab4eced8812e8141, type: 3}
-  fullscreenImage: {fileID: 0}
-  cardID: 
+  thumbnail: {fileID: -221432917189614094, guid: 6d1e9c2920921334ea3b9ff3dab2b9d6, type: 3}
+  fullscreenImage: {fileID: -221432917189614094, guid: 6d1e9c2920921334ea3b9ff3dab2b9d6, type: 3}
+  cardID: 'MrWax_RedSeal '

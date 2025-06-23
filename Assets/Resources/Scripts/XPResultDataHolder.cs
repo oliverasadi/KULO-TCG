@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 public class XPResultDataHolder : MonoBehaviour
@@ -10,6 +10,7 @@ public class XPResultDataHolder : MonoBehaviour
     public bool leveledUp;
     public List<string> cardsPlayed = new List<string>();
 
+    public List<MemoryCardData> memoryCardsToUnlock = new List<MemoryCardData>(); // ✅ New: memory unlock queue
 
     public SplashBackgroundType backgroundType = SplashBackgroundType.MrWax; // Default
 
@@ -36,7 +37,6 @@ public class XPResultDataHolder : MonoBehaviour
         }
     }
 
-
     public void Set(List<XPReward> rewardList, SplashBackgroundType splash)
     {
         rewards = rewardList;
@@ -46,11 +46,12 @@ public class XPResultDataHolder : MonoBehaviour
         foreach (var r in rewards)
             totalXP += r.XP;
     }
+
     public void Clear()
     {
         rewards = new List<XPReward>();
         totalXP = 0;
         backgroundType = SplashBackgroundType.MrWax;
+        memoryCardsToUnlock.Clear(); // ✅ Clear unlocks when resetting
     }
-
 }

@@ -64,7 +64,14 @@ public class FullscreenMemoryViewer : MonoBehaviour
     {
         if (!rootPanel.activeSelf || zoomContainer == null) return;
 
-        // Zooming with smooth tween
+        // 🔴 Press Escape to close
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            Hide();
+            return;
+        }
+
+        // 🔍 Zooming with smooth tween
         float scroll = Input.GetAxis("Mouse ScrollWheel");
         if (scroll != 0f)
         {
@@ -74,7 +81,7 @@ public class FullscreenMemoryViewer : MonoBehaviour
             ClampZoomPosition();
         }
 
-        // Only allow panning if zoomed in
+        // 👆 Only allow panning if zoomed in
         if (zoom <= 1.01f) return;
 
         if (Input.GetMouseButtonDown(2))
@@ -96,6 +103,7 @@ public class FullscreenMemoryViewer : MonoBehaviour
             panTween = zoomContainer.DOAnchorPos(targetPos, 0.15f).SetEase(Ease.OutQuad);
         }
     }
+
 
     private Vector2 ClampPosition(Vector2 pos)
     {
@@ -156,6 +164,8 @@ public class FullscreenMemoryViewer : MonoBehaviour
 
     public void Hide()
     {
+        Debug.Log("[FullscreenMemoryViewer] Hide triggered.");
+
         if (rootPanel == null) return;
 
         CanvasGroup cg = rootPanel.GetComponent<CanvasGroup>();

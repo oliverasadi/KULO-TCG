@@ -11,6 +11,10 @@ public class PlayerProfile
     public int currentLevel = 1;                   // Player's current level
     public int totalXP = 0;                        // Total accumulated XP
 
+    public List<string> unlockedMemories = new List<string>();
+
+
+
     public Dictionary<string, int> deckUsage = new(); // e.g., "Waxy Baby" -> 5 games
 
     public string selectedAvatar = "avatar_default";

@@ -12,6 +12,10 @@ public class MainMenu1 : MonoBehaviour // ✅ Must inherit from MonoBehaviour
     {
         AutoFade.LoadScene("DeckEditorScene"); // ✅ Load deck editor scene
     }
+    public void OpenMuseum()
+    {
+        AutoFade.LoadScene("MuseumMenu"); // ✅ Load Museum Menu
+    }
     public void OpenHelp()
     {
         AutoFade.LoadScene("HelpScene"); // Replace with your actual help scene name

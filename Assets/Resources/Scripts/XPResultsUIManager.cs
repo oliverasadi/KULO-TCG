@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 using System.Collections;
 using System.Collections.Generic;
 using DG.Tweening;
@@ -29,6 +30,9 @@ public class XPResultsUIManager : MonoBehaviour
 
     [Header("Results Panel Entrance")]
     public RectTransform resultsPanelRoot;
+
+    [Header("Navigation")]
+    public Button homeButton;
 
     void Start()
     {
@@ -59,6 +63,48 @@ public class XPResultsUIManager : MonoBehaviour
         }
 
         SetBackground(finalBG);
+
+        // 🔓 Memory Unlock Mapping
+        // 🔓 Memory Unlock Mapping (including base versions)
+        MemoryCardData memoryToUnlock = null;
+        switch (finalBG)
+        {
+            case XPResultDataHolder.SplashBackgroundType.MrWax:
+                memoryToUnlock = Resources.Load<MemoryCardData>("MuseumAssets/Memories/MrWax");
+                break;
+            case XPResultDataHolder.SplashBackgroundType.MrWaxWithRedSeal:
+                memoryToUnlock = Resources.Load<MemoryCardData>("MuseumAssets/Memories/MrWax_RedSeal");
+                break;
+            case XPResultDataHolder.SplashBackgroundType.Nekomata:
+                memoryToUnlock = Resources.Load<MemoryCardData>("MuseumAssets/Memories/Nekomata");
+                break;
+            case XPResultDataHolder.SplashBackgroundType.NekomataWithCatTriFecta:
+                memoryToUnlock = Resources.Load<MemoryCardData>("MuseumAssets/Memories/Nekomata_CatTriFecta");
+                break;
+        }
+
+        if (memoryToUnlock != null)
+        {
+            string memoryID = memoryToUnlock.name;
+
+            if (!XPResultDataHolder.instance.memoryCardsToUnlock.Contains(memoryToUnlock))
+            {
+                XPResultDataHolder.instance.memoryCardsToUnlock.Add(memoryToUnlock);
+                Debug.Log($"🟢 Unlocked memory (session): {memoryToUnlock.memoryTitle}");
+            }
+
+            var profile = ProfileManager.instance?.currentProfile;
+            if (profile != null && !profile.unlockedMemories.Contains(memoryID))
+            {
+                profile.unlockedMemories.Add(memoryID);
+                ProfileManager.instance.SaveProfile();
+                Debug.Log($"💾 Permanently saved unlock: {memoryID}");
+            }
+        }
+
+
+        if (homeButton != null)
+            homeButton.onClick.AddListener(GoToMainMenu);
 
         if (resultsPanelRoot != null)
         {
@@ -180,5 +226,13 @@ public class XPResultsUIManager : MonoBehaviour
             if (starSound != null && AudioManager.instance != null)
                 AudioManager.instance.PlaySFX(starSound, 0.8f);
         }
+    }
+
+    private void GoToMainMenu()
+    {
+        if (XPResultDataHolder.instance != null)
+            XPResultDataHolder.instance.Clear();
+
+        SceneManager.LoadScene("MainMenu"); // Replace if your main menu scene has a different name
     }
 }

@@ -1,10 +1,17 @@
-using UnityEngine;
+﻿using UnityEngine;
 
-[CreateAssetMenu(fileName = "NewMemoryCard", menuName = "KULO/Museum Memory Card")]
+[CreateAssetMenu(fileName = "NewMemoryCard", menuName = "KULO/Museum Memory")]
 public class MemoryCardData : ScriptableObject
 {
-    public int memoryNumber;
+    [Header("Metadata")]
     public string memoryTitle;
+    public int memoryNumber;
+    public bool isLocked = true;
+
+    [Header("Visuals")]
     public Sprite thumbnail;
-    public bool isLocked = false;
+    public Sprite fullscreenImage;
+
+    [Header("Unique ID")]
+    public string cardID; // 🆕 This is used for unlocking persistence
 }

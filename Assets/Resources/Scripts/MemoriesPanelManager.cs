@@ -22,6 +22,8 @@ public class MemoriesPanelManager : MonoBehaviour
 
     private MemoryTabManager tabManager;
 
+    public Button closeButton; // Assign in inspector
+
     void Start()
     {
         tabBarStartPos = tabBar.anchoredPosition;
@@ -30,6 +32,9 @@ public class MemoriesPanelManager : MonoBehaviour
         artTabButton.onClick.AddListener(() => SwitchTab(Tab.Art));
         loreTabButton.onClick.AddListener(() => SwitchTab(Tab.Lore));
         cutsceneTabButton.onClick.AddListener(() => SwitchTab(Tab.Cutscenes));
+
+        if (closeButton != null)
+            closeButton.onClick.AddListener(ClosePanel);
 
         tabManager = FindObjectOfType<MemoryTabManager>();
     }
@@ -57,7 +62,14 @@ public class MemoriesPanelManager : MonoBehaviour
 
     public void ClosePanel()
     {
-        panelRoot.SetActive(false);
+        // Slide tab bar left, content down
+        tabBar.DOAnchorPos(tabBarStartPos + new Vector2(-tabSlideX, 0f), animDuration).SetEase(Ease.InBack);
+        contentRoot.DOAnchorPos(contentStartPos + new Vector2(0f, -contentSlideY), animDuration)
+            .SetEase(Ease.InCubic)
+            .OnComplete(() =>
+            {
+                panelRoot.SetActive(false); // Deactivate after anim completes
+            });
     }
 
     private void SwitchTab(Tab tab)
