@@ -34,6 +34,8 @@ public class XPResultsUIManager : MonoBehaviour
     [Header("Navigation")]
     public Button homeButton;
 
+    private List<string> pendingMemoryIDsToSave = new List<string>();
+
     void Start()
     {
         string selectedCharacter = PlayerProfile.selectedCharacterName;
@@ -104,7 +106,7 @@ public class XPResultsUIManager : MonoBehaviour
             return;
         }
 
-        string memoryID = memory.name;
+        string memoryID = memory.cardID; // ✅ Use cardID for consistency
 
         if (!XPResultDataHolder.instance.memoryCardsToUnlock.Contains(memory))
         {
@@ -115,10 +117,28 @@ public class XPResultsUIManager : MonoBehaviour
         var profile = ProfileManager.instance?.currentProfile;
         if (profile != null && !profile.unlockedMemories.Contains(memoryID))
         {
-            profile.unlockedMemories.Add(memoryID);
-            ProfileManager.instance.SaveProfile();
-            Debug.Log($"💾 Permanently saved unlock: {memoryID}");
+            pendingMemoryIDsToSave.Add(memoryID);
         }
+    }
+
+    void SavePendingMemoryUnlocks()
+    {
+        var profile = ProfileManager.instance?.currentProfile;
+        if (profile == null) return;
+
+        foreach (var memoryID in pendingMemoryIDsToSave)
+        {
+            if (!profile.unlockedMemories.Contains(memoryID))
+            {
+                profile.unlockedMemories.Add(memoryID);
+                Debug.Log($"💾 Permanently saved unlock: {memoryID}");
+            }
+        }
+
+        if (pendingMemoryIDsToSave.Count > 0)
+            ProfileManager.instance.SaveProfile();
+
+        pendingMemoryIDsToSave.Clear();
     }
 
     void SetBackground(XPResultDataHolder.SplashBackgroundType bg)
@@ -196,6 +216,8 @@ public class XPResultsUIManager : MonoBehaviour
 
         if (starRatingDisplay != null)
             yield return StartCoroutine(AnimateStarsWithSound(data.totalXP));
+
+        SavePendingMemoryUnlocks();
     }
 
     IEnumerator AnimateStarsWithSound(int totalXP)
