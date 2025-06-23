@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: e2a484e5fa858e548921603c5e88f137
+guid: a29fa559f8dd90248b1f42e405385430
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 4352766412225118640
-    second: TamTamSprites_0000_Wardrobe-Tam_0
+      213: 8661283020938514802
+    second: ASADI GAMES SPLASH_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -100,13 +100,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: TamTamSprites_0000_Wardrobe-Tam_0
+      name: ASADI GAMES SPLASH_0
       rect:
         serializedVersion: 2
-        x: 32
-        y: 31
-        width: 938
-        height: 918
+        x: 0
+        y: 0
+        width: 3840
+        height: 2160
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -115,8 +115,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 0b10eee6df1286c30800000000000000
-      internalID: 4352766412225118640
+      spriteID: 2719922a40f033870800000000000000
+      internalID: 8661283020938514802
       vertices: []
       indices: 
       edges: []
@@ -134,8 +134,7 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable:
-      TamTamSprites_0000_Wardrobe-Tam_0: 4352766412225118640
+    nameFileIdTable: {}
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

@@ -134,7 +134,8 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      TamTamSprites_0001_Memories-Tam_0: -7101172982511769748
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

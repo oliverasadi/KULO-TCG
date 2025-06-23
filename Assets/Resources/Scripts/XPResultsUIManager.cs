@@ -64,44 +64,14 @@ public class XPResultsUIManager : MonoBehaviour
 
         SetBackground(finalBG);
 
-        // 🔓 Memory Unlock Mapping
-        // 🔓 Memory Unlock Mapping (including base versions)
-        MemoryCardData memoryToUnlock = null;
-        switch (finalBG)
-        {
-            case XPResultDataHolder.SplashBackgroundType.MrWax:
-                memoryToUnlock = Resources.Load<MemoryCardData>("MuseumAssets/Memories/MrWax");
-                break;
-            case XPResultDataHolder.SplashBackgroundType.MrWaxWithRedSeal:
-                memoryToUnlock = Resources.Load<MemoryCardData>("MuseumAssets/Memories/MrWax_RedSeal");
-                break;
-            case XPResultDataHolder.SplashBackgroundType.Nekomata:
-                memoryToUnlock = Resources.Load<MemoryCardData>("MuseumAssets/Memories/Nekomata");
-                break;
-            case XPResultDataHolder.SplashBackgroundType.NekomataWithCatTriFecta:
-                memoryToUnlock = Resources.Load<MemoryCardData>("MuseumAssets/Memories/Nekomata_CatTriFecta");
-                break;
-        }
+        // ✅ Memory Unlocks based on full condition
+        bool playedRedSeal = playerCardsPlayed.Contains("Ultimate Red Seal");
+        bool playedCatTriFecta = playerCardsPlayed.Contains("Cat TriFecta");
 
-        if (memoryToUnlock != null)
-        {
-            string memoryID = memoryToUnlock.name;
-
-            if (!XPResultDataHolder.instance.memoryCardsToUnlock.Contains(memoryToUnlock))
-            {
-                XPResultDataHolder.instance.memoryCardsToUnlock.Add(memoryToUnlock);
-                Debug.Log($"🟢 Unlocked memory (session): {memoryToUnlock.memoryTitle}");
-            }
-
-            var profile = ProfileManager.instance?.currentProfile;
-            if (profile != null && !profile.unlockedMemories.Contains(memoryID))
-            {
-                profile.unlockedMemories.Add(memoryID);
-                ProfileManager.instance.SaveProfile();
-                Debug.Log($"💾 Permanently saved unlock: {memoryID}");
-            }
-        }
-
+        TryUnlockMemory("MrWax", selectedCharacter == "Mr.Wax");
+        TryUnlockMemory("MrWax_RedSeal", selectedCharacter == "Mr.Wax" && playedRedSeal);
+        TryUnlockMemory("Nekomata", selectedCharacter == "Nekomata");
+        TryUnlockMemory("Nekomata_CatTriFecta", selectedCharacter == "Nekomata" && playedCatTriFecta);
 
         if (homeButton != null)
             homeButton.onClick.AddListener(GoToMainMenu);
@@ -120,6 +90,34 @@ public class XPResultsUIManager : MonoBehaviour
         else
         {
             StartCoroutine(RevealRewardsSequentially(data));
+        }
+    }
+
+    void TryUnlockMemory(string memoryResourceName, bool condition)
+    {
+        if (!condition) return;
+
+        var memory = Resources.Load<MemoryCardData>("MuseumAssets/Memories/" + memoryResourceName);
+        if (memory == null)
+        {
+            Debug.LogWarning($"❌ Could not load memory: {memoryResourceName}");
+            return;
+        }
+
+        string memoryID = memory.name;
+
+        if (!XPResultDataHolder.instance.memoryCardsToUnlock.Contains(memory))
+        {
+            XPResultDataHolder.instance.memoryCardsToUnlock.Add(memory);
+            Debug.Log($"🟢 Unlocked memory (session): {memory.memoryTitle}");
+        }
+
+        var profile = ProfileManager.instance?.currentProfile;
+        if (profile != null && !profile.unlockedMemories.Contains(memoryID))
+        {
+            profile.unlockedMemories.Add(memoryID);
+            ProfileManager.instance.SaveProfile();
+            Debug.Log($"💾 Permanently saved unlock: {memoryID}");
         }
     }
 
@@ -233,6 +231,6 @@ public class XPResultsUIManager : MonoBehaviour
         if (XPResultDataHolder.instance != null)
             XPResultDataHolder.instance.Clear();
 
-        SceneManager.LoadScene("MainMenu"); // Replace if your main menu scene has a different name
+        SceneManager.LoadScene("MainMenu");
     }
 }

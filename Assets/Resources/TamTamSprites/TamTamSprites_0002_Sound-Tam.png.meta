@@ -134,7 +134,8 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      TamTamSprites_0002_Sound-Tam_0: 2136224267852944035
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
