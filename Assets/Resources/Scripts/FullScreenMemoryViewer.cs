@@ -8,8 +8,21 @@ public class FullscreenMemoryViewer : MonoBehaviour
 
     [Header("UI Elements")]
     public GameObject rootPanel;
+    public RectTransform zoomContainer;
     public Image displayImage;
-    public Image dimWall; // translucent black wall behind image (optional)
+    public Image dimWall;
+
+    private float zoom = 1f;
+    private float zoomMin = 1f;
+    private float zoomMax = 3f;
+
+    private Vector2 dragStartLocal;
+    private Vector2 dragStartAnchored;
+
+    private RectTransform canvasRect;
+
+    private Tween zoomTween;
+    private Tween panTween;
 
     void Awake()
     {
@@ -17,7 +30,6 @@ public class FullscreenMemoryViewer : MonoBehaviour
         {
             instance = this;
 
-            // Attach to Canvas if needed
             if (transform.parent == null || GetComponentInParent<Canvas>() == null)
             {
                 Canvas canvas = FindObjectOfType<Canvas>();
@@ -31,6 +43,8 @@ public class FullscreenMemoryViewer : MonoBehaviour
                     Debug.LogError("[FullscreenMemoryViewer] No Canvas found!");
                 }
             }
+
+            canvasRect = GetComponentInParent<Canvas>()?.GetComponent<RectTransform>();
 
             if (rootPanel == null && transform.childCount > 0)
             {
@@ -46,6 +60,64 @@ public class FullscreenMemoryViewer : MonoBehaviour
         }
     }
 
+    void Update()
+    {
+        if (!rootPanel.activeSelf || zoomContainer == null) return;
+
+        // Zooming with smooth tween
+        float scroll = Input.GetAxis("Mouse ScrollWheel");
+        if (scroll != 0f)
+        {
+            zoom = Mathf.Clamp(zoom + scroll * 0.5f, zoomMin, zoomMax);
+            zoomTween?.Kill();
+            zoomTween = zoomContainer.DOScale(Vector3.one * zoom, 0.2f).SetEase(Ease.OutSine);
+            ClampZoomPosition();
+        }
+
+        // Only allow panning if zoomed in
+        if (zoom <= 1.01f) return;
+
+        if (Input.GetMouseButtonDown(2))
+        {
+            RectTransformUtility.ScreenPointToLocalPointInRectangle(
+                zoomContainer, Input.mousePosition, null, out dragStartLocal
+            );
+            dragStartAnchored = zoomContainer.anchoredPosition;
+        }
+        else if (Input.GetMouseButton(2))
+        {
+            RectTransformUtility.ScreenPointToLocalPointInRectangle(
+                zoomContainer, Input.mousePosition, null, out Vector2 currentLocal
+            );
+            Vector2 delta = currentLocal - dragStartLocal;
+            Vector2 targetPos = ClampPosition(dragStartAnchored + delta);
+
+            panTween?.Kill();
+            panTween = zoomContainer.DOAnchorPos(targetPos, 0.15f).SetEase(Ease.OutQuad);
+        }
+    }
+
+    private Vector2 ClampPosition(Vector2 pos)
+    {
+        if (canvasRect == null || zoomContainer == null) return pos;
+
+        Vector2 canvasSize = canvasRect.rect.size;
+        Vector2 zoomedSize = zoomContainer.rect.size * zoom;
+
+        float maxX = Mathf.Max(0, (zoomedSize.x - canvasSize.x) / 2f);
+        float maxY = Mathf.Max(0, (zoomedSize.y - canvasSize.y) / 2f);
+
+        return new Vector2(
+            Mathf.Clamp(pos.x, -maxX, maxX),
+            Mathf.Clamp(pos.y, -maxY, maxY)
+        );
+    }
+
+    private void ClampZoomPosition()
+    {
+        zoomContainer.anchoredPosition = ClampPosition(zoomContainer.anchoredPosition);
+    }
+
     public void Show(Sprite image)
     {
         if (displayImage == null)
@@ -59,26 +131,26 @@ public class FullscreenMemoryViewer : MonoBehaviour
             rootPanel.SetActive(true);
             displayImage.sprite = image;
 
-            // Reset states
+            // Reset zoom/pan
+            zoom = 1f;
+            zoomTween?.Kill();
+            zoomContainer.localScale = Vector3.one;
+            zoomContainer.anchoredPosition = Vector2.zero;
+
+            // Animate popup
             rootPanel.transform.localScale = Vector3.one * 0.9f;
             CanvasGroup cg = rootPanel.GetComponent<CanvasGroup>();
             if (cg == null) cg = rootPanel.AddComponent<CanvasGroup>();
             cg.alpha = 0f;
 
-            // Animate popup
             cg.DOFade(1f, 0.3f).SetEase(Ease.OutQuad);
             rootPanel.transform.DOScale(1f, 0.3f).SetEase(Ease.OutBack);
 
-            // Optional: dim wall fade in
             if (dimWall != null)
             {
                 dimWall.color = new Color(0f, 0f, 0f, 0f);
                 dimWall.DOFade(0.6f, 0.3f).SetEase(Ease.OutQuad);
             }
-        }
-        else
-        {
-            Debug.LogError("[FullscreenMemoryViewer] rootPanel is NULL at Show()");
         }
     }
 
@@ -97,7 +169,6 @@ public class FullscreenMemoryViewer : MonoBehaviour
             rootPanel.SetActive(false);
         }
 
-        // Dim wall fade out
         if (dimWall != null)
         {
             dimWall.DOFade(0f, 0.2f).SetEase(Ease.InQuad);
@@ -112,7 +183,6 @@ public class FullscreenMemoryViewer : MonoBehaviour
             if (prefab != null)
             {
                 GameObject clone = Instantiate(prefab);
-
                 Canvas canvas = FindObjectOfType<Canvas>();
                 if (canvas != null)
                     clone.transform.SetParent(canvas.transform, false);
