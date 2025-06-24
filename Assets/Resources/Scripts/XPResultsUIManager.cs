@@ -34,6 +34,10 @@ public class XPResultsUIManager : MonoBehaviour
     [Header("Navigation")]
     public Button homeButton;
 
+    [Header("Museum Unlock UI")]
+    public GameObject museumUnlockPrefab;
+    public Transform popupContainer;
+
     private List<string> pendingMemoryIDsToSave = new List<string>();
 
     void Start()
@@ -66,7 +70,7 @@ public class XPResultsUIManager : MonoBehaviour
 
         SetBackground(finalBG);
 
-        // ✅ Memory Unlocks based on full condition
+        // ✅ Memory Unlocks
         bool playedRedSeal = playerCardsPlayed.Contains("Ultimate Red Seal");
         bool playedCatTriFecta = playerCardsPlayed.Contains("Cat TriFecta");
 
@@ -106,7 +110,7 @@ public class XPResultsUIManager : MonoBehaviour
             return;
         }
 
-        string memoryID = memory.cardID; // ✅ Use cardID for consistency
+        string memoryID = memory.cardID;
 
         if (!XPResultDataHolder.instance.memoryCardsToUnlock.Contains(memory))
         {
@@ -218,6 +222,55 @@ public class XPResultsUIManager : MonoBehaviour
             yield return StartCoroutine(AnimateStarsWithSound(data.totalXP));
 
         SavePendingMemoryUnlocks();
+
+        // 🏛️ Show unlocked museum memories sequentially (no overlap)
+        foreach (var memory in data.memoryCardsToUnlock)
+        {
+            string title = "Museum Piece Unlocked";
+            string description = $"Gallery Item {memory.memoryTitle}";
+            Sprite icon = memory.thumbnail;
+
+            yield return StartCoroutine(ShowMuseumUnlockSequence(title, description, icon));
+        }
+    }
+
+    IEnumerator ShowMuseumUnlockSequence(string title, string description, Sprite icon)
+    {
+        GameObject popup = Instantiate(museumUnlockPrefab, popupContainer);
+        popup.transform.SetAsLastSibling();
+
+        var titleText = popup.transform.Find("TextContainer/TitleText")?.GetComponent<TextMeshProUGUI>();
+        var subtitleText = popup.transform.Find("TextContainer/SubtitleText")?.GetComponent<TextMeshProUGUI>();
+        var iconImage = popup.transform.Find("Icon")?.GetComponent<Image>();
+        var rt = popup.GetComponent<RectTransform>();
+        var cg = popup.GetComponent<CanvasGroup>();
+
+        if (titleText != null) titleText.text = title;
+        if (subtitleText != null) subtitleText.text = description;
+        if (iconImage != null) iconImage.sprite = icon;
+
+        Vector2 targetPos = new Vector2(-276, 98);
+        Vector2 startPos = new Vector2(400, 98);
+        Vector2 exitPos = new Vector2(600, 98);
+
+        rt.anchoredPosition = startPos;
+        if (cg != null) cg.alpha = 0;
+
+        bool done = false;
+
+        Sequence seq = DOTween.Sequence();
+        seq.Append(rt.DOAnchorPos(targetPos, 0.5f).SetEase(Ease.OutCubic));
+        if (cg != null) seq.Join(cg.DOFade(1, 0.4f));
+        seq.AppendInterval(4f);
+        seq.Append(rt.DOAnchorPos(exitPos, 0.5f).SetEase(Ease.InCubic));
+        if (cg != null) seq.Join(cg.DOFade(0, 0.4f));
+        seq.OnComplete(() =>
+        {
+            Destroy(popup);
+            done = true;
+        });
+
+        yield return new WaitUntil(() => done);
     }
 
     IEnumerator AnimateStarsWithSound(int totalXP)

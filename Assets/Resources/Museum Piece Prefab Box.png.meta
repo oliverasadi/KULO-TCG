@@ -1,13 +1,10 @@
 fileFormatVersion: 2
-guid: 61422858852915542899c5810131ca60
+guid: 3fcea2100a44f3b4ea17e79714b66eae
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -1514226583732872059
-    second: Home Icon_0
-  - first:
-      213: 4211225317081138843
-    second: Home Icon_1
+      213: 3499713213914264786
+    second: Museum Piece Prefab Box_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -103,13 +100,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Home Icon_0
+      name: Museum Piece Prefab Box_0
       rect:
         serializedVersion: 2
-        x: 0
-        y: 218
-        width: 512
-        height: 243
+        x: 9
+        y: 12
+        width: 937
+        height: 337
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -118,30 +115,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 58c162fd1f26cfae0800000000000000
-      internalID: -1514226583732872059
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Home Icon_1
-      rect:
-        serializedVersion: 2
-        x: 72
-        y: 51
-        width: 368
-        height: 328
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: b96c0c52d17417a30800000000000000
-      internalID: 4211225317081138843
+      spriteID: 2d4b91330aa719030800000000000000
+      internalID: 3499713213914264786
       vertices: []
       indices: 
       edges: []
@@ -159,9 +134,7 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable:
-      Home Icon_0: -1514226583732872059
-      Home Icon_1: 4211225317081138843
+    nameFileIdTable: {}
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
