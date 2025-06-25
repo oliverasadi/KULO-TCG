@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: Swimming White Tiger Cub
   m_EditorClassIdentifier: 
   cardName: Swimming White Tiger Cub
+  requiresTargetCreature: 0
   category: 0
   power: 1400
   effectDescription: After this card has been on the field for 3 of your opponents
@@ -21,4 +22,10 @@ MonoBehaviour:
   cardNumber: OGN-60
   creatureType: Su Beast
   baseOrEvo: 0
+  summonOptionsAfterOpponentTurn: []
   extraDetails: 'DOB: 2024, GPS: Pagoda Forest Weight: 5.2kg, Height: 0.24m.'
+  inlineEffects: []
+  effects:
+  - {fileID: 11400000, guid: 067cbe792078f5f4a8baa161eccf75fe, type: 2}
+  requiresSacrifice: 0
+  sacrificeRequirements: []

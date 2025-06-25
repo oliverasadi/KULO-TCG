@@ -25,7 +25,7 @@ MonoBehaviour:
   summonOptionsAfterOpponentTurn: []
   extraDetails: 'DOB: 2024, GPS: Hidden Gulu Forest, Weight: 4.7kg, Height: 0.25m.'
   inlineEffects:
-  - effectType: 3
+  - effectType: 0
     cardsToDraw: 0
     requiredCreatureNames: []
     requiredCreatureTypes: []

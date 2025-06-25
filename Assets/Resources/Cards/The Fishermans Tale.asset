@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: The Fishermans Tale
   m_EditorClassIdentifier: 
   cardName: The Fishermans Tale
+  requiresTargetCreature: 0
   category: 1
   power: 0
   effectDescription: "\"Draw 2 cards if you control a card with \u201CFisherman\u201D
@@ -21,4 +22,10 @@ MonoBehaviour:
   cardNumber: OGN-53
   creatureType: 
   baseOrEvo: 0
+  summonOptionsAfterOpponentTurn: []
   extraDetails: 
+  inlineEffects: []
+  effects:
+  - {fileID: 11400000, guid: 45166c7aa9a7ae04993aeb1444c44299, type: 2}
+  requiresSacrifice: 0
+  sacrificeRequirements: []

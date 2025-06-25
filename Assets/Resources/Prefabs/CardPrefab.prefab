@@ -154,7 +154,6 @@ MonoBehaviour:
   replacementTurnDelay: -1
   inlineReplacementCardName: 
   inlineBlockAdditionalPlays: 0
-  hoverVolume: 0.3
   activeInlineEffects: []
   isSacrificeSelected: 0
   isSelected: 0

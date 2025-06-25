@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: What a Catch!
   m_EditorClassIdentifier: 
   cardName: What a Catch
+  requiresTargetCreature: 0
   category: 1
   power: 0
   effectDescription: "If you control a card with \u201CFisherman\u201D in its name
@@ -21,4 +22,10 @@ MonoBehaviour:
   cardNumber: OGN-54
   creatureType: 
   baseOrEvo: 0
+  summonOptionsAfterOpponentTurn: []
   extraDetails: 
+  inlineEffects: []
+  effects:
+  - {fileID: 11400000, guid: 0c85240396b6b6444a4fddc0969d9b93, type: 2}
+  requiresSacrifice: 0
+  sacrificeRequirements: []
