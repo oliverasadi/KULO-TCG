@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: Koi Dad
   m_EditorClassIdentifier: 
   cardName: Koi Dad
+  requiresTargetCreature: 0
   category: 0
   power: 1400
   effectDescription: '"If this card remains on the field after one of your opponent''s
@@ -21,8 +22,12 @@ MonoBehaviour:
   cardNumber: OGN-48
   creatureType: Koi
   baseOrEvo: 0
+  summonOptionsAfterOpponentTurn:
+  - {fileID: 11400000, guid: 16abb367ba5de1b4e90769949e216eeb, type: 2}
+  - {fileID: 11400000, guid: 4f0d82896bd7c734b8fc3392b7d0db9b, type: 2}
   extraDetails: 'DOB: Unknown, GPS: Legendary Koi River, Weight: 4.2kg, Height: 0.30m.'
   inlineEffects: []
-  effects: []
+  effects:
+  - {fileID: 11400000, guid: 8f84d1308996ee24f9456e8df73fe797, type: 2}
   requiresSacrifice: 0
   sacrificeRequirements: []

@@ -23,6 +23,7 @@ MonoBehaviour:
   cardNumber: OGN-50
   creatureType: Koi
   baseOrEvo: 1
+  summonOptionsAfterOpponentTurn: []
   extraDetails: 'DOB: Unknown, GPS: Legendary Koi River, Weight: 10.8kg, Height:
     3.27m.'
   inlineEffects:
@@ -59,7 +60,7 @@ MonoBehaviour:
     count: 1
     allowFromField: 1
     allowFromHand: 1
-  - requiredCardName: Koi Mum
+  - requiredCardName: Koi Dad
     matchByCreatureType: 0
     count: 1
     allowFromField: 1

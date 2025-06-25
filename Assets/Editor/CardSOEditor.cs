@@ -24,6 +24,8 @@ public class CardSOEditor : Editor
         EditorGUILayout.PropertyField(serializedObject.FindProperty("category"));
         EditorGUILayout.PropertyField(serializedObject.FindProperty("cardImage"));
         EditorGUILayout.PropertyField(serializedObject.FindProperty("effectDescription"));
+        EditorGUILayout.PropertyField(serializedObject.FindProperty("summonOptionsAfterOpponentTurn"), true);
+
 
         // Draw asset-based effects.
         EditorGUILayout.Space();

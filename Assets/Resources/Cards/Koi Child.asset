@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: Koi Child
   m_EditorClassIdentifier: 
   cardName: Koi Child
+  requiresTargetCreature: 0
   category: 0
   power: 1300
   effectDescription: '"If this card remains on the field after one of your opponent''s
@@ -21,4 +22,29 @@ MonoBehaviour:
   cardNumber: OGN-47
   creatureType: Koi
   baseOrEvo: 0
+  summonOptionsAfterOpponentTurn:
+  - {fileID: 11400000, guid: 69027d35af9459d4ca57874838183ca6, type: 2}
+  - {fileID: 11400000, guid: 4f0d82896bd7c734b8fc3392b7d0db9b, type: 2}
   extraDetails: 'DOB: Unknown, GPS: Legendary Koi River, Weight: 3.2kg, Height: 0.20m.'
+  inlineEffects:
+  - effectType: 0
+    cardsToDraw: 0
+    requiredCreatureNames: []
+    requiredCreatureTypes: []
+    maxTargets: 0
+    replacementCardName: 
+    turnDelay: 0
+    blockAdditionalPlays: 0
+    promptPrefab: {fileID: 0}
+    powerChange: 0
+    powerLossPerTurn: 0
+    useCountMode: 0
+    powerChangeAmount: 0
+    powerChangeType: 0
+    targetPositions: 
+    adjacencyOwnerToAffect: 0
+    searchOwner: 0
+  effects:
+  - {fileID: 11400000, guid: 8f84d1308996ee24f9456e8df73fe797, type: 2}
+  requiresSacrifice: 0
+  sacrificeRequirements: []

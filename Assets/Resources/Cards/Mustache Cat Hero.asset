@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: Mustache Cat Hero
   m_EditorClassIdentifier: 
   cardName: Mustache Cat Hero
+  requiresTargetCreature: 0
   category: 0
   power: 1200
   effectDescription: This card gains +100 power for each card your opponent controls
@@ -21,17 +22,26 @@ MonoBehaviour:
   cardNumber: OGN-16
   creatureType: Cat
   baseOrEvo: 0
+  summonOptionsAfterOpponentTurn: []
   extraDetails: 'DOB: 2024, GPS: Hidden Gulu Forest, Weight: 4.7kg, Height: 0.25m.'
   inlineEffects:
   - effectType: 3
     cardsToDraw: 0
     requiredCreatureNames: []
+    requiredCreatureTypes: []
     maxTargets: 0
     replacementCardName: 
     turnDelay: 0
     blockAdditionalPlays: 0
     promptPrefab: {fileID: 0}
     powerChange: 100
+    powerLossPerTurn: 0
+    useCountMode: 0
+    powerChangeAmount: 0
+    powerChangeType: 0
+    targetPositions: 
+    adjacencyOwnerToAffect: 2
+    searchOwner: 2
   effects: []
   requiresSacrifice: 0
   sacrificeRequirements: []

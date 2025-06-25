@@ -15,6 +15,7 @@ public class TurnManager : MonoBehaviour
     public bool creaturePlayed = false;
     public bool spellPlayed = false;
 
+    public event Action OnLocalTurnStart;
 
 
     public PlayerManager playerManager1; // Reference to PlayerManager for Player 1
@@ -100,6 +101,13 @@ public class TurnManager : MonoBehaviour
     public void StartTurn(bool drawCard = true)
     {
         Debug.Log($"🕒 Player {currentPlayer}'s turn starts.");
+
+        // ✅ Fire event for summon triggers
+        if (currentPlayer == localPlayerNumber)
+        {
+            OnLocalTurnStart?.Invoke();
+            Debug.Log("[TurnManager] Fired OnLocalTurnStart event.");
+        }
 
         // ✅ Track turns for XP only if it's the human player
         if (currentPlayer == localPlayerNumber && XPTracker.instance != null)

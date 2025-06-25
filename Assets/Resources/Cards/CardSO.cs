@@ -22,6 +22,10 @@ public class CardSO : ScriptableObject
     public enum BaseOrEvo { Base, Evolution }
     public BaseOrEvo baseOrEvo;    // Indicates whether this card is a base creature or an evolution
 
+
+    [Header("Summon Options (After Opponent Turn)")]
+    public List<CardSO> summonOptionsAfterOpponentTurn;
+
     [TextArea]
     public string extraDetails;
 

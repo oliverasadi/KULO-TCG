@@ -134,7 +134,8 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      Museum Piece Prefab Box_0: 3499713213914264786
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

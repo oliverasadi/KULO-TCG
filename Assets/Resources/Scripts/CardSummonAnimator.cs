@@ -33,12 +33,25 @@ public static class CardSummonAnimator
             .SetEase(Ease.OutBack)
             .OnComplete(() =>
             {
-                // 6) Once done, parent it under the cell and center it in local
+                // 6) Once done, parent it under the cell and center it in local space
                 cardRect.SetParent(cellTransform, worldPositionStays: false);
                 cardRect.anchorMin = cardRect.anchorMax = cardRect.pivot = new Vector2(0.5f, 0.5f);
                 cardRect.anchoredPosition = Vector2.zero;
 
-                // 7) Finally invoke the game‐logic callback
+                // ✅ Fix scale issue explicitly
+                cardRect.localScale = Vector3.one;
+
+                // ✅ Extra safety using DOTween to override any async layout transitions
+                cardRect.DOScale(Vector3.one, 0f);
+
+                // ✅ Reset hover scale baseline if present
+                UIOnHoverEvent hoverScript = cardUI.GetComponent<UIOnHoverEvent>();
+                if (hoverScript != null)
+                {
+                    hoverScript.ForceResetOriginalScale(Vector3.one);
+                }
+
+                // 7) Finally invoke the game-logic callback
                 onComplete?.Invoke();
             });
     }

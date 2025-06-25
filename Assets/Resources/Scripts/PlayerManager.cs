@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.Serialization;
+using System;
 using System.Collections.Generic;
 
 public class PlayerManager : MonoBehaviour
@@ -7,6 +8,9 @@ public class PlayerManager : MonoBehaviour
     public enum PlayerTypes { Local, AI, Online };
     public PlayerTypes playerType;
     public int playerNumber;
+
+    // 🔔 New event for summon effects to listen for
+    public event Action OnCardDrawn;
 
     // Static field to persist selected deck across scene reloads
     public static DeckDataSO selectedCharacterDeck;
@@ -38,15 +42,12 @@ public class PlayerManager : MonoBehaviour
         dm = DeckManager.instance;
         Debug.Log("PlayerManager initialized for playerType: " + playerType);
 
-        // If the player picked a character, override the deck
         if (playerType == PlayerTypes.Local && selectedCharacterDeck != null)
         {
             playerSelectedDeck = selectedCharacterDeck;
             Debug.Log($"[PlayerManager] Overriding local deck to '{playerSelectedDeck.deckName}' from Character Select.");
-            // Note: do NOT clear selectedCharacterDeck here to allow persistence on restart
         }
 
-        // AI deck loading
         if (playerType == PlayerTypes.AI)
         {
             if (aiSelectedDeck != null)
@@ -60,7 +61,6 @@ public class PlayerManager : MonoBehaviour
                 currentDeck = dm.GenerateRandomDeck();
             }
         }
-        // Local player deck loading
         else if (playerType == PlayerTypes.Local)
         {
             if (playerSelectedDeck != null)
@@ -79,20 +79,17 @@ public class PlayerManager : MonoBehaviour
                 currentDeck = dm.GenerateRandomDeck();
             }
         }
-        // Fallback for other player types
         else
         {
             currentDeck = dm.GenerateRandomDeck();
         }
 
-        // Safety: if deck ended up empty, regenerate
         if (currentDeck == null || currentDeck.Count == 0)
         {
             Debug.LogWarning("Loaded deck is empty. Generating random deck as fallback.");
             currentDeck = dm.GenerateRandomDeck();
         }
 
-        // Shuffle and draw starting hand
         ShuffleDeck();
         DrawStartingHand();
     }
@@ -102,7 +99,7 @@ public class PlayerManager : MonoBehaviour
         for (int i = 0; i < currentDeck.Count; i++)
         {
             CardSO temp = currentDeck[i];
-            int randomIndex = Random.Range(i, currentDeck.Count);
+            int randomIndex = UnityEngine.Random.Range(i, currentDeck.Count);
             currentDeck[i] = currentDeck[randomIndex];
             currentDeck[randomIndex] = temp;
         }
@@ -127,6 +124,10 @@ public class PlayerManager : MonoBehaviour
 
             if (zones != null)
                 zones.UpdateDeckCount(currentDeck.Count);
+
+            // 🔔 Fire draw event after a card is successfully drawn
+            OnCardDrawn?.Invoke();
+            Debug.Log("[PlayerManager] OnCardDrawn event fired.");
         }
         else
         {
@@ -264,9 +265,6 @@ public class PlayerManager : MonoBehaviour
         return false;
     }
 
-    /// <summary>
-    /// Clears the "block plays next turn" flag. Call this at the start of the player's turn.
-    /// </summary>
     public void ResetBlockPlaysFlag()
     {
         if (blockPlaysNextTurn)
