@@ -8,60 +8,77 @@ using DG.Tweening;
 public class SummonChoiceUI : MonoBehaviour
 {
     [Header("UI References")]
-    public GameObject buttonPrefab;            // Card prefab with CardUI
+    public GameObject buttonPrefab;                 // Card prefab with CardUI
     public RectTransform buttonContainer;
     public TextMeshProUGUI effectDescriptionText;
-    public RectTransform rootPanel;            // 👈 Assign in inspector (main panel)
+    public RectTransform rootPanel;                 // Main panel (assign in inspector)
+    public Button cancelButton;                     // 👈 Assign in Inspector
 
     private Action<CardSO> onChoiceSelected;
-    private CardSO selectedCard;               // Store selected card
+    private CardSO selectedCard;                    // Track selection
 
     /// <summary>
-    /// Shows the summon UI with card options and effect description.
+    /// Show summon UI with options and description.
     /// </summary>
     public void Show(List<CardSO> options, Action<CardSO> callback, string effectDescription = null)
     {
         onChoiceSelected = callback;
+        selectedCard = null;
 
-        // Set effect description
+        // Set optional text
         if (effectDescriptionText != null && !string.IsNullOrEmpty(effectDescription))
             effectDescriptionText.text = effectDescription;
 
-        // Clear previous buttons
+        // Clean previous buttons
         foreach (Transform child in buttonContainer)
             Destroy(child.gameObject);
 
-        // Create one button per summon option
+        // Create buttons for each option
         foreach (CardSO card in options)
         {
             GameObject buttonObj = Instantiate(buttonPrefab, buttonContainer);
 
-            // Populate visuals
             CardUI ui = buttonObj.GetComponent<CardUI>();
-            if (ui != null)
-                ui.SetCardData(card, setFaceDown: false);
-            else
-                Debug.LogWarning("[SummonChoiceUI] Button prefab missing CardUI.");
+            if (ui != null) ui.SetCardData(card, setFaceDown: false);
+            else Debug.LogWarning("[SummonChoiceUI] Button prefab missing CardUI.");
 
-            // Add click logic
             Button btn = buttonObj.GetComponent<Button>();
-            if (btn != null)
-                btn.onClick.AddListener(() => Select(card));
+            if (btn != null) btn.onClick.AddListener(() => Select(card));
+        }
+
+        // Cancel button logic
+        if (cancelButton != null)
+        {
+            cancelButton.onClick.RemoveAllListeners();
+            cancelButton.onClick.AddListener(() =>
+            {
+                selectedCard = null;
+                HideWithSlideOutAndThen(() =>
+                {
+                    onChoiceSelected?.Invoke(null); // null = cancel
+                });
+            });
         }
 
         gameObject.SetActive(true);
 
-        // Animate panel in from top
+        // Animate in
         if (rootPanel != null)
         {
-            rootPanel.anchoredPosition = new Vector2(0, 800); // offscreen start
+            rootPanel.anchoredPosition = new Vector2(0, 800);
             rootPanel.DOAnchorPos(Vector2.zero, 0.5f).SetEase(Ease.OutBack);
         }
     }
 
-    /// <summary>
-    /// Slide out panel, then invoke callback with selected card.
-    /// </summary>
+    private void Select(CardSO chosen)
+    {
+        selectedCard = chosen;
+        HideWithSlideOutAndThen(() =>
+        {
+            onChoiceSelected?.Invoke(selectedCard);
+        });
+    }
+
     public void HideWithSlideOutAndThen(Action onHidden)
     {
         if (rootPanel != null)
@@ -71,7 +88,7 @@ public class SummonChoiceUI : MonoBehaviour
                      .OnComplete(() =>
                      {
                          gameObject.SetActive(false);
-                         onHidden?.Invoke(); // now safe to proceed
+                         onHidden?.Invoke();
                          Destroy(gameObject); // optional
                      });
         }
@@ -81,16 +98,5 @@ public class SummonChoiceUI : MonoBehaviour
             onHidden?.Invoke();
             Destroy(gameObject);
         }
-    }
-
-    private void Select(CardSO chosen)
-    {
-        selectedCard = chosen;
-
-        // Slide out and defer summon until panel is gone
-        HideWithSlideOutAndThen(() =>
-        {
-            onChoiceSelected?.Invoke(selectedCard);
-        });
     }
 }

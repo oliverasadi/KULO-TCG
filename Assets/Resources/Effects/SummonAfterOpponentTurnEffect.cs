@@ -77,16 +77,22 @@ public class SummonAfterOpponentTurnEffect : CardEffect
             return;
         }
 
-        // 👇 Pass the effect description string
         string effectMessage = $"{sourceCard.cardData.cardName} effect activated! Choose a card to summon.";
 
         choiceUI.Show(summonOptions, (CardSO chosenCard) =>
         {
+            if (chosenCard == null)
+            {
+                Debug.Log("[SummonAfterOpponentTurnEffect] Player cancelled the summon.");
+                GameObject.Destroy(uiInstance);
+                return;
+            }
+
             Debug.Log($"[SummonAfterOpponentTurnEffect] Player selected {chosenCard.cardName}.");
-            uiInstance.SetActive(false);
             ChooseSummonLocation(chosenCard, sourceCard, uiInstance);
         }, effectMessage);
     }
+
 
 
     private void ChooseSummonLocation(CardSO cardToSummon, CardUI sourceCard, GameObject uiInstance)
