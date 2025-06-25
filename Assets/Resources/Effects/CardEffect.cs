@@ -18,4 +18,13 @@ public abstract class CardEffect : ScriptableObject
     /// </summary>
     /// <param name="sourceCard">The CardUI that is the source of this effect.</param>
     public abstract void RemoveEffect(CardUI sourceCard);
+
+    /// <summary>
+    /// Optional override. Return false to block summon based on custom condition.
+    /// </summary>
+    /// <param name="sourceCard">The CardUI that is the source of this effect.</param>
+    public virtual bool CanBeSummoned(CardUI sourceCard)
+    {
+        return true; // Default allows summon
+    }
 }

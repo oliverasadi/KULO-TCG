@@ -37,6 +37,11 @@ public class ThousandYearOldCrabEffect : CardEffect
         // No cleanup is needed when the card leaves the field.
     }
 
+    public override bool CanBeSummoned(CardUI sourceCard)
+    {
+        return !PlayerHasAnyCardsOnField(sourceCard);
+    }
+
     // Checks whether the player already has any other cards on the field (besides the source card).
     private bool PlayerHasAnyCardsOnField(CardUI sourceCard)
     {

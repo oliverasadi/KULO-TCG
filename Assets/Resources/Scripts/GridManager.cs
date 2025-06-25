@@ -271,6 +271,34 @@ public bool MoveCardOnBoard(int oldX, int oldY, int newX, int newY, GameObject c
         int currentPlayer = TurnManager.instance.GetCurrentPlayer();
         string baseCardName = null;
 
+        // (0) CHECK SUMMON RESTRICTIONS
+        if (cardObj.TryGetComponent<CardUI>(out var cardUI))
+        {
+            if (cardUI.cardData.effects != null)
+            {
+                foreach (var effect in cardUI.cardData.effects)
+                {
+                    if (!effect.CanBeSummoned(cardUI))
+                    {
+                        Debug.Log($"❌ Cannot summon {cardUI.cardData.cardName} due to summon restriction in {effect.GetType().Name}.");
+
+                        // 🔴 Show floating feedback (if available)
+                        if (FloatingTextManager.instance != null)
+                        {
+                            FloatingTextManager.instance.ShowFloatingTextWorld(
+                                "Field must be empty!",
+                                cardObj.transform.position + new Vector3(0, 100f, 0),
+                                Color.red
+                            );
+                        }
+
+                        return false;
+                    }
+                }
+            }
+        }
+
+
         // (1) SACRIFICE REQUIREMENTS
         if (cardData.requiresSacrifice && cardData.sacrificeRequirements != null && cardData.sacrificeRequirements.Count > 0)
         {

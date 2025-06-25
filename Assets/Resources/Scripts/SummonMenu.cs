@@ -103,59 +103,85 @@ public class SummonMenu : MonoBehaviour
         sacrificeButton.onClick.AddListener(OnSacrifice);
     }
 
-private void OnSummon()
-{
-    if (cardUI == null || cardUI.cardData == null)
+    private void OnSummon()
     {
-        Debug.LogError("OnSummon: CardUI or cardData is null.");
-        StartCoroutine(CloseAfterDelay());
-        return;
-    }
-
-    if (!TurnManager.instance.CanPlayCard(cardUI.cardData))
-    {
-        Debug.LogWarning($"❌ Cannot summon {cardUI.cardData.cardName}: turn limit reached.");
-        StartCoroutine(CloseAfterDelay());
-        return;
-    }
-
-    Debug.Log($"[SummonMenu] Summon button clicked for {cardUI.cardData.cardName}");
-
-    GridManager.instance.EnableCellSelectionMode(
-        cardUI,
-        (x, y) =>
+        if (cardUI == null || cardUI.cardData == null)
         {
-            GridManager.instance.DisableCellSelectionMode();
-
-            Transform cellTransform = GameObject.Find($"GridCell_{x}_{y}")?.transform;
-            if (cellTransform == null)
-            {
-                Debug.LogWarning($"GridCell_{x}_{y} not found.");
-                return;
-            }
-
-            // 👇 Animate first, then do real placement
-            CardSummonAnimator.AnimateCardToCell(cardUI, cellTransform, () =>
-            {
-                bool success = GridManager.instance.PlaceExistingCard(
-                    x,
-                    y,
-                    cardUI.gameObject,
-                    cardUI.cardData,
-                    cellTransform
-                );
-
-                if (!success)
-                {
-                    Debug.LogWarning($"[SummonMenu] Placement failed at ({x},{y}).");
-                }
-            });
+            Debug.LogError("OnSummon: CardUI or cardData is null.");
+            StartCoroutine(CloseAfterDelay());
+            return;
         }
-    );
 
-    // Wait one frame before closing so highlights show
-    StartCoroutine(CloseAfterDelay());
-}
+        if (!TurnManager.instance.CanPlayCard(cardUI.cardData))
+        {
+            Debug.LogWarning($"❌ Cannot summon {cardUI.cardData.cardName}: turn limit reached.");
+            StartCoroutine(CloseAfterDelay());
+            return;
+        }
+
+        Debug.Log($"[SummonMenu] Summon button clicked for {cardUI.cardData.cardName}");
+
+        GridManager.instance.EnableCellSelectionMode(
+            cardUI,
+            (x, y) =>
+            {
+                GridManager.instance.DisableCellSelectionMode();
+
+                Transform cellTransform = GameObject.Find($"GridCell_{x}_{y}")?.transform;
+                if (cellTransform == null)
+                {
+                    Debug.LogWarning($"GridCell_{x}_{y} not found.");
+                    return;
+                }
+
+                // ✅ Check summon restrictions before animation
+                bool isBlocked = false;
+                if (cardUI.cardData.effects != null)
+                {
+                    foreach (var effect in cardUI.cardData.effects)
+                    {
+                        if (!effect.CanBeSummoned(cardUI))
+                        {
+                            Debug.Log($"❌ Cannot summon {cardUI.cardData.cardName} due to summon restriction in {effect.GetType().Name}.");
+
+                            FloatingTextManager.instance.ShowFloatingTextAsChild(
+                                cardUI.transform,
+                                new Vector3(0, 100f, 0),
+                                "❌ Cannot Summon!",
+                                2f // ⏱ Display for 2 seconds
+                            );
+
+                            isBlocked = true;
+                            break;
+                        }
+                    }
+                }
+
+
+                if (isBlocked) return;
+
+                // 👇 Animate first, then do real placement
+                CardSummonAnimator.AnimateCardToCell(cardUI, cellTransform, () =>
+                {
+                    bool success = GridManager.instance.PlaceExistingCard(
+                        x,
+                        y,
+                        cardUI.gameObject,
+                        cardUI.cardData,
+                        cellTransform
+                    );
+
+                    if (!success)
+                    {
+                        Debug.LogWarning($"[SummonMenu] Placement failed at ({x},{y}).");
+                    }
+                });
+            }
+        );
+
+        StartCoroutine(CloseAfterDelay());
+    }
+
 
 
 
