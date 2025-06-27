@@ -15,6 +15,9 @@ public class DelayedReplacementAfterOpponentTurnsEffect : CardEffect
     [Tooltip("If true, also search hand in addition to deck.")]
     public bool includeHand = true;
 
+    // Optional toggle to block extra plays after replacing
+    public bool blockAdditionalPlays = false;
+
     private Dictionary<CardUI, int> turnTracker = new();
     private Dictionary<CardUI, Action> activeListeners = new();
     private Dictionary<CardUI, GameObject> badgeInstances = new();
@@ -26,28 +29,17 @@ public class DelayedReplacementAfterOpponentTurnsEffect : CardEffect
         if (!turnTracker.ContainsKey(sourceCard))
             turnTracker[sourceCard] = 0;
 
-        // Instantiate badge UI
         GameObject badgePrefab = Resources.Load<GameObject>("Prefabs/TurnCountdownBadge");
         if (badgePrefab != null)
         {
-            Debug.Log($"[DelayedReplaceEffect] ✅ Loaded badge prefab for {sourceCard.cardData.cardName}");
             GameObject badge = GameObject.Instantiate(badgePrefab, sourceCard.transform);
-            badge.transform.localPosition = new Vector3(0, -40, 0); // Lower and centered
+            badge.transform.localPosition = new Vector3(0, -40, 0);
             badgeInstances[sourceCard] = badge;
             UpdateBadgeText(sourceCard, turnsToWait);
 
-            // 🔹 Animate: Pop in
             badge.transform.localScale = Vector3.zero;
             badge.transform.DOScale(Vector3.one, 0.3f).SetEase(Ease.OutBack);
-
-            // 🔹 Animate: Idle bobbing
-            badge.transform.DOLocalMoveY(-35, 1f)
-                .SetEase(Ease.InOutSine)
-                .SetLoops(-1, LoopType.Yoyo);
-        }
-        else
-        {
-            Debug.LogWarning("[DelayedReplaceEffect] ❌ Could not find 'TurnCountdownBadge' prefab in Resources/Prefabs/");
+            badge.transform.DOLocalMoveY(-35, 1f).SetEase(Ease.InOutSine).SetLoops(-1, LoopType.Yoyo);
         }
 
         Action onOpponentTurnEnd = () =>
@@ -62,11 +54,8 @@ public class DelayedReplacementAfterOpponentTurnsEffect : CardEffect
             int turnsLeft = turnsToWait - turnTracker[sourceCard];
             UpdateBadgeText(sourceCard, turnsLeft);
 
-            // 🔹 Animate: Turn tick punch
             if (badgeInstances.TryGetValue(sourceCard, out GameObject badge))
-            {
                 badge.transform.DOPunchScale(Vector3.one * 0.1f, 0.25f, 6, 0.5f);
-            }
 
             Debug.Log($"[DelayedReplaceEffect] {sourceCard.cardData.cardName} has waited {turnTracker[sourceCard]}/{turnsToWait} opponent turns.");
 
@@ -83,89 +72,84 @@ public class DelayedReplacementAfterOpponentTurnsEffect : CardEffect
 
     private void ExecuteReplacement(CardUI sourceCard)
     {
-        if (sourceCard == null || sourceCard.cardData == null) return;
+        string oldCardName = sourceCard.cardData.cardName;
+        Debug.Log($"[DelayedReplaceEffect] ExecuteReplacement called for '{oldCardName}'");
 
-        PlayerManager owner = sourceCard.GetComponent<CardHandler>().cardOwner;
-        if (owner == null)
+        CardSO replacementCardSO = DeckManager.instance.FindCardByName(replacementCardName);
+        if (replacementCardSO == null)
         {
-            Debug.LogError("[DelayedReplaceEffect] No owner found for the card.");
+            Debug.LogError("[DelayedReplaceEffect] ❌ Replacement card not found in deck or database.");
             return;
         }
 
-        CardSO replacementCard = owner.currentDeck.Find(c => c.cardName == replacementCardName);
-
-        if (replacementCard == null && includeHand)
+        PlayerManager owner = sourceCard.GetComponent<CardHandler>()?.cardOwner;
+        if (owner == null)
         {
-            foreach (var cardHandler in owner.cardHandlers)
+            Debug.LogError("[DelayedReplaceEffect] ❌ No valid owner found for source card.");
+            return;
+        }
+
+        if (!owner.RemoveCardFromDeck(replacementCardSO))
+        {
+            Debug.LogWarning($"[DelayedReplaceEffect] {replacementCardSO.cardName} was not found in the owner's deck.");
+        }
+        else
+        {
+            Debug.Log($"[DelayedReplaceEffect] Removed {replacementCardSO.cardName} from deck.");
+        }
+
+        CardSO[,] grid = GridManager.instance.GetGrid();
+        GameObject[,] gridObjects = GridManager.instance.GetGridObjects();
+        bool requirementMet = false;
+
+        for (int x = 0; x < 3; x++)
+        {
+            for (int y = 0; y < 3; y++)
             {
-                if (!cardHandler.GetComponent<CardUI>().isOnField &&
-                    cardHandler.cardData.cardName == replacementCardName)
+                if (grid[x, y] != null && grid[x, y].cardName == oldCardName)
                 {
-                    replacementCard = cardHandler.cardData;
-                    break;
+                    Debug.Log($"[DelayedReplaceEffect] Found {oldCardName} on grid at ({x},{y})");
+
+                    GridManager.instance.RemoveCard(x, y, false);
+
+                    GameObject newCardObj = InstantiateReplacementCard(replacementCardSO, owner);
+                    Transform cellTransform = GameObject.Find($"GridCell_{x}_{y}").transform;
+                    GridManager.instance.PlaceReplacementCard(x, y, newCardObj, replacementCardSO, cellTransform);
+
+                    if (replacementCardSO.baseOrEvo == CardSO.BaseOrEvo.Evolution)
+                    {
+                        GridManager.instance.ShowEvolutionSplash(oldCardName, replacementCardSO.cardName);
+                    }
+
+                    if (blockAdditionalPlays)
+                    {
+                        Debug.Log("[DelayedReplaceEffect] Blocking additional plays after replacement.");
+                        TurnManager.instance.BlockAdditionalCardPlays();
+                    }
+
+                    requirementMet = true;
+                    return;
                 }
             }
         }
 
-        if (replacementCard == null)
+        if (!requirementMet)
         {
-            Debug.LogWarning("[DelayedReplaceEffect] Replacement card not found in deck or hand.");
-            return;
+            Debug.LogWarning($"[DelayedReplaceEffect] ❌ Cannot place {replacementCardSO.cardName}: requirement not met (need 1, found 0)");
         }
-
-        Vector2Int pos = ParseGridPosition(sourceCard.transform.parent.name);
-        GridManager.instance.RemoveCard(pos.x, pos.y, false);
-
-        GameObject newCardObj = Instantiate(DeckManager.instance.cardPrefab);
-        CardHandler handler = newCardObj.GetComponent<CardHandler>();
-        handler.SetCard(replacementCard, false, owner.playerType == PlayerManager.PlayerTypes.AI);
-        handler.cardOwner = owner;
-
-        Transform cellTransform = GameObject.Find($"GridCell_{pos.x}_{pos.y}").transform;
-        newCardObj.transform.SetParent(cellTransform, false);
-        newCardObj.transform.localScale = Vector3.one;
-
-        GridManager.instance.PlaceExistingCard(pos.x, pos.y, newCardObj, replacementCard, cellTransform);
-
-        // ✅ Show floating power text manually (guaranteed)
-        if (FloatingTextManager.instance != null)
-        {
-            GameObject floatingText = GameObject.Instantiate(
-                FloatingTextManager.instance.floatingTextPrefab,
-                newCardObj.transform.position,
-                Quaternion.identity,
-                newCardObj.transform
-            );
-            floatingText.transform.localPosition = new Vector3(0, 50f, 0);
-
-            TMPro.TextMeshProUGUI tmp = floatingText.GetComponent<TMPro.TextMeshProUGUI>();
-            CardUI ui = newCardObj.GetComponent<CardUI>();
-            if (tmp != null && ui != null)
-                tmp.text = "Power: " + ui.CalculateEffectivePower();
-
-            FloatingText ft = floatingText.GetComponent<FloatingText>();
-            if (ft != null)
-                ft.sourceCard = newCardObj;
-        }
-
-        Debug.Log($"[DelayedReplaceEffect] {sourceCard.cardData.cardName} was replaced with {replacementCard.cardName}.");
     }
 
-    public override void RemoveEffect(CardUI sourceCard)
-    {
-        Cleanup(sourceCard);
-    }
+    public override void RemoveEffect(CardUI sourceCard) => Cleanup(sourceCard);
 
     private void Cleanup(CardUI sourceCard)
     {
-        if (activeListeners.ContainsKey(sourceCard))
+        if (activeListeners.TryGetValue(sourceCard, out var listener))
         {
-            TurnManager.instance.OnOpponentTurnEnd -= activeListeners[sourceCard];
+            TurnManager.instance.OnOpponentTurnEnd -= listener;
             activeListeners.Remove(sourceCard);
         }
 
-        if (turnTracker.ContainsKey(sourceCard))
-            turnTracker.Remove(sourceCard);
+        turnTracker.Remove(sourceCard);
 
         if (badgeInstances.TryGetValue(sourceCard, out GameObject badge))
         {
@@ -180,10 +164,25 @@ public class DelayedReplacementAfterOpponentTurnsEffect : CardEffect
         {
             TMPro.TextMeshProUGUI label = badge.GetComponentInChildren<TMPro.TextMeshProUGUI>();
             if (label != null)
-            {
                 label.text = turnsRemaining.ToString();
-            }
         }
+    }
+
+    private GameObject InstantiateReplacementCard(CardSO replacementCard, PlayerManager owner)
+    {
+        GameObject cardPrefab = DeckManager.instance.cardPrefab;
+        GameObject newCardObj = GameObject.Instantiate(cardPrefab);
+        CardHandler handler = newCardObj.GetComponent<CardHandler>();
+        if (handler != null)
+        {
+            handler.SetCard(replacementCard, false, false);
+            handler.cardOwner = owner;
+        }
+        else
+        {
+            Debug.LogError("[InstantiateReplacementCard] CardHandler not found on the new card object.");
+        }
+        return newCardObj;
     }
 
     private Vector2Int ParseGridPosition(string cellName)
