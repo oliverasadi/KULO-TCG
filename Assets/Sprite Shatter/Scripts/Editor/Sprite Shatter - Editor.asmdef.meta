@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 94079144ea4f0674498884a42281744c
+AssemblyDefinitionImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 25219
+  packageName: Sprite Shatter
+  packageVersion: 2.0.5
+  assetPath: Assets/Sprite Shatter/Scripts/Editor/Sprite Shatter - Editor.asmdef
+  uploadId: 734425

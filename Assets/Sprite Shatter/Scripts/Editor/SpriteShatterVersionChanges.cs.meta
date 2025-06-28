@@ -1,0 +1,19 @@
+fileFormatVersion: 2
+guid: 4929d7b3cfce8b6459ec4a24f5127fe8
+timeCreated: 1574072894
+licenseType: Store
+MonoImporter:
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 25219
+  packageName: Sprite Shatter
+  packageVersion: 2.0.5
+  assetPath: Assets/Sprite Shatter/Scripts/Editor/SpriteShatterVersionChanges.cs
+  uploadId: 734425

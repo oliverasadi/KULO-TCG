@@ -1,0 +1,15 @@
+{
+    "name": "Sprite Shatter - Example Scene",
+    "references": [
+        "GUID:407accbc31fe26345b5e2ef0af1596f9"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

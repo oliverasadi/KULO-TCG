@@ -1,0 +1,17 @@
+fileFormatVersion: 2
+guid: 2af4a3c86d70be54a8fce0a4283aec09
+labels:
+- Sprite
+MonoImporter:
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 25219
+  packageName: Sprite Shatter
+  packageVersion: 2.0.5
+  assetPath: Assets/Sprite Shatter/Scripts/Shatter.cs
+  uploadId: 734425

@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: e8411378b27d289439d2564960dba396
+MonoImporter:
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 25219
+  packageName: Sprite Shatter
+  packageVersion: 2.0.5
+  assetPath: Assets/Sprite Shatter/Example Scene/Scripts/Circus.cs
+  uploadId: 734425

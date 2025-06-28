@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 5dcd41241064acd43bf74aa59595fb50
+AssemblyDefinitionImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 25219
+  packageName: Sprite Shatter
+  packageVersion: 2.0.5
+  assetPath: Assets/Sprite Shatter/Example Scene/Scripts/Sprite Shatter - Example
+    Scene.asmdef
+  uploadId: 734425
