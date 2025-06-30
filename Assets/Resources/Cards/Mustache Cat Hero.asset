@@ -42,6 +42,7 @@ MonoBehaviour:
     targetPositions: 
     adjacencyOwnerToAffect: 2
     searchOwner: 2
-  effects: []
+  effects:
+  - {fileID: 11400000, guid: 501119f3e219cd546ba5ab2b8f5ba22a, type: 2}
   requiresSacrifice: 0
   sacrificeRequirements: []

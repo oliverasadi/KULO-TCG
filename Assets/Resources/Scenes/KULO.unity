@@ -1022,7 +1022,6 @@ GameObject:
   - component: {fileID: 325760560}
   - component: {fileID: 325760561}
   - component: {fileID: 325760562}
-  - component: {fileID: 325760563}
   - component: {fileID: 325760564}
   m_Layer: 0
   m_Name: GameManager
@@ -1176,23 +1175,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   graveyardDisplayPanelPrefab: {fileID: 1902508706502755870, guid: 12b126f703b5e854989da61388caa0b5, type: 3}
---- !u!114 &325760563
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 325760554}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d9bddde015268bc419aa229c57e340f4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  mainMenuMusic: {fileID: 0}
-  buttonClickSound: {fileID: 8300000, guid: 27f09dcc0f235ca4da615592d081e8f1, type: 3}
-  buttonHoverSound: {fileID: 8300000, guid: 6631aabfb27852e4d8cdda1d4f4d1490, type: 3}
-  characterSelectMusic: {fileID: 0}
-  xpResultsMusic: {fileID: 0}
 --- !u!114 &325760564
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4607,6 +4589,55 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 2.4493365, y: -6.77858, z: -0.73572206}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1095342919
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1095342921}
+  - component: {fileID: 1095342920}
+  m_Layer: 0
+  m_Name: AudioManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1095342920
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1095342919}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d9bddde015268bc419aa229c57e340f4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  mainMenuMusic: {fileID: 0}
+  buttonClickSound: {fileID: 8300000, guid: 27f09dcc0f235ca4da615592d081e8f1, type: 3}
+  buttonHoverSound: {fileID: 8300000, guid: 6631aabfb27852e4d8cdda1d4f4d1490, type: 3}
+  characterSelectMusic: {fileID: 0}
+  xpResultsMusic: {fileID: 8300000, guid: e58c913b7a86a6b45933a22af9f9db8c, type: 3}
+--- !u!4 &1095342921
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1095342919}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 567.91986, y: 121.58503, z: 241.18774}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -8304,3 +8335,4 @@ SceneRoots:
   - {fileID: 641627820}
   - {fileID: 557011456}
   - {fileID: 300820931}
+  - {fileID: 1095342921}
