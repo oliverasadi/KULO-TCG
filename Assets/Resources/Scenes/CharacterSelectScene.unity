@@ -2580,21 +2580,26 @@ MonoBehaviour:
   - characterName: Mr.Wax
     characterThumbnail: {fileID: -3800876115101479417, guid: 3a615a43faed7814cb7026d096ecd195, type: 3}
     fullArtImage: {fileID: -118952161415766039, guid: d966304988b9b7340b1bcf75cb5e47ba, type: 3}
-    description: Mr.Wax from epotjpetpinengonoenovoe goiengpoenve eoigjegjvnepvne
-      evepioiig e enoowpevnjev
+    description: "Don\u2019t let the jazz records and latte foam fool you \u2014
+      Mr. Wax is a master of form and finesse. His obsession with coffee is rivaled
+      only by his ability to mold wax into anything... and his tangled past with
+      the Red Seal."
     voiceLine: {fileID: 8300000, guid: 0161309959ffefb45811a919767a8556, type: 3}
     deck: {fileID: 11400000, guid: 004379a8f4811e041bf53318ba0a02d3, type: 2}
   - characterName: Xu Taishi
     characterThumbnail: {fileID: -5765468095956360690, guid: bad24d9ed2cfba5488efe9521ef75e64, type: 3}
     fullArtImage: {fileID: 7248462872554291659, guid: 948bc7ccccf1cba4c9cf3be7d6cc92cd, type: 3}
-    description: Fish Man with big fishes swimming about fish and talking about fish
-      wow fish
+    description: "They say the koi swims upstream not just to survive, but to become
+      something more. Xu Taishi has already begun that journey \u2014 in silence,
+      in shadow, and with unyielding purpose"
     voiceLine: {fileID: 8300000, guid: 47f7687fad238b94a99c1b9c70a15bc8, type: 3}
     deck: {fileID: 11400000, guid: 21d22651417c149e4a1aebab115f7c42, type: 2}
   - characterName: Nekomata
     characterThumbnail: {fileID: 9172686289472237704, guid: 5a4b9316fe9a4dd4f817c24b50b8dab4, type: 3}
     fullArtImage: {fileID: 6261838875085568562, guid: c66ef8197a956264faca8e47a463e47b, type: 3}
-    description: 'Bunch a cats with ears and tials init. '
+    description: "Always surrounded by cats, always half-smiling. Nekomata\u2019s
+      power isn\u2019t just in her claws \u2014 it\u2019s in the dozens of furry
+      allies she can summon at a glance, each one a fang in her silent rebellion."
     voiceLine: {fileID: 8300000, guid: 84c1ae87a617c6e4ca25df6353659383, type: 3}
     deck: {fileID: 11400000, guid: 36293bfbb81bbe94c91fd63114e12158, type: 2}
   characterCardPrefab: {fileID: 5549054018404174248, guid: e9e684417f7fcde44a17e8a2fc3c5844, type: 3}

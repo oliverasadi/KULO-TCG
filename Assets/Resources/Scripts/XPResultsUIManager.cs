@@ -19,6 +19,8 @@ public class XPResultsUIManager : MonoBehaviour
     public Sprite mrWaxRedSealSprite;
     public Sprite nekomataSprite;
     public Sprite nekomataCatTriFectaSprite;
+    public Sprite xuTaishiWithKoiTrioSprite; // ✅ NEW
+
 
     [Header("Stars")]
     public StarRatingDisplay starRatingDisplay;
@@ -43,6 +45,8 @@ public class XPResultsUIManager : MonoBehaviour
     void Start()
     {
         string selectedCharacter = PlayerProfile.selectedCharacterName;
+        Debug.Log($"[XPResults] selectedCharacter = '{selectedCharacter}'"); // ✅ ADDED DEBUG LOG
+
         List<string> playerCardsPlayed = XPResultDataHolder.instance.cardsPlayed;
 
         var data = XPResultDataHolder.instance;
@@ -51,6 +55,7 @@ public class XPResultsUIManager : MonoBehaviour
             Debug.LogError("❌ XPResultDataHolder or rewards list is null or empty.");
             return;
         }
+
 
         // 🟢 Dynamic Splash Logic
         XPResultDataHolder.SplashBackgroundType finalBG = XPResultDataHolder.SplashBackgroundType.MrWax;
@@ -67,6 +72,18 @@ public class XPResultsUIManager : MonoBehaviour
                 ? XPResultDataHolder.SplashBackgroundType.NekomataWithCatTriFecta
                 : XPResultDataHolder.SplashBackgroundType.Nekomata;
         }
+        else if (selectedCharacter == "Xu Taishi")
+        {
+            bool playedKoiDad = playerCardsPlayed.Contains("Koi Dad");
+            bool playedKoiMum = playerCardsPlayed.Contains("Koi Mum");
+            bool playedKoiChild = playerCardsPlayed.Contains("Koi Child");
+
+            if (playedKoiDad && playedKoiMum && playedKoiChild)
+            {
+                finalBG = XPResultDataHolder.SplashBackgroundType.XuTaishiWithKoiTrio;
+                TryUnlockMemory("XuTaishi_3Koi", true);
+            }
+        }
 
         SetBackground(finalBG);
 
@@ -78,6 +95,7 @@ public class XPResultsUIManager : MonoBehaviour
         TryUnlockMemory("MrWax_RedSeal", selectedCharacter == "Mr.Wax" && playedRedSeal);
         TryUnlockMemory("Nekomata", selectedCharacter == "Nekomata");
         TryUnlockMemory("Nekomata_CatTriFecta", selectedCharacter == "Nekomata" && playedCatTriFecta);
+        // ✅ Xu Taishi + 3 Koi already handled above
 
         if (homeButton != null)
             homeButton.onClick.AddListener(GoToMainMenu);
@@ -98,6 +116,7 @@ public class XPResultsUIManager : MonoBehaviour
             StartCoroutine(RevealRewardsSequentially(data));
         }
     }
+
 
     void TryUnlockMemory(string memoryResourceName, bool condition)
     {
@@ -151,13 +170,27 @@ public class XPResultsUIManager : MonoBehaviour
 
         switch (bg)
         {
-            case XPResultDataHolder.SplashBackgroundType.MrWax: backgroundImage.sprite = mrWaxSprite; break;
-            case XPResultDataHolder.SplashBackgroundType.MrWaxWithRedSeal: backgroundImage.sprite = mrWaxRedSealSprite; break;
-            case XPResultDataHolder.SplashBackgroundType.Nekomata: backgroundImage.sprite = nekomataSprite; break;
-            case XPResultDataHolder.SplashBackgroundType.NekomataWithCatTriFecta: backgroundImage.sprite = nekomataCatTriFectaSprite; break;
-            default: Debug.LogWarning("⚠️ No matching splash background found."); break;
+            case XPResultDataHolder.SplashBackgroundType.MrWax:
+                backgroundImage.sprite = mrWaxSprite;
+                break;
+            case XPResultDataHolder.SplashBackgroundType.MrWaxWithRedSeal:
+                backgroundImage.sprite = mrWaxRedSealSprite;
+                break;
+            case XPResultDataHolder.SplashBackgroundType.Nekomata:
+                backgroundImage.sprite = nekomataSprite;
+                break;
+            case XPResultDataHolder.SplashBackgroundType.NekomataWithCatTriFecta:
+                backgroundImage.sprite = nekomataCatTriFectaSprite;
+                break;
+            case XPResultDataHolder.SplashBackgroundType.XuTaishiWithKoiTrio: // ✅ NEW
+                backgroundImage.sprite = xuTaishiWithKoiTrioSprite;
+                break;
+            default:
+                Debug.LogWarning("⚠️ No matching splash background found.");
+                break;
         }
     }
+
 
     IEnumerator RevealRewardsSequentially(XPResultDataHolder data)
     {

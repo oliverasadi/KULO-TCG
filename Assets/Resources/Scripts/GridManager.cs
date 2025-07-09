@@ -1464,20 +1464,27 @@ if (grid[x, y] != null)
                     // 🔁 ReplaceAfterOpponentTurn logic
                     if (inlineEffect.effectType == CardEffectData.EffectType.ReplaceAfterOpponentTurn)
                     {
-                        // Only run for local player's turn (so AI turns don’t show the prompt)
-                        if (TurnManager.instance.GetCurrentPlayer() == TurnManager.instance.localPlayerNumber)
+                        Debug.Log($"[CheckReplacementEffects] {cardUI.cardData.cardName} current turnDelay: {inlineEffect.turnDelay}");
+
+                        if (inlineEffect.turnDelay > 0)
                         {
-                            Debug.Log($"[CheckReplacementEffects] {cardUI.cardData.cardName} current turnDelay: {inlineEffect.turnDelay}");
+                            inlineEffect.turnDelay--;
+                            Debug.Log($"[CheckReplacementEffects] {cardUI.cardData.cardName} decremented turnDelay to {inlineEffect.turnDelay}");
+                        }
 
-                            if (inlineEffect.turnDelay > 0)
+                        if (inlineEffect.turnDelay <= 0)
+                        {
+                            int ownerPlayer = cardUI.GetComponent<CardHandler>()?.cardOwner?.playerNumber ?? -1;
+                            int localPlayer = TurnManager.instance.localPlayerNumber;
+
+                            if (ownerPlayer == localPlayer)
                             {
-                                inlineEffect.turnDelay--;
-                                Debug.Log($"[CheckReplacementEffects] {cardUI.cardData.cardName} decremented turnDelay to {inlineEffect.turnDelay}");
+                                ShowInlineReplacementPrompt(cardUI, i, j, inlineEffect); // ✅ Human player: show prompt
                             }
-
-                            if (inlineEffect.turnDelay <= 0)
+                            else
                             {
-                                ShowInlineReplacementPrompt(cardUI, i, j, inlineEffect);
+                                Debug.Log($"[CheckReplacementEffects] Auto-replacing for AI: {cardUI.cardData.cardName}");
+                                ExecuteReplacementInline(cardUI, i, j); // ✅ AI: execute replacement directly
                             }
                         }
                     }

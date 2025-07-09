@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 637d25df26f9d0741a341f9bfc11f7e7, type: 3}
+  m_Name: XuTaishi_3Koi
+  m_EditorClassIdentifier: 
+  memoryTitle: Xu Taishi & The Three Koi
+  memoryNumber: 5
+  isLocked: 1
+  thumbnail: {fileID: 6654012710610567854, guid: 16df0825fe1fd294d8cbf481de9ba064, type: 3}
+  fullscreenImage: {fileID: 6654012710610567854, guid: 16df0825fe1fd294d8cbf481de9ba064, type: 3}
+  cardID: XuTaishi_3Koi

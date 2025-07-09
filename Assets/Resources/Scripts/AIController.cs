@@ -146,6 +146,26 @@ public class AIController : PlayerController
         StartCoroutine(AIPlay());
     }
 
+    private void ApplyEffectsToAIHandIfNeeded()
+    {
+        foreach (CardHandler ch in pm.cardHandlers)
+        {
+            CardUI cardUI = ch.GetComponent<CardUI>();
+            if (cardUI == null || cardUI.effectsAppliedInHand) continue;
+
+            if (ch.cardData.effects != null)
+            {
+                foreach (var effect in ch.cardData.effects)
+                {
+                    effect?.ApplyEffect(cardUI);
+                }
+            }
+
+            cardUI.effectsAppliedInHand = true;
+        }
+    }
+
+
     // Coroutine that makes the prefab wiggle.
     private IEnumerator WigglePrefab(GameObject instance)
     {
@@ -178,6 +198,7 @@ public class AIController : PlayerController
 
         // Wait a short moment for the player to notice the image.
         yield return new WaitForSeconds(0.5f);
+        ApplyEffectsToAIHandIfNeeded();
 
         CardSO[,] grid = GridManager.instance.GetGrid();
 
@@ -374,9 +395,35 @@ public class AIController : PlayerController
     // New version of CheckForReplacement that uses the candidate card.
     private bool CheckForReplacement(CardSO candidate, CardSO playerCard)
     {
-        if (candidate != null && candidate.power >= playerCard.power)
-            return true;
-        return false;
+        CardHandler handler = pm.cardHandlers.Find(h => h.cardData == candidate);
+        if (handler == null) return false;
+
+        CardUI aiCardUI = handler.GetComponent<CardUI>();
+        if (aiCardUI == null) return false;
+
+        int aiEffectivePower = aiCardUI.CalculateEffectivePower();
+
+        // 🛠 GET THE TARGET CARD'S ACTUAL EFFECTIVE POWER
+        CardUI targetCardUI = FindCardUIOnGrid(playerCard);
+        int targetEffectivePower = targetCardUI != null ? targetCardUI.CalculateEffectivePower() : playerCard.power;
+
+        Debug.Log($"[AI] Evaluating replacement: {candidate.cardName} ({aiEffectivePower}) vs {playerCard.cardName} ({targetEffectivePower})");
+
+        return aiEffectivePower >= targetEffectivePower;
+    }
+
+    private CardUI FindCardUIOnGrid(CardSO cardSO)
+    {
+        GameObject[,] gridObjects = GridManager.instance.GetGridObjects();
+        for (int x = 0; x < 3; x++)
+            for (int y = 0; y < 3; y++)
+                if (gridObjects[x, y] != null)
+                {
+                    CardHandler handler = gridObjects[x, y].GetComponent<CardHandler>();
+                    if (handler != null && handler.cardData == cardSO)
+                        return handler.GetComponent<CardUI>();
+                }
+        return null;
     }
 
     // Searches for a winning move by checking rows, columns, and diagonals.

@@ -29,6 +29,8 @@ public class CardUI : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler,
     public bool isInGraveyard = false;
     public bool isCloneInGraveyardPanel = false; // NEW
 
+    [HideInInspector]
+    public bool effectsAppliedInHand = false;
 
 
     // Runtime replacement effect fields (for inline ReplaceAfterOpponentTurn)

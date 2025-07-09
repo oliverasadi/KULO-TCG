@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -25,13 +26,39 @@ public class SummonAfterOpponentTurnEffect : CardEffect
             TurnManager.instance.OnOpponentTurnEnd -= onOpponentTurnEnd;
             _registeredHandlers.Remove(sourceCard);
 
-            Debug.Log($"[SummonAfterOpponentTurnEffect] Opponent turn ended. Triggering summon effect for {sourceCard.cardData.cardName}.");
-            TriggerSummonChoice(sourceCard);
+            Debug.Log($"[SummonAfterOpponentTurnEffect] Opponent turn ended. Queuing summon panel after draw...");
+
+            // Wait for draw + splash before triggering panel
+            sourceCard.StartCoroutine(TriggerAfterDrawDelay(sourceCard));
         };
 
         TurnManager.instance.OnOpponentTurnEnd += onOpponentTurnEnd;
         _registeredHandlers[sourceCard] = onOpponentTurnEnd;
     }
+
+    private IEnumerator TriggerAfterDrawDelay(CardUI sourceCard)
+    {
+        int ownerPlayer = sourceCard.GetComponent<CardHandler>().cardOwner.playerNumber;
+        int localPlayer = TurnManager.instance.localPlayerNumber;
+
+        // Wait until it's the card owner's turn again
+        yield return new WaitUntil(() => TurnManager.instance.GetCurrentPlayer() == ownerPlayer);
+
+        // Wait a short moment after draw/splash
+        yield return new WaitForSeconds(1.0f);
+
+        if (ownerPlayer == localPlayer)
+        {
+            Debug.Log($"[SummonAfterOpponentTurnEffect] Prompting player to choose a card to summon via UI.");
+            TriggerSummonChoice(sourceCard);
+        }
+        else
+        {
+            Debug.Log($"[SummonAfterOpponentTurnEffect] Skipping summon panel for AI.");
+            // Optional: auto-resolve for AI
+        }
+    }
+
 
     public override void RemoveEffect(CardUI sourceCard)
     {

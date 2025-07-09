@@ -20,7 +20,7 @@ public class XPResultDataHolder : MonoBehaviour
         MrWaxWithRedSeal,
         Nekomata,
         NekomataWithCatTriFecta,
-        // Add more as needed
+        XuTaishiWithKoiTrio    // ✅ NEW splash for Xu Taishi + Koi trio
     }
 
     void Awake()

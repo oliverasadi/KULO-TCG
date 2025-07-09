@@ -1495,6 +1495,7 @@ MonoBehaviour:
   mrWaxRedSealSprite: {fileID: -221432917189614094, guid: 6d1e9c2920921334ea3b9ff3dab2b9d6, type: 3}
   nekomataSprite: {fileID: 2862261490186400674, guid: cfc19c13b20929142992a78fd087b8c5, type: 3}
   nekomataCatTriFectaSprite: {fileID: 3348651653221084785, guid: 7ea2dd158eed2c244b5a9ddc03d3c3ae, type: 3}
+  xuTaishiWithKoiTrioSprite: {fileID: 6654012710610567854, guid: 16df0825fe1fd294d8cbf481de9ba064, type: 3}
   starRatingDisplay: {fileID: 2144365741}
   rewardSound: {fileID: 8300000, guid: 5042f9e2e3e586b40b9f9d7b00fefc70, type: 3}
   totalXPSound: {fileID: 8300000, guid: 539fb9abdb2e7fd44b01f5bb3abb7716, type: 3}
