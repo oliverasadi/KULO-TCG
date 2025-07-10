@@ -1408,7 +1408,8 @@ if (grid[x, y] != null)
         GridCellHighlighter highlighter = cellObj.GetComponent<GridCellHighlighter>();
         if (highlighter != null)
         {
-            Color evoColor = new Color(0f, 1f, 0f, 0.2f);
+            Color evoColor = new Color(0f, 1f, 0f, 0.5f);
+
             highlighter.SetPersistentHighlight(evoColor);
         }
 

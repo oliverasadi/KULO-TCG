@@ -108,6 +108,25 @@ public class AIController : PlayerController
         return true;
     }
 
+    private void ApplyEffectsToAIHandIfNeeded()
+    {
+        foreach (CardHandler ch in pm.cardHandlers)
+        {
+            CardUI cardUI = ch.GetComponent<CardUI>();
+            if (cardUI == null || cardUI.effectsAppliedInHand) continue;
+
+            if (ch.cardData.effects != null)
+            {
+                foreach (var effect in ch.cardData.effects)
+                {
+                    effect?.ApplyEffect(cardUI);
+                }
+            }
+
+            cardUI.effectsAppliedInHand = true;
+        }
+    }
+
     // Helper method to determine who owns a grid cell's card.
     private string GetOwnerTagFromCell(int x, int y)
     {
@@ -171,13 +190,15 @@ public class AIController : PlayerController
             if (canvas != null)
             {
                 aiThinkingInstance = Instantiate(aiThinkingPrefab, canvas.transform);
-                // Start the wiggle effect on the prefab.
                 wiggleCoroutine = StartCoroutine(WigglePrefab(aiThinkingInstance));
             }
         }
 
         // Wait a short moment for the player to notice the image.
         yield return new WaitForSeconds(0.5f);
+
+        // ✅ Apply card effects to AI hand (so power calculations are correct)
+        ApplyEffectsToAIHandIfNeeded();
 
         CardSO[,] grid = GridManager.instance.GetGrid();
 
@@ -194,13 +215,11 @@ public class AIController : PlayerController
             if (ch.cardData.category == CardSO.CardCategory.Spell &&
                 !TurnManager.instance.spellPlayed && IsCardPlayable(ch.cardData))
             {
-                // Don’t play X1 Damiano when the grid is totally empty
                 bool isDamiano = ch.cardData.effects != null &&
                     ch.cardData.effects.Exists(e => e != null && e.GetType().Name == "X1DamianoEffect");
 
                 if (isDamiano)
                 {
-                    // use the already-declared 'grid' at the top of AIPlay()
                     bool anyOnField = false;
                     for (int x = 0; x < grid.GetLength(0) && !anyOnField; x++)
                         for (int y = 0; y < grid.GetLength(1) && !anyOnField; y++)
@@ -208,124 +227,57 @@ public class AIController : PlayerController
                                 anyOnField = true;
 
                     if (!anyOnField)
-                        continue; // skip this useless self-destruct
+                        continue;
                 }
 
                 playableSpell = ch;
             }
         }
 
-
-        // Decide randomly which to play first.
         bool playSpellFirst = Random.value < 0.5f;
         if (playSpellFirst)
         {
             if (playableSpell != null)
             {
-                currentCandidate = playableSpell.cardData; // Set candidate for replacement check.
+                currentCandidate = playableSpell.cardData;
                 Vector2Int spellMove = ChooseMove(grid, currentCandidate);
-                bool placed = false;
-                if (spellMove.x != -1)
-                {
-                    Debug.Log($"AI plays spell {playableSpell.cardData.cardName} at {spellMove.x}, {spellMove.y}");
-                    placed = PlaceAICardOnGrid(spellMove.x, spellMove.y, playableSpell);
-                }
-                if (!placed)
-                {
-                    Vector2Int fallbackMove = FindRandomMove(grid);
-                    if (fallbackMove.x != -1)
-                    {
-                        Debug.Log($"AI fallback: trying empty cell at {fallbackMove.x}, {fallbackMove.y} for spell {playableSpell.cardData.cardName}");
-                        placed = PlaceAICardOnGrid(fallbackMove.x, fallbackMove.y, playableSpell);
-                    }
-                }
-                if (placed)
-                    pm.cardHandlers.Remove(playableSpell);
-                yield return new WaitForSeconds(Random.Range(2f, 3f));
+                bool placed = TryPlayCard(playableSpell, spellMove, grid, isSpell: true);
+                if (placed) yield return new WaitForSeconds(Random.Range(2f, 3f));
             }
             if (playableCreature != null)
             {
                 currentCandidate = playableCreature.cardData;
                 Vector2Int creatureMove = ChooseMove(grid, currentCandidate);
-                bool placed = false;
-                if (creatureMove.x != -1)
-                {
-                    Debug.Log($"AI plays creature {playableCreature.cardData.cardName} at {creatureMove.x}, {creatureMove.y}");
-                    placed = PlaceAICardOnGrid(creatureMove.x, creatureMove.y, playableCreature);
-                }
-                if (!placed)
-                {
-                    Vector2Int fallbackMove = FindRandomMove(grid);
-                    if (fallbackMove.x != -1)
-                    {
-                        Debug.Log($"AI fallback: trying empty cell at {fallbackMove.x}, {fallbackMove.y} for creature {playableCreature.cardData.cardName}");
-                        placed = PlaceAICardOnGrid(fallbackMove.x, fallbackMove.y, playableCreature);
-                    }
-                }
-                if (placed)
-                    pm.cardHandlers.Remove(playableCreature);
-                yield return new WaitForSeconds(Random.Range(1f, 2f));
+                bool placed = TryPlayCard(playableCreature, creatureMove, grid);
+                if (placed) yield return new WaitForSeconds(Random.Range(1f, 2f));
             }
         }
-        else // Play creature first.
+        else
         {
             if (playableCreature != null)
             {
                 currentCandidate = playableCreature.cardData;
                 Vector2Int creatureMove = ChooseMove(grid, currentCandidate);
-                bool placed = false;
-                if (creatureMove.x != -1)
-                {
-                    Debug.Log($"AI plays creature {playableCreature.cardData.cardName} at {creatureMove.x}, {creatureMove.y}");
-                    placed = PlaceAICardOnGrid(creatureMove.x, creatureMove.y, playableCreature);
-                }
-                if (!placed)
-                {
-                    Vector2Int fallbackMove = FindRandomMove(grid);
-                    if (fallbackMove.x != -1)
-                    {
-                        Debug.Log($"AI fallback: trying empty cell at {fallbackMove.x}, {fallbackMove.y} for creature {playableCreature.cardData.cardName}");
-                        placed = PlaceAICardOnGrid(fallbackMove.x, fallbackMove.y, playableCreature);
-                    }
-                }
-                if (placed)
-                    pm.cardHandlers.Remove(playableCreature);
-                yield return new WaitForSeconds(Random.Range(1f, 2f));
+                bool placed = TryPlayCard(playableCreature, creatureMove, grid);
+                if (placed) yield return new WaitForSeconds(Random.Range(1f, 2f));
             }
             if (playableSpell != null)
             {
                 currentCandidate = playableSpell.cardData;
                 Vector2Int spellMove = ChooseMove(grid, currentCandidate);
-                bool placed = false;
-                if (spellMove.x != -1)
-                {
-                    Debug.Log($"AI plays spell {playableSpell.cardData.cardName} at {spellMove.x}, {spellMove.y}");
-                    placed = PlaceAICardOnGrid(spellMove.x, spellMove.y, playableSpell);
-                }
-                if (!placed)
-                {
-                    Vector2Int fallbackMove = FindRandomMove(grid);
-                    if (fallbackMove.x != -1)
-                    {
-                        Debug.Log($"AI fallback: trying empty cell at {fallbackMove.x}, {fallbackMove.y} for spell {playableSpell.cardData.cardName}");
-                        placed = PlaceAICardOnGrid(fallbackMove.x, fallbackMove.y, playableSpell);
-                    }
-                }
-                if (placed)
-                    pm.cardHandlers.Remove(playableSpell);
-                yield return new WaitForSeconds(Random.Range(1f, 2f));
+                bool placed = TryPlayCard(playableSpell, spellMove, grid, isSpell: true);
+                if (placed) yield return new WaitForSeconds(Random.Range(1f, 2f));
             }
         }
+
         yield return new WaitForSeconds(Random.Range(1f, 2f));
 
-        // Once decisions are complete, destroy the AI thinking image.
         if (aiThinkingInstance != null)
-        {
             Destroy(aiThinkingInstance);
-        }
 
-        EndTurn(); // End AI's turn.
+        EndTurn();
     }
+
 
     // Returns the best aggressive move for the AI given the current grid and the candidate card.
     private Vector2Int FindBestAggressiveMove(CardSO[,] grid, CardSO candidate)
@@ -374,9 +326,18 @@ public class AIController : PlayerController
     // New version of CheckForReplacement that uses the candidate card.
     private bool CheckForReplacement(CardSO candidate, CardSO playerCard)
     {
-        if (candidate != null && candidate.power >= playerCard.power)
-            return true;
-        return false;
+        CardHandler handler = pm.cardHandlers.Find(h => h.cardData == candidate);
+        if (handler == null) return false;
+
+        CardUI cardUI = handler.GetComponent<CardUI>();
+        if (cardUI == null) return false;
+
+        int effectivePower = cardUI.CalculateEffectivePower();
+        int playerPower = playerCard.power;
+
+        Debug.Log($"[AI] Evaluating replacement: {candidate.cardName} ({effectivePower}) vs {playerCard.cardName} ({playerPower})");
+
+        return effectivePower >= playerPower;
     }
 
     // Searches for a winning move by checking rows, columns, and diagonals.
@@ -486,6 +447,32 @@ public class AIController : PlayerController
             blockingZones.Add(new Vector2Int(0, 2));
 
         return blockingZones;
+    }
+
+    private bool TryPlayCard(CardHandler handler, Vector2Int move, CardSO[,] grid, bool isSpell = false)
+    {
+        bool placed = false;
+
+        if (move.x != -1)
+        {
+            Debug.Log($"AI plays {(isSpell ? "spell" : "creature")} {handler.cardData.cardName} at {move.x}, {move.y}");
+            placed = PlaceAICardOnGrid(move.x, move.y, handler);
+        }
+
+        if (!placed)
+        {
+            Vector2Int fallback = FindRandomMove(grid);
+            if (fallback.x != -1)
+            {
+                Debug.Log($"AI fallback: trying empty cell at {fallback.x}, {fallback.y} for {handler.cardData.cardName}");
+                placed = PlaceAICardOnGrid(fallback.x, fallback.y, handler);
+            }
+        }
+
+        if (placed)
+            pm.cardHandlers.Remove(handler);
+
+        return placed;
     }
 
     // Returns a random available grid cell.
@@ -598,6 +585,7 @@ public class AIController : PlayerController
                     cardUI.RevealCard();
                 }
                 CardPreviewManager.Instance.ShowCardPreview(cardHandler.cardData);
+
 
                 // Set flags depending on the card category.
                 if (cardHandler.cardData.category == CardSO.CardCategory.Creature)

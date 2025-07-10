@@ -150,6 +150,8 @@ MonoBehaviour:
   temporaryBoost: 0
   isInGraveyard: 0
   isCloneInGraveyardPanel: 0
+  powerChangeBadgeInstance: {fileID: 0}
+  powerChangeBadgePrefab: {fileID: 6895627581241373546, guid: e04c57f2a423a4f4ead998707ec88c59, type: 3}
   runtimeInlineEffects: []
   replacementTurnDelay: -1
   inlineReplacementCardName: 

@@ -15,6 +15,8 @@ public class CardUI : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler,
     private bool isFaceDown = false;
     public bool isInDeck = false;
     public bool isOnField = false;
+    public bool effectsAppliedInHand = false;
+
 
     [Header("Card Info Popup")]
     public CardInfoPanel cardInfoPanel;
@@ -29,7 +31,8 @@ public class CardUI : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler,
     public bool isInGraveyard = false;
     public bool isCloneInGraveyardPanel = false; // NEW
 
-
+    public GameObject powerChangeBadgeInstance;  // runtime badge
+    public GameObject powerChangeBadgePrefab;    // assign this in Inspector
 
     // Runtime replacement effect fields (for inline ReplaceAfterOpponentTurn)
     public List<CardEffectData> runtimeInlineEffects;
@@ -224,8 +227,45 @@ public class CardUI : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler,
 
 
 
+    public void UpdatePowerIndicator()
+    {
+        if (!isOnField)
+        {
+            if (powerChangeBadgeInstance != null)
+                Destroy(powerChangeBadgeInstance);
+            return;
+        }
 
+        int basePower = cardData.power;
+        int effectivePower = CalculateEffectivePower();
 
+        if (effectivePower > basePower)
+            ShowPowerChangeBadge(true);
+        else if (effectivePower < basePower)
+            ShowPowerChangeBadge(false);
+        else if (powerChangeBadgeInstance != null)
+            Destroy(powerChangeBadgeInstance);
+    }
+
+    public void ShowPowerChangeBadge(bool isIncrease)
+    {
+        if (powerChangeBadgePrefab == null)
+        {
+            Debug.LogWarning("⚠️ powerChangeBadgePrefab not assigned.");
+            return;
+        }
+
+        if (powerChangeBadgeInstance == null)
+        {
+            powerChangeBadgeInstance = Instantiate(powerChangeBadgePrefab, transform);
+            powerChangeBadgeInstance.transform.localPosition = Vector3.zero;
+            powerChangeBadgeInstance.transform.SetAsLastSibling();
+        }
+
+        var text = powerChangeBadgeInstance.GetComponentInChildren<TextMeshProUGUI>();
+        if (text != null)
+            text.text = isIncrease ? "↑" : "↓";
+    }
 
     public void SetFaceDown()
     {
@@ -497,15 +537,12 @@ public class CardUI : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler,
     {
         if (cardData == null) return;
 
-        if (!isOnField)
+        int newEffectivePower = CalculateEffectivePower();
+        if (newEffectivePower != currentPower)
         {
-            int newEffectivePower = CalculateEffectivePower();
-            if (newEffectivePower != currentPower)
-            {
-                currentPower = newEffectivePower;
-                UpdatePowerDisplay();
-                // Optionally update any floating text or other UI elements here.
-            }
+            currentPower = newEffectivePower;
+            UpdatePowerDisplay();
+            UpdatePowerIndicator(); // ✅ Shows ↑ or ↓ badge when power changes
         }
 
         if (isSelected && Input.GetKeyDown(KeyCode.Space))
@@ -514,6 +551,7 @@ public class CardUI : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler,
                 cardInfoPanel.ShowCardInfo(this);
         }
     }
+
 
 
     public bool isSelected = false;
