@@ -121,8 +121,6 @@ public class TurnManager : MonoBehaviour
         if (currentPlayerManager != null)
         {
             Debug.Log($"[TurnManager] Player {currentPlayer} has {currentPlayerManager.cardHandlers.Count} card(s) in hand.");
-
-            // ✅ Reset play-block flags if set last turn
             currentPlayerManager.ResetBlockPlaysFlag();
         }
         else
@@ -149,9 +147,7 @@ public class TurnManager : MonoBehaviour
             spellPlayed = false;
         }
 
-        // ✅ Run end-of-turn effects like Mango Lango & turn-start evo triggers
-        GridManager.instance.CheckReplacementEffects();
-
+        // ✅ Draw card first
         if (currentPlayerManager != null && drawCard)
         {
             if (!skipDrawOnTurnStart)
@@ -164,8 +160,28 @@ public class TurnManager : MonoBehaviour
             }
         }
 
+        // ✅ Delay summon panel trigger for local player, trigger immediately for AI
+        if (currentPlayer == localPlayerNumber)
+        {
+            StartCoroutine(DelayedReplacementEffectTrigger());
+        }
+        else
+        {
+            GridManager.instance.CheckReplacementEffects(); // AI does it instantly
+        }
+
+        // ✅ Start actual turn logic
         currentPlayerManager.pc.StartTurn();
     }
+
+    // ──────────────────────────────────────────────────────────────────────────────
+    // Add this coroutine inside TurnManager.cs
+    private IEnumerator DelayedReplacementEffectTrigger()
+    {
+        yield return new WaitForSeconds(1.0f); // Small delay after draw
+        GridManager.instance.CheckReplacementEffects(); // Shows SummonChoicePanel
+    }
+
 
 
 
