@@ -90,9 +90,17 @@ public class GridManager : MonoBehaviour
         }
 
         // ─── CREATURE (AND NON‐SPELL) LOGIC ────────────────────────────────────
+
+        // ✅ Magnificent Garden restriction applies BEFORE any placement logic
+        if (RestrictHighPowerPlacementEffect.IsRestrictedCell(x, y, cardData))
+        {
+            Debug.Log($"[CanPlaceCard] Cell ({x},{y}) locked by Magnificent Garden. Cannot place {cardData.cardName}.");
+            return false;
+        }
+
         if (grid[x, y] == null)
         {
-            // If the cell is empty → just check if the player can actually pay to play this creature
+            // Empty cell → just check if the player can actually play this creature
             return TurnManager.instance.CanPlayCard(cardData);
         }
         else
@@ -101,7 +109,6 @@ public class GridManager : MonoBehaviour
             CardUI occupantUI = gridObjects[x, y].GetComponent<CardUI>();
             if (occupantUI != null)
             {
-                // Figure out if the occupant belongs to the opponent
                 bool occupantIsOpponent =
                     (currentPlayer == 1 && occupantUI.GetComponent<CardHandler>().isAI) ||
                     (currentPlayer == 2 && !occupantUI.GetComponent<CardHandler>().isAI);
@@ -111,9 +118,6 @@ public class GridManager : MonoBehaviour
                     int occupantEffectivePower = occupantUI.CalculateEffectivePower();
                     bool powerOK = (newCardEffectivePower >= occupantEffectivePower);
 
-                    // Only allow replacement if:
-                    // 1) new card’s power ≥ occupant’s power, AND
-                    // 2) player has enough resources to play it (via CanPlayCard)
                     bool canAfford = TurnManager.instance.CanPlayCard(cardData);
                     bool allowed = (powerOK && canAfford);
 
@@ -128,7 +132,9 @@ public class GridManager : MonoBehaviour
         }
     }
 
-public bool MoveCardOnBoard(int oldX, int oldY, int newX, int newY, GameObject cardObj)
+
+
+    public bool MoveCardOnBoard(int oldX, int oldY, int newX, int newY, GameObject cardObj)
 {
     if (grid[newX, newY] != null)
     {

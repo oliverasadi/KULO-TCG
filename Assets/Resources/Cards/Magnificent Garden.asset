@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: Magnificent Garden
   m_EditorClassIdentifier: 
   cardName: Magnificent Garden
+  requiresTargetCreature: 0
   category: 1
   power: 0
   effectDescription: Choose one zone. Your opponent cannot play cards with more than
@@ -21,4 +22,10 @@ MonoBehaviour:
   cardNumber: OGN-42
   creatureType: 
   baseOrEvo: 0
+  summonOptionsAfterOpponentTurn: []
   extraDetails: 
+  inlineEffects: []
+  effects:
+  - {fileID: 11400000, guid: b7f63f4c01f3da14e942b44469dfaea2, type: 2}
+  requiresSacrifice: 0
+  sacrificeRequirements: []

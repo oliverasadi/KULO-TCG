@@ -34,9 +34,6 @@ public class CardUI : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler,
     public GameObject powerChangeBadgeInstance;  // runtime badge
     public GameObject powerChangeBadgePrefab;    // assign this in Inspector
 
-    [HideInInspector]
-    public bool effectsAppliedInHand = false;
-
 
     // Runtime replacement effect fields (for inline ReplaceAfterOpponentTurn)
     public List<CardEffectData> runtimeInlineEffects;
