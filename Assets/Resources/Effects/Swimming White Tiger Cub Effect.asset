@@ -15,3 +15,4 @@ MonoBehaviour:
   replacementCardName: Legendary White Tiger of the Pagoda
   turnsToWait: 3
   includeHand: 1
+  blockAdditionalPlays: 1

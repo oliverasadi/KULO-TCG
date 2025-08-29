@@ -165,24 +165,6 @@ public class AIController : PlayerController
         StartCoroutine(AIPlay());
     }
 
-    private void ApplyEffectsToAIHandIfNeeded()
-    {
-        foreach (CardHandler ch in pm.cardHandlers)
-        {
-            CardUI cardUI = ch.GetComponent<CardUI>();
-            if (cardUI == null || cardUI.effectsAppliedInHand) continue;
-
-            if (ch.cardData.effects != null)
-            {
-                foreach (var effect in ch.cardData.effects)
-                {
-                    effect?.ApplyEffect(cardUI);
-                }
-            }
-
-            cardUI.effectsAppliedInHand = true;
-        }
-    }
 
 
     // Coroutine that makes the prefab wiggle.
@@ -216,9 +198,6 @@ public class AIController : PlayerController
 
         // Wait a short moment for the player to notice the image.
         yield return new WaitForSeconds(0.5f);
-        ApplyEffectsToAIHandIfNeeded();
-
-        // ✅ Apply card effects to AI hand (so power calculations are correct)
         ApplyEffectsToAIHandIfNeeded();
 
         CardSO[,] grid = GridManager.instance.GetGrid();

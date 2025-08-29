@@ -15,7 +15,6 @@ public class CardUI : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler,
     private bool isFaceDown = false;
     public bool isInDeck = false;
     public bool isOnField = false;
-    public bool effectsAppliedInHand = false;
 
 
     [Header("Card Info Popup")]
@@ -259,17 +258,59 @@ public class CardUI : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler,
             return;
         }
 
-        if (powerChangeBadgeInstance == null)
-        {
-            powerChangeBadgeInstance = Instantiate(powerChangeBadgePrefab, transform);
-            powerChangeBadgeInstance.transform.localPosition = Vector3.zero;
-            powerChangeBadgeInstance.transform.SetAsLastSibling();
-        }
+        if (powerChangeBadgeInstance != null)
+            Destroy(powerChangeBadgeInstance);
+
+        powerChangeBadgeInstance = Instantiate(powerChangeBadgePrefab, transform);
+        powerChangeBadgeInstance.transform.localPosition = new Vector3(40f, 60f, 0); // Adjust as needed
+        powerChangeBadgeInstance.transform.SetAsLastSibling();
 
         var text = powerChangeBadgeInstance.GetComponentInChildren<TextMeshProUGUI>();
         if (text != null)
             text.text = isIncrease ? "↑" : "↓";
+
+        // Start punch scale animation
+        StartCoroutine(AnimatePowerBadge(powerChangeBadgeInstance));
     }
+
+    private IEnumerator AnimatePowerBadge(GameObject badge)
+    {
+        RectTransform rt = badge.GetComponent<RectTransform>();
+        if (rt == null) yield break;
+
+        Vector3 originalScale = rt.localScale;
+        Vector3 punchScale = originalScale * 1.5f;
+
+        float duration = 0.3f;
+        float elapsed = 0f;
+
+        // Scale up
+        while (elapsed < duration)
+        {
+            rt.localScale = Vector3.Lerp(originalScale, punchScale, elapsed / duration);
+            elapsed += Time.deltaTime;
+            yield return null;
+        }
+
+        rt.localScale = punchScale;
+
+        // Scale down
+        elapsed = 0f;
+        while (elapsed < duration)
+        {
+            rt.localScale = Vector3.Lerp(punchScale, originalScale, elapsed / duration);
+            elapsed += Time.deltaTime;
+            yield return null;
+        }
+
+        rt.localScale = originalScale;
+
+        yield return new WaitForSeconds(1.2f); // Display duration
+
+        if (badge != null)
+            Destroy(badge);
+    }
+
 
     public void SetFaceDown()
     {

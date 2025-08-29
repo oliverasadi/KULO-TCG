@@ -130,16 +130,17 @@ public class XPResultsUIManager : MonoBehaviour
         }
 
         string memoryID = memory.cardID;
-
-        if (!XPResultDataHolder.instance.memoryCardsToUnlock.Contains(memory))
-        {
-            XPResultDataHolder.instance.memoryCardsToUnlock.Add(memory);
-            Debug.Log($"🟢 Unlocked memory (session): {memory.memoryTitle}");
-        }
-
         var profile = ProfileManager.instance?.currentProfile;
+
+        // ✅ Only queue unlock if not already unlocked in profile
         if (profile != null && !profile.unlockedMemories.Contains(memoryID))
         {
+            if (!XPResultDataHolder.instance.memoryCardsToUnlock.Contains(memory))
+            {
+                XPResultDataHolder.instance.memoryCardsToUnlock.Add(memory);
+                Debug.Log($"🟢 Unlocked memory (session): {memory.memoryTitle}");
+            }
+
             pendingMemoryIDsToSave.Add(memoryID);
         }
     }

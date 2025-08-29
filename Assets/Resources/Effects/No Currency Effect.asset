@@ -13,7 +13,9 @@ MonoBehaviour:
   m_Name: No Currency Effect
   m_EditorClassIdentifier: 
   requireFewerCardsInHand: 1
+  includeHand: 0
   amount: -400
+  maxTargets: 1
   targetOwner: 1
   mode: 1
   filterMode: 0

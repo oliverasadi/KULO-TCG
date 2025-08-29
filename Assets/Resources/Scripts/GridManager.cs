@@ -109,7 +109,7 @@ public class GridManager : MonoBehaviour
                 if (occupantIsOpponent)
                 {
                     int occupantEffectivePower = occupantUI.CalculateEffectivePower();
-                    bool powerOK = (newCardEffectivePower >= occupantEffectivePower);
+                    bool powerOK = newCardEffectivePower > occupantEffectivePower || Mathf.Approximately(newCardEffectivePower, occupantEffectivePower);
 
                     // Only allow replacement if:
                     // 1) new card’s power ≥ occupant’s power, AND
@@ -1476,16 +1476,22 @@ if (grid[x, y] != null)
                         if (inlineEffect.turnDelay <= 0)
                         {
                             int ownerPlayer = cardUI.GetComponent<CardHandler>()?.cardOwner?.playerNumber ?? -1;
-                            int localPlayer = TurnManager.instance.localPlayerNumber;
+                            int currentTurnPlayer = TurnManager.instance.GetCurrentPlayer();
 
-                            if (ownerPlayer == localPlayer)
+                            if (ownerPlayer == currentTurnPlayer)
                             {
-                                ShowInlineReplacementPrompt(cardUI, i, j, inlineEffect); // ✅ Human player: show prompt
-                            }
-                            else
-                            {
-                                Debug.Log($"[CheckReplacementEffects] Auto-replacing for AI: {cardUI.cardData.cardName}");
-                                ExecuteReplacementInline(cardUI, i, j); // ✅ AI: execute replacement directly
+                                if (ownerPlayer == TurnManager.instance.localPlayerNumber)
+                                {
+                                    ShowInlineReplacementPrompt(cardUI, i, j, inlineEffect); // ✅ Human player: show prompt
+                                }
+                                else
+                                {
+                                    Debug.Log($"[CheckReplacementEffects] Auto-replacing for AI: {cardUI.cardData.cardName}");
+                                    ExecuteReplacementInline(cardUI, i, j); // ✅ AI: execute replacement directly
+                                }
+
+                                // Prevent re-triggering on future turns
+                                inlineEffect.turnDelay = -999;
                             }
                         }
                     }
@@ -1509,6 +1515,7 @@ if (grid[x, y] != null)
             }
         }
     }
+
 
 
 

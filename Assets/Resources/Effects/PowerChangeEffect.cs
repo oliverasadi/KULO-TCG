@@ -61,9 +61,30 @@ public class PowerChangeEffect : CardEffect
         {
             var localPM = TurnManager.currentPlayerManager;
             var oppPM = GetOpponentPM();
-            if (localPM.cardHandlers.Count >= oppPM.cardHandlers.Count)
+
+            int localHandCount = localPM.cardHandlers.Count(h =>
+                h != null &&
+                h.cardData != null &&
+                h.GetComponent<CardUI>() is CardUI ui &&
+                !ui.isOnField &&
+                !ui.isInGraveyard);
+
+            int oppHandCount = oppPM.cardHandlers.Count(h =>
+                h != null &&
+                h.cardData != null &&
+                h.GetComponent<CardUI>() is CardUI ui &&
+                !ui.isOnField &&
+                !ui.isInGraveyard);
+
+            Debug.Log($"[PowerChangeEffect] Cards in hand — You: {localHandCount}, Opponent: {oppHandCount}");
+
+            if (localHandCount >= oppHandCount)
+            {
+                Debug.Log("[PowerChangeEffect] Condition not met: You don't have fewer cards in hand → skipping effect.");
                 return;
+            }
         }
+
 
         int local = TurnManager.instance.localPlayerNumber;
         var gridObjs = GridManager.instance.GetGridObjects();
@@ -75,7 +96,7 @@ public class PowerChangeEffect : CardEffect
             ui.UpdatePowerDisplay();
             int after = ui.CalculateEffectivePower();
 
-            Debug.Log($"[PowerBuff] {(amount >= 0 ? "+" : "")}{amount} → {ui.cardData.cardName} ({before}→{after})");
+            Debug.Log($"[PowerChangeEffect] Applied {(amount >= 0 ? "+" : "")}{amount} to {ui.cardData.cardName} ({before} → {after})");
 
             if (!_affected.Contains(ui))
                 _affected.Add(ui);
@@ -133,8 +154,10 @@ public class PowerChangeEffect : CardEffect
                 }
             }
 
-            // ✅ Apply up to maxTargets (if maxTargets > 0)
-            foreach (var ui in allTargets.Distinct().Take(maxTargets > 0 ? maxTargets : int.MaxValue))
+            var finalTargets = allTargets.Distinct().Take(maxTargets > 0 ? maxTargets : int.MaxValue).ToList();
+            Debug.Log($"[PowerChangeEffect] Found {finalTargets.Count} valid targets.");
+
+            foreach (var ui in finalTargets)
                 ApplyTo(ui);
 
             if (duration == Duration.ThisTurn)
@@ -162,12 +185,19 @@ public class PowerChangeEffect : CardEffect
                 h.ShowSacrificeHighlight();
                 candidates.Add(ui);
             }
-            if (candidates.Count == 0) return;
+
+            if (candidates.Count == 0)
+            {
+                Debug.Log("[PowerChangeEffect] No valid candidates for interactive selection.");
+                return;
+            }
+
+            Debug.Log($"[PowerChangeEffect] Starting target selection for {candidates.Count} valid candidate(s).");
 
             var boostEffect = ScriptableObject.CreateInstance<MultipleTargetPowerBoostEffect>();
             boostEffect.powerIncrease = amount;
-            boostEffect.maxTargets = this.maxTargets; // ✅ pass the limit
-            boostEffect.targetCards = new List<CardUI>();
+            boostEffect.maxTargets = this.maxTargets;
+            boostEffect.targetCards = new List<CardUI>(); // will be populated by selection
             TargetSelectionManager.Instance.StartTargetSelection(boostEffect);
         }
 
@@ -188,18 +218,24 @@ public class PowerChangeEffect : CardEffect
                     valid.Add(ui);
             }
 
-            if (valid.Count == 0) return;
+            if (valid.Count == 0)
+            {
+                Debug.Log("[PowerChangeEffect] No valid RelativeNS targets found.");
+                return;
+            }
 
             foreach (var ui in valid)
                 ui.GetComponent<CardHandler>()?.ShowSacrificeHighlight();
 
             var boostEffect = ScriptableObject.CreateInstance<MultipleTargetPowerBoostEffect>();
             boostEffect.powerIncrease = amount;
-            boostEffect.maxTargets = this.maxTargets; // ✅ pass the limit
+            boostEffect.maxTargets = this.maxTargets;
             boostEffect.targetCards = new List<CardUI>();
             TargetSelectionManager.Instance.StartTargetSelection(boostEffect);
         }
     }
+
+
 
 
     // ────────────────────────────────── expiry helpers ───────────────────────

@@ -1,5 +1,6 @@
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.Events;
+using System.Collections;
 
 [CreateAssetMenu(menuName = "Card Effects/Replace After Opponent Turn")]
 public class ReplaceAfterOpponentTurnEffect : CardEffect
@@ -11,59 +12,74 @@ public class ReplaceAfterOpponentTurnEffect : CardEffect
     public bool blockAdditionalPlays = true;
 
     [Tooltip("The UI prompt prefab to ask the player if they wish to use the effect.")]
-    public GameObject promptPanelPrefab;  // Assign this via the Inspector.
-
-    // Store the delegate so we can unsubscribe properly.
-    private System.Action onOpponentTurnEndAction;
+    public GameObject promptPanelPrefab;
 
     public override void ApplyEffect(CardUI sourceCard)
     {
-        // Subscribe to the opponent turn end event.
         Debug.Log($"[ReplaceAfterOpponentTurnEffect] ApplyEffect called for {sourceCard.cardData.cardName}");
 
-        onOpponentTurnEndAction = () => OnOpponentTurnEnd(sourceCard);
-        TurnManager.instance.OnOpponentTurnEnd += onOpponentTurnEndAction;
+        // Wait until it's the owner's turn again (i.e. after opponent's turn ends)
+        sourceCard.StartCoroutine(TriggerAfterOpponentTurn(sourceCard));
     }
 
-    private void OnOpponentTurnEnd(CardUI sourceCard)
+    private IEnumerator TriggerAfterOpponentTurn(CardUI sourceCard)
     {
-        // Only proceed if the source card is still on the field.
-        if (sourceCard != null && sourceCard.isOnField)
+        if (sourceCard == null || !sourceCard.isOnField)
+            yield break;
+
+        var handler = sourceCard.GetComponent<CardHandler>();
+        if (handler == null || handler.cardOwner == null)
+            yield break;
+
+        int ownerPlayer = handler.cardOwner.playerNumber;
+
+        // 🔁 Wait until the turn loops back to this card's owner
+        yield return new WaitUntil(() => TurnManager.instance.GetCurrentPlayer() == ownerPlayer);
+
+        // ⏱ Optional pacing delay
+        yield return new WaitForSeconds(0.8f);
+
+        // Show prompt only for local player
+        if (ownerPlayer != TurnManager.instance.localPlayerNumber)
         {
-            // Instantiate the prompt panel.
-            GameObject promptInstance = Instantiate(promptPanelPrefab);
-            // Assume the prompt panel has a ReplaceEffectPrompt component.
-            ReplaceEffectPrompt prompt = promptInstance.GetComponent<ReplaceEffectPrompt>();
-            if (prompt != null)
+            Debug.Log("[ReplaceAfterOpponentTurnEffect] Skipping prompt – not local player.");
+            yield break;
+        }
+
+        if (sourceCard == null || !sourceCard.isOnField)
+        {
+            Debug.Log("[ReplaceAfterOpponentTurnEffect] Card removed before prompt.");
+            yield break;
+        }
+
+        ShowPrompt(sourceCard);
+    }
+
+    private void ShowPrompt(CardUI sourceCard)
+    {
+        GameObject promptInstance = Instantiate(promptPanelPrefab);
+        ReplaceEffectPrompt prompt = promptInstance.GetComponent<ReplaceEffectPrompt>();
+
+        if (prompt != null)
+        {
+            prompt.OnResponse.AddListener((bool accepted) =>
             {
-                // Subscribe to the response event.
-                prompt.OnResponse.AddListener((bool accepted) =>
-                {
-                    if (accepted)
-                    {
-                        ExecuteReplacement(sourceCard);
-                    }
-                    // Clean up the prompt panel.
-                    Destroy(promptInstance);
-                });
-            }
-            else
-            {
-                Debug.LogError("ReplaceAfterOpponentTurnEffect: The prompt prefab is missing the ReplaceEffectPrompt component.");
-            }
+                if (accepted)
+                    ExecuteReplacement(sourceCard);
+                Destroy(promptInstance);
+            });
+        }
+        else
+        {
+            Debug.LogError("⚠️ ReplaceAfterOpponentTurnEffect: Missing ReplaceEffectPrompt component.");
         }
     }
 
     private void ExecuteReplacement(CardUI sourceCard)
     {
-        // Log to confirm this method is called
-        Debug.Log($"[ReplaceAfterOpponentTurnEffect] ExecuteReplacement called for '{sourceCard.cardData.cardName}'");
+        Debug.Log($"[ReplaceAfterOpponentTurnEffect] Executing replacement for '{sourceCard.cardData.cardName}'");
 
-        // 1) Grab occupant's name before removing
         string oldCardName = sourceCard.cardData.cardName;
-        Debug.Log($"[ReplaceAfterOpponentTurnEffect] oldCardName = '{oldCardName}'");
-
-        // 2) Find and remove occupant
         CardSO replacementCard = DeckManager.instance.FindCardByName(replacementCardName);
         if (replacementCard == null)
         {
@@ -74,35 +90,26 @@ public class ReplaceAfterOpponentTurnEffect : CardEffect
         Vector2Int gridPos = ParseGridPosition(sourceCard.transform.parent.name);
         GridManager.instance.RemoveCard(gridPos.x, gridPos.y, false);
 
-        // 3) Instantiate & place the new card
         GameObject newCardObj = InstantiateReplacementCard(replacementCard);
         Transform cellTransform = GameObject.Find($"GridCell_{gridPos.x}_{gridPos.y}").transform;
         GridManager.instance.PlaceExistingCard(gridPos.x, gridPos.y, newCardObj, replacementCard, cellTransform);
 
-        // 4) If it's an Evolution, show splash
         if (replacementCard.baseOrEvo == CardSO.BaseOrEvo.Evolution)
         {
-            Debug.Log($"[ReplaceAfterOpponentTurnEffect] Attempting ShowEvolutionSplash with oldCardName='{oldCardName}' and new evo='{replacementCard.cardName}'");
             GridManager.instance.ShowEvolutionSplash(oldCardName, replacementCard.cardName);
         }
 
-        // 5) Optionally block the next turn
         if (blockAdditionalPlays)
         {
-            Debug.Log("Replacing & blocking next turn!");
             TurnManager.instance.BlockPlaysNextTurn();
         }
     }
 
     public override void RemoveEffect(CardUI sourceCard)
     {
-        if (onOpponentTurnEndAction != null)
-        {
-            TurnManager.instance.OnOpponentTurnEnd -= onOpponentTurnEndAction;
-        }
+        // No need to unsubscribe anything – coroutine handles its own lifetime.
     }
 
-    // Helper method to parse grid coordinates from a cell's name (e.g., "GridCell_1_2").
     private Vector2Int ParseGridPosition(string cellName)
     {
         string[] parts = cellName.Split('_');
@@ -115,7 +122,6 @@ public class ReplaceAfterOpponentTurnEffect : CardEffect
         return new Vector2Int(-1, -1);
     }
 
-    // Helper method to instantiate the replacement card.
     private GameObject InstantiateReplacementCard(CardSO replacementCard)
     {
         GameObject cardPrefab = DeckManager.instance.cardPrefab;
