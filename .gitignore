@@ -2,6 +2,7 @@
 #
 # Get latest from https://github.com/github/gitignore/blob/main/Unity.gitignore
 #
+
 /[Ll]ibrary/
 /[Tt]emp/
 /[Oo]bj/
@@ -56,6 +57,9 @@ ExportedObj/
 sysinfo.txt
 
 # Builds
+/[Bb]uild/
+/[Bb]uilds/
+/[Bb]uilds/*
 *.apk
 *.aab
 *.unitypackage
@@ -71,3 +75,7 @@ crashlytics-build.properties
 # Temporary auto-generated Android Assets
 /[Aa]ssets/[Ss]treamingAssets/aa.meta
 /[Aa]ssets/[Ss]treamingAssets/aa/*
+
+# OS generated files
+.DS_Store
+Thumbs.db
