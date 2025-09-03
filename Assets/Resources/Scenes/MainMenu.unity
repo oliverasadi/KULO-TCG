@@ -5947,6 +5947,80 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1028523301}
   m_CullTransparentMesh: 1
+--- !u!1 &1036992688
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1036992691}
+  - component: {fileID: 1036992690}
+  - component: {fileID: 1036992689}
+  m_Layer: 0
+  m_Name: PersistentSystems
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1036992689
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1036992688}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ad493ba6e4b61c6438e7c544876dcd93, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  toastText: {fileID: 1505665432}
+  displayDuration: 2
+--- !u!114 &1036992690
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1036992688}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7e2f45661760dd04da21041a5eee4b77, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  currentProfile:
+    playerName: New Player
+    totalWins: 0
+    totalGames: 0
+    currentLevel: 1
+    totalXP: 0
+    unlockedMemories: []
+    selectedAvatar: default
+    unlockedAvatars: []
+    selectedTitle: Novice
+    unlockedTitles: []
+    totalCardsPlayed: 0
+    lastDeckPlayed: 
+    signatureCardName: Ultimate Red Seal
+    avatarImageName: avatar_default
+--- !u!4 &1036992691
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1036992688}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 56.314255, y: 605.61304, z: -1.089689}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1130219228
 GameObject:
   m_ObjectHideFlags: 0
@@ -9842,8 +9916,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1742656261}
   - component: {fileID: 1742656260}
-  - component: {fileID: 1742656262}
-  - component: {fileID: 1742656263}
   - component: {fileID: 1742656264}
   - component: {fileID: 1742656265}
   - component: {fileID: 1742656266}
@@ -9883,47 +9955,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 595495902}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1742656262
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1742656259}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ad493ba6e4b61c6438e7c544876dcd93, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  toastText: {fileID: 1505665432}
-  displayDuration: 2
---- !u!114 &1742656263
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1742656259}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7e2f45661760dd04da21041a5eee4b77, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  currentProfile:
-    playerName: New Player
-    totalWins: 0
-    totalGames: 0
-    currentLevel: 1
-    totalXP: 0
-    unlockedMemories: []
-    selectedAvatar: default
-    unlockedAvatars: []
-    selectedTitle: Novice
-    unlockedTitles: []
-    totalCardsPlayed: 0
-    lastDeckPlayed: 
-    signatureCardName: Ultimate Red Seal
-    avatarImageName: avatar_default
 --- !u!114 &1742656264
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -11905,3 +11936,4 @@ SceneRoots:
   - {fileID: 595495902}
   - {fileID: 1505665434}
   - {fileID: 194303683}
+  - {fileID: 1036992691}

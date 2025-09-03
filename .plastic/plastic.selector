@@ -1,0 +1,4 @@
+repository "KULO V2/KULO-TCG@5772565779538@cloud"
+  path "/"
+    br "/main"
+    co "/main"

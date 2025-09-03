@@ -10,12 +10,19 @@ public class HomeButton : MonoBehaviour
 
     void Awake()
     {
-        GetComponent<Button>().onClick.AddListener(() =>
-        {
-            if (XPResultDataHolder.instance != null)
-                XPResultDataHolder.instance.Clear(); // Optional clean-up
+        GetComponent<Button>().onClick.AddListener(GoHome);
+    }
 
-            SceneManager.LoadScene(mainMenuSceneName);
-        });
+    private void GoHome()
+    {
+        // Safety: unpause + clear UI selection before switching scenes
+        Time.timeScale = 1f;
+        UnityEngine.EventSystems.EventSystem.current?.SetSelectedGameObject(null);
+
+        // Optional: clear any statics you know about
+        if (XPResultDataHolder.instance != null) XPResultDataHolder.instance.Clear();
+
+        Debug.Log($"[HomeButton] Loading '{mainMenuSceneName}' in Single mode from '{SceneManager.GetActiveScene().name}'");
+        SceneManager.LoadScene(mainMenuSceneName, LoadSceneMode.Single);
     }
 }

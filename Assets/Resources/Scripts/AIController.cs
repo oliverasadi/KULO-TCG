@@ -165,11 +165,6 @@ public class AIController : PlayerController
         StartCoroutine(AIPlay());
     }
 
-<<<<<<< HEAD
-
-=======
->>>>>>> 36ee7edf7afed17f05e8cae652528935019c7e80
-
     // Coroutine that makes the prefab wiggle.
     private IEnumerator WigglePrefab(GameObject instance)
     {

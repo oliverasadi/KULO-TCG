@@ -43,6 +43,9 @@ public class CardUI : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler,
     // NEW: store dynamically created inline effects (e.g. ConditionalPowerBoost) 
     public List<CardEffect> activeInlineEffects; // used so we can remove them on card removal
 
+    public bool effectsAppliedInHand = false;
+
+
     private bool hasEffectsApplied = false; // Track if effects have been applied
 
     // NEW: Flag to indicate this card is selected as a sacrifice.
