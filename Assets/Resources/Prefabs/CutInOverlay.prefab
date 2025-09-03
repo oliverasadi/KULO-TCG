@@ -601,7 +601,7 @@ MonoBehaviour:
   artImage: {fileID: 125200542365494513}
   redSealSprite: {fileID: -8459171824635848458, guid: 798d88993da3ebd44be1299112fd3b87, type: 3}
   catTrifectaSprite: {fileID: -5111943165967340424, guid: 3c1bac3e31a90f743943eaadcd1acdbd, type: 3}
-  whiteTigerSprite: {fileID: 0}
+  whiteTigerSprite: {fileID: 1448374308733126706, guid: 5a9ffc8ee5493eb44983798d2b345886, type: 3}
   slamSFX: {fileID: 8300000, guid: bc49af90a6f7a294e8b8f167c52a9afc, type: 3}
 --- !u!1 &6060518120228939344
 GameObject:
