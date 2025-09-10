@@ -10,13 +10,18 @@ public class TurnManager : MonoBehaviour
     public static TurnManager instance;
     public static PlayerManager currentPlayerManager;
 
+    [Header("End Turn UI")]
     public Button endTurnButton; // Assign in Inspector
+
+    [Header("End Turn Input")]
+    public KeyCode endTurnKey = KeyCode.Z;
+    public float endTurnCooldown = 2f;
+
     public int currentPlayer = 1; // 1 = Player, 2 = AI
     public bool creaturePlayed = false;
     public bool spellPlayed = false;
 
     public event Action OnLocalTurnStart;
-
 
     public PlayerManager playerManager1; // Reference to PlayerManager for Player 1
     public PlayerManager playerManager2; // Reference to PlayerManager for Player 2
@@ -46,6 +51,9 @@ public class TurnManager : MonoBehaviour
     // If we want to block the entire *next* turn, call this
     private bool blockNextTurn = false;
 
+    // Cooldown lock for end turn action
+    private bool endTurnLocked = false;
+
     // Expose creaturePlayed via a public property.
     public bool CreaturePlayed
     {
@@ -74,7 +82,6 @@ public class TurnManager : MonoBehaviour
         }
     }
 
-
     // Turn Splash reference
     [Header("Turn Splash")]
     public GameObject turnSplashPrefab;
@@ -89,8 +96,27 @@ public class TurnManager : MonoBehaviour
 
     void Start()
     {
-        endTurnButton.onClick.AddListener(PlayerEndTurn);
+        if (endTurnButton != null)
+        {
+            endTurnButton.onClick.RemoveAllListeners();
+            endTurnButton.onClick.AddListener(TriggerEndTurn);
+            endTurnButton.interactable = (currentPlayer == localPlayerNumber) && !endTurnLocked;
+        }
+
         StartTurn(); // Start the first turn
+    }
+
+    void Update()
+    {
+        // Keyboard shortcut for ending the turn (only for local player's turn)
+        if (currentPlayer == localPlayerNumber &&
+            endTurnButton != null &&
+            endTurnButton.interactable &&
+            !endTurnLocked &&
+            Input.GetKeyDown(endTurnKey))
+        {
+            TriggerEndTurn();
+        }
     }
 
     PlayerManager SelectPlayerManager()
@@ -172,20 +198,19 @@ public class TurnManager : MonoBehaviour
 
         // ✅ Start actual turn logic
         currentPlayerManager.pc.StartTurn();
+
+        // Ensure the End Turn button reflects whose turn it is and cooldown state
+        if (endTurnButton != null)
+            endTurnButton.interactable = (currentPlayer == localPlayerNumber) && !endTurnLocked;
     }
 
     // ──────────────────────────────────────────────────────────────────────────────
-    // Add this coroutine inside TurnManager.cs
+    // Small delay to allow draw + UI settle before replacement checks
     private IEnumerator DelayedReplacementEffectTrigger()
     {
         yield return new WaitForSeconds(1.0f); // Small delay after draw
         GridManager.instance.CheckReplacementEffects(); // Shows SummonChoicePanel
     }
-
-
-
-
-
 
     public bool CanPlayCard(CardSO card)
     {
@@ -239,17 +264,40 @@ public class TurnManager : MonoBehaviour
         FireOnCardPlayed(card);
     }
 
-
     // The new public method to safely invoke the event
     public void FireOnCardPlayed(CardSO occupant)
     {
-        // This is where the actual invocation happens
         _onCardPlayed?.Invoke(occupant);
     }
 
-    public void PlayerEndTurn()
+    // Public shim so other scripts can still call this
+    public void PlayerEndTurn() => TriggerEndTurn();
+
+    // Guarded entry point (prevents spam & respects turn ownership)
+    private void TriggerEndTurn()
     {
+        if (endTurnLocked) return;                           // already cooling down
+        if (currentPlayer != localPlayerNumber) return;      // only local player can end their turn
+        StartCoroutine(EndTurnWithCooldown());
+    }
+
+    private IEnumerator EndTurnWithCooldown()
+    {
+        endTurnLocked = true;
+
+        if (endTurnButton != null)
+            endTurnButton.interactable = false;
+
+        // Do the actual end turn work
         EndTurn();
+
+        // Cooldown to prevent accidental double-presses
+        yield return new WaitForSeconds(endTurnCooldown);
+
+        endTurnLocked = false;
+
+        if (endTurnButton != null)
+            endTurnButton.interactable = (currentPlayer == localPlayerNumber);
     }
 
     public void EndTurn()
@@ -295,7 +343,6 @@ public class TurnManager : MonoBehaviour
         Debug.Log($"🔄 Turn ended. Now Player {currentPlayer}'s turn.");
 
         StartTurn();
-
     }
 
     public void ResetTurn()
