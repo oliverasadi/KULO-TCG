@@ -1,0 +1,4537 @@
+fileFormatVersion: 2
+guid: 4665dc7788af7024ba6abd9f7e894065
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -4668616608077958449
+    second: New Pop Up Panel_0
+  - first:
+      213: -6084191252098282385
+    second: New Pop Up Panel_1
+  - first:
+      213: 3925012379901590150
+    second: New Pop Up Panel_2
+  - first:
+      213: -9110658545964271308
+    second: New Pop Up Panel_3
+  - first:
+      213: -8570514563980420434
+    second: New Pop Up Panel_4
+  - first:
+      213: 2125231072824334999
+    second: New Pop Up Panel_5
+  - first:
+      213: 2202065195454446709
+    second: New Pop Up Panel_6
+  - first:
+      213: -2889816571129953530
+    second: New Pop Up Panel_7
+  - first:
+      213: -4748876746905702444
+    second: New Pop Up Panel_8
+  - first:
+      213: 3659735884491454496
+    second: New Pop Up Panel_9
+  - first:
+      213: 7798454784430639376
+    second: New Pop Up Panel_10
+  - first:
+      213: -8369863619952974543
+    second: New Pop Up Panel_11
+  - first:
+      213: -3739862938906213670
+    second: New Pop Up Panel_12
+  - first:
+      213: 2478208630402594308
+    second: New Pop Up Panel_13
+  - first:
+      213: 4718160593924055193
+    second: New Pop Up Panel_14
+  - first:
+      213: -574040924954394058
+    second: New Pop Up Panel_15
+  - first:
+      213: -8587690903123244833
+    second: New Pop Up Panel_16
+  - first:
+      213: -2239229805473040159
+    second: New Pop Up Panel_17
+  - first:
+      213: 7487218122401897239
+    second: New Pop Up Panel_18
+  - first:
+      213: 2037443106800027053
+    second: New Pop Up Panel_19
+  - first:
+      213: 1655448707283236406
+    second: New Pop Up Panel_20
+  - first:
+      213: -456484074757810498
+    second: New Pop Up Panel_21
+  - first:
+      213: -5401968712540224014
+    second: New Pop Up Panel_22
+  - first:
+      213: -2845780152915279634
+    second: New Pop Up Panel_23
+  - first:
+      213: 6823597720605908625
+    second: New Pop Up Panel_24
+  - first:
+      213: 6895133036369210642
+    second: New Pop Up Panel_25
+  - first:
+      213: 1793746341485374052
+    second: New Pop Up Panel_26
+  - first:
+      213: -6374191529809015824
+    second: New Pop Up Panel_27
+  - first:
+      213: -8523681523097776609
+    second: New Pop Up Panel_28
+  - first:
+      213: -7915852929980842320
+    second: New Pop Up Panel_29
+  - first:
+      213: -3685570110115415065
+    second: New Pop Up Panel_30
+  - first:
+      213: 3924846389463665658
+    second: New Pop Up Panel_31
+  - first:
+      213: -3962907315958048208
+    second: New Pop Up Panel_32
+  - first:
+      213: 3343656284940677427
+    second: New Pop Up Panel_33
+  - first:
+      213: 6928660542588837075
+    second: New Pop Up Panel_34
+  - first:
+      213: -307842299512491297
+    second: New Pop Up Panel_35
+  - first:
+      213: 354295631997891431
+    second: New Pop Up Panel_36
+  - first:
+      213: -6218209482244966864
+    second: New Pop Up Panel_37
+  - first:
+      213: -2006867669699102438
+    second: New Pop Up Panel_38
+  - first:
+      213: 335563106948560853
+    second: New Pop Up Panel_39
+  - first:
+      213: -6573070744939067644
+    second: New Pop Up Panel_40
+  - first:
+      213: -2630076384021851868
+    second: New Pop Up Panel_41
+  - first:
+      213: 7320781331471402465
+    second: New Pop Up Panel_42
+  - first:
+      213: 6681398770277631541
+    second: New Pop Up Panel_43
+  - first:
+      213: -8301779700593473787
+    second: New Pop Up Panel_44
+  - first:
+      213: 5007208076893624418
+    second: New Pop Up Panel_45
+  - first:
+      213: 2180048257161426698
+    second: New Pop Up Panel_46
+  - first:
+      213: -2926971636941243022
+    second: New Pop Up Panel_47
+  - first:
+      213: 4739169620975854796
+    second: New Pop Up Panel_48
+  - first:
+      213: -2349458873115804804
+    second: New Pop Up Panel_49
+  - first:
+      213: 7628191838068439481
+    second: New Pop Up Panel_50
+  - first:
+      213: -8272442822767113117
+    second: New Pop Up Panel_51
+  - first:
+      213: 3133782461226484357
+    second: New Pop Up Panel_52
+  - first:
+      213: -6002115612126596944
+    second: New Pop Up Panel_53
+  - first:
+      213: 3614125676020603438
+    second: New Pop Up Panel_54
+  - first:
+      213: 8430439125633154040
+    second: New Pop Up Panel_55
+  - first:
+      213: -7188554899463890391
+    second: New Pop Up Panel_56
+  - first:
+      213: 6321917255682582294
+    second: New Pop Up Panel_57
+  - first:
+      213: -8167811525831931358
+    second: New Pop Up Panel_58
+  - first:
+      213: 3107254875376197286
+    second: New Pop Up Panel_59
+  - first:
+      213: 5316749379453335046
+    second: New Pop Up Panel_60
+  - first:
+      213: 7208017670734340531
+    second: New Pop Up Panel_61
+  - first:
+      213: -7339037541306069247
+    second: New Pop Up Panel_62
+  - first:
+      213: 8195089219945886791
+    second: New Pop Up Panel_63
+  - first:
+      213: 4283088860464920306
+    second: New Pop Up Panel_64
+  - first:
+      213: -1736147411663148042
+    second: New Pop Up Panel_65
+  - first:
+      213: -6880745818111496146
+    second: New Pop Up Panel_66
+  - first:
+      213: -6951584554415577427
+    second: New Pop Up Panel_67
+  - first:
+      213: 4918237588386192988
+    second: New Pop Up Panel_68
+  - first:
+      213: 7806293672229973959
+    second: New Pop Up Panel_69
+  - first:
+      213: 1094339996297148584
+    second: New Pop Up Panel_70
+  - first:
+      213: -6456746625952383900
+    second: New Pop Up Panel_71
+  - first:
+      213: -7596414294420454037
+    second: New Pop Up Panel_72
+  - first:
+      213: 8819157880512480636
+    second: New Pop Up Panel_73
+  - first:
+      213: -5807202235984000423
+    second: New Pop Up Panel_74
+  - first:
+      213: -6719276452769003704
+    second: New Pop Up Panel_75
+  - first:
+      213: 631034192909916552
+    second: New Pop Up Panel_76
+  - first:
+      213: 3017380217628599148
+    second: New Pop Up Panel_77
+  - first:
+      213: -7997915500302676680
+    second: New Pop Up Panel_78
+  - first:
+      213: -3504123373882824217
+    second: New Pop Up Panel_79
+  - first:
+      213: -309689965158664092
+    second: New Pop Up Panel_80
+  - first:
+      213: 233382869614660424
+    second: New Pop Up Panel_81
+  - first:
+      213: 4228362631430136833
+    second: New Pop Up Panel_82
+  - first:
+      213: -5451735303069826289
+    second: New Pop Up Panel_83
+  - first:
+      213: 5191745881384701713
+    second: New Pop Up Panel_84
+  - first:
+      213: 8450571898291182462
+    second: New Pop Up Panel_85
+  - first:
+      213: -2602558799032258454
+    second: New Pop Up Panel_86
+  - first:
+      213: -7743899148411384551
+    second: New Pop Up Panel_87
+  - first:
+      213: 119164011110481394
+    second: New Pop Up Panel_88
+  - first:
+      213: 8744432148199376844
+    second: New Pop Up Panel_89
+  - first:
+      213: -6055828185778642057
+    second: New Pop Up Panel_90
+  - first:
+      213: -8712386408367157094
+    second: New Pop Up Panel_91
+  - first:
+      213: 7423924976038749184
+    second: New Pop Up Panel_92
+  - first:
+      213: -7796875330008244441
+    second: New Pop Up Panel_93
+  - first:
+      213: -2265318301634009400
+    second: New Pop Up Panel_94
+  - first:
+      213: 4878915896430309587
+    second: New Pop Up Panel_95
+  - first:
+      213: -4723800499774380889
+    second: New Pop Up Panel_96
+  - first:
+      213: -2579296869890846508
+    second: New Pop Up Panel_97
+  - first:
+      213: 7347446536848281891
+    second: New Pop Up Panel_98
+  - first:
+      213: 6837861956888582792
+    second: New Pop Up Panel_99
+  - first:
+      213: -7570573904195401263
+    second: New Pop Up Panel_100
+  - first:
+      213: -5358810757808446498
+    second: New Pop Up Panel_101
+  - first:
+      213: -7439214928980175806
+    second: New Pop Up Panel_102
+  - first:
+      213: -7377634179781424444
+    second: New Pop Up Panel_103
+  - first:
+      213: -2139241940812274719
+    second: New Pop Up Panel_104
+  - first:
+      213: -5058406029073871151
+    second: New Pop Up Panel_105
+  - first:
+      213: -8484111683776173333
+    second: New Pop Up Panel_106
+  - first:
+      213: 6860235879376881813
+    second: New Pop Up Panel_107
+  - first:
+      213: -5062655447169238009
+    second: New Pop Up Panel_108
+  - first:
+      213: 4561014985286556505
+    second: New Pop Up Panel_109
+  - first:
+      213: 4426062795785426783
+    second: New Pop Up Panel_110
+  - first:
+      213: -7065249625835245172
+    second: New Pop Up Panel_111
+  - first:
+      213: -5048451915048901229
+    second: New Pop Up Panel_112
+  - first:
+      213: 8474685208606249167
+    second: New Pop Up Panel_113
+  - first:
+      213: 1386618888291632583
+    second: New Pop Up Panel_114
+  - first:
+      213: 1486153793554115553
+    second: New Pop Up Panel_115
+  - first:
+      213: -6618588834858034542
+    second: New Pop Up Panel_116
+  - first:
+      213: 7731127724582455996
+    second: New Pop Up Panel_117
+  - first:
+      213: 367734183635987366
+    second: New Pop Up Panel_118
+  - first:
+      213: -4214593196933899791
+    second: New Pop Up Panel_119
+  - first:
+      213: -3488568745897356113
+    second: New Pop Up Panel_120
+  - first:
+      213: -2335577042960158784
+    second: New Pop Up Panel_121
+  - first:
+      213: -7837785252089937644
+    second: New Pop Up Panel_122
+  - first:
+      213: 6731869195503115848
+    second: New Pop Up Panel_123
+  - first:
+      213: -3732173927644649595
+    second: New Pop Up Panel_124
+  - first:
+      213: -4955053251909752061
+    second: New Pop Up Panel_125
+  - first:
+      213: -5635686160588717656
+    second: New Pop Up Panel_126
+  - first:
+      213: 5605714884052819872
+    second: New Pop Up Panel_127
+  - first:
+      213: -1321384634102436797
+    second: New Pop Up Panel_128
+  - first:
+      213: 1242125097421619766
+    second: New Pop Up Panel_129
+  - first:
+      213: -5111285399692455183
+    second: New Pop Up Panel_130
+  - first:
+      213: -392027974602465819
+    second: New Pop Up Panel_131
+  - first:
+      213: -6947663839955354547
+    second: New Pop Up Panel_132
+  - first:
+      213: -3274285355981141643
+    second: New Pop Up Panel_133
+  - first:
+      213: -2161434105743776414
+    second: New Pop Up Panel_134
+  - first:
+      213: -1305847571007618986
+    second: New Pop Up Panel_135
+  - first:
+      213: -8541986243858467142
+    second: New Pop Up Panel_136
+  - first:
+      213: -2001065945356783562
+    second: New Pop Up Panel_137
+  - first:
+      213: -5568554256024125940
+    second: New Pop Up Panel_138
+  - first:
+      213: 7595657407823263035
+    second: New Pop Up Panel_139
+  - first:
+      213: -70691582122625002
+    second: New Pop Up Panel_140
+  - first:
+      213: -2200363023036976852
+    second: New Pop Up Panel_141
+  - first:
+      213: 1009085069340737718
+    second: New Pop Up Panel_142
+  - first:
+      213: 6014235227740974550
+    second: New Pop Up Panel_143
+  - first:
+      213: 7932455640308308295
+    second: New Pop Up Panel_144
+  - first:
+      213: -4266478425681784270
+    second: New Pop Up Panel_145
+  - first:
+      213: 3886414306569366173
+    second: New Pop Up Panel_146
+  - first:
+      213: 1223163169180481566
+    second: New Pop Up Panel_147
+  - first:
+      213: -6873006789303219071
+    second: New Pop Up Panel_148
+  - first:
+      213: -7397485724428743713
+    second: New Pop Up Panel_149
+  - first:
+      213: 3582063832182008517
+    second: New Pop Up Panel_150
+  - first:
+      213: 7962571622788064210
+    second: New Pop Up Panel_151
+  - first:
+      213: 3337163683589178690
+    second: New Pop Up Panel_152
+  - first:
+      213: 4774811459630485837
+    second: New Pop Up Panel_153
+  - first:
+      213: -4329167830843645475
+    second: New Pop Up Panel_154
+  - first:
+      213: 3373237417537082055
+    second: New Pop Up Panel_155
+  - first:
+      213: -7981365783878568478
+    second: New Pop Up Panel_156
+  - first:
+      213: 8654089200124999928
+    second: New Pop Up Panel_157
+  - first:
+      213: 1569150793771661374
+    second: New Pop Up Panel_158
+  - first:
+      213: 5024091003573453027
+    second: New Pop Up Panel_159
+  - first:
+      213: 5191148878287804728
+    second: New Pop Up Panel_160
+  - first:
+      213: -4014625937185762284
+    second: New Pop Up Panel_161
+  - first:
+      213: -931777038405815755
+    second: New Pop Up Panel_162
+  - first:
+      213: 6310820018696369781
+    second: New Pop Up Panel_163
+  - first:
+      213: -1441483295737221867
+    second: New Pop Up Panel_164
+  - first:
+      213: 5474952085418020273
+    second: New Pop Up Panel_165
+  - first:
+      213: 5146438531416290267
+    second: New Pop Up Panel_166
+  - first:
+      213: -1273174713128071654
+    second: New Pop Up Panel_167
+  - first:
+      213: 4594074049987200155
+    second: New Pop Up Panel_168
+  - first:
+      213: -6682287168617015889
+    second: New Pop Up Panel_169
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 1
+  spriteExtrude: 1
+  spriteMeshType: 0
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: New Pop Up Panel_0
+      rect:
+        serializedVersion: 2
+        x: 78
+        y: 0
+        width: 367
+        height: 1024
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fc2360b2eedb53fb0800000000000000
+      internalID: -4668616608077958449
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Pop Up Panel_1
+      rect:
+        serializedVersion: 2
+        x: 149
+        y: 992
+        width: 7
+        height: 32
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f6c8429aa4c909ba0800000000000000
+      internalID: -6084191252098282385
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Pop Up Panel_2
+      rect:
+        serializedVersion: 2
+        x: 214
+        y: 985
+        width: 41
+        height: 39
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 68a7b03c6f1787630800000000000000
+      internalID: 3925012379901590150
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Pop Up Panel_3
+      rect:
+        serializedVersion: 2
+        x: 313
+        y: 0
+        width: 1145
+        height: 1024
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4393ce1a250709180800000000000000
+      internalID: -9110658545964271308
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Pop Up Panel_4
+      rect:
+        serializedVersion: 2
+        x: 1075
+        y: 959
+        width: 70
+        height: 65
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: eaa92af996a6f0980800000000000000
+      internalID: -8570514563980420434
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Pop Up Panel_5
+      rect:
+        serializedVersion: 2
+        x: 1098
+        y: 1007
+        width: 7
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 79a115996665e7d10800000000000000
+      internalID: 2125231072824334999
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Pop Up Panel_6
+      rect:
+        serializedVersion: 2
+        x: 148
+        y: 976
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 57c3053d0ae4f8e10800000000000000
+      internalID: 2202065195454446709
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Pop Up Panel_7
+      rect:
+        serializedVersion: 2
+        x: 515
+        y: 970
+        width: 8
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 60303c3b32f45e7d0800000000000000
+      internalID: -2889816571129953530
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Pop Up Panel_8
+      rect:
+        serializedVersion: 2
+        x: 523
+        y: 947
+        width: 47
+        height: 55
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4dfa29262c9981eb0800000000000000
+      internalID: -4748876746905702444
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Pop Up Panel_9
+      rect:
+        serializedVersion: 2
+        x: 704
+        y: 961
+        width: 22
+        height: 29
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 028fcd6956ef9c230800000000000000
+      internalID: 3659735884491454496
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Pop Up Panel_10
+      rect:
+        serializedVersion: 2
+        x: 897
+        y: 961
+        width: 8
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0190fe6fe4da93c60800000000000000
+      internalID: 7798454784430639376
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Pop Up Panel_11
+      rect:
+        serializedVersion: 2
+        x: 148
+        y: 734
+        width: 8
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 135ec32126548db80800000000000000
+      internalID: -8369863619952974543
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Pop Up Panel_12
+      rect:
+        serializedVersion: 2
+        x: 162
+        y: 690
+        width: 59
+        height: 66
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ad2c8d1c876591cc0800000000000000
+      internalID: -3739862938906213670
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Pop Up Panel_13
+      rect:
+        serializedVersion: 2
+        x: 1332
+        y: 730
+        width: 40
+        height: 42
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 40634768e9d546220800000000000000
+      internalID: 2478208630402594308
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Pop Up Panel_14
+      rect:
+        serializedVersion: 2
+        x: 146
+        y: 710
+        width: 10
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 990e612ff064a7140800000000000000
+      internalID: 4718160593924055193
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Pop Up Panel_15
+      rect:
+        serializedVersion: 2
+        x: 147
+        y: 718
+        width: 9
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6328e85f1d89808f0800000000000000
+      internalID: -574040924954394058
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Pop Up Panel_16
+      rect:
+        serializedVersion: 2
+        x: 291
+        y: 709
+        width: 6
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fd84c768f9462d880800000000000000
+      internalID: -8587690903123244833
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Pop Up Panel_17
+      rect:
+        serializedVersion: 2
+        x: 1365
+        y: 717
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1e8ff4a1b58ace0e0800000000000000
+      internalID: -2239229805473040159
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Pop Up Panel_18
+      rect:
+        serializedVersion: 2
+        x: 1376
+        y: 719
+        width: 10
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 71bd1ad9631f7e760800000000000000
+      internalID: 7487218122401897239
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Pop Up Panel_19
+      rect:
+        serializedVersion: 2
+        x: 133
+        y: 698
+        width: 6
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: da542e6f5b3764c10800000000000000
+      internalID: 2037443106800027053
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Pop Up Panel_20
+      rect:
+        serializedVersion: 2
+        x: 148
+        y: 702
+        width: 8
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6363f7d04d559f610800000000000000
+      internalID: 1655448707283236406
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Pop Up Panel_21
+      rect:
+        serializedVersion: 2
+        x: 262
+        y: 655
+        width: 38
+        height: 47
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: eb6107e072e3aa9f0800000000000000
+      internalID: -456484074757810498
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Pop Up Panel_22
+      rect:
+        serializedVersion: 2
+        x: 146
+        y: 678
+        width: 10
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2f50449a31a5805b0800000000000000
+      internalID: -5401968712540224014
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Pop Up Panel_23
+      rect:
+        serializedVersion: 2
+        x: 246
+        y: 683
+        width: 11
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ee0c0ac4702c188d0800000000000000
+      internalID: -2845780152915279634
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Pop Up Panel_24
+      rect:
+        serializedVersion: 2
+        x: 1354
+        y: 680
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 19e51e259f942be50800000000000000
+      internalID: 6823597720605908625
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Pop Up Panel_25
+      rect:
+        serializedVersion: 2
+        x: 148
+        y: 670
+        width: 8
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 21de8dfe6fe60bf50800000000000000
+      internalID: 6895133036369210642
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Pop Up Panel_26
+      rect:
+        serializedVersion: 2
+        x: 1365
+        y: 673
+        width: 7
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 46a646d3bcaa4e810800000000000000
+      internalID: 1793746341485374052
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Pop Up Panel_27
+      rect:
+        serializedVersion: 2
+        x: 213
+        y: 658
+        width: 8
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0fb0e6753925a87a0800000000000000
+      internalID: -6374191529809015824
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Pop Up Panel_28
+      rect:
+        serializedVersion: 2
+        x: 214
+        y: 664
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f1e423da0dcc5b980800000000000000
+      internalID: -8523681523097776609
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Pop Up Panel_29
+      rect:
+        serializedVersion: 2
+        x: 235
+        y: 661
+        width: 7
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0beb14e33bd352290800000000000000
+      internalID: -7915852929980842320
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Pop Up Panel_30
+      rect:
+        serializedVersion: 2
+        x: 148
+        y: 651
+        width: 7
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7ebf5c703893adcc0800000000000000
+      internalID: -3685570110115415065
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Pop Up Panel_31
+      rect:
+        serializedVersion: 2
+        x: 160
+        y: 0
+        width: 600
+        height: 662
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: afbc4f91ffad77630800000000000000
+      internalID: 3924846389463665658
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Pop Up Panel_32
+      rect:
+        serializedVersion: 2
+        x: 192
+        y: 657
+        width: 7
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 03a1682eacce009c0800000000000000
+      internalID: -3962907315958048208
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Pop Up Panel_33
+      rect:
+        serializedVersion: 2
+        x: 149
+        y: 638
+        width: 6
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 33134eafcad076e20800000000000000
+      internalID: 3343656284940677427
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Pop Up Panel_34
+      rect:
+        serializedVersion: 2
+        x: 1359
+        y: 649
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3dcd54acd0c872060800000000000000
+      internalID: 6928660542588837075
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Pop Up Panel_35
+      rect:
+        serializedVersion: 2
+        x: 1392
+        y: 641
+        width: 9
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fd2f7b24f035abbf0800000000000000
+      internalID: -307842299512491297
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Pop Up Panel_36
+      rect:
+        serializedVersion: 2
+        x: 148
+        y: 614
+        width: 8
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 763f4ba0006bae400800000000000000
+      internalID: 354295631997891431
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Pop Up Panel_37
+      rect:
+        serializedVersion: 2
+        x: 149
+        y: 622
+        width: 7
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 036b2dfdb6b74b9a0800000000000000
+      internalID: -6218209482244966864
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Pop Up Panel_38
+      rect:
+        serializedVersion: 2
+        x: 1350
+        y: 623
+        width: 8
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a197e5cbc7c2624e0800000000000000
+      internalID: -2006867669699102438
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Pop Up Panel_39
+      rect:
+        serializedVersion: 2
+        x: 149
+        y: 606
+        width: 7
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5d7356d2ed828a400800000000000000
+      internalID: 335563106948560853
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Pop Up Panel_40
+      rect:
+        serializedVersion: 2
+        x: 1373
+        y: 611
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 407056cabf2c7c4a0800000000000000
+      internalID: -6573070744939067644
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Pop Up Panel_41
+      rect:
+        serializedVersion: 2
+        x: 146
+        y: 574
+        width: 18
+        height: 26
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 421db36a677108bd0800000000000000
+      internalID: -2630076384021851868
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Pop Up Panel_42
+      rect:
+        serializedVersion: 2
+        x: 149
+        y: 598
+        width: 7
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1e50aa475d3a89560800000000000000
+      internalID: 7320781331471402465
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Pop Up Panel_43
+      rect:
+        serializedVersion: 2
+        x: 1346
+        y: 558
+        width: 33
+        height: 45
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 536412138c819bc50800000000000000
+      internalID: 6681398770277631541
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Pop Up Panel_44
+      rect:
+        serializedVersion: 2
+        x: 148
+        y: 567
+        width: 7
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 507c396d8572acc80800000000000000
+      internalID: -8301779700593473787
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Pop Up Panel_45
+      rect:
+        serializedVersion: 2
+        x: 149
+        y: 550
+        width: 7
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 26816b3773d2d7540800000000000000
+      internalID: 5007208076893624418
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Pop Up Panel_46
+      rect:
+        serializedVersion: 2
+        x: 149
+        y: 542
+        width: 7
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a07f059e656114e10800000000000000
+      internalID: 2180048257161426698
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Pop Up Panel_47
+      rect:
+        serializedVersion: 2
+        x: 153
+        y: 543
+        width: 10
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 27d3970ddce4167d0800000000000000
+      internalID: -2926971636941243022
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Pop Up Panel_48
+      rect:
+        serializedVersion: 2
+        x: 1358
+        y: 544
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cc4a69c39a9e4c140800000000000000
+      internalID: 4739169620975854796
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Pop Up Panel_49
+      rect:
+        serializedVersion: 2
+        x: 1394
+        y: 546
+        width: 7
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c7bfa855a9b056fd0800000000000000
+      internalID: -2349458873115804804
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Pop Up Panel_50
+      rect:
+        serializedVersion: 2
+        x: 148
+        y: 526
+        width: 8
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9b97a929f08ccd960800000000000000
+      internalID: 7628191838068439481
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Pop Up Panel_51
+      rect:
+        serializedVersion: 2
+        x: 149
+        y: 534
+        width: 7
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 36c8c3cf411623d80800000000000000
+      internalID: -8272442822767113117
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Pop Up Panel_52
+      rect:
+        serializedVersion: 2
+        x: 148
+        y: 518
+        width: 7
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 58201c48b8e6d7b20800000000000000
+      internalID: 3133782461226484357
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Pop Up Panel_53
+      rect:
+        serializedVersion: 2
+        x: 148
+        y: 486
+        width: 8
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0b03e5eb6a334bca0800000000000000
+      internalID: -6002115612126596944
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Pop Up Panel_54
+      rect:
+        serializedVersion: 2
+        x: 148
+        y: 478
+        width: 8
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e2a93d46724f72230800000000000000
+      internalID: 3614125676020603438
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Pop Up Panel_55
+      rect:
+        serializedVersion: 2
+        x: 1323
+        y: 428
+        width: 54
+        height: 59
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8fb3be7e7bfeef470800000000000000
+      internalID: 8430439125633154040
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Pop Up Panel_56
+      rect:
+        serializedVersion: 2
+        x: 121
+        y: 421
+        width: 57
+        height: 58
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 92a9f01d76f1d3c90800000000000000
+      internalID: -7188554899463890391
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Pop Up Panel_57
+      rect:
+        serializedVersion: 2
+        x: 149
+        y: 470
+        width: 7
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6176f54cf36fbb750800000000000000
+      internalID: 6321917255682582294
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Pop Up Panel_58
+      rect:
+        serializedVersion: 2
+        x: 141
+        y: 407
+        width: 7
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 22a427231ba16ae80800000000000000
+      internalID: -8167811525831931358
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Pop Up Panel_59
+      rect:
+        serializedVersion: 2
+        x: 147
+        y: 406
+        width: 10
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6ae1661a8df2f1b20800000000000000
+      internalID: 3107254875376197286
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Pop Up Panel_60
+      rect:
+        serializedVersion: 2
+        x: 148
+        y: 414
+        width: 9
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 606381a2463e8c940800000000000000
+      internalID: 5316749379453335046
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Pop Up Panel_61
+      rect:
+        serializedVersion: 2
+        x: 143
+        y: 390
+        width: 13
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3b1ebdeb1e5080460800000000000000
+      internalID: 7208017670734340531
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Pop Up Panel_62
+      rect:
+        serializedVersion: 2
+        x: 148
+        y: 398
+        width: 10
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 10f02357d30862a90800000000000000
+      internalID: -7339037541306069247
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Pop Up Panel_63
+      rect:
+        serializedVersion: 2
+        x: 148
+        y: 382
+        width: 8
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 744f181e93ecab170800000000000000
+      internalID: 8195089219945886791
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Pop Up Panel_64
+      rect:
+        serializedVersion: 2
+        x: 149
+        y: 375
+        width: 7
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2f6b17530a6907b30800000000000000
+      internalID: 4283088860464920306
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Pop Up Panel_65
+      rect:
+        serializedVersion: 2
+        x: 148
+        y: 360
+        width: 8
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6fbaa1aa027f7e7e0800000000000000
+      internalID: -1736147411663148042
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Pop Up Panel_66
+      rect:
+        serializedVersion: 2
+        x: 148
+        y: 350
+        width: 8
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e20b5b9522ea280a0800000000000000
+      internalID: -6880745818111496146
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Pop Up Panel_67
+      rect:
+        serializedVersion: 2
+        x: 162
+        y: 333
+        width: 23
+        height: 28
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: da6a7f7cda2078f90800000000000000
+      internalID: -6951584554415577427
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Pop Up Panel_68
+      rect:
+        serializedVersion: 2
+        x: 1344
+        y: 344
+        width: 25
+        height: 28
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c5e9bb85707114440800000000000000
+      internalID: 4918237588386192988
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Pop Up Panel_69
+      rect:
+        serializedVersion: 2
+        x: 143
+        y: 326
+        width: 16
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7cfa5a14cb6855c60800000000000000
+      internalID: 7806293672229973959
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Pop Up Panel_70
+      rect:
+        serializedVersion: 2
+        x: 148
+        y: 342
+        width: 8
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8a83bc6bd60ef2f00800000000000000
+      internalID: 1094339996297148584
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Pop Up Panel_71
+      rect:
+        serializedVersion: 2
+        x: 147
+        y: 317
+        width: 9
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 46cf76b27270566a0800000000000000
+      internalID: -6456746625952383900
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Pop Up Panel_72
+      rect:
+        serializedVersion: 2
+        x: 148
+        y: 310
+        width: 8
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b658e5e527d149690800000000000000
+      internalID: -7596414294420454037
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Pop Up Panel_73
+      rect:
+        serializedVersion: 2
+        x: 1369
+        y: 313
+        width: 6
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c75880ecd51f36a70800000000000000
+      internalID: 8819157880512480636
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Pop Up Panel_74
+      rect:
+        serializedVersion: 2
+        x: 143
+        y: 295
+        width: 13
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 95ac151955ca86fa0800000000000000
+      internalID: -5807202235984000423
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Pop Up Panel_75
+      rect:
+        serializedVersion: 2
+        x: 148
+        y: 302
+        width: 8
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8478e0d9aa550c2a0800000000000000
+      internalID: -6719276452769003704
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Pop Up Panel_76
+      rect:
+        serializedVersion: 2
+        x: 143
+        y: 283
+        width: 14
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 889558d4142e1c800800000000000000
+      internalID: 631034192909916552
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Pop Up Panel_77
+      rect:
+        serializedVersion: 2
+        x: 147
+        y: 278
+        width: 9
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c632b083253efd920800000000000000
+      internalID: 3017380217628599148
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Pop Up Panel_78
+      rect:
+        serializedVersion: 2
+        x: 148
+        y: 270
+        width: 12
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 83d4edc2a32b10190800000000000000
+      internalID: -7997915500302676680
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Pop Up Panel_79
+      rect:
+        serializedVersion: 2
+        x: 148
+        y: 264
+        width: 8
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7e9229a6b5ade5fc0800000000000000
+      internalID: -3504123373882824217
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Pop Up Panel_80
+      rect:
+        serializedVersion: 2
+        x: 1019
+        y: 67
+        width: 290
+        height: 215
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 468f6341e92c3bbf0800000000000000
+      internalID: -309689965158664092
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Pop Up Panel_81
+      rect:
+        serializedVersion: 2
+        x: 148
+        y: 254
+        width: 8
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 84b0b00cb742d3300800000000000000
+      internalID: 233382869614660424
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Pop Up Panel_82
+      rect:
+        serializedVersion: 2
+        x: 148
+        y: 246
+        width: 8
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 104ede319692eaa30800000000000000
+      internalID: 4228362631430136833
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Pop Up Panel_83
+      rect:
+        serializedVersion: 2
+        x: 145
+        y: 231
+        width: 11
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f03011b50ab8754b0800000000000000
+      internalID: -5451735303069826289
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Pop Up Panel_84
+      rect:
+        serializedVersion: 2
+        x: 148
+        y: 238
+        width: 8
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 11f48004f59cc0840800000000000000
+      internalID: 5191745881384701713
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Pop Up Panel_85
+      rect:
+        serializedVersion: 2
+        x: 147
+        y: 222
+        width: 9
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e7b5b825e56764570800000000000000
+      internalID: 8450571898291182462
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Pop Up Panel_86
+      rect:
+        serializedVersion: 2
+        x: 148
+        y: 214
+        width: 8
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a607d9caf8ad1ebd0800000000000000
+      internalID: -2602558799032258454
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Pop Up Panel_87
+      rect:
+        serializedVersion: 2
+        x: 171
+        y: 215
+        width: 7
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 91d4d72e0c4288490800000000000000
+      internalID: -7743899148411384551
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Pop Up Panel_88
+      rect:
+        serializedVersion: 2
+        x: 177
+        y: 223
+        width: 8
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2fd3048690b57a100800000000000000
+      internalID: 119164011110481394
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Pop Up Panel_89
+      rect:
+        serializedVersion: 2
+        x: 143
+        y: 190
+        width: 17
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cc70ee375b67a5970800000000000000
+      internalID: 8744432148199376844
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Pop Up Panel_90
+      rect:
+        serializedVersion: 2
+        x: 148
+        y: 206
+        width: 8
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 773add5a95065fba0800000000000000
+      internalID: -6055828185778642057
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Pop Up Panel_91
+      rect:
+        serializedVersion: 2
+        x: 159
+        y: 181
+        width: 22
+        height: 30
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a909557c8b2671780800000000000000
+      internalID: -8712386408367157094
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Pop Up Panel_92
+      rect:
+        serializedVersion: 2
+        x: 145
+        y: 182
+        width: 11
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 004a0fb9e64170760800000000000000
+      internalID: 7423924976038749184
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Pop Up Panel_93
+      rect:
+        serializedVersion: 2
+        x: 767
+        y: 182
+        width: 15
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 72f1adc623febc390800000000000000
+      internalID: -7796875330008244441
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Pop Up Panel_94
+      rect:
+        serializedVersion: 2
+        x: 905
+        y: 187
+        width: 7
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8c6e9efb109ff80e0800000000000000
+      internalID: -2265318301634009400
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Pop Up Panel_95
+      rect:
+        serializedVersion: 2
+        x: 947
+        y: 182
+        width: 8
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3d03cbf782465b340800000000000000
+      internalID: 4878915896430309587
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Pop Up Panel_96
+      rect:
+        serializedVersion: 2
+        x: 965
+        y: 176
+        width: 11
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7a4a2252970b17eb0800000000000000
+      internalID: -4723800499774380889
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Pop Up Panel_97
+      rect:
+        serializedVersion: 2
+        x: 1011
+        y: 183
+        width: 7
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4d011eb992f743cd0800000000000000
+      internalID: -2579296869890846508
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Pop Up Panel_98
+      rect:
+        serializedVersion: 2
+        x: 1334
+        y: 179
+        width: 20
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 321140362bf57f560800000000000000
+      internalID: 7347446536848281891
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Pop Up Panel_99
+      rect:
+        serializedVersion: 2
+        x: 148
+        y: 174
+        width: 8
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 88a5083a837f4ee50800000000000000
+      internalID: 6837861956888582792
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Pop Up Panel_100
+      rect:
+        serializedVersion: 2
+        x: 757
+        y: 168
+        width: 11
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1d9479e052befe690800000000000000
+      internalID: -7570573904195401263
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Pop Up Panel_101
+      rect:
+        serializedVersion: 2
+        x: 905
+        y: 168
+        width: 9
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ed3294a020ea1a5b0800000000000000
+      internalID: -5358810757808446498
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Pop Up Panel_102
+      rect:
+        serializedVersion: 2
+        x: 945
+        y: 166
+        width: 10
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2449a5ecf6992c890800000000000000
+      internalID: -7439214928980175806
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Pop Up Panel_103
+      rect:
+        serializedVersion: 2
+        x: 959
+        y: 168
+        width: 7
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4ca09574dc06d9990800000000000000
+      internalID: -7377634179781424444
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Pop Up Panel_104
+      rect:
+        serializedVersion: 2
+        x: 969
+        y: 168
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1e3644df9c2ef42e0800000000000000
+      internalID: -2139241940812274719
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Pop Up Panel_105
+      rect:
+        serializedVersion: 2
+        x: 1010
+        y: 158
+        width: 8
+        height: 26
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1de8b53648eecc9b0800000000000000
+      internalID: -5058406029073871151
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Pop Up Panel_106
+      rect:
+        serializedVersion: 2
+        x: 147
+        y: 158
+        width: 9
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: beaa7c5df51624a80800000000000000
+      internalID: -8484111683776173333
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Pop Up Panel_107
+      rect:
+        serializedVersion: 2
+        x: 148
+        y: 166
+        width: 8
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 59806a96f24743f50800000000000000
+      internalID: 6860235879376881813
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Pop Up Panel_108
+      rect:
+        serializedVersion: 2
+        x: 898
+        y: 120
+        width: 40
+        height: 52
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 70cf743a1b5ddb9b0800000000000000
+      internalID: -5062655447169238009
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Pop Up Panel_109
+      rect:
+        serializedVersion: 2
+        x: 946
+        y: 160
+        width: 9
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 95b1d3db6fafb4f30800000000000000
+      internalID: 4561014985286556505
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Pop Up Panel_110
+      rect:
+        serializedVersion: 2
+        x: 968
+        y: 152
+        width: 23
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f57dc5899a88c6d30800000000000000
+      internalID: 4426062795785426783
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Pop Up Panel_111
+      rect:
+        serializedVersion: 2
+        x: 148
+        y: 150
+        width: 8
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c81f0aa06e033fd90800000000000000
+      internalID: -7065249625835245172
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Pop Up Panel_112
+      rect:
+        serializedVersion: 2
+        x: 206
+        y: 77
+        width: 71
+        height: 86
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 395aed92bbb40f9b0800000000000000
+      internalID: -5048451915048901229
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Pop Up Panel_113
+      rect:
+        serializedVersion: 2
+        x: 754
+        y: 151
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fc09b32eb412c9570800000000000000
+      internalID: 8474685208606249167
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Pop Up Panel_114
+      rect:
+        serializedVersion: 2
+        x: 937
+        y: 155
+        width: 10
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7c5487348824e3310800000000000000
+      internalID: 1386618888291632583
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Pop Up Panel_115
+      rect:
+        serializedVersion: 2
+        x: 947
+        y: 146
+        width: 8
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1eb64625001ef9410800000000000000
+      internalID: 1486153793554115553
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Pop Up Panel_116
+      rect:
+        serializedVersion: 2
+        x: 1012
+        y: 151
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 29a9bef758c0624a0800000000000000
+      internalID: -6618588834858034542
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Pop Up Panel_117
+      rect:
+        serializedVersion: 2
+        x: 1258
+        y: 109
+        width: 44
+        height: 52
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cba49e844bb7a4b60800000000000000
+      internalID: 7731127724582455996
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Pop Up Panel_118
+      rect:
+        serializedVersion: 2
+        x: 818
+        y: 86
+        width: 65
+        height: 68
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6ab246baa447a1500800000000000000
+      internalID: 367734183635987366
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Pop Up Panel_119
+      rect:
+        serializedVersion: 2
+        x: 966
+        y: 136
+        width: 10
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1f91af731d1c285c0800000000000000
+      internalID: -4214593196933899791
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Pop Up Panel_120
+      rect:
+        serializedVersion: 2
+        x: 970
+        y: 146
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fa41246753d169fc0800000000000000
+      internalID: -3488568745897356113
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Pop Up Panel_121
+      rect:
+        serializedVersion: 2
+        x: 1012
+        y: 135
+        width: 7
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0cf6dc8cd0d569fd0800000000000000
+      internalID: -2335577042960158784
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Pop Up Panel_122
+      rect:
+        serializedVersion: 2
+        x: 149
+        y: 134
+        width: 6
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 411426fe6d79a3390800000000000000
+      internalID: -7837785252089937644
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Pop Up Panel_123
+      rect:
+        serializedVersion: 2
+        x: 149
+        y: 123
+        width: 7
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 84e9b58cd576c6d50800000000000000
+      internalID: 6731869195503115848
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Pop Up Panel_124
+      rect:
+        serializedVersion: 2
+        x: 948
+        y: 130
+        width: 7
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 58724c23697a43cc0800000000000000
+      internalID: -3732173927644649595
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Pop Up Panel_125
+      rect:
+        serializedVersion: 2
+        x: 969
+        y: 128
+        width: 7
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 30b66c4025d1c3bb0800000000000000
+      internalID: -4955053251909752061
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Pop Up Panel_126
+      rect:
+        serializedVersion: 2
+        x: 1012
+        y: 127
+        width: 6
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8a1468ccb450ac1b0800000000000000
+      internalID: -5635686160588717656
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Pop Up Panel_127
+      rect:
+        serializedVersion: 2
+        x: 764
+        y: 119
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0af96189cff7bcd40800000000000000
+      internalID: 5605714884052819872
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Pop Up Panel_128
+      rect:
+        serializedVersion: 2
+        x: 811
+        y: 120
+        width: 7
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 34c2aa02daf79ade0800000000000000
+      internalID: -1321384634102436797
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Pop Up Panel_129
+      rect:
+        serializedVersion: 2
+        x: 905
+        y: 120
+        width: 7
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 632c96ee13aec3110800000000000000
+      internalID: 1242125097421619766
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Pop Up Panel_130
+      rect:
+        serializedVersion: 2
+        x: 948
+        y: 119
+        width: 7
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1f2d0bd72011119b0800000000000000
+      internalID: -5111285399692455183
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Pop Up Panel_131
+      rect:
+        serializedVersion: 2
+        x: 969
+        y: 110
+        width: 7
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5edddc752ac3f8af0800000000000000
+      internalID: -392027974602465819
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Pop Up Panel_132
+      rect:
+        serializedVersion: 2
+        x: 339
+        y: 59
+        width: 59
+        height: 48
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d4c72a04c80f49f90800000000000000
+      internalID: -6947663839955354547
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Pop Up Panel_133
+      rect:
+        serializedVersion: 2
+        x: 546
+        y: 99
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5790b7f01d66f82d0800000000000000
+      internalID: -3274285355981141643
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Pop Up Panel_134
+      rect:
+        serializedVersion: 2
+        x: 601
+        y: 98
+        width: 10
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2656ab1f12b0102e0800000000000000
+      internalID: -2161434105743776414
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Pop Up Panel_135
+      rect:
+        serializedVersion: 2
+        x: 690
+        y: 58
+        width: 57
+        height: 52
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 650c8478d82b0ede0800000000000000
+      internalID: -1305847571007618986
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Pop Up Panel_136
+      rect:
+        serializedVersion: 2
+        x: 947
+        y: 106
+        width: 7
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ab6fa82c4c4c47980800000000000000
+      internalID: -8541986243858467142
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Pop Up Panel_137
+      rect:
+        serializedVersion: 2
+        x: 966
+        y: 103
+        width: 10
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 630b0e2ff19ca34e0800000000000000
+      internalID: -2001065945356783562
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Pop Up Panel_138
+      rect:
+        serializedVersion: 2
+        x: 1009
+        y: 104
+        width: 9
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c0e3139586588b2b0800000000000000
+      internalID: -5568554256024125940
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Pop Up Panel_139
+      rect:
+        serializedVersion: 2
+        x: 1009
+        y: 83
+        width: 10
+        height: 23
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b35bedc3b22396960800000000000000
+      internalID: 7595657407823263035
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Pop Up Panel_140
+      rect:
+        serializedVersion: 2
+        x: 148
+        y: 95
+        width: 8
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 61878fe616ad40ff0800000000000000
+      internalID: -70691582122625002
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Pop Up Panel_141
+      rect:
+        serializedVersion: 2
+        x: 393
+        y: 95
+        width: 8
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c21f9f21d7db671e0800000000000000
+      internalID: -2200363023036976852
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Pop Up Panel_142
+      rect:
+        serializedVersion: 2
+        x: 501
+        y: 93
+        width: 8
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6b08432368df00e00800000000000000
+      internalID: 1009085069340737718
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Pop Up Panel_143
+      rect:
+        serializedVersion: 2
+        x: 514
+        y: 96
+        width: 12
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6dd2429231bd67350800000000000000
+      internalID: 6014235227740974550
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Pop Up Panel_144
+      rect:
+        serializedVersion: 2
+        x: 515
+        y: 88
+        width: 8
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 749de1d706eb51e60800000000000000
+      internalID: 7932455640308308295
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Pop Up Panel_145
+      rect:
+        serializedVersion: 2
+        x: 527
+        y: 91
+        width: 16
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2329e530a7c6ac4c0800000000000000
+      internalID: -4266478425681784270
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Pop Up Panel_146
+      rect:
+        serializedVersion: 2
+        x: 596
+        y: 95
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d9a201188315fe530800000000000000
+      internalID: 3886414306569366173
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Pop Up Panel_147
+      rect:
+        serializedVersion: 2
+        x: 659
+        y: 90
+        width: 11
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e18f759fb6c89f010800000000000000
+      internalID: 1223163169180481566
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Pop Up Panel_148
+      rect:
+        serializedVersion: 2
+        x: 905
+        y: 96
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 18ccbb86dbc2e90a0800000000000000
+      internalID: -6873006789303219071
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Pop Up Panel_149
+      rect:
+        serializedVersion: 2
+        x: 947
+        y: 98
+        width: 8
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fdbc66c5de9d65990800000000000000
+      internalID: -7397485724428743713
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Pop Up Panel_150
+      rect:
+        serializedVersion: 2
+        x: 968
+        y: 98
+        width: 8
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5caabf7a31c06b130800000000000000
+      internalID: 3582063832182008517
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Pop Up Panel_151
+      rect:
+        serializedVersion: 2
+        x: 969
+        y: 91
+        width: 7
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2d363e214bcb08e60800000000000000
+      internalID: 7962571622788064210
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Pop Up Panel_152
+      rect:
+        serializedVersion: 2
+        x: 490
+        y: 85
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 245caad60bcff4e20800000000000000
+      internalID: 3337163683589178690
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Pop Up Panel_153
+      rect:
+        serializedVersion: 2
+        x: 501
+        y: 80
+        width: 8
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d415db879b9834240800000000000000
+      internalID: 4774811459630485837
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Pop Up Panel_154
+      rect:
+        serializedVersion: 2
+        x: 617
+        y: 89
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: dd124857bc4bbe3c0800000000000000
+      internalID: -4329167830843645475
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Pop Up Panel_155
+      rect:
+        serializedVersion: 2
+        x: 839
+        y: 83
+        width: 11
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7c29a5f1f8520de20800000000000000
+      internalID: 3373237417537082055
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Pop Up Panel_156
+      rect:
+        serializedVersion: 2
+        x: 905
+        y: 88
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2e5f57d4b1e7c3190800000000000000
+      internalID: -7981365783878568478
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Pop Up Panel_157
+      rect:
+        serializedVersion: 2
+        x: 948
+        y: 88
+        width: 7
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8f8bef3b640891870800000000000000
+      internalID: 8654089200124999928
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Pop Up Panel_158
+      rect:
+        serializedVersion: 2
+        x: 214
+        y: 74
+        width: 7
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e3838cd455eb6c510800000000000000
+      internalID: 1569150793771661374
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Pop Up Panel_159
+      rect:
+        serializedVersion: 2
+        x: 682
+        y: 82
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3e04b33262829b540800000000000000
+      internalID: 5024091003573453027
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Pop Up Panel_160
+      rect:
+        serializedVersion: 2
+        x: 1012
+        y: 71
+        width: 7
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8391382a66aaa0840800000000000000
+      internalID: 5191148878287804728
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Pop Up Panel_161
+      rect:
+        serializedVersion: 2
+        x: 664
+        y: 75
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 41419f30bfe2948c0800000000000000
+      internalID: -4014625937185762284
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Pop Up Panel_162
+      rect:
+        serializedVersion: 2
+        x: 923
+        y: 63
+        width: 15
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 532b4f768b9a113f0800000000000000
+      internalID: -931777038405815755
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Pop Up Panel_163
+      rect:
+        serializedVersion: 2
+        x: 1028
+        y: 69
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 57632dfee59849750800000000000000
+      internalID: 6310820018696369781
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Pop Up Panel_164
+      rect:
+        serializedVersion: 2
+        x: 297
+        y: 67
+        width: 9
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 51d6cef6492defbe0800000000000000
+      internalID: -1441483295737221867
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Pop Up Panel_165
+      rect:
+        serializedVersion: 2
+        x: 970
+        y: 62
+        width: 6
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1bd00a50aefeafb40800000000000000
+      internalID: 5474952085418020273
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Pop Up Panel_166
+      rect:
+        serializedVersion: 2
+        x: 659
+        y: 47
+        width: 8
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bd3737bc392db6740800000000000000
+      internalID: 5146438531416290267
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Pop Up Panel_167
+      rect:
+        serializedVersion: 2
+        x: 778
+        y: 57
+        width: 11
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a1ecdfe0856c45ee0800000000000000
+      internalID: -1273174713128071654
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Pop Up Panel_168
+      rect:
+        serializedVersion: 2
+        x: 1011
+        y: 39
+        width: 7
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b94c35d020e61cf30800000000000000
+      internalID: 4594074049987200155
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: New Pop Up Panel_169
+      rect:
+        serializedVersion: 2
+        x: 969
+        y: 23
+        width: 6
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fa59e63793fb343a0800000000000000
+      internalID: -6682287168617015889
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 5e97eb03825dee720800000000000000
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      New Pop Up Panel_0: -4668616608077958449
+      New Pop Up Panel_1: -6084191252098282385
+      New Pop Up Panel_10: 7798454784430639376
+      New Pop Up Panel_100: -7570573904195401263
+      New Pop Up Panel_101: -5358810757808446498
+      New Pop Up Panel_102: -7439214928980175806
+      New Pop Up Panel_103: -7377634179781424444
+      New Pop Up Panel_104: -2139241940812274719
+      New Pop Up Panel_105: -5058406029073871151
+      New Pop Up Panel_106: -8484111683776173333
+      New Pop Up Panel_107: 6860235879376881813
+      New Pop Up Panel_108: -5062655447169238009
+      New Pop Up Panel_109: 4561014985286556505
+      New Pop Up Panel_11: -8369863619952974543
+      New Pop Up Panel_110: 4426062795785426783
+      New Pop Up Panel_111: -7065249625835245172
+      New Pop Up Panel_112: -5048451915048901229
+      New Pop Up Panel_113: 8474685208606249167
+      New Pop Up Panel_114: 1386618888291632583
+      New Pop Up Panel_115: 1486153793554115553
+      New Pop Up Panel_116: -6618588834858034542
+      New Pop Up Panel_117: 7731127724582455996
+      New Pop Up Panel_118: 367734183635987366
+      New Pop Up Panel_119: -4214593196933899791
+      New Pop Up Panel_12: -3739862938906213670
+      New Pop Up Panel_120: -3488568745897356113
+      New Pop Up Panel_121: -2335577042960158784
+      New Pop Up Panel_122: -7837785252089937644
+      New Pop Up Panel_123: 6731869195503115848
+      New Pop Up Panel_124: -3732173927644649595
+      New Pop Up Panel_125: -4955053251909752061
+      New Pop Up Panel_126: -5635686160588717656
+      New Pop Up Panel_127: 5605714884052819872
+      New Pop Up Panel_128: -1321384634102436797
+      New Pop Up Panel_129: 1242125097421619766
+      New Pop Up Panel_13: 2478208630402594308
+      New Pop Up Panel_130: -5111285399692455183
+      New Pop Up Panel_131: -392027974602465819
+      New Pop Up Panel_132: -6947663839955354547
+      New Pop Up Panel_133: -3274285355981141643
+      New Pop Up Panel_134: -2161434105743776414
+      New Pop Up Panel_135: -1305847571007618986
+      New Pop Up Panel_136: -8541986243858467142
+      New Pop Up Panel_137: -2001065945356783562
+      New Pop Up Panel_138: -5568554256024125940
+      New Pop Up Panel_139: 7595657407823263035
+      New Pop Up Panel_14: 4718160593924055193
+      New Pop Up Panel_140: -70691582122625002
+      New Pop Up Panel_141: -2200363023036976852
+      New Pop Up Panel_142: 1009085069340737718
+      New Pop Up Panel_143: 6014235227740974550
+      New Pop Up Panel_144: 7932455640308308295
+      New Pop Up Panel_145: -4266478425681784270
+      New Pop Up Panel_146: 3886414306569366173
+      New Pop Up Panel_147: 1223163169180481566
+      New Pop Up Panel_148: -6873006789303219071
+      New Pop Up Panel_149: -7397485724428743713
+      New Pop Up Panel_15: -574040924954394058
+      New Pop Up Panel_150: 3582063832182008517
+      New Pop Up Panel_151: 7962571622788064210
+      New Pop Up Panel_152: 3337163683589178690
+      New Pop Up Panel_153: 4774811459630485837
+      New Pop Up Panel_154: -4329167830843645475
+      New Pop Up Panel_155: 3373237417537082055
+      New Pop Up Panel_156: -7981365783878568478
+      New Pop Up Panel_157: 8654089200124999928
+      New Pop Up Panel_158: 1569150793771661374
+      New Pop Up Panel_159: 5024091003573453027
+      New Pop Up Panel_16: -8587690903123244833
+      New Pop Up Panel_160: 5191148878287804728
+      New Pop Up Panel_161: -4014625937185762284
+      New Pop Up Panel_162: -931777038405815755
+      New Pop Up Panel_163: 6310820018696369781
+      New Pop Up Panel_164: -1441483295737221867
+      New Pop Up Panel_165: 5474952085418020273
+      New Pop Up Panel_166: 5146438531416290267
+      New Pop Up Panel_167: -1273174713128071654
+      New Pop Up Panel_168: 4594074049987200155
+      New Pop Up Panel_169: -6682287168617015889
+      New Pop Up Panel_17: -2239229805473040159
+      New Pop Up Panel_18: 7487218122401897239
+      New Pop Up Panel_19: 2037443106800027053
+      New Pop Up Panel_2: 3925012379901590150
+      New Pop Up Panel_20: 1655448707283236406
+      New Pop Up Panel_21: -456484074757810498
+      New Pop Up Panel_22: -5401968712540224014
+      New Pop Up Panel_23: -2845780152915279634
+      New Pop Up Panel_24: 6823597720605908625
+      New Pop Up Panel_25: 6895133036369210642
+      New Pop Up Panel_26: 1793746341485374052
+      New Pop Up Panel_27: -6374191529809015824
+      New Pop Up Panel_28: -8523681523097776609
+      New Pop Up Panel_29: -7915852929980842320
+      New Pop Up Panel_3: -9110658545964271308
+      New Pop Up Panel_30: -3685570110115415065
+      New Pop Up Panel_31: 3924846389463665658
+      New Pop Up Panel_32: -3962907315958048208
+      New Pop Up Panel_33: 3343656284940677427
+      New Pop Up Panel_34: 6928660542588837075
+      New Pop Up Panel_35: -307842299512491297
+      New Pop Up Panel_36: 354295631997891431
+      New Pop Up Panel_37: -6218209482244966864
+      New Pop Up Panel_38: -2006867669699102438
+      New Pop Up Panel_39: 335563106948560853
+      New Pop Up Panel_4: -8570514563980420434
+      New Pop Up Panel_40: -6573070744939067644
+      New Pop Up Panel_41: -2630076384021851868
+      New Pop Up Panel_42: 7320781331471402465
+      New Pop Up Panel_43: 6681398770277631541
+      New Pop Up Panel_44: -8301779700593473787
+      New Pop Up Panel_45: 5007208076893624418
+      New Pop Up Panel_46: 2180048257161426698
+      New Pop Up Panel_47: -2926971636941243022
+      New Pop Up Panel_48: 4739169620975854796
+      New Pop Up Panel_49: -2349458873115804804
+      New Pop Up Panel_5: 2125231072824334999
+      New Pop Up Panel_50: 7628191838068439481
+      New Pop Up Panel_51: -8272442822767113117
+      New Pop Up Panel_52: 3133782461226484357
+      New Pop Up Panel_53: -6002115612126596944
+      New Pop Up Panel_54: 3614125676020603438
+      New Pop Up Panel_55: 8430439125633154040
+      New Pop Up Panel_56: -7188554899463890391
+      New Pop Up Panel_57: 6321917255682582294
+      New Pop Up Panel_58: -8167811525831931358
+      New Pop Up Panel_59: 3107254875376197286
+      New Pop Up Panel_6: 2202065195454446709
+      New Pop Up Panel_60: 5316749379453335046
+      New Pop Up Panel_61: 7208017670734340531
+      New Pop Up Panel_62: -7339037541306069247
+      New Pop Up Panel_63: 8195089219945886791
+      New Pop Up Panel_64: 4283088860464920306
+      New Pop Up Panel_65: -1736147411663148042
+      New Pop Up Panel_66: -6880745818111496146
+      New Pop Up Panel_67: -6951584554415577427
+      New Pop Up Panel_68: 4918237588386192988
+      New Pop Up Panel_69: 7806293672229973959
+      New Pop Up Panel_7: -2889816571129953530
+      New Pop Up Panel_70: 1094339996297148584
+      New Pop Up Panel_71: -6456746625952383900
+      New Pop Up Panel_72: -7596414294420454037
+      New Pop Up Panel_73: 8819157880512480636
+      New Pop Up Panel_74: -5807202235984000423
+      New Pop Up Panel_75: -6719276452769003704
+      New Pop Up Panel_76: 631034192909916552
+      New Pop Up Panel_77: 3017380217628599148
+      New Pop Up Panel_78: -7997915500302676680
+      New Pop Up Panel_79: -3504123373882824217
+      New Pop Up Panel_8: -4748876746905702444
+      New Pop Up Panel_80: -309689965158664092
+      New Pop Up Panel_81: 233382869614660424
+      New Pop Up Panel_82: 4228362631430136833
+      New Pop Up Panel_83: -5451735303069826289
+      New Pop Up Panel_84: 5191745881384701713
+      New Pop Up Panel_85: 8450571898291182462
+      New Pop Up Panel_86: -2602558799032258454
+      New Pop Up Panel_87: -7743899148411384551
+      New Pop Up Panel_88: 119164011110481394
+      New Pop Up Panel_89: 8744432148199376844
+      New Pop Up Panel_9: 3659735884491454496
+      New Pop Up Panel_90: -6055828185778642057
+      New Pop Up Panel_91: -8712386408367157094
+      New Pop Up Panel_92: 7423924976038749184
+      New Pop Up Panel_93: -7796875330008244441
+      New Pop Up Panel_94: -2265318301634009400
+      New Pop Up Panel_95: 4878915896430309587
+      New Pop Up Panel_96: -4723800499774380889
+      New Pop Up Panel_97: -2579296869890846508
+      New Pop Up Panel_98: 7347446536848281891
+      New Pop Up Panel_99: 6837861956888582792
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
