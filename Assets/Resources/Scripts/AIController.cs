@@ -110,16 +110,32 @@ public class AIController : PlayerController
 
     private void ApplyEffectsToAIHandIfNeeded()
     {
-        foreach (CardHandler ch in pm.cardHandlers)
+        if (pm == null || pm.cardHandlers == null) return;
+
+        // Take a snapshot so effects that modify the hand won't break enumeration
+        var snapshot = pm.cardHandlers.ToArray();
+
+        foreach (var ch in snapshot)
         {
-            CardUI cardUI = ch.GetComponent<CardUI>();
+            if (ch == null) continue;
+
+            var cardUI = ch.GetComponent<CardUI>();
             if (cardUI == null || cardUI.effectsAppliedInHand) continue;
 
-            if (ch.cardData.effects != null)
+            var effects = ch.cardData != null ? ch.cardData.effects : null;
+            if (effects != null)
             {
-                foreach (var effect in ch.cardData.effects)
+                // also snapshot effects in case an effect list is modified during application
+                foreach (var effect in effects.ToArray())
                 {
-                    effect?.ApplyEffect(cardUI);
+                    try
+                    {
+                        effect?.ApplyEffect(cardUI);
+                    }
+                    catch (System.Exception ex)
+                    {
+                        Debug.LogError($"[AIController] Effect apply failed on {ch.cardData?.cardName}: {ex}");
+                    }
                 }
             }
 
@@ -196,33 +212,42 @@ public class AIController : PlayerController
 
         // Wait a short moment for the player to notice the image.
         yield return new WaitForSeconds(0.5f);
+
+        // Effects may modify the hand; apply them before we take our snapshot.
         ApplyEffectsToAIHandIfNeeded();
 
         CardSO[,] grid = GridManager.instance.GetGrid();
 
-        // Scan AI hand for a playable creature and a playable spell.
+        // ── Scan AI hand using a SNAPSHOT (prevents InvalidOperationException) ──
         CardHandler playableCreature = null;
         CardHandler playableSpell = null;
-        foreach (CardHandler ch in pm.cardHandlers)
+
+        var handSnapshot = (pm != null && pm.cardHandlers != null)
+            ? pm.cardHandlers.ToArray()
+            : System.Array.Empty<CardHandler>();
+
+        foreach (var ch in handSnapshot)
         {
+            if (ch == null || ch.cardData == null) continue;
+
             if (ch.cardData.category == CardSO.CardCategory.Creature &&
                 !TurnManager.instance.creaturePlayed && IsCardPlayable(ch.cardData))
             {
                 playableCreature = ch;
             }
+
             if (ch.cardData.category == CardSO.CardCategory.Spell &&
                 !TurnManager.instance.spellPlayed && IsCardPlayable(ch.cardData))
             {
                 bool isDamiano = ch.cardData.effects != null &&
-                    ch.cardData.effects.Exists(e => e != null && e.GetType().Name == "X1DamianoEffect");
+                                 ch.cardData.effects.Exists(e => e != null && e.GetType().Name == "X1DamianoEffect");
 
                 if (isDamiano)
                 {
                     bool anyOnField = false;
                     for (int x = 0; x < grid.GetLength(0) && !anyOnField; x++)
                         for (int y = 0; y < grid.GetLength(1) && !anyOnField; y++)
-                            if (grid[x, y] != null)
-                                anyOnField = true;
+                            if (grid[x, y] != null) anyOnField = true;
 
                     if (!anyOnField)
                         continue;
@@ -270,11 +295,13 @@ public class AIController : PlayerController
 
         yield return new WaitForSeconds(Random.Range(1f, 2f));
 
-        if (aiThinkingInstance != null)
-            Destroy(aiThinkingInstance);
+        // Clean up thinking prefab safely
+        if (wiggleCoroutine != null) StopCoroutine(wiggleCoroutine);
+        if (aiThinkingInstance != null) Destroy(aiThinkingInstance);
 
         EndTurn();
     }
+
 
 
     // Returns the best aggressive move for the AI given the current grid and the candidate card.
