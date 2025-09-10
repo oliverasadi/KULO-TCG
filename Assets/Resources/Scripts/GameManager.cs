@@ -5,19 +5,17 @@ using UnityEngine.UI;     // For Button, Image
 using UnityEngine.EventSystems; // For detecting UI clicks
 using System.Collections;
 using System.Collections.Generic;
+using DG.Tweening; // DOTween
 
 public class GameManager : MonoBehaviour
 {
     public static GameManager instance;
-
-
 
     private bool gameActive = true;
     private int roundsWonP1 = 0;
     private int roundsWonP2 = 0;
     public int totalRoundsToWin = 3;
     public int playerCardsPlayedThisGame = 0;  // tracks how many cards the player has played this game
-
 
     // Track unique wins
     public bool[] rowUsed = new bool[3];
@@ -26,7 +24,6 @@ public class GameManager : MonoBehaviour
 
     public PostGameXPPanel xpPanel; // Assign in Inspector
     public PlayerProfile profile;   // Optional direct access if not via ProfileManager
-
 
     [Header("UI Elements")]
     public TextMeshProUGUI roundsWonTextP1;
@@ -54,6 +51,9 @@ public class GameManager : MonoBehaviour
 
     // Coroutine handle for pulsing
     private Coroutine pulseRoutine;
+
+    // DOTween sequence handle for the win message (so we can kill/replace cleanly)
+    private Sequence winMsgSeq;
 
     void Awake()
     {
@@ -91,7 +91,6 @@ public class GameManager : MonoBehaviour
 
         StartGame();
     }
-
 
     void Update()
     {
@@ -140,11 +139,11 @@ public class GameManager : MonoBehaviour
             string deck = ProfileManager.instance.currentProfile.lastDeckPlayed;
 
             Dictionary<string, string> signatureCards = new Dictionary<string, string>
-        {
-            { "Mr. Wax", "Ultimate Red Seal" },
-            { "Nekomata", "Cat Trifecta" },
-            { "Xu Taishi", "Bonsai Beast Lvl 3" }
-        };
+            {
+                { "Mr. Wax", "Ultimate Red Seal" },
+                { "Nekomata", "Cat Trifecta" },
+                { "Xu Taishi", "Bonsai Beast Lvl 3" }
+            };
 
             if (signatureCards.ContainsKey(deck))
             {
@@ -158,16 +157,13 @@ public class GameManager : MonoBehaviour
         }
     }
 
-
-
-
     public void EndTurn()
     {
         if (!gameActive) return;
         TurnManager.instance.EndTurn();
     }
 
-  public GameObject postGamePopupPrefab; // Assign in Inspector (the popup UI with Restart, Home, etc.)
+    public GameObject postGamePopupPrefab; // Assign in Inspector (the popup UI with Restart, Home, etc.)
 
     public void CheckForWin()
     {
@@ -210,12 +206,8 @@ public class GameManager : MonoBehaviour
             UpdateRoundsUI();
         }
 
-        // 5) Show round-win text
-        if (gameStatusText != null)
-        {
-            gameStatusText.gameObject.SetActive(true);
-            gameStatusText.text = $"Player {winner} wins {newLines} line(s)!";
-        }
+        // 5) Show round-win text (animated)
+        ShowWinMessageAnimated($"Player {winner} wins {newLines} line(s)!", false);
 
         // 6) Game over?
         if (roundsWonP1 >= totalRoundsToWin || roundsWonP2 >= totalRoundsToWin)
@@ -223,11 +215,8 @@ public class GameManager : MonoBehaviour
             if (audioSource != null && gameWinClip != null)
                 audioSource.PlayOneShot(gameWinClip);
 
-            if (gameStatusText != null)
-            {
-                gameStatusText.gameObject.SetActive(true);
-                gameStatusText.text = $"Player {winner} Wins Game";
-            }
+            // Final win message (stay in center — no slide-out)
+            ShowWinMessageAnimated($"Player {winner} Wins Game", true);
 
             // ✅ Guard XP logic to avoid crash
             if (XPTracker.instance != null)
@@ -282,14 +271,9 @@ public class GameManager : MonoBehaviour
         }
         else
         {
-            Invoke("ClearWinAnnouncement", 2f);
+            // We let the animation handle hiding on its own (no Invoke/Clear needed).
         }
     }
-
-
-
-
-
 
     private void ShowPostGamePopup()
     {
@@ -304,9 +288,6 @@ public class GameManager : MonoBehaviour
         }
     }
 
-
-
-
     private void AddPlayerWin(int index, Axis axis)
     {
         Vector2Int[] cells = axis switch
@@ -316,7 +297,7 @@ public class GameManager : MonoBehaviour
             Axis.MainDiag => new[] { new Vector2Int(0, 0), new Vector2Int(1, 1), new Vector2Int(2, 2) },
             _ => new[] { new Vector2Int(0, 2), new Vector2Int(1, 1), new Vector2Int(2, 0) },
         };
-         
+
         playerRoundWins.Add(new RoundWinInfo { cells = cells });
 
         // Apply persistent green highlight
@@ -436,4 +417,79 @@ public class GameManager : MonoBehaviour
     }
 
     private enum Axis { Row, Col, MainDiag, AntiDiag }
+
+    // ─────────────────────────────────────────────────────────────────────
+    // DOTween animation for win message (right → center → left) + POP
+    // If isFinal == true: it flies in and stays centered (no fly-out).
+    // ─────────────────────────────────────────────────────────────────────
+    public void ShowWinMessageAnimated(
+        string message,
+        bool isFinal,
+        float inDuration = 0.5f,
+        float holdDuration = 1f,
+        float outDuration = 0.5f)
+    {
+        if (gameStatusText == null) return;
+
+        var rect = gameStatusText.rectTransform;
+
+        // --- Force full-screen, center anchored rect so it can't clip ---
+        rect.anchorMin = Vector2.zero;       // (0,0)
+        rect.anchorMax = Vector2.one;        // (1,1)
+        rect.pivot = new Vector2(0.5f, 0.5f);
+        rect.sizeDelta = Vector2.zero;       // fill parent
+        rect.anchoredPosition = Vector2.zero;
+
+        // --- TMP sizing so it doesn't get gigantic/cropped ---
+        gameStatusText.enableAutoSizing = true;
+        gameStatusText.fontSizeMin = 36;   // tweak to taste
+        gameStatusText.fontSizeMax = 96;   // <- cap so it won’t be huge
+        gameStatusText.enableWordWrapping = false;
+        gameStatusText.overflowMode = TMPro.TextOverflowModes.Overflow;
+        gameStatusText.alignment = TextAlignmentOptions.Center;
+        gameStatusText.margin = new Vector4(40, 0, 40, 0); // left/right breathing room
+
+        // Resolve canvas width (prefer parent rect over Screen.width)
+        float canvasWidth = Screen.width;
+        if (rect.parent is RectTransform parentRect && parentRect.rect.width > 0f)
+            canvasWidth = parentRect.rect.width;
+
+        Vector2 startPos = new Vector2(canvasWidth * 1.1f, 0f);   // off-screen right
+        Vector2 centerPos = Vector2.zero;                         // center
+        Vector2 endPos = new Vector2(-canvasWidth * 1.1f, 0f);  // off-screen left
+
+        // Kill any old sequence
+        if (winMsgSeq != null && winMsgSeq.IsActive())
+            winMsgSeq.Kill();
+
+        // Initial state
+        rect.anchoredPosition = startPos;
+        rect.localScale = Vector3.one;
+        gameStatusText.color = Color.white; // reset after any previous color tween
+        gameStatusText.text = message;
+        gameStatusText.gameObject.SetActive(true);
+
+        // Build sequence: slide in -> pop -> gold flash -> hold -> (slide out)
+        winMsgSeq = DOTween.Sequence()
+            .Append(rect.DOAnchorPos(centerPos, inDuration).SetEase(Ease.OutCubic))
+            .Append(rect.DOPunchScale(Vector3.one * 0.18f, 0.22f, vibrato: 6, elasticity: 0.75f))
+            .Join(gameStatusText.DOColor(new Color(1f, 0.92f, 0.2f), 0.12f))  // gold flash
+            .Append(gameStatusText.DOColor(Color.white, 0.25f))
+            .AppendInterval(holdDuration);
+
+        if (!isFinal)
+        {
+            winMsgSeq.Append(rect.DOAnchorPos(endPos, outDuration).SetEase(Ease.InCubic))
+                     .OnComplete(() => gameStatusText.gameObject.SetActive(false));
+        }
+        else
+        {
+            // gentle idle pulse if it's the final win
+            winMsgSeq.Append(rect.DOScale(1.05f, 0.6f).SetLoops(-1, LoopType.Yoyo));
+        }
+
+        // Optional: play pop SFX right as it lands
+        if (audioSource != null && roundWinClip != null)
+            winMsgSeq.Insert(inDuration, DOVirtual.DelayedCall(0f, () => audioSource.PlayOneShot(roundWinClip)));
+    }
 }
