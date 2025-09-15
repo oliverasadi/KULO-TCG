@@ -12,7 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e4f6397d03f57964ab98848b4ed1b9da, type: 3}
   m_Name: HeartMaskBoyLvl3_Buff
   m_EditorClassIdentifier: 
+  Continuous: 1
   includeHand: 1
+  recalcInterval: 0.15
   targetOwner: 0
   filterMode: 0
   filterValue: 
