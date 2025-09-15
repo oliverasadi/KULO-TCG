@@ -267,6 +267,7 @@ public class TurnManager : MonoBehaviour
     // The new public method to safely invoke the event
     public void FireOnCardPlayed(CardSO occupant)
     {
+        Debug.Log($"[OnCardPlayed] Event fired with '{occupant.cardName}'");
         _onCardPlayed?.Invoke(occupant);
     }
 

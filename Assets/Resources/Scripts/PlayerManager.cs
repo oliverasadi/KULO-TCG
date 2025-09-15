@@ -9,7 +9,7 @@ public class PlayerManager : MonoBehaviour
     public PlayerTypes playerType;
     public int playerNumber;
 
-    // 🔔 New event for summon effects to listen for
+    // 🔔 Event for any listeners that care specifically about draws (optional for now)
     public event Action OnCardDrawn;
 
     // Static field to persist selected deck across scene reloads
@@ -120,20 +120,53 @@ public class PlayerManager : MonoBehaviour
         {
             CardSO drawnCard = currentDeck[0];
             currentDeck.RemoveAt(0);
+
+            Debug.Log($"[Draw] → Drew '{drawnCard.cardName}' (base power {drawnCard.power})");
+
             SpawnCard(drawnCard);
 
             if (zones != null)
                 zones.UpdateDeckCount(currentDeck.Count);
 
-            // 🔔 Fire draw event after a card is successfully drawn
+            // Notify listeners that a card entered hand (auras/synergies)
+            TurnManager.instance?.FireOnCardPlayed(drawnCard);
+
+            // (Optional) local draw hook
             OnCardDrawn?.Invoke();
-            Debug.Log("[PlayerManager] OnCardDrawn event fired.");
+
+            // Grab the CardUI we just spawned (last in cardHandlers)
+            CardHandler h = (cardHandlers != null && cardHandlers.Count > 0) ? cardHandlers[cardHandlers.Count - 1] : null;
+            CardUI ui = h ? h.GetComponent<CardUI>() : null;
+
+            if (ui != null)
+            {
+                int effNow = ui.CalculateEffectivePower();
+                Debug.Log($"[Draw]   '{ui.cardData.cardName}' in hand → effective NOW: {effNow} (tempBoost={ui.temporaryBoost})");
+
+                // Check again next frame to catch aura updates
+                StartCoroutine(LogDrawAfterFrame(ui));
+            }
+            else
+            {
+                Debug.LogWarning("[Draw] Could not find CardUI for the drawn card immediately after SpawnCard.");
+            }
         }
         else
         {
             Debug.LogWarning("⚠️ Deck is empty! No more cards to draw.");
         }
     }
+
+    private System.Collections.IEnumerator LogDrawAfterFrame(CardUI ui)
+    {
+        yield return null; // wait one frame for any aura recalc
+        if (ui != null)
+        {
+            int eff = ui.CalculateEffectivePower();
+            Debug.Log($"[Draw+Aura] '{ui.cardData.cardName}' effective AFTER 1 frame: {eff} (tempBoost={ui.temporaryBoost})");
+        }
+    }
+
 
     public void SpawnCard(CardSO cardData)
     {
