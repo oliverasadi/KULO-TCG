@@ -22,6 +22,7 @@ MonoBehaviour:
   cardNumber: OGN-28
   creatureType: Wax
   baseOrEvo: 0
+  summonOptionsAfterOpponentTurn: []
   extraDetails: 'DOB: Unknown, GPS: Mystical Peaks, Weight: 5.2kg, Height: 2.25m.'
   inlineEffects:
   - effectType: 5
@@ -30,9 +31,9 @@ MonoBehaviour:
     requiredCreatureTypes: []
     maxTargets: 0
     replacementCardName: Heart Mask Boy Lvl 3
-    turnDelay: 1
+    turnDelay: -999
     blockAdditionalPlays: 1
-    promptPrefab: {fileID: 8867524506416461353, guid: 70388e56cbed5dc479ad555bd0ee7ee8, type: 3}
+    promptPrefab: {fileID: 7928040033407935227, guid: df2f2af95044fe34db4a767ff6a79493, type: 3}
     powerChange: 0
     powerLossPerTurn: 0
     useCountMode: 0
