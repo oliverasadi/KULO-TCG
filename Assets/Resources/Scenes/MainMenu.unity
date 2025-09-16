@@ -11876,6 +11876,10 @@ PrefabInstance:
     m_TransformParent: {fileID: 595495902}
     m_Modifications:
     - target: {fileID: 2402604041314552317, guid: 527f1f6540f86644585f4b31e1521612, type: 3}
+      propertyPath: xpResultsMusic
+      value: 
+      objectReference: {fileID: 8300000, guid: e58c913b7a86a6b45933a22af9f9db8c, type: 3}
+    - target: {fileID: 2402604041314552317, guid: 527f1f6540f86644585f4b31e1521612, type: 3}
       propertyPath: buttonHoverSound
       value: 
       objectReference: {fileID: 8300000, guid: 6631aabfb27852e4d8cdda1d4f4d1490, type: 3}

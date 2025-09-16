@@ -913,7 +913,69 @@ if (grid[x, y] != null)
     }
 
 
+    // Arm click selection only for the provided cells.
+    // Assumes the visuals (highlights) were already set by the caller.
+    public void EnableClickSelectionForCells(List<Vector2Int> cells, System.Action<int, int> cellSelectedCallback)
+    {
+        if (cells == null || cells.Count == 0) return;
 
+        foreach (var c in cells)
+        {
+            GameObject cellObj = GameObject.Find($"GridCell_{c.x}_{c.y}");
+            if (cellObj == null) continue;
+
+            // Track for later cleanup in DisableCellSelectionMode()
+            if (!cellSelectionCells.Contains(cellObj))
+                cellSelectionCells.Add(cellObj);
+
+            // Mark as “selection” so DisableCellSelectionMode knows to restore/reset after
+            var highlighter = cellObj.GetComponent<GridCellHighlighter>();
+            if (highlighter != null)
+                highlighter.isSacrificeHighlight = true;
+
+            // Ensure it can receive clicks
+            var btn = cellObj.GetComponent<UnityEngine.UI.Button>() ?? cellObj.AddComponent<UnityEngine.UI.Button>();
+            btn.onClick.RemoveAllListeners();
+            int sx = c.x, sy = c.y;
+            btn.onClick.AddListener(() =>
+            {
+                DisableCellSelectionMode();          // removes listeners + restores highlights
+                cellSelectedCallback?.Invoke(sx, sy);
+            });
+            btn.enabled = true;
+        }
+
+        // Spawn the same cancel button used by the other selection flow
+        // (we reuse your existing Cancel logic & placement)
+        if (cellSelectionCancelButtonPrefab != null)
+        {
+            GameObject overlay = GameObject.Find("OverlayCanvas");
+            if (overlay != null)
+            {
+                cellSelectionCancelButtonInstance = Instantiate(cellSelectionCancelButtonPrefab, overlay.transform);
+                var rt = cellSelectionCancelButtonInstance.GetComponent<RectTransform>();
+                if (rt != null)
+                {
+                    rt.anchorMin = rt.anchorMax = rt.pivot = new Vector2(1f, 1f);
+                    rt.anchoredPosition = new Vector2(-300f, -300f);
+                }
+                var cancelBtn = cellSelectionCancelButtonInstance.GetComponent<UnityEngine.UI.Button>();
+                if (cancelBtn != null)
+                {
+                    cancelBtn.onClick.RemoveAllListeners();
+                    cancelBtn.onClick.AddListener(() => { DisableCellSelectionMode(); });
+                }
+            }
+            else
+            {
+                Debug.LogWarning("EnableClickSelectionForCells: 'OverlayCanvas' not found.");
+            }
+        }
+        else
+        {
+            Debug.LogWarning("EnableClickSelectionForCells: cancel prefab not assigned.");
+        }
+    }
 
 
 

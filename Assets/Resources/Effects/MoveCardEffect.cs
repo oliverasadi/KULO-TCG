@@ -56,6 +56,7 @@ public class MoveCardEffect : CardEffect
 
         int local = TurnManager.instance.localPlayerNumber;
 
+        // ===== Any-Destination (empty cells anywhere) =====
         if (interactiveAnyDestination)
         {
             if (ui.cardData.cardName != allowedName1 && ui.cardData.cardName != allowedName2)
@@ -75,18 +76,20 @@ public class MoveCardEffect : CardEffect
                     }
             if (empties.Count == 0) return;
 
-            GridManager.instance.EnableCellSelectionMode((sx, sy) =>
+            // <<< NEW: arm clicks for exactly these cells >>>
+            GridManager.instance.EnableClickSelectionForCells(empties, (sx, sy) =>
             {
                 var dest = new Vector2Int(sx, sy);
                 if (!empties.Contains(dest)) return;
 
-                ResetCellHighlight(fx, fy); // remove old highlight
+                ResetCellHighlight(fx, fy);
                 GridManager.instance.MoveCardOnBoard(fx, fy, sx, sy, go);
-                ClearHighlights(empties);   // remove all yellow highlights
+                ClearHighlights(empties);
             });
             return;
         }
 
+        // ===== Relative-to-Opponent (one space above/below an opponent card) =====
         if (interactiveRelativeToOpponent)
         {
             if (mustBeYours && handle.cardOwner.playerNumber != local)
@@ -110,7 +113,8 @@ public class MoveCardEffect : CardEffect
                            ?.GetComponent<GridCellHighlighter>()
                            ?.SetPersistentHighlight(highlightColor);
 
-            GridManager.instance.EnableCellSelectionMode((sx, sy) =>
+            // <<< NEW: arm clicks for exactly these cells >>>
+            GridManager.instance.EnableClickSelectionForCells(valids, (sx, sy) =>
             {
                 var chosen = new Vector2Int(sx, sy);
                 if (!valids.Contains(chosen)) return;
@@ -122,6 +126,7 @@ public class MoveCardEffect : CardEffect
             return;
         }
 
+        // ===== Static offsets mode =====
         bool ownerOK = filterMode switch
         {
             FilterMode.YoursOnly => handle.cardOwner.playerNumber == local,
