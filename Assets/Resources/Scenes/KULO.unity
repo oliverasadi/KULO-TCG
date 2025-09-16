@@ -617,6 +617,10 @@ MonoBehaviour:
   playerManager2: {fileID: 18294247}
   localPlayerNumber: 1
   turnSplashPrefab: {fileID: 5748148297602084476, guid: 2a84139bdbd6a064d9b40b4bb1f92717, type: 3}
+  yourTurnStartSFX: {fileID: 8300000, guid: 8e198f9debb52e349b8e4736008b38a4, type: 3}
+  yourTurnEndSFX: {fileID: 8300000, guid: 7353fea2f80264a4ba8e9dc18621fda1, type: 3}
+  cpuTurnStartSFX: {fileID: 8300000, guid: 8e198f9debb52e349b8e4736008b38a4, type: 3}
+  cpuTurnEndSFX: {fileID: 8300000, guid: 7353fea2f80264a4ba8e9dc18621fda1, type: 3}
 --- !u!1 &187639293
 GameObject:
   m_ObjectHideFlags: 0

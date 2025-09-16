@@ -85,6 +85,10 @@ public class TurnManager : MonoBehaviour
     // Turn Splash reference
     [Header("Turn Splash")]
     public GameObject turnSplashPrefab;
+    public AudioClip yourTurnStartSFX;
+    public AudioClip yourTurnEndSFX;
+    public AudioClip cpuTurnStartSFX;
+    public AudioClip cpuTurnEndSFX;
 
     void Awake()
     {
@@ -374,6 +378,19 @@ public class TurnManager : MonoBehaviour
     {
         Debug.Log($"[TurnManager] ShowTurnSplash with message: '{message}'");
 
+        // -- SFX: make sure AudioManager exists, then pick the right clip
+        AudioManager.EnsureExists();  // spawns it from Resources if needed
+
+        AudioClip sfx = null;
+        if (message == "Your Turn Start") sfx = yourTurnStartSFX;
+        else if (message == "Your Turn End") sfx = yourTurnEndSFX;
+        else if (message == "CPU Turn Start") sfx = cpuTurnStartSFX;
+        else if (message == "CPU Turn End") sfx = cpuTurnEndSFX;
+
+        if (AudioManager.instance != null && sfx != null)
+            AudioManager.instance.PlaySFX(sfx);
+
+        // -- Existing UI spawn
         if (turnSplashPrefab == null)
         {
             Debug.LogWarning("No turnSplashPrefab assigned in TurnManager!");
@@ -389,13 +406,7 @@ public class TurnManager : MonoBehaviour
 
         GameObject splashObj = Instantiate(turnSplashPrefab, overlayCanvas.transform);
         TurnSplashUI splashUI = splashObj.GetComponent<TurnSplashUI>();
-        if (splashUI != null)
-        {
-            splashUI.Setup(message);
-        }
-        else
-        {
-            Debug.LogWarning("TurnSplashPrefab is missing a TurnSplashUI component!");
-        }
+        if (splashUI != null) splashUI.Setup(message);
+        else Debug.LogWarning("TurnSplashPrefab is missing a TurnSplashUI component!");
     }
 }
