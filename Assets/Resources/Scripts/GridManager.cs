@@ -1528,65 +1528,77 @@ if (grid[x, y] != null)
 
     private void ShowInlineReplacementPrompt(CardUI sourceCardUI, int gridX, int gridY, CardEffectData inlineEffect)
     {
-        // Check if the card belongs to the local player.
+        // Must belong to local player
         CardHandler cardHandler = sourceCardUI.GetComponent<CardHandler>();
-        if (cardHandler == null)
-        {
-            Debug.LogError("[ShowInlineReplacementPrompt] CardHandler missing on cardUI.");
-            return;
-        }
+        if (cardHandler == null) { Debug.LogError("[ShowInlineReplacementPrompt] CardHandler missing."); return; }
         PlayerManager owner = cardHandler.cardOwner;
         if (owner == null || owner.playerNumber != TurnManager.instance.localPlayerNumber)
         {
-            Debug.Log("[ShowInlineReplacementPrompt] Not showing prompt because the card does not belong to the local player.");
+            Debug.Log("[ShowInlineReplacementPrompt] Not local player's card; skipping UI.");
             return;
         }
 
-        // Check that the inline effect has a prompt prefab assigned.
         if (inlineEffect.promptPrefab == null)
         {
-            Debug.LogError($"[ShowInlineReplacementPrompt] No promptPrefab assigned for card {sourceCardUI.cardData.cardName}");
+            Debug.LogError($"[ShowInlineReplacementPrompt] No promptPrefab on {sourceCardUI.cardData.cardName}");
             return;
         }
 
-        // Find the canvas named "OverlayCanvas" in the scene.
         GameObject overlayCanvas = GameObject.Find("OverlayCanvas");
-        if (overlayCanvas == null)
+        if (overlayCanvas == null) { Debug.LogError("[ShowInlineReplacementPrompt] OverlayCanvas not found!"); return; }
+
+        // Instantiate the prefab
+        GameObject panelInstance = Instantiate(inlineEffect.promptPrefab, overlayCanvas.transform);
+
+        // ── Case 1: SummonChoiceUI (Koi-style panel with card art)
+        var choiceUI = panelInstance.GetComponent<SummonChoiceUI>();
+        if (choiceUI != null)
         {
-            Debug.LogError("[ShowInlineReplacementPrompt] OverlayCanvas not found in the scene!");
+            string targetName = inlineEffect.replacementCardName;
+            CardSO replacement = DeckManager.instance.FindCardByName(targetName);
+            var options = new List<CardSO>();
+            if (replacement != null) options.Add(replacement);
+
+            string desc = $"Evolve {sourceCardUI.cardData.cardName} into {targetName}?";
+
+            choiceUI.Show(
+                options,
+                chosen =>
+                {
+                    if (chosen != null)
+                    {
+                        ExecuteReplacementInline(sourceCardUI, gridX, gridY);
+                    }
+                    else
+                    {
+                        Debug.Log($"[Inline Replacement] Cancelled for {sourceCardUI.cardData.cardName}");
+                    }
+                },
+                desc
+            );
             return;
         }
 
-        // Instantiate the prompt as a child of OverlayCanvas.
-        GameObject promptInstance = Instantiate(inlineEffect.promptPrefab, overlayCanvas.transform);
-        ReplaceEffectPrompt prompt = promptInstance.GetComponent<ReplaceEffectPrompt>();
+        // ── Case 2: fallback to text-only ReplaceEffectPrompt
+        var prompt = panelInstance.GetComponent<ReplaceEffectPrompt>();
         if (prompt == null)
         {
-            Debug.LogError("[ShowInlineReplacementPrompt] The prompt prefab is missing a ReplaceEffectPrompt component!");
-            Destroy(promptInstance);
+            Debug.LogError("[ShowInlineReplacementPrompt] Prefab has neither SummonChoiceUI nor ReplaceEffectPrompt!");
+            Destroy(panelInstance);
             return;
         }
 
-        // Initialize the prompt with the card's name and effect description.
         prompt.Initialize(sourceCardUI.cardData.cardName, sourceCardUI.cardData.effectDescription);
-
-        // Add a one-time listener to the prompt's OnResponse event.
-        prompt.OnResponse.AddListener((bool accepted) =>
+        prompt.OnResponse.AddListener(accepted =>
         {
-            // Remove all listeners and destroy the prompt immediately.
             prompt.OnResponse.RemoveAllListeners();
-            Destroy(promptInstance);
+            Destroy(panelInstance);
 
-            if (accepted)
-            {
-                ExecuteReplacementInline(sourceCardUI, gridX, gridY);
-            }
-            else
-            {
-                Debug.Log($"[Inline Replacement] Replacement declined for {sourceCardUI.cardData.cardName}");
-            }
+            if (accepted) ExecuteReplacementInline(sourceCardUI, gridX, gridY);
         });
     }
+
+
 
 
 
