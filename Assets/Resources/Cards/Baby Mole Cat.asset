@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: Baby Mole Cat
   m_EditorClassIdentifier: 
   cardName: Baby Mole Cat
+  requiresTargetCreature: 0
   category: 0
   power: 1400
   effectDescription: "If this card remains on the field after one of your opponent's
@@ -22,17 +23,26 @@ MonoBehaviour:
   cardNumber: OGN-18
   creatureType: Cat
   baseOrEvo: 0
+  summonOptionsAfterOpponentTurn: []
   extraDetails: 'DOB: 2024 GPS: Gulu Island Height: 2kg Height: 0.23m'
   inlineEffects:
   - effectType: 5
     cardsToDraw: 0
     requiredCreatureNames: []
+    requiredCreatureTypes: []
     maxTargets: 0
     replacementCardName: The Cat with the Mole
     turnDelay: 1
     blockAdditionalPlays: 1
-    promptPrefab: {fileID: 8867524506416461353, guid: 70388e56cbed5dc479ad555bd0ee7ee8, type: 3}
+    promptPrefab: {fileID: 7928040033407935227, guid: df2f2af95044fe34db4a767ff6a79493, type: 3}
     powerChange: 0
+    powerLossPerTurn: 0
+    useCountMode: 0
+    powerChangeAmount: 0
+    powerChangeType: 0
+    targetPositions: 
+    adjacencyOwnerToAffect: 2
+    searchOwner: 2
   effects: []
   requiresSacrifice: 0
   sacrificeRequirements: []
