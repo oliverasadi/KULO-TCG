@@ -1,10 +1,10 @@
-﻿// CharacterSelectManager.cs
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 using TMPro;
-using DG.Tweening; // ✅ Required for DOTween
+using DG.Tweening;
 
 public class CharacterSelectManager : MonoBehaviour
 {
@@ -15,18 +15,21 @@ public class CharacterSelectManager : MonoBehaviour
         public Sprite characterThumbnail;
         public Sprite fullArtImage;
         public string description;
+
+        // Plays on selection click (we play this BEFORE changing scenes)
         public AudioClip voiceLine;
+
         public DeckDataSO deck;
+
+        // If assigned → we route to Prologue scene
+        public PrologueSequence prologue;
     }
 
     [Header("Character List")]
     public List<CharacterData> characters = new List<CharacterData>();
 
-    [Header("Card Display Prefab")]
-    public GameObject characterCardPrefab;
-
-    [Header("Card Row Parent")]
-    public Transform cardRowParent;
+    [Header("Card Display Prefab")] public GameObject characterCardPrefab;
+    [Header("Card Row Parent")] public Transform cardRowParent;
 
     [Header("Full Art Display")]
     public Image fullArtImage;
@@ -35,18 +38,20 @@ public class CharacterSelectManager : MonoBehaviour
     [Header("UI Text & Button")]
     public TextMeshProUGUI nameText;
     public TextMeshProUGUI descriptionText;
-    public Button playButton;    // optional now
+    public Button playButton;
 
     [Header("Tween Offsets")]
     public float artOffscreenOffsetX = 500f;
     public float uiOffscreenOffsetX = 300f;
 
-    // runtime-captured positions
+    // timing for fade into Prologue
+    [Header("Transitions")]
+    public float fadeOutTime = 0.25f;
+    public float fadeInTime = 0.25f;
+
     private Vector2 artOnScreen, artOffScreen;
     private RectTransform nameRT, descRT, btnRT;
-    private Vector2 nameOn, nameOff;
-    private Vector2 descOn, descOff;
-    private Vector2 btnOn, btnOff;
+    private Vector2 nameOn, nameOff, descOn, descOff, btnOn, btnOff;
 
     private AudioSource _audio;
     private CharacterData selectedCharacter;
@@ -55,12 +60,10 @@ public class CharacterSelectManager : MonoBehaviour
     {
         AudioManager.EnsureExists();
 
-        // audio setup
         _audio = GetComponent<AudioSource>();
         if (_audio == null) _audio = gameObject.AddComponent<AudioSource>();
         _audio.playOnAwake = false;
 
-        // capture on/off positions
         if (fullArtImageRectTransform != null)
         {
             artOnScreen = fullArtImageRectTransform.anchoredPosition;
@@ -72,29 +75,13 @@ public class CharacterSelectManager : MonoBehaviour
         if (descriptionText != null) descRT = descriptionText.GetComponent<RectTransform>();
         if (playButton != null) btnRT = playButton.GetComponent<RectTransform>();
 
-        if (nameRT != null)
-        {
-            nameOn = nameRT.anchoredPosition;
-            nameOff = nameOn + Vector2.right * uiOffscreenOffsetX;
-            nameRT.anchoredPosition = nameOff;
-        }
-        if (descRT != null)
-        {
-            descOn = descRT.anchoredPosition;
-            descOff = descOn + Vector2.right * uiOffscreenOffsetX;
-            descRT.anchoredPosition = descOff;
-        }
-        if (btnRT != null)
-        {
-            btnOn = btnRT.anchoredPosition;
-            btnOff = btnOn + Vector2.right * uiOffscreenOffsetX;
-            btnRT.anchoredPosition = btnOff;
-        }
+        if (nameRT != null) { nameOn = nameRT.anchoredPosition; nameOff = nameOn + Vector2.right * uiOffscreenOffsetX; nameRT.anchoredPosition = nameOff; }
+        if (descRT != null) { descOn = descRT.anchoredPosition; descOff = descOn + Vector2.right * uiOffscreenOffsetX; descRT.anchoredPosition = descOff; }
+        if (btnRT != null) { btnOn = btnRT.anchoredPosition; btnOff = btnOn + Vector2.right * uiOffscreenOffsetX; btnRT.anchoredPosition = btnOff; }
     }
 
     void Start()
     {
-        // spawn all the character cards
         foreach (var data in characters)
         {
             var card = Instantiate(characterCardPrefab, cardRowParent);
@@ -102,57 +89,94 @@ public class CharacterSelectManager : MonoBehaviour
             cardUI.Setup(data, this);
         }
 
-        // animate the very first character straight in
         if (characters.Count > 0)
             ReplaceCharacter(characters[0]);
     }
 
-
     public void SelectCharacter(CharacterData data)
     {
         selectedCharacter = data;
-        if (fullArtImage != null) fullArtImage.sprite = data.fullArtImage;
-        if (nameText != null) nameText.text = data.characterName;
-        if (descriptionText != null) descriptionText.text = data.description;
+        if (fullArtImage) fullArtImage.sprite = data.fullArtImage;
+        if (nameText) nameText.text = data.characterName;
+        if (descriptionText) descriptionText.text = data.description;
 
-        // keep the Play Button wired in case you still use it
-        playButton.onClick.RemoveAllListeners();
-        playButton.onClick.AddListener(() =>
-            StartCoroutine(PlayThenLoad(data.voiceLine, data.deck))
-        );
+        if (playButton != null)
+        {
+            playButton.onClick.RemoveAllListeners();
+            playButton.onClick.AddListener(() => StartGame(data));
+        }
     }
 
-    /// <summary>
-    /// Called by the card click. Starts voice + scene load.
-    /// </summary>
+    /// Plays the prologue (if any) with a FADE, after playing the selection voice immediately.
     public void StartGame(CharacterData data)
     {
-        StartCoroutine(PlayThenLoad(data.voiceLine, data.deck));
+        if (data != null && data.prologue != null)
+        {
+            StartCoroutine(FadeToPrologue(data));
+        }
+        else
+        {
+            // No prologue → old flow
+            StartCoroutine(PlayThenLoad(data.voiceLine, data.deck));
+        }
+    }
+
+    private IEnumerator FadeToPrologue(CharacterData data)
+    {
+        // Play the selection voice right now
+        if (data.voiceLine != null)
+        {
+            _audio.Stop();
+            _audio.PlayOneShot(data.voiceLine);
+            yield return new WaitForSeconds(data.voiceLine.length);
+        }
+
+        // Pass context to Prologue (no after-voice; we already played it)
+        PrologueContext.Set(
+            data.prologue,
+            data.deck,
+            null,                      // voiceLineAfter = null (already played)
+            data.characterName
+        );
+
+        // Stop menu music (instance-safe)
+        StopMenuMusicSafe();
+
+        // Fade to Prologue scene
+        AutoFade.LoadScene("Prologue", fadeOutTime, fadeInTime, Color.black);
     }
 
     private IEnumerator PlayThenLoad(AudioClip clip, DeckDataSO deck)
     {
         PlayerManager.selectedCharacterDeck = deck;
 
-        // ✅ Set selected character name for XPResultsScene
         if (selectedCharacter != null)
             PlayerProfile.selectedCharacterName = selectedCharacter.characterName;
 
-        if (clip != null) _audio.PlayOneShot(clip);
-        yield return new WaitForSeconds(clip != null ? clip.length : 0f);
-        AutoFade.LoadScene("KULO", 0.3f, 0.3f, Color.black);
+        if (clip != null) { _audio.PlayOneShot(clip); yield return new WaitForSeconds(clip.length); }
+
+        AutoFade.LoadScene("KULO", fadeOutTime, fadeInTime, Color.black);
     }
 
+    private void StopMenuMusicSafe()
+    {
+        var am = FindObjectOfType<AudioManager>();
+        if (am == null) return;
+
+        // Replace with your real API if you have it (e.g., am.StopMusic();)
+        try { am.SendMessage("StopMusic", SendMessageOptions.DontRequireReceiver); } catch { }
+        try { am.SendMessage("StopAllMusic", SendMessageOptions.DontRequireReceiver); } catch { }
+        // Or by name:
+        // try { am.SendMessage("Stop", "CharacterSelectTheme", SendMessageOptions.DontRequireReceiver); } catch {}
+    }
 
     public void ReplaceCharacter(CharacterData data)
     {
-        // kill any running tweens
         fullArtImageRectTransform?.DOKill();
         nameRT?.DOKill();
         descRT?.DOKill();
         btnRT?.DOKill();
 
-        // sequence: slide out → swap → slide in
         var seq = DOTween.Sequence();
 
         seq.Append(fullArtImageRectTransform
@@ -168,11 +192,11 @@ public class CharacterSelectManager : MonoBehaviour
             nameText.text = data.characterName;
             descriptionText.text = data.description;
 
-            // re-wire Play button (optional)
-            playButton.onClick.RemoveAllListeners();
-            playButton.onClick.AddListener(() =>
-                StartCoroutine(PlayThenLoad(data.voiceLine, data.deck))
-            );
+            if (playButton != null)
+            {
+                playButton.onClick.RemoveAllListeners();
+                playButton.onClick.AddListener(() => StartGame(data));
+            }
         });
 
         seq.Append(fullArtImageRectTransform
