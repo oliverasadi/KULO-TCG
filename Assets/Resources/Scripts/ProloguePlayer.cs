@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Video;
@@ -8,7 +8,7 @@ using UnityEngine.Events;
 public class ProloguePlayer : MonoBehaviour
 {
     [Header("UI")]
-    public Image backgroundImage;        // stills
+    public Image backgroundImage;        // stills (kept enabled to avoid flicker)
     public RawImage backgroundVideo;     // videos (can be null if images-only)
     public TextMeshProUGUI subtitleText;
     public Image continueIcon;
@@ -21,10 +21,16 @@ public class ProloguePlayer : MonoBehaviour
     public float letterboxAnimTime = 0.25f;
 
     [Header("Slide Transitions")]
-    public float slideCutDip = 0.15f;       // black dip length between slides
+    public bool useSlideDip = false;        // ❗ default off to avoid black flashes
+    public float slideCutDip = 0.15f;       // black dip length between slides (if enabled)
     public float slideWhooshDelay = 0.02f;  // when to play the whoosh relative to dip
     public float kenBurnsScale = 1.06f;     // 1.00 -> 1.06 over time (stills only)
     public float kenBurnsDuration = 6f;     // long, non-blocking
+
+    [Header("Crossfade (optional)")]
+    public Image crossfadeImage;       // overlay image above backgroundImage
+    public CanvasGroup crossfadeGroup; // CanvasGroup on crossfadeImage
+    public float imageCrossfadeTime = 0.18f;
 
     [Header("Video (optional)")]
     public VideoPlayer videoPlayer;      // optional
@@ -61,8 +67,17 @@ public class ProloguePlayer : MonoBehaviour
     {
         // Initial vis
         if (continueIcon) continueIcon.gameObject.SetActive(false);
-        if (backgroundImage) { backgroundImage.gameObject.SetActive(false); backgroundImage.color = Color.white; }
-        if (backgroundVideo) { backgroundVideo.gameObject.SetActive(false); backgroundVideo.color = Color.white; }
+        if (backgroundImage)
+        {
+            backgroundImage.gameObject.SetActive(true);  // keep enabled to avoid 1-frame black
+            backgroundImage.color = Color.white;
+        }
+        if (backgroundVideo)
+        {
+            backgroundVideo.gameObject.SetActive(false);
+            backgroundVideo.color = Color.white;
+        }
+        if (crossfadeImage) crossfadeImage.gameObject.SetActive(false);
 
         // Start with canvas invisible, bars hidden
         if (canvasGroup) canvasGroup.alpha = 0f;
@@ -86,25 +101,25 @@ public class ProloguePlayer : MonoBehaviour
         {
             var slide = seq.slides[si];
 
-            // Hard dip to black for a punchy cut (Tekken-ish)
-            if (si > 0) // not before the very first slide
-            {
+            // Optional punchy dip (disabled by default)
+            if (useSlideDip && si > 0)
                 yield return StartCoroutine(DipBlack(slideCutDip, slideWhooshDelay));
-            }
 
             // ----- Visual (image OR video) -----
             bool hasVideo = (slide.video != null && videoPlayer && backgroundVideo);
 
             if (hasVideo)
             {
-                if (backgroundImage) backgroundImage.gameObject.SetActive(false);
-                backgroundVideo.gameObject.SetActive(true);
-
+                if (backgroundVideo && !backgroundVideo.gameObject.activeSelf)
+                    backgroundVideo.gameObject.SetActive(true);
                 if (videoTexture != null)
                 {
                     videoPlayer.targetTexture = videoTexture;
                     backgroundVideo.texture = videoTexture;
                 }
+
+                // hide still to ensure no flicker above video
+                if (backgroundImage) backgroundImage.color = Color.clear;
 
                 videoPlayer.clip = slide.video;
                 videoPlayer.isLooping = slide.loopVideo;
@@ -113,10 +128,15 @@ public class ProloguePlayer : MonoBehaviour
             }
             else if (slide.image != null && backgroundImage != null)
             {
-                if (backgroundVideo) backgroundVideo.gameObject.SetActive(false);
-                backgroundImage.gameObject.SetActive(true);
-                backgroundImage.sprite = slide.image;
-                backgroundImage.color = Color.white;
+                // stop video if we were playing one
+                if (backgroundVideo && backgroundVideo.gameObject.activeSelf)
+                {
+                    if (videoPlayer) videoPlayer.Stop();
+                    backgroundVideo.gameObject.SetActive(false);
+                }
+
+                // Crossfade to avoid any flash
+                yield return StartCoroutine(CrossfadeToSprite(slide.image));
 
                 // Ken Burns (non-blocking)
                 StartCoroutine(KenBurns(backgroundImage.rectTransform, kenBurnsScale, kenBurnsDuration));
@@ -182,7 +202,7 @@ public class ProloguePlayer : MonoBehaviour
             }
 
             // stop video when leaving slide
-            if (hasVideo) videoPlayer.Stop();
+            if (hasVideo && videoPlayer) videoPlayer.Stop();
 
             // global skip-all?
             if (Input.GetKey(skipAllKey))
@@ -203,12 +223,43 @@ public class ProloguePlayer : MonoBehaviour
         return Input.GetKeyDown(advanceKey) || (clickToAdvance && Input.GetMouseButtonDown(0));
     }
 
+    // Crossfade helper (safe if not wired)
+    private IEnumerator CrossfadeToSprite(Sprite s)
+    {
+        if (!backgroundImage) yield break;
+
+        // If no overlay set up, just swap sprite
+        if (!crossfadeImage || !crossfadeGroup)
+        {
+            backgroundImage.color = Color.white;
+            backgroundImage.sprite = s;
+            yield break;
+        }
+
+        // Put new sprite on overlay and fade it in
+        crossfadeImage.sprite = s;
+        crossfadeGroup.alpha = 0f;
+        crossfadeImage.gameObject.SetActive(true);
+
+        float t = 0f;
+        while (t < imageCrossfadeTime)
+        {
+            t += Time.deltaTime;
+            crossfadeGroup.alpha = Mathf.Clamp01(t / imageCrossfadeTime);
+            yield return null;
+        }
+
+        // Commit sprite to the real background and hide overlay
+        backgroundImage.sprite = s;
+        backgroundImage.color = Color.white;
+        crossfadeImage.gameObject.SetActive(false);
+    }
+
     // Fade in a whole sentence; any click/Space -> NEXT line immediately
     private IEnumerator ShowLineFade(string text)
     {
         if (!subtitleText) yield break;
 
-        // SFX on new line
         if (sfxSource && linePopSfx) sfxSource.PlayOneShot(linePopSfx);
 
         subtitleText.text = text;
@@ -225,22 +276,20 @@ public class ProloguePlayer : MonoBehaviour
         {
             if (AdvancePressed())
             {
-                _wantsAdvance = true; // request NEXT line, not just finish fade
+                _wantsAdvance = true; // request NEXT line
                 yield break;
             }
 
             t += Time.deltaTime;
-            float a = Mathf.Clamp01(t / lineFadeInDuration);
-            c.a = a;
+            c.a = Mathf.Clamp01(t / lineFadeInDuration);
             subtitleText.color = c;
             yield return null;
         }
 
-        // ensure fully visible
+        // ensure fully visible and guard tiny time
         c.a = 1f;
         subtitleText.color = c;
 
-        // Let it rest a hair unless the player clicks
         float guard = 0.12f;
         float g = 0f;
         while (g < guard)
@@ -293,12 +342,9 @@ public class ProloguePlayer : MonoBehaviour
 
         float half = Mathf.Max(0.01f, dipTime * 0.5f);
 
-        // whoosh slightly after dip begins
         if (sfxSource && slideWhooshSfx) StartCoroutine(DelayedWhoosh(whooshDelay));
 
-        // fade to black quickly
         yield return StartCoroutine(Fade(canvasGroup.alpha, 0f, half));
-        // and up again
         yield return StartCoroutine(Fade(0f, 1f, half));
     }
 
@@ -357,7 +403,10 @@ public class ProloguePlayer : MonoBehaviour
         // smooth volume approach
         while (!Mathf.Approximately(bedSource.volume, target))
         {
-            bedSource.volume = Mathf.MoveTowards(bedSource.volume, target, Time.deltaTime * (1f / Mathf.Max(0.0001f, 1f / bedDuckSpeed)));
+            bedSource.volume = Mathf.MoveTowards(
+                bedSource.volume, target,
+                Time.deltaTime * (1f / Mathf.Max(0.0001f, 1f / bedDuckSpeed))
+            );
             yield return null;
         }
         bedSource.volume = target;
