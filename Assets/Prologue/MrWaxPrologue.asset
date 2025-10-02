@@ -21,20 +21,14 @@ MonoBehaviour:
     loopVideo: 0
     lines:
     - text: "It began in silence\u2026 in a small, cluttered studio."
-      voice: {fileID: 0}
+      voice: {fileID: 8300000, guid: edda18e43dd574c4f9c8c7497e7b03f6, type: 3}
       postHold: 0
     - text: ' The boy sat across from his father, watching carefully as wax was shaped
         with steady hands.'
-      voice: {fileID: 0}
+      voice: {fileID: 8300000, guid: f7a7ff1b971e13c45965e7b1e0dccc79, type: 3}
       postHold: 0
     - text: "Animals, figures\u2026 nothing more than craft."
-      voice: {fileID: 0}
-      postHold: 0
-    - text: " But in the boy\u2019s eyes, it was everything."
-      voice: {fileID: 0}
-      postHold: 0
-    - text: " He admired his father deeply\u2026 and wished to become just like him."
-      voice: {fileID: 0}
+      voice: {fileID: 8300000, guid: 55b78c7c9b3c69346b07f07489682382, type: 3}
       postHold: 0
     waitForClickAtEnd: 1
   - image: {fileID: 8877237383500523630, guid: 853a619d9b650a845a066de6af9bf39b, type: 3}
@@ -42,10 +36,10 @@ MonoBehaviour:
     loopVideo: 0
     lines:
     - text: " But in the boy\u2019s eyes, it was everything."
-      voice: {fileID: 0}
+      voice: {fileID: 8300000, guid: 94e7f3116c2b0d34797f7813f676ef64, type: 3}
       postHold: 0
     - text: "He admired his father deeply\u2026 and wished to become just like him."
-      voice: {fileID: 0}
+      voice: {fileID: 8300000, guid: 13654e30c737a174abc637eff00ef30f, type: 3}
       postHold: 0
     waitForClickAtEnd: 1
   - image: {fileID: 5341143399956295109, guid: 7aeb0f677e18ca94d8fc0f3490ed4090, type: 3}
@@ -53,19 +47,19 @@ MonoBehaviour:
     loopVideo: 0
     lines:
     - text: That night, he lay awake.
-      voice: {fileID: 0}
+      voice: {fileID: 8300000, guid: 054ce14744f34524b93d92b5928dca7d, type: 3}
       postHold: 0
     - text: The room was empty, quiet
-      voice: {fileID: 0}
+      voice: {fileID: 8300000, guid: ae8ed00f6404b91459bbb97197af0885, type: 3}
       postHold: 0
     - text: But in his mind, shapes began to take form
-      voice: {fileID: 0}
+      voice: {fileID: 8300000, guid: f2be6f74b8e08ea488a23021cfb4a37d, type: 3}
       postHold: 0
     - text: "Creatures\u2026 little friends he hoped to make one day"
-      voice: {fileID: 0}
+      voice: {fileID: 8300000, guid: a6c9e510ba57e7d42997e176eab6b7c2, type: 3}
       postHold: 0
     - text: He dreamed not of what was, but of what could be.
-      voice: {fileID: 0}
+      voice: {fileID: 8300000, guid: 32bc3feabe105c545bb1860af5328d87, type: 3}
       postHold: 0
     waitForClickAtEnd: 1
   - image: {fileID: -4297325017364479022, guid: 2b13ac72e93b75e4da8250a74f9c81db, type: 3}
@@ -73,13 +67,13 @@ MonoBehaviour:
     loopVideo: 0
     lines:
     - text: The next day, he carried a record
-      voice: {fileID: 0}
+      voice: {fileID: 8300000, guid: d582346e6d47ee0499fd5ec0a2de1a72, type: 3}
       postHold: 0
     - text: A single vinyl, precious and fragile.
-      voice: {fileID: 0}
+      voice: {fileID: 8300000, guid: 2d69b83589838e14fbdeb488b342a28a, type: 3}
       postHold: 0
     - text: He walked carefully, holding it as if it were treasure.
-      voice: {fileID: 0}
+      voice: {fileID: 8300000, guid: db634c1590e84c34a9ba5aad890d01fc, type: 3}
       postHold: 0
     waitForClickAtEnd: 1
   - image: {fileID: -7796533322113598094, guid: b751a9c368f7b0045ac228dcd39d85a7, type: 3}
@@ -87,7 +81,7 @@ MonoBehaviour:
     loopVideo: 0
     lines:
     - text: " But then\u2026 the cat. A stumble."
-      voice: {fileID: 0}
+      voice: {fileID: 8300000, guid: 6eed6d7f063990046bbad1366d4c7d5e, type: 3}
       postHold: 0
     waitForClickAtEnd: 1
   - image: {fileID: -2592496362140362172, guid: 743c33857a2795e4da2a0457f86a3633, type: 3}
@@ -95,7 +89,7 @@ MonoBehaviour:
     loopVideo: 0
     lines:
     - text: "The record slipped from his hands\u2026 turning in the air\u2026 "
-      voice: {fileID: 0}
+      voice: {fileID: 8300000, guid: 79c40122902d5d6419e5a07e74429f86, type: 3}
       postHold: 0
     waitForClickAtEnd: 1
   - image: {fileID: -8848255671383068937, guid: c6bc842ed700cd54288a961c8ffbf55b, type: 3}
@@ -108,7 +102,7 @@ MonoBehaviour:
     loopVideo: 0
     lines:
     - text: before falling into the fire
-      voice: {fileID: 0}
+      voice: {fileID: 8300000, guid: dd02542ee36396f40972b5f8e5479ca7, type: 3}
       postHold: 0
     waitForClickAtEnd: 1
   - image: {fileID: -511070911217708073, guid: 0629b0853f2e39840a0e0d2359709c41, type: 3}
@@ -121,10 +115,10 @@ MonoBehaviour:
     loopVideo: 0
     lines:
     - text: "From the flames\u2026 something stirred.\r"
-      voice: {fileID: 0}
+      voice: {fileID: 8300000, guid: 35434a7582031c643a7056dd9f973868, type: 3}
       postHold: 0
     - text: The wax began to move, not melting, but forming
-      voice: {fileID: 0}
+      voice: {fileID: 8300000, guid: aaffc262c32d9d049800f8e3255fb6d4, type: 3}
       postHold: 0
     waitForClickAtEnd: 1
   - image: {fileID: -1971298828903357581, guid: 5743b6e5d76be9c42be873e965eed1df, type: 3}
@@ -132,10 +126,10 @@ MonoBehaviour:
     loopVideo: 0
     lines:
     - text: "Figures rose from the fire \u2014 the very creatures he had once imagined."
-      voice: {fileID: 0}
+      voice: {fileID: 8300000, guid: 3b207c0ea8fc9794a90cfa58fc81968b, type: 3}
       postHold: 0
     - text: Small. Glowing. Impossible.
-      voice: {fileID: 0}
+      voice: {fileID: 8300000, guid: 890ed0ca3cfe6b842824b7b85c932c44, type: 3}
       postHold: 0
     waitForClickAtEnd: 1
   - image: {fileID: -1971298828903357581, guid: 5743b6e5d76be9c42be873e965eed1df, type: 3}
@@ -143,7 +137,7 @@ MonoBehaviour:
     loopVideo: 0
     lines:
     - text: " And the boy stood frozen, caught between fear\u2026 and awe.\""
-      voice: {fileID: 0}
+      voice: {fileID: 8300000, guid: 91bf4b9be2f0db341a02e7fb3dbf3e4c, type: 3}
       postHold: 0
     waitForClickAtEnd: 1
   - image: {fileID: 4666402876873774152, guid: 96ed411271cf9cf409ad293cfd5f3beb, type: 3}
@@ -151,7 +145,7 @@ MonoBehaviour:
     loopVideo: 0
     lines:
     - text: But they were not alone.
-      voice: {fileID: 0}
+      voice: {fileID: 8300000, guid: 894219a874df3fb4787a08f99437cc0d, type: 3}
       postHold: 0
     waitForClickAtEnd: 1
   - image: {fileID: 1610649561206329623, guid: d4fe8ae29b8a713488fea68fd24b96b5, type: 3}
@@ -159,23 +153,20 @@ MonoBehaviour:
     loopVideo: 0
     lines:
     - text: " From the hall, his father watched\u2026 hidden in the doorway."
-      voice: {fileID: 0}
+      voice: {fileID: 8300000, guid: f36eb7c8865ecac419d9705fccdd7c99, type: 3}
       postHold: 0
     waitForClickAtEnd: 1
   - image: {fileID: 6893029304209861384, guid: 0a642285cdc24804da3cae1e8fe2b42b, type: 3}
     video: {fileID: 0}
     loopVideo: 0
-    lines:
-    - text: " From the hall, his father watched\u2026 hidden in the doorway."
-      voice: {fileID: 0}
-      postHold: 0
+    lines: []
     waitForClickAtEnd: 1
   - image: {fileID: 4069411528096993963, guid: 5a5eca19f882d6b4c921503e7f8ecfca, type: 3}
     video: {fileID: 0}
     loopVideo: 0
     lines:
     - text: No words. No warning. Only the sound of retreat.
-      voice: {fileID: 0}
+      voice: {fileID: 8300000, guid: ec8d18cdf4b75ae48813d288d9003ac5, type: 3}
       postHold: 0
     waitForClickAtEnd: 1
   - image: {fileID: -3741687828711916310, guid: d2d5c7eae7ca69f4ab501dd83d8eb347, type: 3}
@@ -183,14 +174,11 @@ MonoBehaviour:
     loopVideo: 0
     lines:
     - text: " He turned from the sight\u2026 and ran."
-      voice: {fileID: 0}
+      voice: {fileID: 8300000, guid: 0dfa0d0d92f0f3744a56d22c6c273cbb, type: 3}
       postHold: 0
     waitForClickAtEnd: 1
   - image: {fileID: 970755793549812866, guid: e47fe33b9ff5aa04c89b4b463166c24c, type: 3}
     video: {fileID: 0}
     loopVideo: 0
-    lines:
-    - text: " He turned from the sight\u2026 and ran."
-      voice: {fileID: 0}
-      postHold: 0
+    lines: []
     waitForClickAtEnd: 1
