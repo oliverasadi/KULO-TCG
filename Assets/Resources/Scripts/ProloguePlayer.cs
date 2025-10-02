@@ -21,7 +21,7 @@ public class ProloguePlayer : MonoBehaviour
     public float letterboxAnimTime = 0.25f;
 
     [Header("Slide Transitions")]
-    public bool useSlideDip = false;        // ❗ default off to avoid black flashes
+    public bool useSlideDip = false;        // default off to avoid black flashes
     public float slideCutDip = 0.15f;       // black dip length between slides (if enabled)
     public float slideWhooshDelay = 0.02f;  // when to play the whoosh relative to dip
     public float kenBurnsScale = 1.06f;     // 1.00 -> 1.06 over time (stills only)
@@ -48,13 +48,15 @@ public class ProloguePlayer : MonoBehaviour
 
     [Header("Input")]
     public KeyCode advanceKey = KeyCode.Space; // click or Space -> next line immediately
-    public KeyCode skipKey = KeyCode.Escape;   // cancels current wait/voice
+    public KeyCode skipKey = KeyCode.Escape;   // cancels current voice
     public KeyCode skipAllKey = KeyCode.Escape;// press/hold to skip whole sequence
     public bool clickToAdvance = true;
 
-    [Header("Line Fade")]
+    [Header("Line Presentation")]
     public float lineFadeInDuration = 0.4f;    // fade-in time for each sentence
-    public float minLineDuration = 2.4f;       // total time a line should live (fade+hold) if no click
+
+    [Header("Flow")]
+    public bool requireClickPerLine = true;    // 🔒 gate every line behind click/Space
 
     [Header("Events")]
     public UnityEvent OnFinished;              // invoked when sequence ends
@@ -69,7 +71,7 @@ public class ProloguePlayer : MonoBehaviour
         if (continueIcon) continueIcon.gameObject.SetActive(false);
         if (backgroundImage)
         {
-            backgroundImage.gameObject.SetActive(true);  // keep enabled to avoid 1-frame black
+            backgroundImage.gameObject.SetActive(true);
             backgroundImage.color = Color.white;
         }
         if (backgroundVideo)
@@ -110,8 +112,9 @@ public class ProloguePlayer : MonoBehaviour
 
             if (hasVideo)
             {
-                if (backgroundVideo && !backgroundVideo.gameObject.activeSelf)
+                if (!backgroundVideo.gameObject.activeSelf)
                     backgroundVideo.gameObject.SetActive(true);
+
                 if (videoTexture != null)
                 {
                     videoPlayer.targetTexture = videoTexture;
@@ -142,22 +145,22 @@ public class ProloguePlayer : MonoBehaviour
                 StartCoroutine(KenBurns(backgroundImage.rectTransform, kenBurnsScale, kenBurnsDuration));
             }
 
-            // ----- Lines (sentence-by-sentence fade, click -> next) -----
+            // ----- Lines (fade-in, THEN wait for click every time) -----
             foreach (var line in slide.lines)
             {
                 if (continueIcon) continueIcon.gameObject.SetActive(false);
                 _wantsAdvance = false;
 
+                // Fade the sentence; click during fade skips straight to NEXT line
                 if (subtitleText)
                     yield return StartCoroutine(ShowLineFade(line.text));
                 else
                     yield return null;
 
-                if (_wantsAdvance) continue; // user clicked during fade/hold -> next line
+                // If user clicked during fade → next line now
+                if (_wantsAdvance) continue;
 
-                float postHold = (line.postHold >= 0f) ? line.postHold : seq.defaultPostLineHold;
-
-                // voice playback (click -> next line)
+                // If there's voice, play it while we wait for click
                 if (line.voice && voiceSource)
                 {
                     // Duck ambience while voice plays
@@ -166,34 +169,42 @@ public class ProloguePlayer : MonoBehaviour
                     voiceSource.Stop();
                     voiceSource.clip = line.voice;
                     voiceSource.Play();
-                    yield return StartCoroutine(WaitForVoiceOrAdvance(voiceSource));
 
-                    // Unduck ambience
+                    // WAIT FOR CLICK (do not auto-advance on voice end)
+                    while (!AdvancePressed())
+                    {
+                        if (Input.GetKeyDown(skipKey) && voiceSource.isPlaying)
+                            voiceSource.Stop();
+
+                        // if voice ended naturally, unduck but keep waiting
+                        if (!voiceSource.isPlaying)
+                            StartCoroutine(DuckBed(false));
+
+                        // allow global skip-all: break out entire slide/sequence
+                        if (Input.GetKey(skipAllKey)) break;
+
+                        yield return null;
+                    }
+
+                    // On click, ensure voice is stopped and unducked
+                    if (voiceSource.isPlaying) voiceSource.Stop();
                     StartCoroutine(DuckBed(false));
 
-                    if (_wantsAdvance) continue;
+                    // If global skip-all pressed, break out
+                    if (Input.GetKey(skipAllKey)) break;
                 }
                 else
                 {
-                    // enforce minimum line life: fade time already elapsed, wait remaining unless click
-                    float remaining = Mathf.Max(0f, minLineDuration - lineFadeInDuration);
-                    float tHold = 0f;
-                    while (tHold < Mathf.Max(remaining, postHold))
-                    {
-                        if (AdvancePressed()) { _wantsAdvance = true; break; }
-                        if (Input.GetKeyDown(skipKey)) break;
-                        tHold += Time.deltaTime;
-                        yield return null;
-                    }
-                    if (_wantsAdvance) continue;
+                    // No voice: simply wait for the click/Space
+                    yield return StartCoroutine(WaitForAdvance());
                 }
 
-                // allow global skip-out at any time
+                // global skip-all?
                 if (Input.GetKey(skipAllKey))
                     break;
             }
 
-            // end-of-slide pause
+            // end-of-slide pause (still requires click if enabled on the slide)
             if (slide.waitForClickAtEnd)
             {
                 if (continueIcon) continueIcon.gameObject.SetActive(true);
@@ -204,7 +215,6 @@ public class ProloguePlayer : MonoBehaviour
             // stop video when leaving slide
             if (hasVideo && videoPlayer) videoPlayer.Stop();
 
-            // global skip-all?
             if (Input.GetKey(skipAllKey))
                 break;
         }
@@ -296,16 +306,6 @@ public class ProloguePlayer : MonoBehaviour
         {
             if (AdvancePressed()) { _wantsAdvance = true; yield break; }
             g += Time.deltaTime;
-            yield return null;
-        }
-    }
-
-    private IEnumerator WaitForVoiceOrAdvance(AudioSource src)
-    {
-        while (src && src.isPlaying && !_wantsAdvance)
-        {
-            if (AdvancePressed()) { _wantsAdvance = true; break; }
-            if (Input.GetKeyDown(skipKey)) { src.Stop(); break; }
             yield return null;
         }
     }

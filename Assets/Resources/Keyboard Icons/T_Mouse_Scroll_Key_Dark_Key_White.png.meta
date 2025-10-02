@@ -134,7 +134,8 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      T_Mouse_Scroll_Key_Dark_Key_White_0: 4424853465108165998
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

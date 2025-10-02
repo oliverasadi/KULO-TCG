@@ -174,7 +174,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Subtitle Text
+  m_text: 
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: b491f9971093738409d428c76bf50533, type: 2}
   m_sharedMaterial: {fileID: 2738520619706379671, guid: b491f9971093738409d428c76bf50533, type: 2}
@@ -479,14 +479,34 @@ MonoBehaviour:
   subtitleText: {fileID: 4590582177333018311}
   continueIcon: {fileID: 7419680523548823343}
   canvasGroup: {fileID: 9205488425749702364}
+  letterboxTop: {fileID: 0}
+  letterboxBottom: {fileID: 0}
+  letterboxTargetHeight: 120
+  letterboxAnimTime: 0.25
+  useSlideDip: 0
+  slideCutDip: 0.15
+  slideWhooshDelay: 0.02
+  kenBurnsScale: 1.06
+  kenBurnsDuration: 6
+  crossfadeImage: {fileID: 0}
+  crossfadeGroup: {fileID: 0}
+  imageCrossfadeTime: 0.18
   videoPlayer: {fileID: 219893804143363047}
   videoTexture: {fileID: 0}
   voiceSource: {fileID: 3632059035248035100}
   bedSource: {fileID: 3632059035248035100}
+  sfxSource: {fileID: 0}
+  slideWhooshSfx: {fileID: 0}
+  linePopSfx: {fileID: 0}
+  bedVolume: 0.7
+  bedDuckVolume: 0.35
+  bedDuckSpeed: 12
   advanceKey: 32
   skipKey: 27
   skipAllKey: 279
   clickToAdvance: 1
+  lineFadeInDuration: 0.4
+  minLineDuration: 2.4
   OnFinished:
     m_PersistentCalls:
       m_Calls: []
@@ -599,7 +619,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -0.000061035, y: 0}
+  m_AnchoredPosition: {x: -0.000061035156, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &2050779439512220921
@@ -623,14 +643,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 0, g: 0, b: 0, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: -221432917189614094, guid: 6d1e9c2920921334ea3b9ff3dab2b9d6, type: 3}
+  m_Sprite: {fileID: 0}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
