@@ -1,0 +1,202 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 932ce75d3c583724cb9da135376a0e84, type: 3}
+  m_Name: XuTaishiPrologue
+  m_EditorClassIdentifier: 
+  charsPerSecond: 10
+  defaultVoiceBed: {fileID: 8300000, guid: 65c28debddf780d4d91fd151299aa983, type: 3}
+  defaultPostLineHold: 1
+  slides:
+  - image: {fileID: -6166999775944077591, guid: 246e974491998c448bd0d86623bb89fe, type: 3}
+    video: {fileID: 0}
+    loopVideo: 0
+    lines:
+    - text: 'There was a time when Su Island overflowed with life.
+
+'
+      voice: {fileID: 0}
+      postHold: 0
+    - text: 'The air shimmered with lantern light, and laughter echoed across the
+        bridges.
+
+'
+      voice: {fileID: 0}
+      postHold: 0
+    - text: "Poets wrote beside the canals. Artists painted by the water\u2019s edge.\r"
+      voice: {fileID: 0}
+      postHold: 0
+    - text: ' Children chased koi through the shallows, their voices carrying like
+        song.
+
+        
+
+'
+      voice: {fileID: 0}
+      postHold: 0
+    - text: "The Su River was the island\u2019s heartbeat \u2014 flowing through
+        every home, every dream.\r"
+      voice: {fileID: 0}
+      postHold: 0
+    waitForClickAtEnd: 1
+  - image: {fileID: 29875203221035116, guid: e2ee3860b8413eb4d9aabb7dbcd09c79, type: 3}
+    video: {fileID: 0}
+    loopVideo: 0
+    lines:
+    - text: But nothing flows forever.
+      voice: {fileID: 0}
+      postHold: 0
+    - text: " As the world beyond Su Island grew \u2014 new cities, new trade, new
+        names \u2014 the island\u2019s voice began to fade.\r\n"
+      voice: {fileID: 0}
+      postHold: 0
+    - text: The bridges still stood, but fewer feet crossed them.
+      voice: {fileID: 0}
+      postHold: 0
+    - text: ' The markets emptied. The poets left their ink to dry.'
+      voice: {fileID: 0}
+      postHold: 0
+    waitForClickAtEnd: 1
+  - image: {fileID: -5556666025091563763, guid: 2c35f6ad271438546960b678e7b865cb, type: 3}
+    video: {fileID: 0}
+    loopVideo: 0
+    lines:
+    - text: "When word of the KULO Tournament reached the islands, Xu Taishi saw
+        his final path.\r\n\r"
+      voice: {fileID: 0}
+      postHold: 0
+    - text: "Victory promised more than gold \u2014 it offered a voice loud enough
+        to reach the world beyond Su"
+      voice: {fileID: 0}
+      postHold: 0
+    - text: "He left before dawn, his sister sleeping peacefully for the first time
+        in years.\r"
+      voice: {fileID: 0}
+      postHold: 0
+    - text: ' The golden koi followed, weaving light upon the surface as if guiding
+        him home.'
+      voice: {fileID: 0}
+      postHold: 0
+    - text: He does not seek fame.
+      voice: {fileID: 0}
+      postHold: 0
+    waitForClickAtEnd: 1
+  - image: {fileID: 5486932296637939752, guid: a7e5396dd6b82c3479b2908e7a60b9e2, type: 3}
+    video: {fileID: 0}
+    loopVideo: 0
+    lines:
+    - text: "In a small house by the river\u2019s edge, the silence was deeper still\r"
+      voice: {fileID: 0}
+      postHold: 0
+    - text: "His sister lay beneath a thin blanket, her breath shallow, her skin
+        pale as moonlight.\r\n\r"
+      voice: {fileID: 0}
+      postHold: 0
+    - text: 'The water that once nourished their home had turned bitter, heavy with
+        silt and sickness.
+
+'
+      voice: {fileID: 0}
+      postHold: 0
+    - text: Xu Taishi stayed beside her night after night, praying that the Su River
+        would listen one last time
+      voice: {fileID: 0}
+      postHold: 0
+    waitForClickAtEnd: 1
+  - image: {fileID: 6027452428853284203, guid: 063ce7f042902f6428486646b32a7dbe, type: 3}
+    video: {fileID: 0}
+    loopVideo: 0
+    lines:
+    - text: "When the healers failed, and the island\u2019s wells ran dry\r"
+      voice: {fileID: 0}
+      postHold: 0
+    - text: " Xu Taishi turned to the only power left \u2014 the old river rites.\r\n\r"
+      voice: {fileID: 0}
+      postHold: 0
+    - text: "Beneath the gaze of the moon, he began the ritual of flow \u2014\r\n
+        a forbidden bond once used to mend the spirit and the stream.\u201D\r\r\n"
+      voice: {fileID: 0}
+      postHold: 0
+    - text: "The air filled with light.\r"
+      voice: {fileID: 0}
+      postHold: 0
+    - text: " From the bowls of river water rose the last of Su\u2019s creatures
+        \u2014\r\n the koi, the tiger, the bonsai beast, the ancient crab.\r"
+      voice: {fileID: 0}
+      postHold: 0
+    - text: " Fading, but still alive enough to answer his call.\r"
+      voice: {fileID: 0}
+      postHold: 0
+    - text: "He sealed their spirits into cards of water and ink \u2014\r\n vessels
+        of memory that would outlive the dying river.\r"
+      voice: {fileID: 0}
+      postHold: 0
+    - text: " Each spirit given new form\u2026\r\n each heartbeat taken from him
+        in return."
+      voice: {fileID: 0}
+      postHold: 0
+    - text: "When the ritual ended, she slept peacefully \u2014 and Xu Taishi\u2019s
+        reflection in the water no longer matched the man he once was."
+      voice: {fileID: 0}
+      postHold: 0
+    waitForClickAtEnd: 1
+  - image: {fileID: 7865001813158878703, guid: fa1c82b0de94ff04bae22e3b5f58a561, type: 3}
+    video: {fileID: 0}
+    loopVideo: 0
+    lines:
+    - text: "When dawn came, the house was still.\r"
+      voice: {fileID: 0}
+      postHold: 0
+    - text: But Xu Taishi no longer felt his own heartbeat.
+      voice: {fileID: 0}
+      postHold: 0
+    - text: " The river pulsed within him now.\r"
+      voice: {fileID: 0}
+      postHold: 0
+    - text: The cracks upon his mask were not from battle  but from the weight of
+        holding a dying island together
+      voice: {fileID: 0}
+      postHold: 0
+    waitForClickAtEnd: 1
+  - image: {fileID: 29875203221035116, guid: e2ee3860b8413eb4d9aabb7dbcd09c79, type: 3}
+    video: {fileID: 0}
+    loopVideo: 0
+    lines:
+    - text: "When dawn came, the house was still.\r"
+      voice: {fileID: 0}
+      postHold: 0
+    - text: But Xu Taishi no longer felt his own heartbeat.
+      voice: {fileID: 0}
+      postHold: 0
+    - text: " The river pulsed within him now.\r"
+      voice: {fileID: 0}
+      postHold: 0
+    - text: The cracks upon his mask were not from battle  but from the weight of
+        holding a dying island together
+      voice: {fileID: 0}
+      postHold: 0
+    - text: The cracks upon his mask were not from battle  but from the weight of
+        holding a dying island together
+      voice: {fileID: 0}
+      postHold: 0
+    - text: The cracks upon his mask were not from battle  but from the weight of
+        holding a dying island together
+      voice: {fileID: 0}
+      postHold: 0
+    - text: The cracks upon his mask were not from battle  but from the weight of
+        holding a dying island together
+      voice: {fileID: 0}
+      postHold: 0
+    - text: The cracks upon his mask were not from battle  but from the weight of
+        holding a dying island together
+      voice: {fileID: 0}
+      postHold: 0
+    waitForClickAtEnd: 1

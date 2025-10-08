@@ -2724,7 +2724,6 @@ MonoBehaviour:
     voiceLine: {fileID: 8300000, guid: 0161309959ffefb45811a919767a8556, type: 3}
     deck: {fileID: 11400000, guid: 004379a8f4811e041bf53318ba0a02d3, type: 2}
     prologue: {fileID: 11400000, guid: 89c7fa2cbbfc06d4cbd26010956f6ea2, type: 2}
-    playPrologueOnFirstTime: 1
   - characterName: Xu Taishi
     characterThumbnail: {fileID: -5765468095956360690, guid: bad24d9ed2cfba5488efe9521ef75e64, type: 3}
     fullArtImage: {fileID: 7248462872554291659, guid: 948bc7ccccf1cba4c9cf3be7d6cc92cd, type: 3}
@@ -2733,8 +2732,7 @@ MonoBehaviour:
       in shadow, and with unyielding purpose"
     voiceLine: {fileID: 8300000, guid: 47f7687fad238b94a99c1b9c70a15bc8, type: 3}
     deck: {fileID: 11400000, guid: 21d22651417c149e4a1aebab115f7c42, type: 2}
-    prologue: {fileID: 0}
-    playPrologueOnFirstTime: 1
+    prologue: {fileID: 11400000, guid: a296e4aff8704c94ba352f7099a0412e, type: 2}
   - characterName: Nekomata
     characterThumbnail: {fileID: 9172686289472237704, guid: 5a4b9316fe9a4dd4f817c24b50b8dab4, type: 3}
     fullArtImage: {fileID: 6261838875085568562, guid: c66ef8197a956264faca8e47a463e47b, type: 3}
@@ -2744,7 +2742,6 @@ MonoBehaviour:
     voiceLine: {fileID: 8300000, guid: 84c1ae87a617c6e4ca25df6353659383, type: 3}
     deck: {fileID: 11400000, guid: 36293bfbb81bbe94c91fd63114e12158, type: 2}
     prologue: {fileID: 0}
-    playPrologueOnFirstTime: 1
   characterCardPrefab: {fileID: 5549054018404174248, guid: e9e684417f7fcde44a17e8a2fc3c5844, type: 3}
   cardRowParent: {fileID: 1107674934}
   fullArtImage: {fileID: 1161245885}
@@ -2754,7 +2751,8 @@ MonoBehaviour:
   playButton: {fileID: 386387523}
   artOffscreenOffsetX: 500
   uiOffscreenOffsetX: 300
-  prologuePlayerPrefab: {fileID: 810228915458040922, guid: 2205820c36719ea4d9274379e774c8b9, type: 3}
+  fadeOutTime: 0.25
+  fadeInTime: 0.25
 --- !u!1 &2129622809
 GameObject:
   m_ObjectHideFlags: 0
