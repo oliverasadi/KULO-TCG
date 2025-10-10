@@ -23,28 +23,28 @@ MonoBehaviour:
     - text: 'There was a time when Su Island overflowed with life.
 
 '
-      voice: {fileID: 0}
+      voice: {fileID: 8300000, guid: 15a5df54bbff5624f836fee5a170f5bb, type: 3}
       postHold: 0
     - text: 'The air shimmered with lantern light, and laughter echoed across the
         bridges.
 
 '
-      voice: {fileID: 0}
+      voice: {fileID: 8300000, guid: 2cb36aa449bfb164184babd6a57e40c2, type: 3}
       postHold: 0
     - text: "Poets wrote beside the canals. Artists painted by the water\u2019s edge.\r"
-      voice: {fileID: 0}
+      voice: {fileID: 8300000, guid: a5bd81cd71746bb4e912c8cb12c3f07c, type: 3}
       postHold: 0
     - text: ' Children chased koi through the shallows, their voices carrying like
         song.
 
-        
+
 
 '
-      voice: {fileID: 0}
+      voice: {fileID: 8300000, guid: e27673ac0fd19f04e9dd3b2d2c12ff20, type: 3}
       postHold: 0
     - text: "The Su River was the island\u2019s heartbeat \u2014 flowing through
         every home, every dream.\r"
-      voice: {fileID: 0}
+      voice: {fileID: 8300000, guid: 57738902036d2d4478a94aa60abc174b, type: 3}
       postHold: 0
     waitForClickAtEnd: 1
   - image: {fileID: 29875203221035116, guid: e2ee3860b8413eb4d9aabb7dbcd09c79, type: 3}
@@ -52,41 +52,42 @@ MonoBehaviour:
     loopVideo: 0
     lines:
     - text: But nothing flows forever.
-      voice: {fileID: 0}
+      voice: {fileID: 8300000, guid: 0609e45474f6fe04d9c94b13d5b60466, type: 3}
       postHold: 0
     - text: " As the world beyond Su Island grew \u2014 new cities, new trade, new
         names \u2014 the island\u2019s voice began to fade.\r\n"
-      voice: {fileID: 0}
+      voice: {fileID: 8300000, guid: a63a9b4bb666d6b429a40105fab6cf76, type: 3}
       postHold: 0
     - text: The bridges still stood, but fewer feet crossed them.
-      voice: {fileID: 0}
+      voice: {fileID: 8300000, guid: da66f526dc76b534b87ab04b25e355a9, type: 3}
       postHold: 0
     - text: ' The markets emptied. The poets left their ink to dry.'
-      voice: {fileID: 0}
+      voice: {fileID: 8300000, guid: 62750fce477eba24eb6beacd8a5116bd, type: 3}
       postHold: 0
     waitForClickAtEnd: 1
   - image: {fileID: -5556666025091563763, guid: 2c35f6ad271438546960b678e7b865cb, type: 3}
     video: {fileID: 0}
     loopVideo: 0
     lines:
-    - text: "When word of the KULO Tournament reached the islands, Xu Taishi saw
-        his final path.\r\n\r"
-      voice: {fileID: 0}
+    - text: "Only one remained \u2014 a scholar named Xu Taishi, keeper of the old
+        river rites.\r\r"
+      voice: {fileID: 8300000, guid: e6221cbe4b1f41b4aa33a78251919a31, type: 3}
       postHold: 0
-    - text: "Victory promised more than gold \u2014 it offered a voice loud enough
-        to reach the world beyond Su"
-      voice: {fileID: 0}
+    - text: "Around him, the last spirits of Su still lingered \u2014\r\r\n"
+      voice: {fileID: 8300000, guid: 40b6311627636964f9c5cfcf8f219f05, type: 3}
       postHold: 0
-    - text: "He left before dawn, his sister sleeping peacefully for the first time
-        in years.\r"
-      voice: {fileID: 0}
+    - text: the bonsai beasts that carried blossoms upon their backs.
+      voice: {fileID: 8300000, guid: 468a2047699904046b0112294ac5f960, type: 3}
       postHold: 0
-    - text: ' The golden koi followed, weaving light upon the surface as if guiding
-        him home.'
-      voice: {fileID: 0}
+    - text: "Now their glow was dim.\r\r"
+      voice: {fileID: 8300000, guid: 0e5e0c1c4d8c42c4d847a18d0eb82108, type: 3}
       postHold: 0
-    - text: He does not seek fame.
-      voice: {fileID: 0}
+    - text: Their leaves turned to dust.
+      voice: {fileID: 8300000, guid: 4c3dc49e8e67b7b43af435214dc4fb61, type: 3}
+      postHold: 0
+    - text: "Even the river\u2019s guardians could no longer breathe beneath its
+        surface."
+      voice: {fileID: 8300000, guid: 78a966e7777e37f40a4b2d8d91c05f25, type: 3}
       postHold: 0
     waitForClickAtEnd: 1
   - image: {fileID: 5486932296637939752, guid: a7e5396dd6b82c3479b2908e7a60b9e2, type: 3}
@@ -94,21 +95,21 @@ MonoBehaviour:
     loopVideo: 0
     lines:
     - text: "In a small house by the river\u2019s edge, the silence was deeper still\r"
-      voice: {fileID: 0}
+      voice: {fileID: 8300000, guid: 1748d1ee4d5a76846a8cbc4a612e634e, type: 3}
       postHold: 0
     - text: "His sister lay beneath a thin blanket, her breath shallow, her skin
         pale as moonlight.\r\n\r"
-      voice: {fileID: 0}
+      voice: {fileID: 8300000, guid: 4dfe9f67290a02e4c9b482b17c704c01, type: 3}
       postHold: 0
     - text: 'The water that once nourished their home had turned bitter, heavy with
         silt and sickness.
 
 '
-      voice: {fileID: 0}
+      voice: {fileID: 8300000, guid: 9ad2a1dd5b9b01c4e8ed64c787568c46, type: 3}
       postHold: 0
     - text: Xu Taishi stayed beside her night after night, praying that the Su River
         would listen one last time
-      voice: {fileID: 0}
+      voice: {fileID: 8300000, guid: b2b9dcdd101be1c47807014f507a832f, type: 3}
       postHold: 0
     waitForClickAtEnd: 1
   - image: {fileID: 6027452428853284203, guid: 063ce7f042902f6428486646b32a7dbe, type: 3}
@@ -116,17 +117,17 @@ MonoBehaviour:
     loopVideo: 0
     lines:
     - text: "When the healers failed, and the island\u2019s wells ran dry\r"
-      voice: {fileID: 0}
+      voice: {fileID: 8300000, guid: 817b1903699f4f94989b32da5aa4c29a, type: 3}
       postHold: 0
     - text: " Xu Taishi turned to the only power left \u2014 the old river rites.\r\n\r"
-      voice: {fileID: 0}
+      voice: {fileID: 8300000, guid: 30631ff9c7fd0ff4abd3c2b888beba76, type: 3}
       postHold: 0
     - text: "Beneath the gaze of the moon, he began the ritual of flow \u2014\r\n
         a forbidden bond once used to mend the spirit and the stream.\u201D\r\r\n"
-      voice: {fileID: 0}
+      voice: {fileID: 8300000, guid: 3c6241cfd0a796541958f698778d5656, type: 3}
       postHold: 0
     - text: "The air filled with light.\r"
-      voice: {fileID: 0}
+      voice: {fileID: 8300000, guid: 4321d1a633fb9174b8c9c9ba40dd9cc4, type: 3}
       postHold: 0
     - text: " From the bowls of river water rose the last of Su\u2019s creatures
         \u2014\r\n the koi, the tiger, the bonsai beast, the ancient crab.\r"
@@ -166,6 +167,30 @@ MonoBehaviour:
       voice: {fileID: 0}
       postHold: 0
     waitForClickAtEnd: 1
+  - image: {fileID: -5556666025091563763, guid: 2c35f6ad271438546960b678e7b865cb, type: 3}
+    video: {fileID: 0}
+    loopVideo: 0
+    lines:
+    - text: "When word of the KULO Tournament reached the islands, Xu Taishi saw
+        his final path.\r\n\r"
+      voice: {fileID: 0}
+      postHold: 0
+    - text: "Victory promised more than gold \u2014 it offered a voice loud enough
+        to reach the world beyond Su"
+      voice: {fileID: 0}
+      postHold: 0
+    - text: "He left before dawn, his sister sleeping peacefully for the first time
+        in years.\r"
+      voice: {fileID: 0}
+      postHold: 0
+    - text: ' The golden koi followed, weaving light upon the surface as if guiding
+        him home.'
+      voice: {fileID: 0}
+      postHold: 0
+    - text: He does not seek fame.
+      voice: {fileID: 0}
+      postHold: 0
+    waitForClickAtEnd: 1
   - image: {fileID: 29875203221035116, guid: e2ee3860b8413eb4d9aabb7dbcd09c79, type: 3}
     video: {fileID: 0}
     loopVideo: 0
@@ -177,18 +202,6 @@ MonoBehaviour:
       voice: {fileID: 0}
       postHold: 0
     - text: " The river pulsed within him now.\r"
-      voice: {fileID: 0}
-      postHold: 0
-    - text: The cracks upon his mask were not from battle  but from the weight of
-        holding a dying island together
-      voice: {fileID: 0}
-      postHold: 0
-    - text: The cracks upon his mask were not from battle  but from the weight of
-        holding a dying island together
-      voice: {fileID: 0}
-      postHold: 0
-    - text: The cracks upon his mask were not from battle  but from the weight of
-        holding a dying island together
       voice: {fileID: 0}
       postHold: 0
     - text: The cracks upon his mask were not from battle  but from the weight of
