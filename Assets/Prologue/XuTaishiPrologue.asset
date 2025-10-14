@@ -131,22 +131,22 @@ MonoBehaviour:
       postHold: 0
     - text: " From the bowls of river water rose the last of Su\u2019s creatures
         \u2014\r\n the koi, the tiger, the bonsai beast, the ancient crab.\r"
-      voice: {fileID: 0}
+      voice: {fileID: 8300000, guid: 6de9f704edb98e849bb482bbe18ad934, type: 3}
       postHold: 0
     - text: " Fading, but still alive enough to answer his call.\r"
-      voice: {fileID: 0}
+      voice: {fileID: 8300000, guid: 26dfe47f53210fd478dd1b5e35f138d2, type: 3}
       postHold: 0
     - text: "He sealed their spirits into cards of water and ink \u2014\r\n vessels
         of memory that would outlive the dying river.\r"
-      voice: {fileID: 0}
+      voice: {fileID: 8300000, guid: 4d3ce6c6519290a4ea731c420b620a73, type: 3}
       postHold: 0
     - text: " Each spirit given new form\u2026\r\n each heartbeat taken from him
         in return."
-      voice: {fileID: 0}
+      voice: {fileID: 8300000, guid: 03aa37e35cb5c5d48aa9e1d8496dfc88, type: 3}
       postHold: 0
     - text: "When the ritual ended, she slept peacefully \u2014 and Xu Taishi\u2019s
         reflection in the water no longer matched the man he once was."
-      voice: {fileID: 0}
+      voice: {fileID: 8300000, guid: 44ce030065174604e872ebe34407437f, type: 3}
       postHold: 0
     waitForClickAtEnd: 1
   - image: {fileID: 7865001813158878703, guid: fa1c82b0de94ff04bae22e3b5f58a561, type: 3}
@@ -154,62 +154,46 @@ MonoBehaviour:
     loopVideo: 0
     lines:
     - text: "When dawn came, the house was still.\r"
-      voice: {fileID: 0}
+      voice: {fileID: 8300000, guid: 6f8b549390f00224a8f54b0963791909, type: 3}
       postHold: 0
     - text: But Xu Taishi no longer felt his own heartbeat.
-      voice: {fileID: 0}
+      voice: {fileID: 8300000, guid: b3f82d4031fe5f843bec3d21e9f2c80b, type: 3}
       postHold: 0
     - text: " The river pulsed within him now.\r"
-      voice: {fileID: 0}
+      voice: {fileID: 8300000, guid: 46349dbb7790d6148bac5234ff0b03eb, type: 3}
       postHold: 0
     - text: The cracks upon his mask were not from battle  but from the weight of
         holding a dying island together
-      voice: {fileID: 0}
+      voice: {fileID: 8300000, guid: 14985a57f8f31c144be1e4c9ede1ec9e, type: 3}
       postHold: 0
     waitForClickAtEnd: 1
-  - image: {fileID: -5556666025091563763, guid: 2c35f6ad271438546960b678e7b865cb, type: 3}
+  - image: {fileID: 3384029462252102218, guid: 5145a5cc06e61514e8009c3cf02659ef, type: 3}
     video: {fileID: 0}
     loopVideo: 0
     lines:
     - text: "When word of the KULO Tournament reached the islands, Xu Taishi saw
         his final path.\r\n\r"
-      voice: {fileID: 0}
+      voice: {fileID: 8300000, guid: f71b903ad53c5804fbc33c116beeca1e, type: 3}
       postHold: 0
     - text: "Victory promised more than gold \u2014 it offered a voice loud enough
         to reach the world beyond Su"
-      voice: {fileID: 0}
+      voice: {fileID: 8300000, guid: d4428f2aef3b8024c93792591afa6182, type: 3}
       postHold: 0
     - text: "He left before dawn, his sister sleeping peacefully for the first time
         in years.\r"
-      voice: {fileID: 0}
+      voice: {fileID: 8300000, guid: 0a5d14f8776533643ba99955db99e376, type: 3}
       postHold: 0
-    - text: ' The golden koi followed, weaving light upon the surface as if guiding
-        him home.'
-      voice: {fileID: 0}
+    - text: The golden koi followed, weaving light upon the surface as if guiding
+        him home.
+      voice: {fileID: 8300000, guid: 87658e37509c9ea46a3a1891ff93648b, type: 3}
       postHold: 0
-    - text: He does not seek fame.
-      voice: {fileID: 0}
+    - text: 'He does not seek fame. He seeks balance.
+
+        To restore what the
+        world forgot.'
+      voice: {fileID: 8300000, guid: 5542a728e36eb564f8b236c82f926a60, type: 3}
       postHold: 0
-    waitForClickAtEnd: 1
-  - image: {fileID: 29875203221035116, guid: e2ee3860b8413eb4d9aabb7dbcd09c79, type: 3}
-    video: {fileID: 0}
-    loopVideo: 0
-    lines:
-    - text: "When dawn came, the house was still.\r"
-      voice: {fileID: 0}
-      postHold: 0
-    - text: But Xu Taishi no longer felt his own heartbeat.
-      voice: {fileID: 0}
-      postHold: 0
-    - text: " The river pulsed within him now.\r"
-      voice: {fileID: 0}
-      postHold: 0
-    - text: The cracks upon his mask were not from battle  but from the weight of
-        holding a dying island together
-      voice: {fileID: 0}
-      postHold: 0
-    - text: The cracks upon his mask were not from battle  but from the weight of
-        holding a dying island together
-      voice: {fileID: 0}
+    - text: "The world moved on\u2026but Su still waits to flow again."
+      voice: {fileID: 8300000, guid: e46441cabfab22a48902d45c7a846e2c, type: 3}
       postHold: 0
     waitForClickAtEnd: 1
