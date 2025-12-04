@@ -13,14 +13,16 @@ MonoBehaviour:
   m_Name: Tainted Drink
   m_EditorClassIdentifier: 
   cardName: Tainted Drink
+  requiresTargetCreature: 0
   category: 1
   power: 0
-  effectDescription: '"Decrease an opponent''s creature''s power by -300 until the
-    end of this turn.'
+  effectDescription: Decrease an opponent's creature's power by -300 until the end
+    of this turn.
   cardImage: {fileID: -7768644054061247927, guid: 15acc440f2c8a1f4999e29a270d7ef0c, type: 3}
   cardNumber: OGN-30
   creatureType: 
   baseOrEvo: 0
+  summonOptionsAfterOpponentTurn: []
   extraDetails: 
   inlineEffects: []
   effects:

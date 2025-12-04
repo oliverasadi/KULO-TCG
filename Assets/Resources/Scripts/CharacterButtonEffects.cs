@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 
@@ -10,16 +10,25 @@ public class CharacterButtonEffects : MonoBehaviour,
 {
     [Header("Glow Settings")]
     public Color glowColor = Color.yellow;
-    public float glowDistance = 5f;      // how �thick� the glow is
+    public float glowDistance = 5f;      // how “thick” the glow is
 
     [Header("Click Sound")]
     public AudioClip clickSound;
 
+    [Header("Behaviour")]
+    public bool freezeOnClick = true;    // ✅ if true, button “freezes” after click
+
     private Outline _outline;
     private AudioSource _audioSrc;
+    private Button _button;
+
+    // Internal state
+    private bool _isFrozen = false;
 
     void Awake()
     {
+        _button = GetComponent<Button>();
+
         // 1) Set up the Outline component
         _outline = GetComponent<Outline>();
         if (_outline == null)
@@ -39,12 +48,14 @@ public class CharacterButtonEffects : MonoBehaviour,
     // Hover start
     public void OnPointerEnter(PointerEventData eventData)
     {
+        if (_isFrozen) return;         // ✅ don’t change if frozen
         _outline.enabled = true;
     }
 
     // Hover end
     public void OnPointerExit(PointerEventData eventData)
     {
+        if (_isFrozen) return;         // ✅ keep glow if frozen
         _outline.enabled = false;
     }
 
@@ -53,5 +64,26 @@ public class CharacterButtonEffects : MonoBehaviour,
     {
         if (clickSound != null)
             _audioSrc.PlayOneShot(clickSound);
+
+        if (freezeOnClick && !_isFrozen)
+        {
+            _isFrozen = true;
+
+            // Keep the glow on
+            _outline.enabled = true;
+
+            // Stop further clicks if you want
+            if (_button != null)
+                _button.interactable = false;
+        }
+    }
+
+    // Optional: if you later want to change selection from code
+    public void Unfreeze()
+    {
+        _isFrozen = false;
+        _outline.enabled = false;
+        if (_button != null)
+            _button.interactable = true;
     }
 }

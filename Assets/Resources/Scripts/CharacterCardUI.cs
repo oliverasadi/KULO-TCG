@@ -1,11 +1,13 @@
-﻿// CharacterCardUI.cs
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using UnityEngine.EventSystems;
 using DG.Tweening;
 
-public class CharacterCardUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
+public class CharacterCardUI : MonoBehaviour,
+    IPointerEnterHandler,
+    IPointerExitHandler,
+    IPointerClickHandler   // ✅ added
 {
     public Image thumbnailImage;
     public TextMeshProUGUI nameText;
@@ -16,6 +18,13 @@ public class CharacterCardUI : MonoBehaviour, IPointerEnterHandler, IPointerExit
     private float fadeDuration = 0.2f;
     private float scaleDuration = 0.4f;
     private Material grayscaleMat;
+
+    // ✅ selection state
+    private bool isSelected = false;
+    private Vector3 baseScale;
+
+    // ✅ global “currently selected” card
+    private static CharacterCardUI currentSelected;
 
     public void Setup(CharacterSelectManager.CharacterData newData, CharacterSelectManager mgr)
     {
@@ -28,11 +37,14 @@ public class CharacterCardUI : MonoBehaviour, IPointerEnterHandler, IPointerExit
         // prepare grayscale material
         grayscaleMat = Instantiate(thumbnailImage.material);
         thumbnailImage.material = grayscaleMat;
-        grayscaleMat.SetFloat("_GrayAmount", 1f);
+        grayscaleMat.SetFloat("_GrayAmount", 1f); // start grey
 
-        transform.localScale = Vector3.one;
+        baseScale = Vector3.one;
+        transform.localScale = baseScale;
 
-        // clicking the card now starts the game
+        isSelected = false;
+
+        // clicking the card starts the game (keep this)
         var btn = GetComponent<Button>();
         btn.onClick.RemoveAllListeners();
         btn.onClick.AddListener(() => manager.StartGame(data));
@@ -40,22 +52,62 @@ public class CharacterCardUI : MonoBehaviour, IPointerEnterHandler, IPointerExit
 
     public void OnPointerEnter(PointerEventData eventData)
     {
-        // slide old → swap → slide in new
+        // Update big art on hover
         manager.ReplaceCharacter(data);
 
-        // thumbnail color & pop
-        grayscaleMat.DOKill();
-        transform.DOKill();
-        grayscaleMat.DOFloat(0f, "_GrayAmount", fadeDuration);
-        transform.DOScale(1.1f, scaleDuration).SetEase(Ease.OutElastic);
+        if (isSelected) return; // already locked in
+
+        ApplyHighlightedVisuals();
     }
 
     public void OnPointerExit(PointerEventData eventData)
     {
-        // only gray & shrink thumbnail
+        // ✅ if selected, do NOT go back to grey/small
+        if (isSelected) return;
+
+        ApplyNormalVisuals();
+    }
+
+    public void OnPointerClick(PointerEventData eventData)
+    {
+        // ✅ deselect previous selected card
+        if (currentSelected != null && currentSelected != this)
+        {
+            currentSelected.Deselect();
+        }
+
+        // ✅ select this card
+        currentSelected = this;
+        isSelected = true;
+        ApplyHighlightedVisuals();  // stay colourful + enlarged
+    }
+
+    private void ApplyHighlightedVisuals()
+    {
+        if (grayscaleMat == null) return;
+
         grayscaleMat.DOKill();
         transform.DOKill();
-        grayscaleMat.DOFloat(1f, "_GrayAmount", fadeDuration);
-        transform.DOScale(1f, 0.25f).SetEase(Ease.InBack);
+
+        grayscaleMat.DOFloat(0f, "_GrayAmount", fadeDuration);          // colourful
+        transform.DOScale(baseScale * 1.1f, scaleDuration)
+                 .SetEase(Ease.OutElastic);                             // enlarged
+    }
+
+    private void ApplyNormalVisuals()
+    {
+        if (grayscaleMat == null) return;
+
+        grayscaleMat.DOKill();
+        transform.DOKill();
+
+        grayscaleMat.DOFloat(1f, "_GrayAmount", fadeDuration);          // grey
+        transform.DOScale(baseScale, 0.25f).SetEase(Ease.InBack);       // normal size
+    }
+
+    public void Deselect()
+    {
+        isSelected = false;
+        ApplyNormalVisuals();
     }
 }

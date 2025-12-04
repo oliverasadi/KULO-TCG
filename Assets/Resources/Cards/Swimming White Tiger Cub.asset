@@ -16,8 +16,9 @@ MonoBehaviour:
   requiresTargetCreature: 0
   category: 0
   power: 1400
-  effectDescription: After this card has been on the field for 3 of your opponents
-    turns
+  effectDescription: "After this card has been on the field for 3 of your opponents
+    turns, sacrifice this card and summon \u2018Legendary White Tiger of the Pagoda\u2019
+    from your deck or hand. "
   cardImage: {fileID: -2672381674187173436, guid: 94b2dd6a5640ada4886d4951daeb4bee, type: 3}
   cardNumber: OGN-60
   creatureType: Su Beast

@@ -13,13 +13,15 @@ MonoBehaviour:
   m_Name: Red Seal
   m_EditorClassIdentifier: 
   cardName: Red Seal
+  requiresTargetCreature: 0
   category: 0
   power: 1400
-  effectDescription: N/A
+  effectDescription: 
   cardImage: {fileID: -5075560014524144143, guid: abb81dd9b669a3c4493e16ca13cc2424, type: 3}
   cardNumber: OGN-37
   creatureType: Wax
   baseOrEvo: 0
+  summonOptionsAfterOpponentTurn: []
   extraDetails: 'DOB: 2017, GPS: Lion Island, Weight: 305.0kg, Height: 1.35m.'
   inlineEffects:
   - effectType: 6
@@ -32,10 +34,13 @@ MonoBehaviour:
     blockAdditionalPlays: 0
     promptPrefab: {fileID: 0}
     powerChange: 0
+    powerLossPerTurn: 0
+    useCountMode: 0
     powerChangeAmount: 0
     powerChangeType: 0
     targetPositions: 
     adjacencyOwnerToAffect: 0
+    searchOwner: 2
   effects: []
   requiresSacrifice: 0
   sacrificeRequirements: []

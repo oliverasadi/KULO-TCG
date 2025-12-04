@@ -16,8 +16,15 @@ MonoBehaviour:
   requiresTargetCreature: 0
   category: 0
   power: 1500
-  effectDescription: '"If this card remains on the field after one of your opponent''s
-    turns'
+  effectDescription: " KULO__Origin_Card_List KULO__Origin_Card_List  100% 10 I49 
+    If this card remains on the field after one of your opponent's turns, you may
+    place a \u2018Koi Child\u2019 or \u2018Koi Mum\u2019 from your deck or hand onto
+    the field. If you do, you cannot play any additional cards during that turn.
+    Summarize this data       \t If this card remains on the field after one of your
+    opponent's turns, you may place a \u2018Koi Child\u2019 or \u2018Koi Mum\u2019
+    from your deck or hand onto the field. If you do, you cannot play any additional
+    cards during that turn. Turn on screen reader support To enable screen reader
+    support, press Ctrl+Alt+Z To learn about keyboard shortcuts, press Ctrl+slash"
   cardImage: {fileID: -64668212011504671, guid: 99de771b6fafdfe4cbd712bac2453d90, type: 3}
   cardNumber: OGN-48
   creatureType: Koi

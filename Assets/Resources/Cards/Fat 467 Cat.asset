@@ -13,16 +13,24 @@ MonoBehaviour:
   m_Name: Fat 467 Cat
   m_EditorClassIdentifier: 
   cardName: Fat 467 Cat
+  requiresTargetCreature: 0
   category: 0
   power: 2000
-  effectDescription: '"EVOLUTION :'
+  effectDescription: "If this card remains on the field after one of your opponent's
+    turns, you may replace it with \u2018Fat 467 Cat\u2019 from your deck or hand.
+    If you do, you cannot play any additional cards during that turn."
   cardImage: {fileID: 534048477439852426, guid: bd5e210ec35bceb44b7489f0edbe002d, type: 3}
   cardNumber: OGN-17
   creatureType: Cat
   baseOrEvo: 1
+  summonOptionsAfterOpponentTurn: []
   extraDetails: 'DOB: 2016, GPS: Gulu City, Weight: 7.5kg, Height: 0.22m.'
+  inlineEffects: []
+  effects: []
   requiresSacrifice: 1
   sacrificeRequirements:
   - requiredCardName: 467 Cat
     matchByCreatureType: 0
     count: 1
+    allowFromField: 1
+    allowFromHand: 0

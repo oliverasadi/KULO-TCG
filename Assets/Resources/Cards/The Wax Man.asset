@@ -13,24 +13,34 @@ MonoBehaviour:
   m_Name: The Wax Man
   m_EditorClassIdentifier: 
   cardName: The Wax Man
+  requiresTargetCreature: 0
   category: 0
   power: 1400
-  effectDescription: When this creature is summoned, draw 1 card.
+  effectDescription: When this creature is succesfully summoned, draw 1 card.
   cardImage: {fileID: -3047204546146683538, guid: c75d6c20de7053649b8fc5b149519f3e, type: 3}
   cardNumber: OGN-35
   creatureType: Wax
   baseOrEvo: 0
+  summonOptionsAfterOpponentTurn: []
   extraDetails: 'DOB: 1995, GPS: WaxBrough, Weight: 79.0kg, Height: 1.75m.'
   inlineEffects:
   - effectType: 1
     cardsToDraw: 1
     requiredCreatureNames: []
+    requiredCreatureTypes: []
     maxTargets: 0
     replacementCardName: 
     turnDelay: 0
     blockAdditionalPlays: 0
     promptPrefab: {fileID: 0}
     powerChange: 0
+    powerLossPerTurn: 0
+    useCountMode: 0
+    powerChangeAmount: 0
+    powerChangeType: 0
+    targetPositions: 
+    adjacencyOwnerToAffect: 2
+    searchOwner: 2
   effects: []
   requiresSacrifice: 0
   sacrificeRequirements: []

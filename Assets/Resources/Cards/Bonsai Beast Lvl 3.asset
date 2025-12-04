@@ -16,12 +16,13 @@ MonoBehaviour:
   requiresTargetCreature: 0
   category: 0
   power: 3000
-  effectDescription: "\"EVOLUTION: To summon this card, sacrifice \u2018Bonsai Beast
-    Lvl.2\u2019.   \""
+  effectDescription: "EVOLUTION: To summon this card, sacrifice \u2018Bonsai Beast
+    Lvl.2\u2019."
   cardImage: {fileID: -3260920301099544853, guid: e3dd162bc12b52444a773c889c00204b, type: 3}
   cardNumber: OGN-45
   creatureType: Su Beast
   baseOrEvo: 1
+  summonOptionsAfterOpponentTurn: []
   extraDetails: 'DOB: 2025, GPS: Su River, Weight:14.5kg, Height: 1.13m.'
   inlineEffects: []
   effects:

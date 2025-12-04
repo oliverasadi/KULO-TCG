@@ -16,8 +16,10 @@ MonoBehaviour:
   requiresTargetCreature: 0
   category: 0
   power: 1200
-  effectDescription: '"After this card has remained on the field for one of your
-    opponent''s turns'
+  effectDescription: "After this card has remained on the field for one of your opponent's
+    turns, you may sacrifice this card to play a \u2018Heart Mask Boy Lvl. 2\u2019
+    from your deck or hand.  You cannot play any additional cards for the rest of
+    your turn."
   cardImage: {fileID: 1257136585316704121, guid: c72595baedaa074459c1f5f3cfe9bee0, type: 3}
   cardNumber: OGN-27
   creatureType: Wax

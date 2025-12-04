@@ -13,25 +13,36 @@ MonoBehaviour:
   m_Name: Mole Cat Girlfriend
   m_EditorClassIdentifier: 
   cardName: Mole Cat Girlfriend
+  requiresTargetCreature: 0
   category: 0
   power: 1300
-  effectDescription: "\"If \u2018The Cat with the Mole\u2019 is on the field"
+  effectDescription: "If \u2018The Cat with the Mole\u2019 is on the field, both
+    this card and \u2018The Cat with the Mole\u2019 gain +500 power. "
   cardImage: {fileID: -1563933619148205488, guid: b011f259583569e498cbccf62b13b681, type: 3}
   cardNumber: OGN-06
   creatureType: Cat
   baseOrEvo: 0
+  summonOptionsAfterOpponentTurn: []
   extraDetails: 'DOB: 2024, GPS: Hidden Gulu Forest, Weight: 4.7kg, Height: 0.25m.'
   inlineEffects:
   - effectType: 4
     cardsToDraw: 0
     requiredCreatureNames:
     - The Cat with the Mole
+    requiredCreatureTypes: []
     maxTargets: 0
     replacementCardName: 
     turnDelay: 0
     blockAdditionalPlays: 0
     promptPrefab: {fileID: 0}
     powerChange: 500
+    powerLossPerTurn: 0
+    useCountMode: 0
+    powerChangeAmount: 0
+    powerChangeType: 0
+    targetPositions: 
+    adjacencyOwnerToAffect: 2
+    searchOwner: 2
   effects: []
   requiresSacrifice: 0
   sacrificeRequirements: []

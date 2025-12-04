@@ -13,13 +13,17 @@ MonoBehaviour:
   m_Name: No Currency
   m_EditorClassIdentifier: 
   cardName: No Currency
+  requiresTargetCreature: 0
   category: 1
   power: 0
-  effectDescription: '"If you have fewer cards in your hand than your opponent'
+  effectDescription: If you have fewer cards in your hand than your opponent, decrease
+    the power of one of their creatures on the field by -400 until the end of this
+    turn.
   cardImage: {fileID: -202533923593063007, guid: 67f40b633d02f4a4e9cd28ca2b4927dd, type: 3}
   cardNumber: OGN-31
   creatureType: 
   baseOrEvo: 0
+  summonOptionsAfterOpponentTurn: []
   extraDetails: 
   inlineEffects: []
   effects:

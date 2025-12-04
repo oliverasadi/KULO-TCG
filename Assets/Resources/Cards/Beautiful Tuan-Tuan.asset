@@ -13,14 +13,16 @@ MonoBehaviour:
   m_Name: Beautiful Tuan-Tuan
   m_EditorClassIdentifier: 
   cardName: Beautiful Tuan-Tuan
+  requiresTargetCreature: 0
   category: 0
   power: 2000
-  effectDescription: "\"EVOLUTION: Sacrifice 1 \u2018Baby Tuan\u2019 to summon this
+  effectDescription: "EVOLUTION: Sacrifice 1 \u2018Baby Tuan\u2019 to summon this
     creature."
   cardImage: {fileID: -7325985804073441562, guid: 44e39b9c68c9e5f48a29ba41ea03545f, type: 3}
   cardNumber: OGN-12
   creatureType: Cat
   baseOrEvo: 1
+  summonOptionsAfterOpponentTurn: []
   extraDetails: 'DOB: 2018, GPS: Gulu Island, Weight: 4.8kg, Height: 0.22m.'
   inlineEffects:
   - effectType: 0
@@ -33,10 +35,13 @@ MonoBehaviour:
     blockAdditionalPlays: 0
     promptPrefab: {fileID: 0}
     powerChange: 0
+    powerLossPerTurn: 0
+    useCountMode: 0
     powerChangeAmount: 0
     powerChangeType: 0
     targetPositions: 
     adjacencyOwnerToAffect: 2
+    searchOwner: 2
   effects: []
   requiresSacrifice: 1
   sacrificeRequirements:

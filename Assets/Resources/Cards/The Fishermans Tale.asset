@@ -16,7 +16,7 @@ MonoBehaviour:
   requiresTargetCreature: 0
   category: 1
   power: 0
-  effectDescription: "\"Draw 2 cards if you control a card with \u201CFisherman\u201D
+  effectDescription: "Draw 2 cards if you control a card with \u201CFisherman\u201D
     in its name on the field."
   cardImage: {fileID: 5449323194754339375, guid: bcbcf2e455cf9ec43852f734d4693956, type: 3}
   cardNumber: OGN-53

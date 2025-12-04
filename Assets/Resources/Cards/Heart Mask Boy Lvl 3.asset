@@ -16,12 +16,14 @@ MonoBehaviour:
   requiresTargetCreature: 0
   category: 0
   power: 2800
-  effectDescription: '"EVOLUTION: Sacrifice ''Heart Mask Boy Lvl 2'' form the field.Increase
-    the power of all cards in your hand and on the field by +200'
+  effectDescription: 'EVOLUTION: Sacrifice ''Heart Mask Boy Lvl 2'' form the field.Increase
+    the power of all cards in your hand and on the field by +200, excluding this
+    card.'
   cardImage: {fileID: 5523859765984264331, guid: 4ed40ccdc5189c4498800b8f39c4b72c, type: 3}
   cardNumber: OGN-29
   creatureType: Wax
   baseOrEvo: 0
+  summonOptionsAfterOpponentTurn: []
   extraDetails: 'DOB: Unknown, GPS: Mystical Summit, Weight: 500.8kg, Height: 70.30m.'
   inlineEffects: []
   effects:

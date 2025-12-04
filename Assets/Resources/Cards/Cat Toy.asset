@@ -13,14 +13,16 @@ MonoBehaviour:
   m_Name: Cat Toy
   m_EditorClassIdentifier: 
   cardName: Cat Toy
+  requiresTargetCreature: 0
   category: 1
   power: 0
-  effectDescription: '"All ''Cat''-type cards on the field gain +100 power during
-    your'
+  effectDescription: All 'Cat'-type cards on the field gain +100 power during your 
+    opponent's next turn.
   cardImage: {fileID: -5388175316623976081, guid: ae98c4f37a48d794ca17f47294202ca5, type: 3}
   cardNumber: OGN-20
   creatureType: 
   baseOrEvo: 0
+  summonOptionsAfterOpponentTurn: []
   extraDetails: 
   inlineEffects: []
   effects:

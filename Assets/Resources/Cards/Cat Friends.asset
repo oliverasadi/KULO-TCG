@@ -16,12 +16,14 @@ MonoBehaviour:
   requiresTargetCreature: 0
   category: 1
   power: 0
-  effectDescription: "\"If you control 2 or more \u2018Cat\u2019 type cards on the
-    field"
+  effectDescription: "If you control 2 or more \u2018Cat\u2019 type cards on the
+    field, you may summon a \u2018Cat\u2019 card from your deck.  You cannot achieve
+    a win condition this turn."
   cardImage: {fileID: 5791523260125451457, guid: 99f33b0d44077a843bdfd014b70a1b5d, type: 3}
   cardNumber: OGN-08
   creatureType: 
   baseOrEvo: 0
+  summonOptionsAfterOpponentTurn: []
   extraDetails: 
   inlineEffects: []
   effects: []

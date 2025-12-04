@@ -16,8 +16,10 @@ MonoBehaviour:
   requiresTargetCreature: 0
   category: 0
   power: 2000
-  effectDescription: '"EVOLUTION: Sacrifice ''Heart Mask Boy Lvl 1'' form the field.After
-    this card has remained on the field for one of your opponent''s turns'
+  effectDescription: "EVOLUTION: Sacrifice 'Heart Mask Boy Lvl 1' form the field.After
+    this card has remained on the field for one of your opponent's turns, you may
+    sacrifice this card to play a \u2018Heart Mask Boy Lvl. 3\u2019 from your deck
+    or hand.  You cannot play any additional cards for the rest of your turn."
   cardImage: {fileID: -9022183157247502749, guid: f34fb2234516f2d469508c467f807bf0, type: 3}
   cardNumber: OGN-28
   creatureType: Wax
