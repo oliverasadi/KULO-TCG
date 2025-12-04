@@ -589,15 +589,20 @@ if (grid[x, y] != null)
                         condEffect.ApplyEffect(cardUIComp);
                         cardUIComp.activeInlineEffects.Add(condEffect);
                     }
-                    // 4) MultipleTargetPowerBoostEffect
                     else if (inlineEffect.effectType == CardEffectData.EffectType.MultipleTargetPowerBoost)
                     {
                         Debug.Log("Creating a runtime instance of MultipleTargetPowerBoostEffect for target selection...");
                         var boostEffect = ScriptableObject.CreateInstance<MultipleTargetPowerBoostEffect>();
+
+                        // ✨ Copy values from the inline data
+                        boostEffect.powerIncrease = inlineEffect.powerChange;
+                        boostEffect.maxTargets = inlineEffect.maxTargets;   // <<< IMPORTANT
+
                         if (handler != null && handler.isAI)
                         {
                             var aiTargets = new List<CardUI>();
-                            for (int gx = 0; gx < 3; gx++) for (int gy = 0; gy < 3; gy++)
+                            for (int gx = 0; gx < 3; gx++)
+                                for (int gy = 0; gy < 3; gy++)
                                 {
                                     var mCard = gridObjects[gx, gy];
                                     var mH = mCard?.GetComponent<CardHandler>();
@@ -605,7 +610,7 @@ if (grid[x, y] != null)
                                     if (mH != null && mUI != null && mH.isAI)
                                     {
                                         aiTargets.Add(mUI);
-                                        if (aiTargets.Count >= 3) break;
+                                        if (aiTargets.Count >= boostEffect.maxTargets) break; // optional safety
                                     }
                                 }
                             boostEffect.targetCards = aiTargets;
@@ -615,10 +620,11 @@ if (grid[x, y] != null)
                         else if (TargetSelectionManager.Instance != null)
                         {
                             TargetSelectionManager.Instance.StartTargetSelection(boostEffect);
-                            Debug.Log("Please click on up to 3 target cards on the board for the boost effect.");
+                            Debug.Log($"Please click on up to {boostEffect.maxTargets} target cards on the board for the boost effect.");
                         }
                         else Debug.LogWarning("TargetSelectionManager instance not found!");
                     }
+
                     // 5) AdjustPowerAdjacentEffect
                     else if (inlineEffect.effectType == CardEffectData.EffectType.AdjustPowerAdjacent)
                     {
