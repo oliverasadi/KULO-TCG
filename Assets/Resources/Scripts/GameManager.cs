@@ -138,12 +138,12 @@ public class GameManager : MonoBehaviour
         {
             string deck = ProfileManager.instance.currentProfile.lastDeckPlayed;
 
-            Dictionary<string, string> signatureCards = new Dictionary<string, string>
-            {
-                { "Mr. Wax", "Ultimate Red Seal" },
-                { "Nekomata", "Cat Trifecta" },
-                { "Xu Taishi", "Bonsai Beast Lvl 3" }
-            };
+          Dictionary<string, string> signatureCards = new Dictionary<string, string>
+{
+    { "WaxyBaby",       "Ultimate Red Seal" },   // Mr. Wax
+    { "CatAdventures",  "Cat Trifecta" },        // Nekomata
+    { "SuzhouDeck",     "Bonsai Beast Lvl 3" }   // Xu Taishi
+};
 
             if (signatureCards.ContainsKey(deck))
             {
