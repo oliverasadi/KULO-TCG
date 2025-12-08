@@ -26,14 +26,7 @@ public class MoveCardEffect : CardEffect
 
     private readonly Color highlightColor = new Color(1f, 1f, 0f, .45f);   // yellow
 
-    private static void ClearHighlights(IEnumerable<Vector2Int> cells)
-    {
-        foreach (var c in cells)
-            GameObject.Find($"GridCell_{c.x}_{c.y}")
-                      ?.GetComponent<GridCellHighlighter>()
-                      ?.ResetHighlight();
-    }
-
+    // Reset a single cell's highlight (used to clear the old position)
     private static void ResetCellHighlight(int x, int y)
     {
         GameObject.Find($"GridCell_{x}_{y}")
@@ -43,6 +36,7 @@ public class MoveCardEffect : CardEffect
 
     public override void ApplyEffect(CardUI sourceCard)
     {
+        // Get from-grid coordinates from parent name: "GridCell_x_y"
         var p = sourceCard.transform.parent.name.Split('_');
         if (p.Length < 3) return;
         int fx = int.Parse(p[1]), fy = int.Parse(p[2]);
@@ -59,6 +53,7 @@ public class MoveCardEffect : CardEffect
         // ===== Any-Destination (empty cells anywhere) =====
         if (interactiveAnyDestination)
         {
+            // Restrict to specific card names (Jump the Fence)
             if (ui.cardData.cardName != allowedName1 && ui.cardData.cardName != allowedName2)
                 return;
 
@@ -66,7 +61,9 @@ public class MoveCardEffect : CardEffect
 
             var empties = new List<Vector2Int>();
             for (int x = 0; x < 3; ++x)
+            {
                 for (int y = 0; y < 3; ++y)
+                {
                     if (grid[x, y] == null)
                     {
                         empties.Add(new Vector2Int(x, y));
@@ -74,18 +71,24 @@ public class MoveCardEffect : CardEffect
                                    ?.GetComponent<GridCellHighlighter>()
                                    ?.SetPersistentHighlight(highlightColor);
                     }
+                }
+            }
+
             if (empties.Count == 0) return;
 
-            // <<< NEW: arm clicks for exactly these cells >>>
+            // Arm clicks for exactly these empty cells
             GridManager.instance.EnableClickSelectionForCells(empties, (sx, sy) =>
             {
                 var dest = new Vector2Int(sx, sy);
                 if (!empties.Contains(dest)) return;
 
+                // Clear highlight on old cell
                 ResetCellHighlight(fx, fy);
+
+                // Move card and let GridManager handle the new green/red highlight
                 GridManager.instance.MoveCardOnBoard(fx, fy, sx, sy, go);
-                ClearHighlights(empties);
             });
+
             return;
         }
 
@@ -98,31 +101,44 @@ public class MoveCardEffect : CardEffect
             var valids = new List<Vector2Int>();
 
             for (int x = 0; x < 3; ++x)
+            {
                 for (int y = 0; y < 3; ++y)
                 {
                     var opp = objs[x, y]?.GetComponent<CardHandler>();
                     if (opp == null || opp.cardOwner.playerNumber == local) continue;
 
-                    if (y + 1 < 3 && grid[x, y + 1] == null) valids.Add(new Vector2Int(x, y + 1));
-                    if (y - 1 >= 0 && grid[x, y - 1] == null) valids.Add(new Vector2Int(x, y - 1));
+                    // Check one space above and below opponent card
+                    if (y + 1 < 3 && grid[x, y + 1] == null)
+                        valids.Add(new Vector2Int(x, y + 1));
+
+                    if (y - 1 >= 0 && grid[x, y - 1] == null)
+                        valids.Add(new Vector2Int(x, y - 1));
                 }
+            }
+
             if (valids.Count == 0) return;
 
+            // Highlight valid destination cells
             foreach (var d in valids)
+            {
                 GameObject.Find($"GridCell_{d.x}_{d.y}")
                            ?.GetComponent<GridCellHighlighter>()
                            ?.SetPersistentHighlight(highlightColor);
+            }
 
-            // <<< NEW: arm clicks for exactly these cells >>>
+            // Arm clicks for exactly these valid cells
             GridManager.instance.EnableClickSelectionForCells(valids, (sx, sy) =>
             {
                 var chosen = new Vector2Int(sx, sy);
                 if (!valids.Contains(chosen)) return;
 
+                // Clear highlight on old cell
                 ResetCellHighlight(fx, fy);
+
+                // Move card and let GridManager handle the new green/red highlight
                 GridManager.instance.MoveCardOnBoard(fx, fy, sx, sy, go);
-                ClearHighlights(valids);
             });
+
             return;
         }
 
@@ -133,6 +149,7 @@ public class MoveCardEffect : CardEffect
             FilterMode.OpponentOnly => handle.cardOwner.playerNumber != local,
             _ => true
         };
+
         if (!ownerOK) return;
         if (filterMode == FilterMode.SpecificName && ui.cardData.cardName != filterValue) return;
         if (filterMode == FilterMode.NameContains && !ui.cardData.cardName.Contains(filterValue)) return;
