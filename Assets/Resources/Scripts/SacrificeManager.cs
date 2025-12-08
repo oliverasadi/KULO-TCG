@@ -208,14 +208,44 @@ public class SacrificeManager : MonoBehaviour
         if (currentEvolutionCard == null || card == null || card.cardData == null)
             return false;
 
+        // Don’t allow double-selecting the same card
+        if (selectedSacrifices.Contains(card.gameObject))
+            return false;
+
+        // Go through each requirement and see if this card fits one,
+        // and if we still "need" more of that requirement.
         foreach (var req in currentEvolutionCard.cardData.sacrificeRequirements)
         {
-            bool match = req.matchByCreatureType
+            bool matchesReq = req.matchByCreatureType
                 ? (card.cardData.creatureType == req.requiredCardName)
                 : (card.cardData.cardName == req.requiredCardName);
-            if (match)
+
+            if (!matchesReq)
+                continue;
+
+            // Count how many already-selected sacrifices satisfy THIS requirement
+            int alreadySelectedForThisReq = 0;
+            foreach (GameObject selected in selectedSacrifices)
+            {
+                var ui = selected.GetComponent<CardUI>();
+                if (ui == null || ui.cardData == null) continue;
+
+                bool selectedMatchesReq = req.matchByCreatureType
+                    ? (ui.cardData.creatureType == req.requiredCardName)
+                    : (ui.cardData.cardName == req.requiredCardName);
+
+                if (selectedMatchesReq)
+                    alreadySelectedForThisReq++;
+            }
+
+            // Only valid if we still need more of this particular card
+            if (alreadySelectedForThisReq < req.count)
                 return true;
+            else
+                return false; // This requirement is already satisfied; cannot add more of this card type.
         }
+
+        // Didn’t match any requirement at all
         return false;
     }
 }
