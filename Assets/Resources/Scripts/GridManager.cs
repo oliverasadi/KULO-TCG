@@ -135,73 +135,95 @@ public class GridManager : MonoBehaviour
 
 
     public bool MoveCardOnBoard(int oldX, int oldY, int newX, int newY, GameObject cardObj)
-{
-    if (grid[newX, newY] != null)
     {
-        Debug.LogWarning("❌ Cannot move to occupied cell!");
-        return false;
-    }
-
-    var cardData = grid[oldX, oldY];
-    if (cardData == null)
-    {
-        Debug.LogError("❌ No card to move from the source cell!");
-        return false;
-    }
-
-    // (1) Clear old slot
-    grid[oldX, oldY] = null;
-    gridObjects[oldX, oldY] = null;
-    ResetCellVisual(oldX, oldY);
-
-    // (1.5) Also clear highlight on old cell
-    GameObject oldCell = GameObject.Find($"GridCell_{oldX}_{oldY}");
-    if (oldCell != null)
-    {
-        var oldHighlighter = oldCell.GetComponent<GridCellHighlighter>();
-        if (oldHighlighter != null)
+        // 0) Safety: don't move into an occupied cell
+        if (grid[newX, newY] != null)
         {
-            oldHighlighter.ResetHighlight();
-            oldHighlighter.ClearStoredPersistentHighlight();
-        }
-    }
-
-    // (2) Assign to new slot
-    grid[newX, newY] = cardData;
-    gridObjects[newX, newY] = cardObj;
-
-    // (3) Move UI
-    GameObject newCell = GameObject.Find($"GridCell_{newX}_{newY}");
-    if (newCell != null)
-    {
-        cardObj.transform.SetParent(newCell.transform, false);
-        RectTransform rt = cardObj.GetComponent<RectTransform>();
-        if (rt != null)
-        {
-            rt.anchorMin = rt.anchorMax = rt.pivot = new Vector2(0.5f, 0.5f);
-            rt.anchoredPosition = Vector2.zero;
+            Debug.LogWarning("❌ Cannot move to occupied cell!");
+            return false;
         }
 
-        // (4) Flash highlight on new cell
-        var highlighter = newCell.GetComponent<GridCellHighlighter>();
-        if (highlighter != null)
+        var cardData = grid[oldX, oldY];
+        if (cardData == null)
         {
-            var handler = cardObj.GetComponent<CardHandler>();
-            bool isAI = handler != null && handler.isAI;
-            Color baseColor = isAI ? Color.red : Color.green;
-            Color flashColor = new Color(baseColor.r, baseColor.g, baseColor.b, 0.5f);
-            highlighter.FlashHighlight(flashColor);
+            Debug.LogError("❌ No card to move from the source cell!");
+            return false;
         }
+
+        // (1) Clear old slot
+        grid[oldX, oldY] = null;
+        gridObjects[oldX, oldY] = null;
+        ResetCellVisual(oldX, oldY);
+
+        // (1.5) Also clear highlight on old cell
+        GameObject oldCell = GameObject.Find($"GridCell_{oldX}_{oldY}");
+        if (oldCell != null)
+        {
+            var oldHighlighter = oldCell.GetComponent<GridCellHighlighter>();
+            if (oldHighlighter != null)
+            {
+                oldHighlighter.ResetHighlight();
+                oldHighlighter.ClearStoredPersistentHighlight();
+            }
+
+            // Also mark the old drop zone as empty
+            var oldDz = oldCell.GetComponent<GridDropZone>();
+            if (oldDz != null)
+                oldDz.isOccupied = false;
+        }
+
+        // (2) Assign to new slot
+        grid[newX, newY] = cardData;
+        gridObjects[newX, newY] = cardObj;
+
+        // (3) Move UI
+        GameObject newCell = GameObject.Find($"GridCell_{newX}_{newY}");
+        if (newCell != null)
+        {
+            cardObj.transform.SetParent(newCell.transform, false);
+            RectTransform rt = cardObj.GetComponent<RectTransform>();
+            if (rt != null)
+            {
+                rt.anchorMin = rt.anchorMax = rt.pivot = new Vector2(0.5f, 0.5f);
+                rt.anchoredPosition = Vector2.zero;
+            }
+
+            // (3a) Mark the new drop zone as occupied ✅
+            var dz = newCell.GetComponent<GridDropZone>();
+            if (dz != null)
+                dz.isOccupied = true;
+
+            // (4) Flash highlight on new cell
+            var highlighter = newCell.GetComponent<GridCellHighlighter>();
+            if (highlighter != null)
+            {
+                var handler = cardObj.GetComponent<CardHandler>();
+                bool isAI = handler != null && handler.isAI;
+                Color baseColor = isAI ? Color.red : Color.green;
+                Color flashColor = new Color(baseColor.r, baseColor.g, baseColor.b, 0.5f);
+                highlighter.FlashHighlight(flashColor);
+            }
+        }
+
+        // (5) Ensure card still shows it's on the field
+        var ui = cardObj.GetComponent<CardUI>();
+        if (ui != null)
+            ui.isOnField = true;
+
+        Debug.Log($"[GridManager] Moved {cardData.cardName} from ({oldX},{oldY}) to ({newX},{newY})");
+
+        // (6) Re-evaluate any conditional synergies (if you use them) ✅
+        UpdateMutualConditionalEffects();
+
+        // (7) Check for a win after the move ✅
+        if (cardData.category == CardSO.CardCategory.Creature && !HasSelfDestructEffect(cardData))
+        {
+            GameManager.instance.CheckForWin();
+        }
+
+        return true;
     }
 
-    // (5) Ensure card still shows it's on the field
-    var ui = cardObj.GetComponent<CardUI>();
-    if (ui != null)
-        ui.isOnField = true;
-
-    Debug.Log($"[GridManager] Moved {cardData.cardName} from ({oldX},{oldY}) to ({newX},{newY})");
-    return true;
-}
 
 
 
