@@ -1596,6 +1596,12 @@ if (grid[x, y] != null)
 
     private void ShowInlineReplacementPrompt(CardUI sourceCardUI, int gridX, int gridY, CardEffectData inlineEffect)
     {
+        // 🚫 If we've already played a creature this turn, don't even show the prompt.
+        if (TurnManager.instance != null && TurnManager.instance.CreaturePlayed)
+        {
+            Debug.Log("[ShowInlineReplacementPrompt] Creature already played this turn – not showing replacement prompt.");
+            return;
+        }
         // Must belong to local player
         CardHandler cardHandler = sourceCardUI.GetComponent<CardHandler>();
         if (cardHandler == null) { Debug.LogError("[ShowInlineReplacementPrompt] CardHandler missing."); return; }
@@ -1613,7 +1619,15 @@ if (grid[x, y] != null)
         }
 
         GameObject overlayCanvas = GameObject.Find("OverlayCanvas");
-        if (overlayCanvas == null) { Debug.LogError("[ShowInlineReplacementPrompt] OverlayCanvas not found!"); return; }
+        if (overlayCanvas == null)
+        {
+            Debug.LogError("[ShowInlineReplacementPrompt] OverlayCanvas not found!");
+            return;
+        }
+
+        // 🔹 Panels that already exist BEFORE we spawn this one
+        SummonChoiceUI[] existingPanels = overlayCanvas.GetComponentsInChildren<SummonChoiceUI>(true);
+        int index = existingPanels.Length;   // 0 = first panel, 1 = second, etc.
 
         // Instantiate the prefab
         GameObject panelInstance = Instantiate(inlineEffect.promptPrefab, overlayCanvas.transform);
@@ -1629,21 +1643,47 @@ if (grid[x, y] != null)
 
             string desc = $"Evolve {sourceCardUI.cardData.cardName} into {targetName}?";
 
+            // 👉 Small offset so panels are stacked/fanned
+            Vector2 offset = new Vector2(index * 40f, -index * 40f);
+
             choiceUI.Show(
                 options,
                 chosen =>
                 {
                     if (chosen != null)
                     {
+                        // Do the evolution
                         ExecuteReplacementInline(sourceCardUI, gridX, gridY);
+
+                        // 🔥 After a successful choice, close ALL remaining evolution panels
+                        var allPanels = overlayCanvas.GetComponentsInChildren<SummonChoiceUI>(true);
+                        foreach (var p in allPanels)
+                        {
+                            if (p != null)
+                            {
+                                // slide them out nicely; empty callback is fine
+                                p.HideWithSlideOutAndThen(() => { });
+                            }
+                        }
                     }
                     else
                     {
                         Debug.Log($"[Inline Replacement] Cancelled for {sourceCardUI.cardData.cardName}");
                     }
                 },
-                desc
+                desc,
+                offset
             );
+
+            // 🔥 Focus logic:
+            // dim all old panels, then focus the new one
+            foreach (var panel in existingPanels)
+            {
+                if (panel != null)
+                    panel.SetFocused(false);
+            }
+            choiceUI.SetFocused(true);
+
             return;
         }
 
@@ -1672,6 +1712,7 @@ if (grid[x, y] != null)
 
 
 
+
     /// <summary>
     /// Executes the inline replacement effect by removing the source card from the grid,
     /// instantiating a replacement card, and placing it into the same grid cell.
@@ -1685,8 +1726,17 @@ if (grid[x, y] != null)
         CardSO replacementCard = DeckManager.instance.FindCardByName(replacementName);
         if (replacementCard != null)
         {
+            // 🔹 NEW: respect "1 creature per turn" rule for replacements too.
+            if (replacementCard.category == CardSO.CardCategory.Creature &&
+                TurnManager.instance != null &&
+                TurnManager.instance.CreaturePlayed)
+            {
+                Debug.Log("[ExecuteReplacementInline] A creature has already been played this turn – replacement cancelled.");
+                return;
+            }
+
             // Get the owner from the source card's CardHandler.
-            PlayerManager owner = sourceCardUI.GetComponent<CardHandler>().cardOwner;
+            PlayerManager owner = sourceCardUI.GetComponent<CardHandler>()?.cardOwner;
             if (owner == null)
             {
                 Debug.LogError($"[ExecuteReplacementInline] Source card '{sourceCardUI.cardData.cardName}' has no owner!");
