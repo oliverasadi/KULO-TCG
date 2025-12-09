@@ -23,9 +23,25 @@ public class AIController : PlayerController
         // No per-frame logic needed.
     }
 
-    // Checks if the card's sacrifice requirements are met on the grid.
+    // ──────────────────────────────────────────────────────────────────────────
+    // Playability checks
+    // ──────────────────────────────────────────────────────────────────────────
+
+    // Checks if the card's conditions are met on the grid / hand.
     private bool IsCardPlayable(CardSO card)
     {
+        if (card == null) return false;
+
+        // If this is a SPELL, make sure it actually has something useful to do.
+        if (card.category == CardSO.CardCategory.Spell)
+        {
+            if (!IsSpellUsefulForAI(card))
+            {
+                Debug.Log($"[AIController] Spell {card.cardName} has no useful targets → not playable right now.");
+                return false;
+            }
+        }
+
         // If the card is an Evolution card, ensure the AI has the required base on its board.
         if (card.baseOrEvo == CardSO.BaseOrEvo.Evolution)
         {
@@ -74,9 +90,11 @@ public class AIController : PlayerController
             }
         }
 
-        if (!card.requiresSacrifice || card.sacrificeRequirements.Count == 0)
+        // If no sacrifice is required, at this point it is playable.
+        if (!card.requiresSacrifice || card.sacrificeRequirements == null || card.sacrificeRequirements.Count == 0)
             return true;
 
+        // Otherwise, make sure all sacrifice requirements are met by AI-owned cards on the field.
         CardSO[,] fieldGrid = GridManager.instance.GetGrid();
         foreach (var req in card.sacrificeRequirements)
         {
@@ -108,6 +126,250 @@ public class AIController : PlayerController
         return true;
     }
 
+    // Decide whether a SPELL is actually worth playing right now.
+    private bool IsSpellUsefulForAI(CardSO card)
+    {
+        if (pm == null) return false;
+        if (card.effects == null || card.effects.Count == 0)
+            return true; // no metadata to reason about → assume OK
+
+        bool anyUseful = false;
+
+        foreach (var effect in card.effects)
+        {
+            if (effect == null) continue;
+
+            // Movement spells like "Jump the Fence", "The Jump!", etc.
+            if (effect is MoveCardEffect moveEffect)
+            {
+                if (IsMoveSpellUseful(moveEffect))
+                {
+                    anyUseful = true;
+                    break;
+                }
+                else
+                {
+                    // Try other effects if there are any.
+                    continue;
+                }
+            }
+
+            // Buff/debuff spells like "Cat Toy", "Perfected Soil", etc.
+            if (effect is PowerChangeEffect powerEffect)
+            {
+                if (HasUsefulPowerChangeTargets(powerEffect))
+                {
+                    anyUseful = true;
+                    break;
+                }
+                else
+                {
+                    continue;
+                }
+            }
+
+            // Other effect types we don't model yet → assume useful for now.
+            anyUseful = true;
+            break;
+        }
+
+        if (!anyUseful)
+            Debug.Log($"[AIController] Spell {card.cardName} judged not useful (no valid targets).");
+
+        return anyUseful;
+    }
+
+    // Helper for movement spells (MoveCardEffect)
+    private bool IsMoveSpellUseful(MoveCardEffect effect)
+    {
+        CardSO[,] grid = GridManager.instance.GetGrid();
+        GameObject[,] gridObjs = GridManager.instance.GetGridObjects();
+
+        // First check if there is at least one empty cell to move INTO.
+        bool hasEmpty = false;
+        for (int x = 0; x < 3 && !hasEmpty; x++)
+        {
+            for (int y = 0; y < 3 && !hasEmpty; y++)
+            {
+                if (grid[x, y] == null)
+                    hasEmpty = true;
+            }
+        }
+
+        if (!hasEmpty)
+        {
+            Debug.Log($"[AIController] Move spell {effect.name} not useful: no empty cells on board.");
+            return false;
+        }
+
+        // Interactive any-destination mode – e.g. "Jump the Fence"
+        if (effect.interactiveAnyDestination)
+        {
+            for (int x = 0; x < 3; x++)
+            {
+                for (int y = 0; y < 3; y++)
+                {
+                    if (grid[x, y] == null) continue;
+
+                    GameObject obj = gridObjs[x, y];
+                    if (obj == null) continue;
+
+                    CardHandler handler = obj.GetComponent<CardHandler>();
+                    if (handler == null || !handler.isAI) continue;  // must be AI's creature
+
+                    string name = grid[x, y].cardName;
+
+                    bool matchesAllowed =
+                        (!string.IsNullOrEmpty(effect.allowedName1) && name == effect.allowedName1) ||
+                        (!string.IsNullOrEmpty(effect.allowedName2) && name == effect.allowedName2);
+
+                    if (matchesAllowed)
+                    {
+                        Debug.Log($"[AIController] Move spell {effect.name} is useful (found source {name} at {x},{y}).");
+                        return true;
+                    }
+                }
+            }
+
+            Debug.Log($"[AIController] Move spell {effect.name} is not useful: AI has no allowed source creatures on board.");
+            return false;
+        }
+
+        // Interactive relative-to-opponent mode – e.g. "The Jump!"
+        if (effect.interactiveRelativeToOpponent)
+        {
+            for (int x = 0; x < 3; x++)
+            {
+                for (int y = 0; y < 3; y++)
+                {
+                    GameObject obj = gridObjs[x, y];
+                    if (obj == null) continue;
+
+                    CardHandler srcHandler = obj.GetComponent<CardHandler>();
+                    if (srcHandler == null) continue;
+
+                    // If mustBeYours, the source must be AI-owned.
+                    if (effect.mustBeYours && !srcHandler.isAI)
+                        continue;
+
+                    // Look north/south for an opponent card
+                    for (int dy = -1; dy <= 1; dy += 2)
+                    {
+                        int ty = y + dy;
+                        if (ty < 0 || ty >= 3) continue;
+
+                        GameObject targetObj = gridObjs[x, ty];
+                        if (targetObj == null) continue;
+
+                        CardHandler targetHandler = targetObj.GetComponent<CardHandler>();
+                        if (targetHandler == null) continue;
+
+                        // Needs to be opponent
+                        if (targetHandler.isAI == srcHandler.isAI)
+                            continue;
+
+                        Debug.Log($"[AIController] Move spell {effect.name} is useful (relative to opponent at {x},{ty}).");
+                        return true;
+                    }
+                }
+            }
+
+            Debug.Log($"[AIController] Move spell {effect.name} is not useful: no valid relative-to-opponent pairs.");
+            return false;
+        }
+
+        // Other move modes (offsets-based, etc.) – be lenient for now.
+        return true;
+    }
+
+    // Helper for buff/debuff spells (PowerChangeEffect)
+    private bool HasUsefulPowerChangeTargets(PowerChangeEffect effect)
+    {
+        if (pm == null) return false;
+
+        PlayerManager ownerPM = pm;
+        PlayerManager oppPM = (ownerPM == TurnManager.instance.playerManager1)
+            ? TurnManager.instance.playerManager2
+            : TurnManager.instance.playerManager1;
+
+        // Fewer-cards condition
+        if (effect.requireFewerCardsInHand)
+        {
+            int ownerHand = CountRealHandCards(ownerPM);
+            int oppHand = CountRealHandCards(oppPM);
+
+            Debug.Log($"[AIController] Checking fewer-cards condition for {effect.name}: AI={ownerHand}, Opp={oppHand}");
+
+            if (ownerHand >= oppHand)
+                return false;
+        }
+
+        // Only estimate static filter spells; interactive ones we assume AI wants.
+        if (effect.mode != PowerChangeEffect.Mode.StaticFilter)
+            return true;
+
+        // Determine which side the effect is targeting.
+        PlayerManager targetPM = (effect.targetOwner == PowerChangeEffect.TargetOwner.Yours) ? ownerPM : oppPM;
+
+        // Board targets
+        foreach (var ui in Object.FindObjectsOfType<CardUI>())
+        {
+            if (!ui.isOnField) continue;
+
+            var h = ui.GetComponent<CardHandler>();
+            if (h == null || h.cardOwner != targetPM) continue;
+
+            if (effect.filterMode == PowerChangeEffect.FilterMode.Type && ui.cardData.creatureType != effect.filterValue) continue;
+            if (effect.filterMode == PowerChangeEffect.FilterMode.NameContains && !ui.cardData.cardName.Contains(effect.filterValue)) continue;
+
+            Debug.Log($"[AIController] PowerChangeEffect {effect.name} has valid board target: {ui.cardData.cardName}");
+            return true;
+        }
+
+        // Hand targets (if enabled)
+        if (effect.includeHand)
+        {
+            foreach (var handler in targetPM.cardHandlers)
+            {
+                if (handler == null || handler.cardData == null) continue;
+
+                var ui = handler.GetComponent<CardUI>();
+                if (ui == null) continue;
+                if (ui.isOnField || ui.isInGraveyard) continue;
+
+                if (effect.filterMode == PowerChangeEffect.FilterMode.Type && ui.cardData.creatureType != effect.filterValue) continue;
+                if (effect.filterMode == PowerChangeEffect.FilterMode.NameContains && !ui.cardData.cardName.Contains(effect.filterValue)) continue;
+
+                Debug.Log($"[AIController] PowerChangeEffect {effect.name} has valid hand target: {ui.cardData.cardName}");
+                return true;
+            }
+        }
+
+        Debug.Log($"[AIController] PowerChangeEffect {effect.name} has NO valid targets for AI.");
+        return false;
+    }
+
+    private int CountRealHandCards(PlayerManager player)
+    {
+        if (player == null || player.cardHandlers == null) return 0;
+
+        int count = 0;
+        foreach (var h in player.cardHandlers)
+        {
+            if (h == null || h.cardData == null) continue;
+
+            var ui = h.GetComponent<CardUI>();
+            if (ui == null) continue;
+            if (!ui.isOnField && !ui.isInGraveyard)
+                count++;
+        }
+        return count;
+    }
+
+    // ──────────────────────────────────────────────────────────────────────────
+    // Hand effects
+    // ──────────────────────────────────────────────────────────────────────────
+
     private void ApplyEffectsToAIHandIfNeeded()
     {
         if (pm == null || pm.cardHandlers == null) return;
@@ -125,7 +387,7 @@ public class AIController : PlayerController
             var effects = ch.cardData != null ? ch.cardData.effects : null;
             if (effects != null)
             {
-                // also snapshot effects in case an effect list is modified during application
+                // Also snapshot effects in case an effect list is modified during application
                 foreach (var effect in effects.ToArray())
                 {
                     try
@@ -155,10 +417,20 @@ public class AIController : PlayerController
         return ch.isAI ? "AI" : "Player";
     }
 
+    // ──────────────────────────────────────────────────────────────────────────
+    // Move choice
+    // ──────────────────────────────────────────────────────────────────────────
+
     // Chooses a move based on aggressive, blocking, or random strategies.
-    // Note: We pass in the candidate card so the aggressive branch only returns cells if the candidate's power is sufficient.
+    // For SPELLS, just pick a simple empty cell (spells don't count for wins).
     private Vector2Int ChooseMove(CardSO[,] grid, CardSO candidate)
     {
+        if (candidate != null && candidate.category == CardSO.CardCategory.Spell)
+        {
+            // For most spells the board position does not matter; just pick an empty cell.
+            return FindRandomMove(grid);
+        }
+
         Vector2Int move = FindBestAggressiveMove(grid, candidate);
         if (move.x == -1)
             move = FindBlockingMove(grid);
@@ -193,6 +465,10 @@ public class AIController : PlayerController
             yield return null;
         }
     }
+
+    // ──────────────────────────────────────────────────────────────────────────
+    // Turn logic
+    // ──────────────────────────────────────────────────────────────────────────
 
     // AIPlay uses the candidate card to choose a move, shows the thinking image, and then attempts placement.
     private IEnumerator AIPlay()
@@ -242,6 +518,7 @@ public class AIController : PlayerController
                 bool isDamiano = ch.cardData.effects != null &&
                                  ch.cardData.effects.Exists(e => e != null && e.GetType().Name == "X1DamianoEffect");
 
+                // Damiano: only useful if there is at least one card on the field.
                 if (isDamiano)
                 {
                     bool anyOnField = false;
@@ -302,7 +579,9 @@ public class AIController : PlayerController
         EndTurn();
     }
 
-
+    // ──────────────────────────────────────────────────────────────────────────
+    // Board evaluation
+    // ──────────────────────────────────────────────────────────────────────────
 
     // Returns the best aggressive move for the AI given the current grid and the candidate card.
     private Vector2Int FindBestAggressiveMove(CardSO[,] grid, CardSO candidate)
@@ -351,17 +630,18 @@ public class AIController : PlayerController
     // New version of CheckForReplacement that uses the candidate card.
     private bool CheckForReplacement(CardSO candidate, CardSO playerCard)
     {
+        if (candidate == null || pm == null || pm.cardHandlers == null)
+            return false;
+
         CardHandler handler = pm.cardHandlers.Find(h => h.cardData == candidate);
         if (handler == null) return false;
-
-
 
         CardUI aiCardUI = handler.GetComponent<CardUI>();
         if (aiCardUI == null) return false;
 
         int aiEffectivePower = aiCardUI.CalculateEffectivePower();
 
-        // 🛠 GET THE TARGET CARD'S ACTUAL EFFECTIVE POWER
+        // Get the target card's actual effective power
         CardUI targetCardUI = FindCardUIOnGrid(playerCard);
         int targetEffectivePower = targetCardUI != null ? targetCardUI.CalculateEffectivePower() : playerCard.power;
 
@@ -611,7 +891,7 @@ public class AIController : PlayerController
                 x = baseX;
                 y = baseY;
             }
-            // Else: no matching sacrifice on the field  fallback to the provided (x,y).
+            // Else: no matching sacrifice on the field – fallback to the provided (x,y).
         }
 
         string cellName = $"GridCell_{x}_{y}";
@@ -629,7 +909,6 @@ public class AIController : PlayerController
                     cardUI.RevealCard();
                 }
                 CardPreviewManager.Instance.ShowCardPreview(cardHandler.cardData);
-
 
                 // Set flags depending on the card category.
                 if (cardHandler.cardData.category == CardSO.CardCategory.Creature)
