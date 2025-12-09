@@ -3058,8 +3058,9 @@ MonoBehaviour:
   placeCardSound: {fileID: 8300000, guid: 1b00d8dc7d3df8d439a6305d3a63f9b2, type: 3}
   removeCardSound: {fileID: 8300000, guid: 583d5dec202e38846b578c3fb40521da, type: 3}
   destroyCardSound: {fileID: 8300000, guid: 49921d88fb8ef4066aa53d94e7bda0b9, type: 3}
-  isHoldingCard: 0
+  chainIconPrefab: {fileID: 4242393218720394904, guid: 06dfdfebb66b0784a9ac92c7258ab443, type: 3}
   cellSelectionCancelButtonPrefab: {fileID: 8853522671109537191, guid: b5b4663ea763d3d41a2055a7ece3dc61, type: 3}
+  isHoldingCard: 0
 --- !u!4 &669551653
 Transform:
   m_ObjectHideFlags: 0
@@ -4140,6 +4141,26 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1479547990}
     m_Modifications:
+    - target: {fileID: 2988910414766468124, guid: f1e19709391b35b48bb122e5354adc5e, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 2988910414766468124, guid: f1e19709391b35b48bb122e5354adc5e, type: 3}
+      propertyPath: m_Color.a
+      value: 0.49019608
+      objectReference: {fileID: 0}
+    - target: {fileID: 2988910414766468124, guid: f1e19709391b35b48bb122e5354adc5e, type: 3}
+      propertyPath: m_Color.b
+      value: 0.4113207
+      objectReference: {fileID: 0}
+    - target: {fileID: 2988910414766468124, guid: f1e19709391b35b48bb122e5354adc5e, type: 3}
+      propertyPath: m_Color.g
+      value: 0.4113207
+      objectReference: {fileID: 0}
+    - target: {fileID: 2988910414766468124, guid: f1e19709391b35b48bb122e5354adc5e, type: 3}
+      propertyPath: m_Color.r
+      value: 0.4113207
+      objectReference: {fileID: 0}
     - target: {fileID: 3389354795925345079, guid: f1e19709391b35b48bb122e5354adc5e, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -5083,6 +5104,26 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1479547990}
     m_Modifications:
+    - target: {fileID: 2988910414766468124, guid: f1e19709391b35b48bb122e5354adc5e, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 2988910414766468124, guid: f1e19709391b35b48bb122e5354adc5e, type: 3}
+      propertyPath: m_Color.a
+      value: 0.49019608
+      objectReference: {fileID: 0}
+    - target: {fileID: 2988910414766468124, guid: f1e19709391b35b48bb122e5354adc5e, type: 3}
+      propertyPath: m_Color.b
+      value: 0.4113207
+      objectReference: {fileID: 0}
+    - target: {fileID: 2988910414766468124, guid: f1e19709391b35b48bb122e5354adc5e, type: 3}
+      propertyPath: m_Color.g
+      value: 0.4113207
+      objectReference: {fileID: 0}
+    - target: {fileID: 2988910414766468124, guid: f1e19709391b35b48bb122e5354adc5e, type: 3}
+      propertyPath: m_Color.r
+      value: 0.4113207
+      objectReference: {fileID: 0}
     - target: {fileID: 3389354795925345079, guid: f1e19709391b35b48bb122e5354adc5e, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5

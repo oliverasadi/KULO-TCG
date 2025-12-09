@@ -58,6 +58,9 @@ public class RestrictHighPowerPlacementEffect : CardEffect
             highlighter?.SetPersistentHighlight(new Color(1f, 0f, 0f, 0.3f));
         }
 
+        // 🔗 Show chain icon on this cell
+        GridManager.instance.ShowChainIcon(x, y);
+
         // Start the restriction timer
         GridManager.instance.StartCoroutine(RestrictionCoroutine(x, y));
     }
@@ -87,7 +90,11 @@ public class RestrictHighPowerPlacementEffect : CardEffect
             var highlighter = cellObj.GetComponent<GridCellHighlighter>();
             highlighter?.ResetHighlight();
         }
+
+        // 🔓 Remove chain icon
+        GridManager.instance.HideChainIcon(x, y);
     }
+
 
     public override void RemoveEffect(CardUI sourceCard)
     {

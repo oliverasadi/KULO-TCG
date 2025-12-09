@@ -23,6 +23,49 @@ public class GridManager : MonoBehaviour
     public AudioClip removeCardSound;
     public AudioClip destroyCardSound;
 
+    [Header("Magnificent Garden Visuals")]
+    public GameObject chainIconPrefab;          // assign ChainIcon prefab here in Inspector
+    private GameObject[,] chainIcons = new GameObject[3, 3];
+
+    // ────────────────────────────────────────────────────────────────────────────
+    // New two-parameter overload: explicitly pass in the CardUI being summoned.
+    // ────────────────────────────────────────────────────────────────────────────
+    // Add these fields at the top of GridManager (just below existing fields)
+    [SerializeField] private GameObject cellSelectionCancelButtonPrefab;
+    private GameObject cellSelectionCancelButtonInstance;
+
+    public void ShowChainIcon(int x, int y)
+    {
+        if (chainIconPrefab == null) return;
+        if (x < 0 || x > 2 || y < 0 || y > 2) return;
+
+        // Already showing one here?
+        if (chainIcons[x, y] != null) return;
+
+        GameObject cellObj = GameObject.Find($"GridCell_{x}_{y}");
+        if (cellObj == null) return;
+
+        var icon = Instantiate(chainIconPrefab, cellObj.transform);
+        var rt = icon.GetComponent<RectTransform>();
+        if (rt != null)
+        {
+            rt.anchorMin = rt.anchorMax = rt.pivot = new Vector2(0.5f, 0.5f);
+            rt.anchoredPosition = Vector2.zero;
+        }
+
+        chainIcons[x, y] = icon;
+    }
+
+    public void HideChainIcon(int x, int y)
+    {
+        if (x < 0 || x > 2 || y < 0 || y > 2) return;
+
+        if (chainIcons[x, y] != null)
+        {
+            Destroy(chainIcons[x, y]);
+            chainIcons[x, y] = null;
+        }
+    }
 
     public bool isHoldingCard;
 
@@ -780,12 +823,7 @@ if (grid[x, y] != null)
             Debug.Log($"[GridManager] {card.cardName} is no longer at ({x},{y}) by removal time.");
         }
     }
-    // ────────────────────────────────────────────────────────────────────────────
-    // New two-parameter overload: explicitly pass in the CardUI being summoned.
-    // ────────────────────────────────────────────────────────────────────────────
-    // Add these fields at the top of GridManager (just below existing fields)
-    [SerializeField] private GameObject cellSelectionCancelButtonPrefab;
-    private GameObject cellSelectionCancelButtonInstance;
+ 
 
 
     // ────────────────────────────────────────────────────────────────────────────
