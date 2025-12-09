@@ -232,6 +232,13 @@ public class GridManager : MonoBehaviour
     {
         Debug.Log($"[GridManager] Attempting to place {cardData.cardName} at ({x},{y}). Category: {cardData.category}");
 
+        // 🔒 Magnificent Garden: block restricted creature placements (player + AI)
+        if (RestrictHighPowerPlacementEffect.IsRestrictedCell(x, y, cardData))
+        {
+            Debug.Log($"[PlaceExistingCard] Cell ({x},{y}) locked by Magnificent Garden. Cannot place {cardData.cardName}.");
+            return false;
+        }
+
         // ─── SPELLS: EARLY EXIT ────────────────────────────────────────────────
         if (cardData.category == CardSO.CardCategory.Spell)
         {
@@ -787,12 +794,21 @@ if (grid[x, y] != null)
     public void EnableCellSelectionMode(CardUI newCardUI, System.Action<int, int> cellSelectedCallback)
     {
         int currentPlayer = TurnManager.instance.GetCurrentPlayer();
+        CardSO cardData = newCardUI != null ? newCardUI.cardData : null;
 
         // Loop through all grid cells (3×3)
         for (int x = 0; x < 3; x++)
         {
             for (int y = 0; y < 3; y++)
             {
+                // ✅ Magnificent Garden restriction applies BEFORE any placement logic
+                if (cardData != null &&
+                    RestrictHighPowerPlacementEffect.IsRestrictedCell(x, y, cardData))
+                {
+                    Debug.Log($"[EnableCellSelectionMode] Cell ({x},{y}) locked by Magnificent Garden. Cannot place {cardData.cardName}.");
+                    continue; // skip this cell entirely
+                }
+
                 // Only highlight if CanPlaceCard allows it for this newCardUI
                 if (CanPlaceCard(x, y, newCardUI))
                 {
@@ -897,6 +913,7 @@ if (grid[x, y] != null)
             Debug.LogError("EnableCellSelectionMode was called without a CardUI and no CurrentEvolutionCard was found.");
         }
     }
+
 
 
     // ────────────────────────────────────────────────────────────────────────────

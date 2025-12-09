@@ -1,5 +1,6 @@
-using UnityEngine;
+﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;   // ← add this
 
 [CreateAssetMenu(menuName = "Card Effects/Restrict High Power Placement")]
 public class RestrictHighPowerPlacementEffect : CardEffect
@@ -14,7 +15,35 @@ public class RestrictHighPowerPlacementEffect : CardEffect
     public override void ApplyEffect(CardUI sourceCard)
     {
         Debug.Log("[MagnificentGarden] Select a cell to restrict.");
-        GridManager.instance.EnableCellSelectionMode((x, y) => OnCellSelected(x, y));
+
+        var selectableCells = new List<Vector2Int>();
+
+        // Highlight ALL 3×3 cells as selectable for this spell
+        for (int x = 0; x < 3; x++)
+        {
+            for (int y = 0; y < 3; y++)
+            {
+                selectableCells.Add(new Vector2Int(x, y));
+
+                GameObject cellObj = GameObject.Find($"GridCell_{x}_{y}");
+                if (cellObj == null) continue;
+
+                var highlighter = cellObj.GetComponent<GridCellHighlighter>();
+                if (highlighter != null)
+                {
+                    // Temporarily override any stored highlight
+                    highlighter.ClearStoredPersistentHighlight();
+                    highlighter.SetPersistentHighlight(new Color(1f, 1f, 0f, 0.5f)); // yellow
+                    highlighter.isSacrificeHighlight = true;
+                }
+            }
+        }
+
+        // This method will add click listeners and a Cancel button
+        GridManager.instance.EnableClickSelectionForCells(
+            selectableCells,
+            (x, y) => OnCellSelected(x, y)
+        );
     }
 
     private void OnCellSelected(int x, int y)
@@ -70,6 +99,6 @@ public class RestrictHighPowerPlacementEffect : CardEffect
         return restrictionActive &&
                x == restrictedX && y == restrictedY &&
                cardData.category == CardSO.CardCategory.Creature &&
-               cardData.power > 1400; // Use threshold
+               cardData.power >= 1400; // block 1400 and higher
     }
 }
