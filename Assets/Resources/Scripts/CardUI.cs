@@ -232,10 +232,24 @@ public class CardUI : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler,
 
     public void UpdatePowerIndicator()
     {
-        if (!isOnField)
+        // If this card lives in the grave, never show the badge
+        if (isInGraveyard)
         {
             if (powerChangeBadgeInstance != null)
+            {
                 Destroy(powerChangeBadgeInstance);
+                powerChangeBadgeInstance = null;
+            }
+            return;
+        }
+
+        if (cardData == null)
+        {
+            if (powerChangeBadgeInstance != null)
+            {
+                Destroy(powerChangeBadgeInstance);
+                powerChangeBadgeInstance = null;
+            }
             return;
         }
 
@@ -243,12 +257,26 @@ public class CardUI : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler,
         int effectivePower = CalculateEffectivePower();
 
         if (effectivePower > basePower)
+        {
+            // Buff → green “up” badge
             ShowPowerChangeBadge(true);
+        }
         else if (effectivePower < basePower)
+        {
+            // Debuff → red “down” badge
             ShowPowerChangeBadge(false);
-        else if (powerChangeBadgeInstance != null)
-            Destroy(powerChangeBadgeInstance);
+        }
+        else
+        {
+            // Back to normal → remove badge
+            if (powerChangeBadgeInstance != null)
+            {
+                Destroy(powerChangeBadgeInstance);
+                powerChangeBadgeInstance = null;
+            }
+        }
     }
+
 
     public void ShowPowerChangeBadge(bool isIncrease)
     {
@@ -276,39 +304,36 @@ public class CardUI : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler,
     private IEnumerator AnimatePowerBadge(GameObject badge)
     {
         RectTransform rt = badge.GetComponent<RectTransform>();
-        if (rt == null) yield break;
+        if (rt == null)
+            yield break;
 
         Vector3 originalScale = rt.localScale;
         Vector3 punchScale = originalScale * 1.5f;
-
         float duration = 0.3f;
-        float elapsed = 0f;
 
         // Scale up
-        while (elapsed < duration)
+        float t = 0f;
+        while (t < duration)
         {
-            rt.localScale = Vector3.Lerp(originalScale, punchScale, elapsed / duration);
-            elapsed += Time.deltaTime;
+            t += Time.deltaTime;
+            float lerp = Mathf.Clamp01(t / duration);
+            rt.localScale = Vector3.Lerp(originalScale, punchScale, lerp);
             yield return null;
         }
 
-        rt.localScale = punchScale;
-
-        // Scale down
-        elapsed = 0f;
-        while (elapsed < duration)
+        // Scale back down
+        t = 0f;
+        while (t < duration)
         {
-            rt.localScale = Vector3.Lerp(punchScale, originalScale, elapsed / duration);
-            elapsed += Time.deltaTime;
+            t += Time.deltaTime;
+            float lerp = Mathf.Clamp01(t / duration);
+            rt.localScale = Vector3.Lerp(punchScale, originalScale, lerp);
             yield return null;
         }
 
-        rt.localScale = originalScale;
-
-        yield return new WaitForSeconds(1.2f); // Display duration
-
-        if (badge != null)
-            Destroy(badge);
+        // IMPORTANT: don't destroy the badge here.
+        // It will stay visible as a constant icon until UpdatePowerIndicator
+        // decides the card is back to base power and removes it.
     }
 
 

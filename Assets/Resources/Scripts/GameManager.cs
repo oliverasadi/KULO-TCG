@@ -69,7 +69,7 @@ public class GameManager : MonoBehaviour
         // Reset state
         ResetUniqueWins();
         playerRoundWins.Clear();
-        CancelPulse();
+        pulseRoutine = null;          // just clear the handle
         UpdateRoundsUI();
 
         // Capture default button colors
@@ -308,6 +308,25 @@ public class GameManager : MonoBehaviour
             cellObj?.GetComponent<GridCellHighlighter>()?.SetPersistentHighlight(green);
         }
     }
+    // Re-apply persistent green highlight for all stored winning lines.
+    // This is a safety net in case a pulse was cancelled mid-way.
+    private void ReapplyAllRoundHighlights()
+    {
+        Color green = new Color(0f, 1f, 0f, 0.5f);
+
+        foreach (var info in playerRoundWins)
+        {
+            foreach (var c in info.cells)
+            {
+                var cellObj = GameObject.Find($"GridCell_{c.x}_{c.y}");
+                var highlighter = cellObj ? cellObj.GetComponent<GridCellHighlighter>() : null;
+                if (highlighter != null)
+                {
+                    highlighter.SetPersistentHighlight(green);
+                }
+            }
+        }
+    }
 
     private void ResetRoundButtonsUI()
     {
@@ -355,20 +374,28 @@ public class GameManager : MonoBehaviour
 
         btn.image.color = blue;
         foreach (var c in info.cells)
+        {
             GameObject.Find($"GridCell_{c.x}_{c.y}")
                 ?.GetComponent<GridCellHighlighter>()
                 ?.FlashHighlight(blue);
+        }
 
         yield return new WaitForSeconds(1f);
 
         foreach (var c in info.cells)
+        {
             GameObject.Find($"GridCell_{c.x}_{c.y}")
                 ?.GetComponent<GridCellHighlighter>()
                 ?.RestoreHighlight();
+        }
+
+        // Make sure ALL round win highlights are back in their correct state
+        ReapplyAllRoundHighlights();
 
         btn.image.color = Color.green;
         pulseRoutine = null;
     }
+
 
     private void CancelPulse()
     {
@@ -376,8 +403,13 @@ public class GameManager : MonoBehaviour
         {
             StopCoroutine(pulseRoutine);
             pulseRoutine = null;
+
+            // Safety: restore all stored win highlights and button colours
+            ReapplyAllRoundHighlights();
+            RefreshRoundButtons();
         }
     }
+
 
     private void ClearWinAnnouncement()
     {

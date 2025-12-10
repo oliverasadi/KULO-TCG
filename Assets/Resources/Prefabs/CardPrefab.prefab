@@ -157,6 +157,7 @@ MonoBehaviour:
   inlineReplacementCardName: 
   inlineBlockAdditionalPlays: 0
   activeInlineEffects: []
+  effectsAppliedInHand: 0
   isSacrificeSelected: 0
   isSelected: 0
 --- !u!114 &3076055314872575902
