@@ -6696,8 +6696,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 75e0aca241a67524688c3c61b8dc7150, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  amplitude: 5
-  speed: 0.3
+  amplitude: 10
+  speed: 1
 --- !u!225 &1133540601
 CanvasGroup:
   m_ObjectHideFlags: 0
@@ -9377,8 +9377,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 75e0aca241a67524688c3c61b8dc7150, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  amplitude: 10
-  speed: 0.5
+  amplitude: 20
+  speed: 2
 --- !u!225 &1493257432
 CanvasGroup:
   m_ObjectHideFlags: 0

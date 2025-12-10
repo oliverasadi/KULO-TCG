@@ -1,0 +1,559 @@
+fileFormatVersion: 2
+guid: 7192598011b315f48a84dd058958559f
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -134204932692403770
+    second: TamTam Prologue_0
+  - first:
+      213: 6543219307914353087
+    second: TamTam Prologue_1
+  - first:
+      213: 5449154471235489342
+    second: TamTam Prologue_2
+  - first:
+      213: 4125527049395149200
+    second: TamTam Prologue_3
+  - first:
+      213: 1732973613152554155
+    second: TamTam Prologue_4
+  - first:
+      213: 3611877569430204189
+    second: TamTam Prologue_5
+  - first:
+      213: 3056152911936665294
+    second: TamTam Prologue_6
+  - first:
+      213: 8118524453527730606
+    second: TamTam Prologue_7
+  - first:
+      213: -6503539392652537803
+    second: TamTam Prologue_8
+  - first:
+      213: 8333449886486477341
+    second: TamTam Prologue_9
+  - first:
+      213: 6946332557168372661
+    second: TamTam Prologue_10
+  - first:
+      213: -4355288032860736620
+    second: TamTam Prologue_11
+  - first:
+      213: -5785348050980020901
+    second: TamTam Prologue_12
+  - first:
+      213: -7986048495499313112
+    second: TamTam Prologue_13
+  - first:
+      213: -4360264007529144538
+    second: TamTam Prologue_14
+  - first:
+      213: -6201364071217317629
+    second: TamTam Prologue_15
+  - first:
+      213: 1875307282455828472
+    second: TamTam Prologue_16
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 1
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 1
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: TamTam Prologue_0
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 1064
+        width: 1434
+        height: 1048
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6c993c32355332ef0800000000000000
+      internalID: -134204932692403770
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TamTam Prologue_1
+      rect:
+        serializedVersion: 2
+        x: 1701
+        y: 1680
+        width: 32
+        height: 53
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fb956b70b4f2eca50800000000000000
+      internalID: 6543219307914353087
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TamTam Prologue_2
+      rect:
+        serializedVersion: 2
+        x: 1024
+        y: 0
+        width: 1333
+        height: 1514
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e3e0938ee194f9b40800000000000000
+      internalID: 5449154471235489342
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TamTam Prologue_3
+      rect:
+        serializedVersion: 2
+        x: 2315
+        y: 620
+        width: 319
+        height: 842
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 09996725ef0d04930800000000000000
+      internalID: 4125527049395149200
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TamTam Prologue_4
+      rect:
+        serializedVersion: 2
+        x: 2315
+        y: 1393
+        width: 7
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bac4519c152cc0810800000000000000
+      internalID: 1732973613152554155
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TamTam Prologue_5
+      rect:
+        serializedVersion: 2
+        x: 2317
+        y: 1402
+        width: 6
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d1fa61a4387ff1230800000000000000
+      internalID: 3611877569430204189
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TamTam Prologue_6
+      rect:
+        serializedVersion: 2
+        x: 1382
+        y: 375
+        width: 11
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ec6b24791e2a96a20800000000000000
+      internalID: 3056152911936665294
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TamTam Prologue_7
+      rect:
+        serializedVersion: 2
+        x: 1384
+        y: 368
+        width: 8
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ea9b7d80afacaa070800000000000000
+      internalID: 8118524453527730606
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TamTam Prologue_8
+      rect:
+        serializedVersion: 2
+        x: 1382
+        y: 359
+        width: 9
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5309f2e2169ceb5a0800000000000000
+      internalID: -6503539392652537803
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TamTam Prologue_9
+      rect:
+        serializedVersion: 2
+        x: 1383
+        y: 344
+        width: 6
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d1abb8de48c56a370800000000000000
+      internalID: 8333449886486477341
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TamTam Prologue_10
+      rect:
+        serializedVersion: 2
+        x: 1383
+        y: 333
+        width: 7
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5bb60c158a4566060800000000000000
+      internalID: 6946332557168372661
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TamTam Prologue_11
+      rect:
+        serializedVersion: 2
+        x: 1383
+        y: 302
+        width: 10
+        height: 32
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 49373d20c98ee83c0800000000000000
+      internalID: -4355288032860736620
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TamTam Prologue_12
+      rect:
+        serializedVersion: 2
+        x: 1313
+        y: 151
+        width: 7
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b5d5657899056bfa0800000000000000
+      internalID: -5785348050980020901
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TamTam Prologue_13
+      rect:
+        serializedVersion: 2
+        x: 2364
+        y: 151
+        width: 7
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 82088ba843bdb2190800000000000000
+      internalID: -7986048495499313112
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TamTam Prologue_14
+      rect:
+        serializedVersion: 2
+        x: 2439
+        y: 88
+        width: 185
+        height: 69
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 62fdd40acfa3d73c0800000000000000
+      internalID: -4360264007529144538
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TamTam Prologue_15
+      rect:
+        serializedVersion: 2
+        x: 2313
+        y: 75
+        width: 7
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 309b834cb3450f9a0800000000000000
+      internalID: -6201364071217317629
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TamTam Prologue_16
+      rect:
+        serializedVersion: 2
+        x: 1604
+        y: 0
+        width: 10
+        height: 5
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8f79b7f990e660a10800000000000000
+      internalID: 1875307282455828472
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 5e97eb03825dee720800000000000000
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      TamTam Prologue_0: -134204932692403770
+      TamTam Prologue_1: 6543219307914353087
+      TamTam Prologue_10: 6946332557168372661
+      TamTam Prologue_11: -4355288032860736620
+      TamTam Prologue_12: -5785348050980020901
+      TamTam Prologue_13: -7986048495499313112
+      TamTam Prologue_14: -4360264007529144538
+      TamTam Prologue_15: -6201364071217317629
+      TamTam Prologue_16: 1875307282455828472
+      TamTam Prologue_2: 5449154471235489342
+      TamTam Prologue_3: 4125527049395149200
+      TamTam Prologue_4: 1732973613152554155
+      TamTam Prologue_5: 3611877569430204189
+      TamTam Prologue_6: 3056152911936665294
+      TamTam Prologue_7: 8118524453527730606
+      TamTam Prologue_8: -6503539392652537803
+      TamTam Prologue_9: 8333449886486477341
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

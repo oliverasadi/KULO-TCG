@@ -3,8 +3,8 @@ using UnityEngine;
 public class UIDrift : MonoBehaviour
 {
     [Header("Drift Settings")]
-    public float amplitude = 10f;
-    public float speed = 0.5f;
+    public float amplitude = 20f;
+    public float speed = 2f;
 
     private RectTransform rt;
     private Vector2 startPos;
