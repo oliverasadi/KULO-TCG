@@ -1268,33 +1268,34 @@ if (grid[x, y] != null)
     public void ResetCellVisual(int x, int y)
     {
         GameObject cellObj = GameObject.Find($"GridCell_{x}_{y}");
-        if (cellObj != null)
-        {
-            // 1) Clear the drop-zone occupancy so OnPointerEnter will highlight again
-            var dz = cellObj.GetComponent<GridDropZone>();
-            if (dz != null)
-            {
-                dz.isOccupied = false;
-                dz.HideHighlights();  // ensure it’s showing the normalImage
-            }
+        if (cellObj == null) return;
 
-            // 2) Reset any outline/highlight background
-            GridCellHighlighter highlighter = cellObj.GetComponent<GridCellHighlighter>();
-            if (highlighter != null)
+        // 1) Sync the drop-zone occupancy to the actual grid state
+        var dz = cellObj.GetComponent<GridDropZone>();
+        if (dz != null)
+        {
+            dz.isOccupied = (grid[x, y] != null);
+            dz.HideHighlights();
+        }
+
+        // 2) Reset any outline/highlight background
+        GridCellHighlighter highlighter = cellObj.GetComponent<GridCellHighlighter>();
+        if (highlighter != null)
+        {
+            // Don’t reset evolution cards’ persistent color (only if card still there)
+            if (grid[x, y] != null && grid[x, y].baseOrEvo == CardSO.BaseOrEvo.Evolution)
             {
-                // Don’t reset evolution cards’ persistent color
-                if (grid[x, y] != null && grid[x, y].baseOrEvo == CardSO.BaseOrEvo.Evolution)
-                {
-                    Debug.Log($"[GridManager] Not resetting highlight for evolution card at ({x},{y}).");
-                }
-                else
-                {
-                    highlighter.ForceClearHighlight();
-                    Debug.Log($"[GridManager] Reset visual for cell ({x},{y}).");
-                }
+                Debug.Log($"[GridManager] Not resetting highlight for evolution card at ({x},{y}).");
+            }
+            else
+            {
+                highlighter.HardReset();
+                Debug.Log($"[GridManager] Reset visual for cell ({x},{y}).");
             }
         }
     }
+
+
 
     // ------------------------------------------------
     // Methods for Sacrifice/Evolution placeholders

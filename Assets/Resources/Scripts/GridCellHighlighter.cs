@@ -4,161 +4,119 @@ using UnityEngine.UI;
 
 public class GridCellHighlighter : MonoBehaviour
 {
-    // Outline component for border glow.
+    [Header("Visuals")]
     public Outline outlineComponent;
-    // Child object for a highlight background.
     public GameObject highlightObject;
-    // Duration for the temporary highlight effect.
+
+    [Header("Flash")]
     public float highlightDuration = 0.5f;
 
-    // Field to mark the cell as a sacrifice highlight.
+    // Used by selection flows (sacrifice / choose-cell etc)
     public bool isSacrificeHighlight = false;
 
-    // Fields to store a pre-existing persistent highlight.
-    private bool hadPersistentHighlight = false;
+    // Stored "previous state" so we can restore properly after flash/selection
+    // (this is really "hasStoredState", not "had a highlight")
+    private bool hasStoredState = false;
+    private bool storedOutlineEnabled = false;
+    private bool storedHighlightEnabled = false;
     private Color storedOutlineColor;
     private Color storedHighlightColor;
 
-    // Cached default values.
+    // Defaults
     private Color defaultOutlineColor;
     private Color defaultHighlightColor;
 
-    void Awake()
+    private Image _highlightImage;
+
+    private void Awake()
     {
         if (outlineComponent != null)
         {
             defaultOutlineColor = outlineComponent.effectColor;
             outlineComponent.enabled = false;
         }
+
         if (highlightObject != null)
         {
-            Image img = highlightObject.GetComponent<Image>();
-            if (img != null)
-                defaultHighlightColor = img.color;
+            _highlightImage = highlightObject.GetComponent<Image>();
+            if (_highlightImage != null)
+                defaultHighlightColor = _highlightImage.color;
+
             highlightObject.SetActive(false);
         }
     }
 
-    /// <summary>
-    /// Clears any stored persistent highlight so that next time SetPersistentHighlight is called,
-    /// the current colour is stored.
-    /// </summary>
     public void ClearStoredPersistentHighlight()
     {
-        hadPersistentHighlight = false;
+        hasStoredState = false;
+        storedOutlineEnabled = false;
+        storedHighlightEnabled = false;
     }
 
-    /// <summary>
-    /// Temporarily flashes the highlight with the given color.
-    /// After the duration, it restores to the previously stored persistent state if available.
-    /// </summary>
     public void FlashHighlight(Color flashColor)
     {
+        // Important: kill any previous flash so it can't restore later
+        StopAllCoroutines();
         StartCoroutine(HighlightRoutine(flashColor));
     }
 
     private IEnumerator HighlightRoutine(Color flashColor)
     {
-        // Set outline effect color.
         if (outlineComponent != null)
         {
             outlineComponent.effectColor = flashColor;
             outlineComponent.enabled = true;
         }
 
-        // Set the child highlight image color.
         if (highlightObject != null)
         {
-            Image img = highlightObject.GetComponent<Image>();
-            if (img != null)
-            {
-                img.color = flashColor;
-            }
+            if (_highlightImage != null)
+                _highlightImage.color = flashColor;
+
             highlightObject.SetActive(true);
         }
 
         yield return new WaitForSeconds(highlightDuration);
 
-        // Instead of resetting completely, restore any persistent highlight.
         RestoreHighlight();
     }
 
-    public void ForceClearHighlight()
-    {
-        // If FlashHighlight() is mid-coroutine, stop it so it can't "restore" later
-        StopAllCoroutines();
-
-        // Fully reset visuals + internal state
-        if (outlineComponent != null)
-        {
-            outlineComponent.enabled = false;
-            outlineComponent.effectColor = defaultOutlineColor;
-        }
-
-        if (highlightObject != null)
-        {
-            Image img = highlightObject.GetComponent<Image>();
-            if (img != null)
-                img.color = defaultHighlightColor;
-
-            highlightObject.SetActive(false);
-        }
-
-        isSacrificeHighlight = false;
-
-        // Also clear any “stored persistent” state so RestoreHighlight can’t bring it back
-        hadPersistentHighlight = false;
-        storedOutlineColor = defaultOutlineColor;
-        storedHighlightColor = defaultHighlightColor;
-    }
-
-
-    /// <summary>
-    /// Immediately resets the cell's visuals to their default state.
-    /// </summary>
     public void ResetHighlight()
     {
+        // Important: stop flashes so they can't re-apply colour after we clear
+        StopAllCoroutines();
+
         if (outlineComponent != null)
         {
             outlineComponent.enabled = false;
             outlineComponent.effectColor = defaultOutlineColor;
         }
+
         if (highlightObject != null)
         {
+            if (_highlightImage != null)
+                _highlightImage.color = defaultHighlightColor;
+
             highlightObject.SetActive(false);
-            Image img = highlightObject.GetComponent<Image>();
-            if (img != null)
-            {
-                img.color = defaultHighlightColor;
-            }
         }
+
         isSacrificeHighlight = false;
-        hadPersistentHighlight = false;
+        ClearStoredPersistentHighlight();
     }
 
-    /// <summary>
-    /// Sets a persistent highlight on the cell with the specified color.
-    /// This highlight will remain until you manually clear or restore it.
-    /// </summary>
     public void SetPersistentHighlight(Color persistentColor)
     {
-        // Always store the current state when applying a new highlight.
-        // (ClearStoredPersistentHighlight should be called beforehand if needed.)
-        if (!hadPersistentHighlight)
+        // Capture current state ONCE so we can restore later
+        // (even if the current state is "no highlight")
+        if (!hasStoredState)
         {
-            if (outlineComponent != null && outlineComponent.enabled)
-            {
-                storedOutlineColor = outlineComponent.effectColor;
-            }
-            if (highlightObject != null && highlightObject.activeSelf)
-            {
-                Image img = highlightObject.GetComponent<Image>();
-                if (img != null)
-                {
-                    storedHighlightColor = img.color;
-                }
-            }
-            hadPersistentHighlight = true;
+            storedOutlineEnabled = (outlineComponent != null && outlineComponent.enabled);
+            storedHighlightEnabled = (highlightObject != null && highlightObject.activeSelf);
+
+            storedOutlineColor = outlineComponent != null ? outlineComponent.effectColor : defaultOutlineColor;
+            storedHighlightColor = _highlightImage != null ? _highlightImage.color : defaultHighlightColor;
+
+            hasStoredState = true;
         }
 
         if (outlineComponent != null)
@@ -166,50 +124,50 @@ public class GridCellHighlighter : MonoBehaviour
             outlineComponent.effectColor = persistentColor;
             outlineComponent.enabled = true;
         }
+
         if (highlightObject != null)
         {
-            Image img = highlightObject.GetComponent<Image>();
-            if (img != null)
-            {
-                img.color = persistentColor;
-            }
+            if (_highlightImage != null)
+                _highlightImage.color = persistentColor;
+
             highlightObject.SetActive(true);
         }
+
         isSacrificeHighlight = true;
     }
 
-    /// <summary>
-    /// Restores the highlight to the previously stored persistent state,
-    /// or resets to default if none was stored.
-    /// </summary>
     public void RestoreHighlight()
     {
-        if (hadPersistentHighlight)
-        {
-            if (outlineComponent != null)
-            {
-                outlineComponent.effectColor = storedOutlineColor;
-                outlineComponent.enabled = true;
-            }
-            if (highlightObject != null)
-            {
-                highlightObject.SetActive(true);
-                Image img = highlightObject.GetComponent<Image>();
-                if (img != null)
-                {
-                    img.color = storedHighlightColor;
-                }
-            }
-        }
-        else
+        StopAllCoroutines();
+
+        if (!hasStoredState)
         {
             ResetHighlight();
+            return;
         }
+
+        if (outlineComponent != null)
+        {
+            outlineComponent.effectColor = storedOutlineColor;
+            outlineComponent.enabled = storedOutlineEnabled;
+        }
+
+        if (highlightObject != null)
+        {
+            if (_highlightImage != null)
+                _highlightImage.color = storedHighlightColor;
+
+            highlightObject.SetActive(storedHighlightEnabled);
+        }
+
+        isSacrificeHighlight = false;
     }
 
-    // Expose whether this cell had a persistent highlight before temporary selection.
-    public bool HasStoredPersistentHighlight
+    // Strong “make it definitely clean” call (used when a cell becomes empty)
+    public void HardReset()
     {
-        get { return hadPersistentHighlight; }
+        ResetHighlight();
     }
+
+    public bool HasStoredPersistentHighlight => hasStoredState;
 }
