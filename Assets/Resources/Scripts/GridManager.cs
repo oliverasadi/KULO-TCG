@@ -1289,7 +1289,7 @@ if (grid[x, y] != null)
                 }
                 else
                 {
-                    highlighter.ResetHighlight();
+                    highlighter.ForceClearHighlight();
                     Debug.Log($"[GridManager] Reset visual for cell ({x},{y}).");
                 }
             }

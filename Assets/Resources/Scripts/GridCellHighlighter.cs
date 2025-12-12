@@ -83,6 +83,36 @@ public class GridCellHighlighter : MonoBehaviour
         RestoreHighlight();
     }
 
+    public void ForceClearHighlight()
+    {
+        // If FlashHighlight() is mid-coroutine, stop it so it can't "restore" later
+        StopAllCoroutines();
+
+        // Fully reset visuals + internal state
+        if (outlineComponent != null)
+        {
+            outlineComponent.enabled = false;
+            outlineComponent.effectColor = defaultOutlineColor;
+        }
+
+        if (highlightObject != null)
+        {
+            Image img = highlightObject.GetComponent<Image>();
+            if (img != null)
+                img.color = defaultHighlightColor;
+
+            highlightObject.SetActive(false);
+        }
+
+        isSacrificeHighlight = false;
+
+        // Also clear any “stored persistent” state so RestoreHighlight can’t bring it back
+        hadPersistentHighlight = false;
+        storedOutlineColor = defaultOutlineColor;
+        storedHighlightColor = defaultHighlightColor;
+    }
+
+
     /// <summary>
     /// Immediately resets the cell's visuals to their default state.
     /// </summary>

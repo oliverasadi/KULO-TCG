@@ -245,6 +245,71 @@ public class AIController : PlayerController
         return anyUseful;
     }
 
+    // Gate certain spells (like Return of the Cats) so AI only plays them if they can actually resolve.
+    private bool IsSpellWorthPlaying(CardSO spell)
+    {
+        if (spell == null || spell.effects == null) return true;
+
+        // Look for ReturnFromGraveyardEffect on this spell
+        ReturnFromGraveyardEffect ret = null;
+        foreach (var e in spell.effects)
+        {
+            ret = e as ReturnFromGraveyardEffect;
+            if (ret != null) break;
+        }
+
+        // If it's not a grave-return spell, we don't gate it here
+        if (ret == null) return true;
+
+        if (pm == null || pm.zones == null) return false;
+
+        var grave = pm.zones.GetGraveyardCards();
+        if (grave == null) return false;
+
+        int count = 0;
+
+        foreach (var obj in grave)
+        {
+            if (obj == null) continue;
+
+            CardSO data = null;
+
+            var ch = obj.GetComponent<CardHandler>();
+            if (ch != null) data = ch.cardData;
+
+            if (data == null)
+            {
+                var cu = obj.GetComponent<CardUI>();
+                if (cu != null) data = cu.cardData;
+            }
+
+            if (data == null) continue;
+
+            bool valid = false;
+
+            if (ret.filterMode == ReturnFromGraveyardEffect.FilterMode.Type)
+            {
+                valid = (data.category == CardSO.CardCategory.Creature && data.creatureType == ret.filterValue);
+            }
+            else if (ret.filterMode == ReturnFromGraveyardEffect.FilterMode.Category &&
+                     System.Enum.TryParse<CardSO.CardCategory>(ret.filterValue, true, out var parsed))
+            {
+                valid = (data.category == parsed);
+            }
+
+            if (valid) count++;
+        }
+
+        if (count < ret.cardsToSelect)
+        {
+            Debug.Log($"[AIController] Skipping {spell.cardName}: needs {ret.cardsToSelect} valid grave target(s), found {count}.");
+            return false;
+        }
+
+        return true;
+    }
+
+
     // Helper for movement spells (MoveCardEffect)
     private bool IsMoveSpellUseful(MoveCardEffect effect)
     {
@@ -795,7 +860,7 @@ public class AIController : PlayerController
         CardHandler playableCreature = null;
         CardHandler playableSpell = null;
 
-        // NEW: track how "good" the chosen creature is
+        // track how "good" the chosen creature is
         int bestCreatureScore = int.MinValue;
 
         var handSnapshot = (pm != null && pm.cardHandlers != null)
@@ -832,14 +897,15 @@ public class AIController : PlayerController
                 if (score > bestCreatureScore)
                 {
                     bestCreatureScore = score;
-                    playableCreature = ch;   // ✅ now this will be Large Happy Zui over Mole Cat Girlfriend
+                    playableCreature = ch;
                 }
             }
 
-            // ---------------- SPELLS (unchanged) ----------------
+            // ---------------- SPELLS (UPDATED) ----------------
             if (data.category == CardSO.CardCategory.Spell &&
                 !TurnManager.instance.spellPlayed &&
-                IsCardPlayable(data))
+                IsCardPlayable(data) &&
+                IsSpellWorthPlaying(data))   // ✅ NEW: gate Return of the Cats etc.
             {
                 bool isDamiano = data.effects != null &&
                                  data.effects.Exists(e => e != null && e.GetType().Name == "X1DamianoEffect");
@@ -859,7 +925,6 @@ public class AIController : PlayerController
                 playableSpell = ch;
             }
         }
-
 
         bool playSpellFirst = Random.value < 0.5f;
         if (playSpellFirst)
@@ -905,6 +970,7 @@ public class AIController : PlayerController
 
         EndTurn();
     }
+
 
     // ──────────────────────────────────────────────────────────────────────────
     // Board evaluation
@@ -1210,27 +1276,44 @@ public class AIController : PlayerController
     {
         CardHandler bestCandidate = null;
         float highestPower = 0;
+
+        // 1) Prefer best creature
         foreach (CardHandler ch in pm.cardHandlers)
         {
+            if (ch == null || ch.cardData == null) continue;
+
             CardSO card = ch.cardData;
-            if (card.category == CardSO.CardCategory.Creature && !tm.creaturePlayed && card.power > highestPower && IsCardPlayable(card))
+
+            if (card.category == CardSO.CardCategory.Creature &&
+                !tm.creaturePlayed &&
+                card.power > highestPower &&
+                IsCardPlayable(card))
             {
                 bestCandidate = ch;
                 highestPower = card.power;
             }
         }
+
+        // 2) If no creature found, pick first playable spell (BUT gate it)
         if (bestCandidate == null)
         {
             foreach (CardHandler ch in pm.cardHandlers)
             {
+                if (ch == null || ch.cardData == null) continue;
+
                 CardSO card = ch.cardData;
-                if (card.category == CardSO.CardCategory.Spell && !tm.spellPlayed && IsCardPlayable(card))
+
+                if (card.category == CardSO.CardCategory.Spell &&
+                    !tm.spellPlayed &&
+                    IsCardPlayable(card) &&
+                    IsSpellWorthPlaying(card)) // ✅ NEW
                 {
                     bestCandidate = ch;
                     break;
                 }
             }
         }
+
         return bestCandidate;
     }
 

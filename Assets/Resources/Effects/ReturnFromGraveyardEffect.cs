@@ -27,12 +27,13 @@ public class ReturnFromGraveyardEffect : CardEffect
     public override void ApplyEffect(CardUI sourceCard)
     {
         var handler = sourceCard.GetComponent<CardHandler>();
-        if (handler == null || handler.cardOwner == null)
-            return;
+        if (handler == null || handler.cardOwner == null) return;
 
         // --- Helper to safely get CardSO from GameObject ---
         CardSO GetCardData(GameObject obj)
         {
+            if (obj == null) return null;
+
             if (obj.TryGetComponent<CardHandler>(out var ch) && ch.cardData != null)
                 return ch.cardData;
 
@@ -42,45 +43,7 @@ public class ReturnFromGraveyardEffect : CardEffect
             return null;
         }
 
-        // -------------------- AI ------------------------
-        if (handler.isAI)
-        {
-            var graveyard = handler.cardOwner.zones.GetGraveyardCards();
-            var valid = graveyard.Where(obj =>
-            {
-                var data = GetCardData(obj);
-                if (data == null) return false;
-
-                if (filterMode == FilterMode.Type)
-                    return data.category == CardSO.CardCategory.Creature && data.creatureType == filterValue;
-
-                if (filterMode == FilterMode.Category &&
-                    Enum.TryParse<CardSO.CardCategory>(filterValue, true, out var parsedCategory))
-                    return data.category == parsedCategory;
-
-                return false;
-            })
-            .Take(cardsToSelect)
-            .ToList();
-
-            foreach (var realCard in valid)
-            {
-                var ch = realCard.GetComponent<CardHandler>();
-                if (ch != null && ch.cardData != null)
-                    handler.cardOwner.SpawnCard(ch.cardData);
-            }
-
-            if (blockPlaysNextTurn)
-                handler.cardOwner.blockPlaysNextTurn = true;
-
-            return;
-        }
-
-        // -------------------- Player ------------------------
-        var zones = handler.cardOwner.zones;
-        var graveList = zones.GetGraveyardCards();
-
-        List<GameObject> validList = graveList.Where(obj =>
+        bool IsValidTarget(GameObject obj)
         {
             var data = GetCardData(obj);
             if (data == null) return false;
@@ -93,32 +56,107 @@ public class ReturnFromGraveyardEffect : CardEffect
                 return data.category == parsedCategory;
 
             return false;
-        }).ToList();
+        }
 
-        // Optional Debug
+        // If the selection UI returns a "clone" object, resolve it back to a real graveyard object.
+        GameObject ResolveToRealGraveObject(GameObject selectedObj, List<GameObject> remainingRealCards)
+        {
+            if (selectedObj == null || remainingRealCards == null) return null;
+
+            // If it IS one of the real objects, perfect.
+            if (remainingRealCards.Contains(selectedObj))
+                return selectedObj;
+
+            // Otherwise, try to match by CardSO reference (and make sure we don't reuse the same real card twice).
+            var selectedData = GetCardData(selectedObj);
+            if (selectedData == null) return null;
+
+            return remainingRealCards.FirstOrDefault(go => GetCardData(go) == selectedData);
+        }
+
+        // -------------------- AI ------------------------
+        if (handler.isAI)
+        {
+            var graveyard = handler.cardOwner.zones.GetGraveyardCards();
+            if (graveyard == null) return;
+
+            var valid = graveyard.Where(IsValidTarget).ToList();
+
+            // ✅ Hard gate: only resolve/apply if we can actually return the required amount.
+            if (valid.Count < cardsToSelect)
+            {
+                Debug.Log($"[ReturnFromGraveyardEffect] AI skipped: needs {cardsToSelect} valid target(s), found {valid.Count}.");
+                return;
+            }
+
+            var chosen = valid.Take(cardsToSelect).ToList();
+            foreach (var realCard in chosen)
+            {
+                var data = GetCardData(realCard);
+                if (data == null) continue;
+
+                // Add to hand
+                handler.cardOwner.SpawnCard(data);
+
+                // Remove from graveyard + destroy the old grave object so we don’t duplicate
+                graveyard.Remove(realCard);
+                if (realCard != null)
+                    GameObject.Destroy(realCard);
+            }
+
+            if (blockPlaysNextTurn)
+                handler.cardOwner.blockPlaysNextTurn = true;
+
+            return;
+        }
+
+        // -------------------- Player ------------------------
+        var zones = handler.cardOwner.zones;
+        var graveList = zones.GetGraveyardCards();
+        if (graveList == null) return;
+
+        List<GameObject> validList = graveList.Where(IsValidTarget).ToList();
+
         Debug.Log($"[GraveyardFilter] FilterMode={filterMode}, FilterValue={filterValue}, ValidCards={validList.Count}");
 
-        if (validList.Count == 0)
-            return;
+        if (validList.Count == 0) return;
 
         GraveyardSelectionManager.Instance.StartGraveyardSelection(
             validList,
             cardsToSelect,
             selected =>
             {
-                foreach (var realCard in selected)
-                {
-                    var ch = realCard.GetComponent<CardHandler>();
-                    if (ch != null && ch.cardData != null)
-                    {
-                        if (graveList.Contains(realCard))
-                            graveList.Remove(realCard);
+                if (selected == null) return;
 
-                        handler.cardOwner.SpawnCard(ch.cardData);
-                    }
+                // Keep a "remaining" list so if you pick 2 copies of the same card,
+                // we remove 2 *different* real grave objects.
+                var remainingReal = new List<GameObject>(graveList);
+
+                int returnedCount = 0;
+
+                foreach (var picked in selected)
+                {
+                    var real = ResolveToRealGraveObject(picked, remainingReal);
+                    if (real == null) continue;
+
+                    var data = GetCardData(real);
+                    if (data == null) continue;
+
+                    remainingReal.Remove(real);
+
+                    // Remove from grave list + destroy the grave object so it’s truly moved
+                    if (graveList.Contains(real))
+                        graveList.Remove(real);
+
+                    if (real != null)
+                        GameObject.Destroy(real);
+
+                    handler.cardOwner.SpawnCard(data);
+                    returnedCount++;
                 }
 
-                if (blockPlaysNextTurn)
+                // If you want the penalty ALWAYS when the spell is played, remove the "returnedCount > 0" check.
+                if (blockPlaysNextTurn && returnedCount > 0)
                     handler.cardOwner.blockPlaysNextTurn = true;
             }
         );
