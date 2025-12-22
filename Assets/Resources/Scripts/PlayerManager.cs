@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.Serialization;
 using System;
+using System.Linq;
 using System.Collections.Generic;
 
 public class PlayerManager : MonoBehaviour
@@ -284,18 +285,106 @@ public class PlayerManager : MonoBehaviour
         }
     }
 
+    // -------------------------------------------------------------------------
+    // Replacement consumption + debug helpers
+    // -------------------------------------------------------------------------
+
+    /// <summary>
+    /// Removes ONE copy of the given card from THIS player's deck list.
+    /// Matches by cardName (safer than reference equality).
+    /// </summary>
     public bool RemoveCardFromDeck(CardSO cardData)
     {
-        if (DeckManager.instance.currentDeck.Contains(cardData))
+        if (cardData == null)
         {
-            DeckManager.instance.currentDeck.Remove(cardData);
-            DeckZone.instance.UpdateDeckCount(DeckManager.instance.currentDeck.Count);
-            Debug.Log($"[PlayerManager] Removed {cardData.cardName} from the deck.");
+            Debug.LogWarning("[PlayerManager] RemoveCardFromDeck called with null cardData.");
+            return false;
+        }
+
+        int idx = currentDeck.FindIndex(c => c != null && c.cardName == cardData.cardName);
+        if (idx >= 0)
+        {
+            currentDeck.RemoveAt(idx);
+
+            if (zones != null)
+                zones.UpdateDeckCount(currentDeck.Count);
+
+            Debug.Log($"[PlayerManager] Removed '{cardData.cardName}' from Player {playerNumber} deck. Deck now: {currentDeck.Count}");
             return true;
         }
 
-        Debug.LogWarning($"[PlayerManager] Card {cardData.cardName} was not found in the deck.");
+        Debug.LogWarning($"[PlayerManager] '{cardData.cardName}' not found in Player {playerNumber} deck.");
         return false;
+    }
+
+    /// <summary>
+    /// Tries to consume ONE copy of cardData from the player's HAND first, then DECK.
+    /// If taken from hand, returns the existing hand card GameObject in existingHandCardObj.
+    /// If taken from deck, existingHandCardObj will be null (and caller can instantiate).
+    /// </summary>
+    public bool TryConsumeCardFromDeckOrHand(CardSO cardData, out GameObject existingHandCardObj, out string source)
+    {
+        existingHandCardObj = null;
+        source = "NONE";
+
+        if (cardData == null)
+        {
+            Debug.LogWarning("[PlayerManager] TryConsumeCardFromDeckOrHand called with null cardData.");
+            return false;
+        }
+
+        // 1) HAND (prefer using an existing copy if it's already drawn)
+        for (int i = 0; i < cardHandlers.Count; i++)
+        {
+            CardHandler h = cardHandlers[i];
+            if (h == null) continue;
+
+            CardUI ui = h.GetComponent<CardUI>();
+            if (ui == null || ui.cardData == null) continue;
+            if (ui.isOnField) continue;
+
+            if (ui.cardData.cardName == cardData.cardName)
+            {
+                cardHandlers.RemoveAt(i);
+                existingHandCardObj = h.gameObject;
+                source = "HAND";
+                Debug.Log($"[PlayerManager] Consumed '{cardData.cardName}' from HAND (Player {playerNumber}).");
+                return true;
+            }
+        }
+
+        // 2) DECK
+        if (RemoveCardFromDeck(cardData))
+        {
+            source = "DECK";
+            return true;
+        }
+
+        return false;
+    }
+
+    /// <summary>
+    /// Logs how many copies of cardName exist in THIS player's deck + hand.
+    /// (Hand excludes cards already on the field.)
+    /// </summary>
+    public void LogDeckHandCount(string cardName, string label = "Count")
+    {
+        if (string.IsNullOrEmpty(cardName))
+            return;
+
+        int deckCount = currentDeck.Count(c => c != null && c.cardName == cardName);
+
+        int handCount = 0;
+        foreach (var h in cardHandlers)
+        {
+            if (h == null) continue;
+            CardUI ui = h.GetComponent<CardUI>();
+            if (ui == null || ui.cardData == null) continue;
+            if (ui.isOnField) continue;
+            if (ui.cardData.cardName == cardName) handCount++;
+        }
+
+        Debug.Log($"[CountCheck] {label} | Player {playerNumber} | '{cardName}' deck={deckCount} hand={handCount} total={deckCount + handCount}");
     }
 
     public void ResetBlockPlaysFlag()

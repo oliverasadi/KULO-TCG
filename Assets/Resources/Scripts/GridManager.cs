@@ -471,74 +471,74 @@ public class GridManager : MonoBehaviour
             }
         }
 
-       // (2) OCCUPANT REPLACEMENT LOGIC
-if (grid[x, y] != null)
-{
-    // Prevent spells replacing creatures
-    if (cardData.category == CardSO.CardCategory.Spell && grid[x, y].category == CardSO.CardCategory.Creature)
-    {
-        Debug.Log($"[GridManager] Spells have no power and cannot replace Creature cards. {cardData.cardName} cannot replace {grid[x, y].cardName}.");
-        return false;
-    }
-
-    // Check the occupant’s power versus the new card’s power
-    float occupantPower = gridObjects[x, y].GetComponent<CardUI>().CalculateEffectivePower();
-    float newPower = cardObj.GetComponent<CardUI>().CalculateEffectivePower();
-
-    // If occupant is stronger, you can’t replace
-    if (occupantPower > newPower)
-    {
-        Debug.Log($"Cannot replace {grid[x, y].cardName} at ({x},{y}) - occupant power ({occupantPower}) > new card power ({newPower}).");
-        return false;
-    }
-    // If equal power, both die
-    else if (Mathf.Approximately(occupantPower, newPower))
-    {
-        if (cardData.category == CardSO.CardCategory.Spell)
+        // (2) OCCUPANT REPLACEMENT LOGIC
+        if (grid[x, y] != null)
         {
-            Debug.Log($"[GridManager] Spell {cardData.cardName} cannot destroy Creature {grid[x, y].cardName} on equal power.");
-            return false;
+            // Prevent spells replacing creatures
+            if (cardData.category == CardSO.CardCategory.Spell && grid[x, y].category == CardSO.CardCategory.Creature)
+            {
+                Debug.Log($"[GridManager] Spells have no power and cannot replace Creature cards. {cardData.cardName} cannot replace {grid[x, y].cardName}.");
+                return false;
+            }
+
+            // Check the occupant’s power versus the new card’s power
+            float occupantPower = gridObjects[x, y].GetComponent<CardUI>().CalculateEffectivePower();
+            float newPower = cardObj.GetComponent<CardUI>().CalculateEffectivePower();
+
+            // If occupant is stronger, you can’t replace
+            if (occupantPower > newPower)
+            {
+                Debug.Log($"Cannot replace {grid[x, y].cardName} at ({x},{y}) - occupant power ({occupantPower}) > new card power ({newPower}).");
+                return false;
+            }
+            // If equal power, both die
+            else if (Mathf.Approximately(occupantPower, newPower))
+            {
+                if (cardData.category == CardSO.CardCategory.Spell)
+                {
+                    Debug.Log($"[GridManager] Spell {cardData.cardName} cannot destroy Creature {grid[x, y].cardName} on equal power.");
+                    return false;
+                }
+
+                Debug.Log($"Equal power at ({x},{y}). Destroying both occupant and new card.");
+
+                // 🔊 Play destroy SFX
+                if (audioSource != null && destroyCardSound != null)
+                    audioSource.PlayOneShot(destroyCardSound);
+
+                var occHandler = gridObjects[x, y].GetComponent<CardHandler>();
+                RemoveCard(x, y, occHandler != null && occHandler.isAI);
+
+                // Send the new card to graveyard instead of placing
+                var newHandler = cardObj.GetComponent<CardHandler>();
+                newHandler?.cardOwner?.zones.AddCardToGrave(cardObj);
+
+                TurnManager.instance.RegisterCardPlay(cardData);
+                if (cardData.baseOrEvo != CardSO.BaseOrEvo.Evolution)
+                    ResetCellVisual(x, y);
+
+                return true;
+            }
+            // Occupant is weaker: replace, but only if player can afford to play
+            else
+            {
+                bool canAfford = TurnManager.instance.CanPlayCard(cardData);
+                if (!canAfford)
+                {
+                    Debug.Log($"Cannot replace {grid[x, y].cardName} at ({x},{y}) because player cannot pay for {cardData.cardName}.");
+                    return false;
+                }
+
+                Debug.Log($"Replacing occupant {grid[x, y].cardName} at ({x},{y}) with {cardData.cardName}.");
+
+                // 🔊 Play destroy SFX
+                if (audioSource != null && destroyCardSound != null)
+                    audioSource.PlayOneShot(destroyCardSound);
+
+                var occHandler = gridObjects[x, y].GetComponent<CardHandler>();
+                RemoveCard(x, y, occHandler != null && occHandler.isAI);
+            }
         }
-
-        Debug.Log($"Equal power at ({x},{y}). Destroying both occupant and new card.");
-
-        // 🔊 Play destroy SFX
-        if (audioSource != null && destroyCardSound != null)
-            audioSource.PlayOneShot(destroyCardSound);
-
-        var occHandler = gridObjects[x, y].GetComponent<CardHandler>();
-        RemoveCard(x, y, occHandler != null && occHandler.isAI);
-
-        // Send the new card to graveyard instead of placing
-        var newHandler = cardObj.GetComponent<CardHandler>();
-        newHandler?.cardOwner?.zones.AddCardToGrave(cardObj);
-
-        TurnManager.instance.RegisterCardPlay(cardData);
-        if (cardData.baseOrEvo != CardSO.BaseOrEvo.Evolution)
-            ResetCellVisual(x, y);
-
-        return true;
-    }
-    // Occupant is weaker: replace, but only if player can afford to play
-    else
-    {
-        bool canAfford = TurnManager.instance.CanPlayCard(cardData);
-        if (!canAfford)
-        {
-            Debug.Log($"Cannot replace {grid[x, y].cardName} at ({x},{y}) because player cannot pay for {cardData.cardName}.");
-            return false;
-        }
-
-        Debug.Log($"Replacing occupant {grid[x, y].cardName} at ({x},{y}) with {cardData.cardName}.");
-
-        // 🔊 Play destroy SFX
-        if (audioSource != null && destroyCardSound != null)
-            audioSource.PlayOneShot(destroyCardSound);
-
-        var occHandler = gridObjects[x, y].GetComponent<CardHandler>();
-        RemoveCard(x, y, occHandler != null && occHandler.isAI);
-    }
-}
 
 
         // (3) RE-PARENT & CENTER THE CARD
@@ -823,7 +823,7 @@ if (grid[x, y] != null)
             Debug.Log($"[GridManager] {card.cardName} is no longer at ({x},{y}) by removal time.");
         }
     }
- 
+
 
 
     // ────────────────────────────────────────────────────────────────────────────
@@ -1639,7 +1639,7 @@ if (grid[x, y] != null)
                                 else
                                 {
                                     Debug.Log($"[CheckReplacementEffects] Auto-replacing for AI: {cardUI.cardData.cardName}");
-                                    ExecuteReplacementInline(cardUI, i, j); // ✅ AI: execute replacement directly
+                                    ExecuteReplacementInline(cardUI, i, j, inlineEffect); // ✅ AI: execute replacement directly
                                 }
 
                                 // Prevent re-triggering on future turns
@@ -1731,7 +1731,7 @@ if (grid[x, y] != null)
                     if (chosen != null)
                     {
                         // Do the evolution
-                        ExecuteReplacementInline(sourceCardUI, gridX, gridY);
+                        ExecuteReplacementInline(sourceCardUI, gridX, gridY, inlineEffect);
 
                         // 🔥 After a successful choice, close ALL remaining evolution panels
                         var allPanels = overlayCanvas.GetComponentsInChildren<SummonChoiceUI>(true);
@@ -1780,7 +1780,7 @@ if (grid[x, y] != null)
             prompt.OnResponse.RemoveAllListeners();
             Destroy(panelInstance);
 
-            if (accepted) ExecuteReplacementInline(sourceCardUI, gridX, gridY);
+            if (accepted) ExecuteReplacementInline(sourceCardUI, gridX, gridY, inlineEffect);
         });
     }
 
@@ -1791,83 +1791,112 @@ if (grid[x, y] != null)
 
 
 
+
     /// <summary>
     /// Executes the inline replacement effect by removing the source card from the grid,
-    /// instantiating a replacement card, and placing it into the same grid cell.
+    /// consuming the replacement card from HAND or DECK (not generating it for free),
+    /// and placing it into the same grid cell.
     /// </summary>
-    private void ExecuteReplacementInline(CardUI sourceCardUI, int gridX, int gridY)
+    private void ExecuteReplacementInline(CardUI sourceCardUI, int gridX, int gridY, CardEffectData inlineEffect)
     {
-        string replacementName = sourceCardUI.cardData.inlineEffects[0].replacementCardName;
+        // Prefer the triggering inlineEffect (safer if the card has multiple inline effects)
+        string replacementName = (inlineEffect != null && !string.IsNullOrEmpty(inlineEffect.replacementCardName))
+            ? inlineEffect.replacementCardName
+            : null;
+
+        // Fallbacks for older data
+        if (string.IsNullOrEmpty(replacementName))
+            replacementName = sourceCardUI.inlineReplacementCardName;
+        if (string.IsNullOrEmpty(replacementName) && sourceCardUI.cardData != null && sourceCardUI.cardData.inlineEffects != null && sourceCardUI.cardData.inlineEffects.Count > 0)
+            replacementName = sourceCardUI.cardData.inlineEffects[0].replacementCardName;
+
         bool blockAdditional = sourceCardUI.inlineBlockAdditionalPlays;
         Debug.Log($"[ExecuteReplacementInline] Attempting to replace {sourceCardUI.cardData.cardName} with {replacementName} at cell ({gridX},{gridY})");
 
-        CardSO replacementCard = DeckManager.instance.FindCardByName(replacementName);
-        if (replacementCard != null)
+        if (string.IsNullOrEmpty(replacementName))
         {
-            // 🔹 NEW: respect "1 creature per turn" rule for replacements too.
-            if (replacementCard.category == CardSO.CardCategory.Creature &&
-                TurnManager.instance != null &&
-                TurnManager.instance.CreaturePlayed)
-            {
-                Debug.Log("[ExecuteReplacementInline] A creature has already been played this turn – replacement cancelled.");
-                return;
-            }
-
-            // Get the owner from the source card's CardHandler.
-            PlayerManager owner = sourceCardUI.GetComponent<CardHandler>()?.cardOwner;
-            if (owner == null)
-            {
-                Debug.LogError($"[ExecuteReplacementInline] Source card '{sourceCardUI.cardData.cardName}' has no owner!");
-                return;
-            }
-
-            // Remove the replacement card from the owner's deck.
-            if (owner.RemoveCardFromDeck(replacementCard))
-            {
-                Debug.Log($"[ExecuteReplacementInline] {replacementCard.cardName} removed from deck.");
-            }
-            else
-            {
-                Debug.LogWarning($"[ExecuteReplacementInline] {replacementCard.cardName} was not found in the deck.");
-            }
-
-            // Remove the source occupant from the grid.
-            RemoveCard(gridX, gridY, false);
-
-            // Instantiate the replacement card object.
-            GameObject newCardObj = InstantiateReplacementCardInline(replacementCard, owner);
-
-            // Find the grid cell's transform.
-            GameObject cellObj = GameObject.Find($"GridCell_{gridX}_{gridY}");
-            if (cellObj == null)
-            {
-                Debug.LogError($"[ExecuteReplacementInline] Grid cell 'GridCell_{gridX}_{gridY}' not found.");
-                return;
-            }
-            Transform cellTransform = cellObj.transform;
-
-            // Place the replacement card.
-            PlaceReplacementCard(gridX, gridY, newCardObj, replacementCard, cellTransform);
-
-            // For evolution cards, show the evolution splash.
-            if (replacementCard.baseOrEvo == CardSO.BaseOrEvo.Evolution)
-            {
-                Debug.Log($"[ExecuteReplacementInline] Showing evolution splash with old '{sourceCardUI.cardData.cardName}' and new evo '{replacementCard.cardName}'");
-                GridManager.instance.ShowEvolutionSplash(sourceCardUI.cardData.cardName, replacementCard.cardName);
-            }
-
-            if (blockAdditional)
-            {
-                Debug.Log("Replacing & blocking next turn [inline]!");
-                TurnManager.instance.BlockAdditionalCardPlays();
-            }
-            Debug.Log($"[Inline Replacement] Successfully replaced card at ({gridX},{gridY}) with {replacementName}.");
+            Debug.LogError("[ExecuteReplacementInline] replacementName is empty. Cancelling.");
+            return;
         }
-        else
+
+        CardSO replacementCard = DeckManager.instance.FindCardByName(replacementName);
+        if (replacementCard == null)
         {
             Debug.LogError($"[ExecuteReplacementInline] Replacement card not found: {replacementName}");
+            return;
         }
+
+        // Respect "1 creature per turn" rule for replacements too.
+        if (replacementCard.category == CardSO.CardCategory.Creature &&
+            TurnManager.instance != null &&
+            TurnManager.instance.CreaturePlayed)
+        {
+            Debug.Log("[ExecuteReplacementInline] A creature has already been played this turn – replacement cancelled.");
+            return;
+        }
+
+        PlayerManager owner = sourceCardUI.GetComponent<CardHandler>()?.cardOwner;
+        if (owner == null)
+        {
+            Debug.LogError($"[ExecuteReplacementInline] Source card '{sourceCardUI.cardData.cardName}' has no owner!");
+            return;
+        }
+
+        // ✅ Debug count (deck + hand) before
+        owner.LogDeckHandCount(replacementName, "Before replacement");
+
+        // ✅ Consume from HAND first, else DECK. If we take from deck, we'll instantiate a new card object.
+        GameObject existingHandObj;
+        string consumedFrom;
+        if (!owner.TryConsumeCardFromDeckOrHand(replacementCard, out existingHandObj, out consumedFrom))
+        {
+            Debug.LogWarning($"[ExecuteReplacementInline] '{replacementName}' not found in HAND or DECK. Replacement cancelled.");
+            owner.LogDeckHandCount(replacementName, "After failed consume");
+            return;
+        }
+
+        // ✅ Debug count after consuming
+        owner.LogDeckHandCount(replacementName, $"After consume ({consumedFrom})");
+
+        // Remove the source occupant from the grid.
+        RemoveCard(gridX, gridY, false);
+
+        // Use existing hand card if we consumed from hand; otherwise instantiate from deck.
+        GameObject newCardObj = existingHandObj != null
+            ? existingHandObj
+            : InstantiateReplacementCardInline(replacementCard, owner);
+
+        // Find the grid cell's transform.
+        GameObject cellObj = GameObject.Find($"GridCell_{gridX}_{gridY}");
+        if (cellObj == null)
+        {
+            Debug.LogError($"[ExecuteReplacementInline] Grid cell 'GridCell_{gridX}_{gridY}' not found.");
+            return;
+        }
+        Transform cellTransform = cellObj.transform;
+
+        // Place the replacement card.
+        PlaceReplacementCard(gridX, gridY, newCardObj, replacementCard, cellTransform);
+
+        // For evolution cards, show the evolution splash.
+        if (replacementCard.baseOrEvo == CardSO.BaseOrEvo.Evolution)
+        {
+            Debug.Log($"[ExecuteReplacementInline] Showing evolution splash with old '{sourceCardUI.cardData.cardName}' and new evo '{replacementCard.cardName}'");
+            GridManager.instance.ShowEvolutionSplash(sourceCardUI.cardData.cardName, replacementCard.cardName);
+        }
+
+        if (blockAdditional)
+        {
+            Debug.Log("Replacing & blocking next turn [inline]!");
+            TurnManager.instance.BlockAdditionalCardPlays();
+        }
+
+        // ✅ Debug count after replacement
+        owner.LogDeckHandCount(replacementName, "After replacement");
+
+        Debug.Log($"[Inline Replacement] Successfully replaced card at ({gridX},{gridY}) with {replacementName}. ConsumedFrom={consumedFrom}");
     }
+
 
 
 
@@ -1914,6 +1943,14 @@ if (grid[x, y] != null)
             cardObj.transform.localPosition = Vector3.zero;
         }
 
+        // Optional safety: reset any weird rotation from flip animations
+        cardObj.transform.localRotation = Quaternion.identity;
+
+        // Mark as on-field (replacement bypasses normal hand->field flow)
+        CardUI placedUI = cardObj.GetComponent<CardUI>();
+        if (placedUI != null)
+            placedUI.isOnField = true;
+
         // Update grid references.
         grid[x, y] = cardData;
         gridObjects[x, y] = cardObj;
@@ -1926,6 +1963,18 @@ if (grid[x, y] != null)
             isAICard = (handler.cardOwner != null && handler.cardOwner.playerType == PlayerManager.PlayerTypes.AI);
             Debug.Log($"[PlaceReplacementCard] Forcing ownership for {cardData.cardName}: isAI = {isAICard}, owner = {handler.cardOwner?.playerNumber}");
             handler.isAI = isAICard;
+
+            // ✅ IMPORTANT FIX:
+            // If this card object was taken from AI hand, it may still be face-down (card back).
+            // Force it face-up now that it is on the field.
+            handler.SetCard(cardData, false, isAICard);
+            Debug.Log($"[PlaceReplacementCard] Forced face-up visuals for {cardData.cardName} (isAI={isAICard}).");
+        }
+        else
+        {
+            // Fallback (shouldn't usually happen, but safe)
+            if (placedUI != null)
+                placedUI.SetCardData(cardData, false);
         }
 
         // Register the card play and optionally play a sound.
@@ -1977,7 +2026,6 @@ if (grid[x, y] != null)
             }
         }
 
-
         // For Spell cards, queue removal.
         if (cardData.category == CardSO.CardCategory.Spell)
         {
@@ -2028,6 +2076,7 @@ if (grid[x, y] != null)
                             }
                         }
                     }
+
                     // Handle ConditionalPowerBoost effect.
                     if (inlineEffect.effectType == CardEffectData.EffectType.ConditionalPowerBoost)
                     {
@@ -2058,24 +2107,25 @@ if (grid[x, y] != null)
 
         // For non-Spell cards, check for an immediate win.
         if (cardData.category != CardSO.CardCategory.Spell && grid[x, y] == cardData && !HasSelfDestructEffect(cardData))
-            if (cardData.category != CardSO.CardCategory.Spell && grid[x, y] == cardData && !HasSelfDestructEffect(cardData))
+        {
+            Debug.Log("[PlaceReplacementCard] Checking for win condition now...");
+
+            // 🔍 Log the column you think should win (e.g., column 1)
+            for (int i = 0; i < 3; i++)
             {
-                Debug.Log("[PlaceReplacementCard] Checking for win condition now...");
-
-                // 🔍 Log the column you think should win (e.g., column 1)
-                for (int i = 0; i < 3; i++)
-                {
-                    GameObject obj = GridManager.instance.GetGridObjects()[i, 1];
-                    CardHandler ch = obj?.GetComponent<CardHandler>();
-                    var cardName = GridManager.instance.GetGrid()[i, 1]?.cardName;
-                    Debug.Log($"[DEBUG] Column 1 - cell ({i},1): {cardName}, Owner: {ch?.cardOwner?.playerNumber}, isAI: {ch?.isAI}");
-                }
-
-                GameManager.instance.CheckForWin();
+                GameObject obj = GridManager.instance.GetGridObjects()[i, 1];
+                CardHandler ch = obj?.GetComponent<CardHandler>();
+                var cardName = GridManager.instance.GetGrid()[i, 1]?.cardName;
+                Debug.Log($"[DEBUG] Column 1 - cell ({i},1): {cardName}, Owner: {ch?.cardOwner?.playerNumber}, isAI: {ch?.isAI}");
             }
+
+            GameManager.instance.CheckForWin();
+        }
 
         return true;
     }
+
+
     public void PrintGridState()
     {
         for (int x = 0; x < 3; x++)
